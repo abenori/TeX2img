@@ -1,0 +1,67 @@
+TeX2img
+
+(C)Abe Noriyuki abenori@math.sci.hokudai.ac.jp
+                http://www.math.sci.hokudai.ac.jp/~abenori/
+
+# これは何？
+入力したTeXソースコードをTeXでコンパイルして，次のような形式の画像で出力するアプリケーションです．
+* アウトラインをとった EPS ファイル
+* JPEG ファイル
+* PNG ファイル
+* 背景を透過させた PNG ファイル
+* PDF ファイル
+
+出力した EPS / JPEG / PNG / PDF ファイルは Word / Excel / PowerPoint や，Illustrator / InDesign 等に貼り付けて利用することができます．
+
+もともとの作者は寺田侑祐氏です．Version 1.2 以降開発を引き継ぎました．
+
+# 動作条件
+* .NET Framework 2.0 以降．（Vista 以降ならばもともと入っていると思います．）
+* 適切な TeX ディストリビューション（W32TeX か TeX Live を推奨）がインストールされており，platex 及び dvipdfmx が使えること．
+* Ghostscript がインストールされ，使えること．（TeX Live 内のものでも大丈夫です．）
+* ImageMagick がインストールされていると，それを用いて画像を出力することができます．（必須ではありません．）
+
+# インストール
+解凍後出てくる TeX2img.exe をダブルクリックすれば起動します．初回に platex.exe などの場所を推定しますが，推定に失敗した場合は，メニューの「ツール(T)」→「オプション... (O) Ctrl+E」から設定をしてください．
+
+# 起動オプション
+* /platex (PATH)
+platex.exe のパスとして (PATH) を設定します．
+
+* /dvipdfmx (PATH)
+dvipdfmx.exe のパスとして (PATH) を設定します．
+
+* /dvipdfmx (PATH)
+dvipdfmx.exe のパスとして (PATH) を設定します．
+
+* /gs (PATH)
+Ghostscript のパスとして (PATH) を設定します．
+
+* /exit
+画面を出さずに終了します．（起動オプションにより設定された設定項目は保存されます．）
+
+# 参考
+* 元々の作者である寺田氏による，TeX2img 配布ページ
+http://island.geocities.jp/loveinequality/
+には，TeX2img を活用するための情報があります．参考にしてみてください．
+
+# 謝辞
+* もともとの TeX2img は寺田侑祐氏によるものです．というか現段階でまだ彼の書いたコードの方が多いと思います．
+* Azuki テキストエディタエンジンを利用しています．
+http://sgry.b.sourceforge.jp/
+
+# ライセンス
+修正 BSD ライセンスです．license.txt を参照．
+なお，Azuki エディタコンポーネント Azuki.dll には zlib ライセンスが適用されています．
+http://sgry.b.sourceforge.jp/introduction/license/
+
+# 履歴（1.2以降）
+* Version 1.2
+** 開発を引き継いだ．
+** emf のサポートをやめた．
+** 環境設定用の起動オプションを追加．
+** ソースコードの色付け機能を搭載．（Azuki エディタコンポーネントを利用．）
+** ファイル名に空白が入っている場合に動かないバグ修正．
+** 複数ページにわたる TeX ソースを変換する場合，ページごとにファイルを出力するようにした．
+** JPEG / PNG 時には，余白設定を従来のpxに加え，「bp」でも指定できるようにした．（EPS / PDF の出力と同様の空白が得られるはず．）
+** ライセンスを修正 BSD ライセンスへと変更
