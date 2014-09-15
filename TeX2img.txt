@@ -1,7 +1,6 @@
 TeX2img
 
-(C)Abe Noriyuki abenori@math.sci.hokudai.ac.jp
-                http://www.math.sci.hokudai.ac.jp/~abenori/
+(C)Abe Noriyuki http://www.math.sci.hokudai.ac.jp/~abenori/
 
 # これは何？
 入力したTeXソースコードをTeXでコンパイルして，次のような形式の画像で出力するアプリケーションです．
