@@ -16,7 +16,7 @@
 
 # 動作条件
 * .NET Framework 2.0 以降．（Vista 以降ならばもともと入っていると思います．）
-* 適切な TeX ディストリビューション（W32TeX か TeX Live を推奨）がインストールされており，UTF-8 に対応している platex 及び dvipdfmx が使えること．
+* 適切な TeX ディストリビューション（W32TeX か TeX Live を推奨）がインストールされており，platex 及び dvipdfmx が使えること．
 * Ghostscript がインストールされ，使えること．（TeX Live 内のものでも大丈夫です．）
 * ImageMagick がインストールされていると，それを用いて画像を出力することができます．（必須ではありません．）
 
