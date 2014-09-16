@@ -30,7 +30,7 @@ namespace TeX2img {
             return string.Empty;
         }
 
-        string platexPath_, dvipdfmxPath_, gsPath_;
+        string platexPath_, dvipdfmxPath_, gsPath_,encode_;
         int resolutionScale_;
         decimal leftMargin_, rightMargin_, topMargin_, bottomMargin_;
         bool useMagickFlag_, transparentPngFlag_, showOutputWindowFlag_, previewFlag_, deleteTmpFileFlag_, ignoreErrorFlag_,yohakuUnitBP_;
@@ -38,13 +38,14 @@ namespace TeX2img {
         Process proc_;
         const int epsResolution_ = 20016;
 
-        public Converter(string platexPath, string dvipdfmxPath, string gsPath,
+        public Converter(string platexPath, string dvipdfmxPath, string gsPath,string encode,
                   int resolutionScale, decimal leftMargin, decimal rightMargin, decimal topMargin, decimal bottomMargin,bool yohakuUnitBP,
                         bool useMagickFlag, bool transparentPngFlag, bool showOutputWindowFlag, bool previewFlag, bool deleteTmpFileFlag, bool ignoreErrorFlag,
                             IOutputController controller) {
             platexPath_ = platexPath;
             dvipdfmxPath_ = dvipdfmxPath;
             gsPath_ = gsPath;
+            encode_ = encode;
             resolutionScale_ = resolutionScale;
             leftMargin_ = leftMargin;
             rightMargin_ = rightMargin;
@@ -123,17 +124,6 @@ namespace TeX2img {
                 FileName = FileName.Replace("\"", "");
             }
             return FileName;
-
-            /*
-            String[] splitedPath = path.Split(new Char[] { ' ' });
-            proc_.StartInfo.FileName = splitedPath[0];
-            proc_.StartInfo.Arguments = "";
-
-            for(int i = 1 ; i < splitedPath.Length ; i++) {
-                proc_.StartInfo.Arguments += " " + splitedPath[i];
-            }
-            proc_.StartInfo.Arguments += " ";
-            */
         }
 
         private void printCommandLine() {
@@ -149,7 +139,9 @@ namespace TeX2img {
 
             string arg;
             proc_.StartInfo.FileName = setProcStartInfo(platexPath_, out arg);
-            proc_.StartInfo.Arguments = arg + "-kanji=sjis -interaction=nonstopmode " + baseName + ".tex";
+            proc_.StartInfo.Arguments = arg;
+            if(encode_.Substring(0, 1) != "_") proc_.StartInfo.Arguments += "-no-guess-input-enc -kanji=" + encode_ + " ";
+            proc_.StartInfo.Arguments += "-interaction=nonstopmode " + baseName + ".tex";
 
             try {
                 printCommandLine();
@@ -227,29 +219,6 @@ namespace TeX2img {
         }
 
 
-        /*
-        private bool eps2emf(string baseName) {
-            proc_.StartInfo.FileName = Application.StartupPath + @"\pstoedit\pstoedit.exe";
-            proc_.StartInfo.Arguments = "-f emf  -psarg \"-r" + resolution + "\" " + baseName + ".eps " + baseName + ".emf";
-            try {
-                printCommandLine();
-                proc_.Start();
-                proc_.WaitForExit();
-            }
-            catch(Win32Exception) {
-                controller_.showPstoeditError();
-                return false;
-            }
-            if(!File.Exists(baseName + ".emf")) {
-                controller_.showPstoeditError();
-                return false;
-            }
-
-            return true;
-        }
-        */
-
-
         private void enlargeBB(string inputEpsFileName) {
             Regex regexBB = new Regex(@"^\%\%(HiRes|)BoundingBox\: ([\d\.]+) ([\d\.]+) ([\d\.]+) ([\d\.]+)$");
             
@@ -272,12 +241,6 @@ namespace TeX2img {
                             continue;
                         }
 
-                        /*
-                        match = regexHiResBB.Match(line);
-                        if(match.Success) {
-                            continue;
-                        }
-                         */
                         lines.Add(line.TrimEnd('\r', '\n'));
                     }
                 }
@@ -328,37 +291,6 @@ namespace TeX2img {
             }
         }
 
-        /*
-        private int pdfpage(string pdfFileName) {
-            proc_.StartInfo.FileName = Converter.which("pdfinfo.exe");
-            if(proc_.StartInfo.FileName == "") return -1;
-            proc_.StartInfo.Arguments = pdfFileName;
-            try {
-                printCommandLine();
-                proc_.Start();
-                proc_.WaitForExit();
-                if(proc_.ExitCode == 0) {
-                    Regex reg = new Regex("Pages:[ \t]*([0-9]+)");
-                    while(proc_.StandardOutput.Peek() >= 0) {
-                        var match = reg.Match(proc_.StandardOutput.ReadLine());
-                        if(match.Success) {
-                            return int.Parse(match.Groups[1].Value);
-                        }
-                    }
-                    return -1;
-                } else {
-                    controller_.appendOutput(proc_.StandardOutput.ReadToEnd());
-                    controller_.appendOutput(proc_.StandardError.ReadToEnd());
-                    controller_.showGenerateError();
-                    return -1;
-                }
-            }
-            catch(Win32Exception) {
-                controller_.showPathError("pdfinfo.exe", "pdfinfo.exe");
-                return -1;
-            }
-        }
-         */
 
         private bool pdfcrop(string inputFileName, string outputFileName, bool addMargine) {
             proc_.StartInfo.FileName = Converter.which("pdfcrop.exe");
@@ -383,63 +315,6 @@ namespace TeX2img {
             }
             return false;
         }
-
-        /*
-        private bool pdf2img(string inputFileName, string outputFileName) {
-            string extension = Path.GetExtension(outputFileName).ToLower();
-            if(useMagickFlag_) {
-                proc_.StartInfo.FileName = Converter.which("convert.exe");
-                // convert.exeのパスにシステムフォルダが入っている場合は，Windows付属の「危険な」convert.exeであると見なす．
-                if(proc_.StartInfo.FileName.ToLower().Contains(System.Environment.SystemDirectory.ToLower())) {
-                    controller_.showImageMagickError();
-                }
-
-                if(extension == ".png" && transparentPngFlag_) {
-                    proc_.StartInfo.Arguments = "-transparent white ";
-                } else proc_.StartInfo.Arguments = "-background white -alpha off ";
-                proc_.StartInfo.Arguments += "-density " + (72 * resolutionScale_) + "x" + (72 * resolutionScale_) + "% \"" + inputFileName + "\" \"" + outputFileName + "\"";
-                try {
-                    printCommandLine();
-                    proc_.Start();
-                    proc_.WaitForExit();
-                    if(proc_.ExitCode == 0) return true;
-                    else {
-                        controller_.appendOutput(proc_.StandardOutput.ReadToEnd());
-                        controller_.appendOutput(proc_.StandardError.ReadToEnd());
-                    }
-                }
-                catch {
-                    controller_.showPathError("convert.exe", "ImageMagick");
-                }
-                return false;
-            } else {
-                // Ghostscriptで変換
-                string arg;
-                proc_.StartInfo.FileName = setProcStartInfo(gsPath_, out arg);
-                proc_.StartInfo.Arguments = arg;
-                string device;
-                if(extension == ".jpg") device = "jpeg";
-                else if(transparentPngFlag_) device = "pngalpha";
-                else device = "png256";
-                proc_.StartInfo.Arguments += String.Format("-q -sDEVICE={0} -sOutputFile=\"{1}\" -dNOPAUSE -dBATCH -dPDFFitPage -r{2}  \"{3}\"", device, outputFileName, resolutionScale_ * 72, inputFileName);
-                try {
-                    printCommandLine();
-                    proc_.Start();
-                    proc_.WaitForExit();
-                    if(proc_.ExitCode == 0) return true;
-                    else {
-                        controller_.appendOutput(proc_.StandardOutput.ReadToEnd());
-                        controller_.appendOutput(proc_.StandardError.ReadToEnd());
-                        return false;
-                    }
-                }
-                catch {
-                    controller_.showPathError(Path.GetFileName(gsPath_), "Ghostscript");
-                }
-                return false;
-            }
-        }
-        */
 
         private bool eps2img(string inputFileName, string outputFileName) {
             string extension = Path.GetExtension(outputFileName).ToLower();

@@ -9,103 +9,28 @@ using System.ComponentModel;
 namespace TeX2img {
     public partial class MainForm : Form, IOutputController {
         #region プロパティの設定
-        private int resolutionScale;
-        private bool transparentPngFlag;
-        private decimal topmargin = 0;
-        private decimal bottommargin = 0;
-        private decimal leftmargin = 0;
-        private decimal rightmargin = 0;
-        private string platexPath = "";
-        private string dvipdfmxPath = "";
-        private string gsPath = "";
-        private bool useMagickFlag = false;
-        private bool showOutputWindowFlag = true;
-        private bool previewFlag = true;
-        private bool deleteTmpFileFlag = true;
-        private bool ignoreErrorFlag = false;
-        private int settingTabIndex = 0;
-        private bool saveSettings_ = true;
-        private bool yohakuunitbp_ = false;
+        public string PlatexPath {get; set;}
+        public string DvipdfmxPath {get; set;}
+        public string GsPath {get; set;}
+        public int ResolutionScale {get; set;}
+        public bool UseMagickFlag {get; set;}
+        public bool TransparentPngFlag {get; set;}
+        public bool ShowOutputWindowFlag {get; set;}
+        public bool PreviewFlag {get; set;}
+        public bool DeleteTmpFileFlag {get; set;}
+        public bool IgnoreErrorFlag {get; set;}
+        public decimal TopMargin  { get; set; }
+        public decimal BottomMargin { get; set; }
+        public decimal LeftMargin {get; set;}
+        public decimal RightMargin {get; set;}
+        public int SettingTabIndex {get; set;}
+        public bool YohakuUnitBP {get; set;}
+        private bool saveSettingsFlag;
 
-        public string PlatexPath {
-            get { return platexPath; }
-            set { platexPath = value; }
-        }
+        // 文字コードを表す utf8,sjis,jis,euc
+        // _utf8, _sjisは文字コードを推定に任せ，それぞれ入力されたソースをUTF-8/Shift_JISで扱う
+        public string Encode {get; set;}
 
-        public string DvipdfmxPath {
-            get { return dvipdfmxPath; }
-            set { dvipdfmxPath = value; }
-        }
-
-        public string GsPath {
-            get { return gsPath; }
-            set { gsPath = value; }
-        }
-
-        public int ResolutionScale {
-            get { return resolutionScale; }
-            set { resolutionScale = value; }
-        }
-
-        public bool UseMagickFlag {
-            get { return useMagickFlag; }
-            set { useMagickFlag = value; }
-        }
-
-        public bool TransparentPngFlag {
-            get { return transparentPngFlag; }
-            set { transparentPngFlag = value; }
-        }
-
-        public bool ShowOutputWindowFlag {
-            get { return showOutputWindowFlag; }
-            set { showOutputWindowFlag = value; }
-        }
-
-        public bool PreviewFlag {
-            get { return previewFlag; }
-            set { previewFlag = value; }
-        }
-
-        public bool DeleteTmpFileFlag {
-            get { return deleteTmpFileFlag; }
-            set { deleteTmpFileFlag = value; }
-        }
-
-        public bool IgnoreErrorFlag {
-            get { return ignoreErrorFlag; }
-            set { ignoreErrorFlag = value; }
-        }
-
-        public decimal TopMargin {
-            get { return topmargin; }
-            set { topmargin = value; }
-        }
-
-        public decimal BottomMargin {
-            get { return bottommargin; }
-            set { bottommargin = value; }
-        }
-
-        public decimal LeftMargin {
-            get { return leftmargin; }
-            set { leftmargin = value; }
-        }
-
-        public decimal RightMargin {
-            get { return rightmargin; }
-            set { rightmargin = value; }
-        }
-
-        public int SettingTabIndex {
-            get { return settingTabIndex; }
-            set { settingTabIndex = value; }
-        }
-
-        public bool YohakuUnitBP {
-            get { return yohakuunitbp_; }
-            set { yohakuunitbp_ = value;  }
-        }
         #endregion
 
         private OutputForm myOutputForm;
@@ -113,6 +38,18 @@ namespace TeX2img {
 
         #region コンストラクタおよび初期化処理関連のメソッド
         public MainForm() {
+            TopMargin = 0;
+            BottomMargin = 0;
+            LeftMargin = 0;
+            RightMargin = 0;
+            ShowOutputWindowFlag = true;
+            PreviewFlag = true;
+            DeleteTmpFileFlag = true;
+            IgnoreErrorFlag = false;
+            SettingTabIndex = 0;
+            saveSettingsFlag = true;
+            YohakuUnitBP = false;
+
             InitializeComponent();
             saveFileDialog1.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
             myPreambleForm = new PreambleForm(this);
@@ -133,46 +70,46 @@ namespace TeX2img {
                 case "/platex":
                     ++i;
                     if(i == cmds.Length) break;
-                    platexPath = cmds[i];
+                    PlatexPath = cmds[i];
                     break;
                 case "/dvipdfmx":
                     ++i;
                     if(i == cmds.Length) break;
-                    dvipdfmxPath = cmds[i];
+                    DvipdfmxPath = cmds[i];
                     break;
                 case "/gs":
                     ++i;
                     if(i == cmds.Length) break;
-                    gsPath = cmds[i];
+                    GsPath = cmds[i];
                     break;
                 case "/exit":
                     exit = true;
                     break;
                 case "/nosavesetting":
-                    saveSettings_ = false;
+                    saveSettingsFlag = false;
                     break;
                 default:
                     break;
                 }
             }
             if(exit) {
-                if(saveSettings_)saveSettings();
+                if(saveSettingsFlag)saveSettings();
                 Environment.Exit(0);
             }
         }
 
 
         private void setPath() {
-            if(platexPath == String.Empty || dvipdfmxPath == String.Empty || gsPath == String.Empty) {
-                if(platexPath == String.Empty) platexPath = Converter.which("platex");
-                if(dvipdfmxPath == String.Empty) dvipdfmxPath = Converter.which("dvipdfmx");
-                if(gsPath == String.Empty) gsPath = Converter.guessgsPath();
+            if(PlatexPath == String.Empty || DvipdfmxPath == String.Empty || GsPath == String.Empty) {
+                if(PlatexPath == String.Empty) PlatexPath = Converter.which("platex");
+                if(DvipdfmxPath == String.Empty) DvipdfmxPath = Converter.which("dvipdfmx");
+                if(GsPath == String.Empty) GsPath = Converter.guessgsPath();
 
-                if(platexPath == String.Empty || dvipdfmxPath == String.Empty || gsPath == String.Empty) {
+                if(PlatexPath == String.Empty || DvipdfmxPath == String.Empty || GsPath == String.Empty) {
                     MessageBox.Show("platex / dvipdfmx / gs のパス設定に失敗しました。\n環境設定画面で手動で設定してください。");
                     (new SettingForm(this)).ShowDialog();
                 } else {
-                    MessageBox.Show(String.Format("TeX 関連プログラムのパスを\n {0}\n {1}\n {2}\nに設定しました。\n違っている場合は環境設定画面で手動で変更してください。", platexPath, dvipdfmxPath, gsPath));
+                    MessageBox.Show(String.Format("TeX 関連プログラムのパスを\n {0}\n {1}\n {2}\nに設定しました。\n違っている場合は環境設定画面で手動で変更してください。", PlatexPath, DvipdfmxPath, GsPath));
                 }
             }
         }
@@ -181,19 +118,20 @@ namespace TeX2img {
 
         #region 設定値の読み書き
         private void loadSettings() {
-            platexPath = Properties.Settings.Default.platexPath;
-            dvipdfmxPath = Properties.Settings.Default.dvipdfmxPath;
-            gsPath = Properties.Settings.Default.gsPath;
+            PlatexPath = Properties.Settings.Default.platexPath;
+            DvipdfmxPath = Properties.Settings.Default.dvipdfmxPath;
+            GsPath = Properties.Settings.Default.gsPath;
+            Encode = Properties.Settings.Default.encode;
 
-            transparentPngFlag = Properties.Settings.Default.transparentPngFlag;
-            resolutionScale = Properties.Settings.Default.resolutionScale;
-            topmargin = Properties.Settings.Default.topMargin;
-            leftmargin = Properties.Settings.Default.leftMargin;
-            rightmargin = Properties.Settings.Default.rightMargin;
-            bottommargin = Properties.Settings.Default.bottomMargin;
-            yohakuunitbp_ = Properties.Settings.Default.yohakuUnitBP;
+            TransparentPngFlag = Properties.Settings.Default.transparentPngFlag;
+            ResolutionScale = Properties.Settings.Default.resolutionScale;
+            TopMargin = Properties.Settings.Default.topMargin;
+            LeftMargin = Properties.Settings.Default.leftMargin;
+            RightMargin = Properties.Settings.Default.rightMargin;
+            BottomMargin = Properties.Settings.Default.bottomMargin;
+            YohakuUnitBP = Properties.Settings.Default.yohakuUnitBP;
 
-            useMagickFlag = Properties.Settings.Default.useMagickFlag;
+            UseMagickFlag = Properties.Settings.Default.useMagickFlag;
 
             this.Height = Properties.Settings.Default.Height;
             this.Width = Properties.Settings.Default.Width;
@@ -204,12 +142,12 @@ namespace TeX2img {
             myOutputForm.Height = Properties.Settings.Default.outputWindowHeight;
             myOutputForm.Width = Properties.Settings.Default.outputWindowWidth;
 
-            showOutputWindowFlag = Properties.Settings.Default.showOutputWindowFlag;
-            previewFlag = Properties.Settings.Default.previewFlag;
-            deleteTmpFileFlag = Properties.Settings.Default.deleteTmpFileFlag;
-            ignoreErrorFlag = Properties.Settings.Default.ignoreErrorFlag;
+            ShowOutputWindowFlag = Properties.Settings.Default.showOutputWindowFlag;
+            PreviewFlag = Properties.Settings.Default.previewFlag;
+            DeleteTmpFileFlag = Properties.Settings.Default.deleteTmpFileFlag;
+            IgnoreErrorFlag = Properties.Settings.Default.ignoreErrorFlag;
 
-            settingTabIndex = Properties.Settings.Default.settingTabIndex;
+            SettingTabIndex = Properties.Settings.Default.settingTabIndex;
 
             if(Properties.Settings.Default.outputFile != "") {
                 outputFileNameTextBox.Text = Properties.Settings.Default.outputFile;
@@ -230,19 +168,20 @@ namespace TeX2img {
         }
 
         private void saveSettings() {
-            Properties.Settings.Default.platexPath = platexPath;
-            Properties.Settings.Default.dvipdfmxPath = dvipdfmxPath;
-            Properties.Settings.Default.gsPath = gsPath;
+            Properties.Settings.Default.platexPath = PlatexPath;
+            Properties.Settings.Default.dvipdfmxPath = DvipdfmxPath;
+            Properties.Settings.Default.gsPath = GsPath;
+            Properties.Settings.Default.encode = Encode;
 
-            Properties.Settings.Default.resolutionScale = resolutionScale;
-            Properties.Settings.Default.transparentPngFlag = transparentPngFlag;
-            Properties.Settings.Default.topMargin = topmargin;
-            Properties.Settings.Default.leftMargin = leftmargin;
-            Properties.Settings.Default.rightMargin = rightmargin;
-            Properties.Settings.Default.bottomMargin = bottommargin;
-            Properties.Settings.Default.yohakuUnitBP = yohakuunitbp_;
+            Properties.Settings.Default.resolutionScale = ResolutionScale;
+            Properties.Settings.Default.transparentPngFlag = TransparentPngFlag;
+            Properties.Settings.Default.topMargin = TopMargin;
+            Properties.Settings.Default.leftMargin = LeftMargin;
+            Properties.Settings.Default.rightMargin = RightMargin;
+            Properties.Settings.Default.bottomMargin = BottomMargin;
+            Properties.Settings.Default.yohakuUnitBP = YohakuUnitBP;
 
-            Properties.Settings.Default.useMagickFlag = useMagickFlag;
+            Properties.Settings.Default.useMagickFlag = UseMagickFlag;
 
             Properties.Settings.Default.Height = this.Height;
             Properties.Settings.Default.Width = this.Width;
@@ -253,17 +192,17 @@ namespace TeX2img {
             Properties.Settings.Default.outputWindowHeight = myOutputForm.Height;
             Properties.Settings.Default.outputWindowWidth = myOutputForm.Width;
 
-            Properties.Settings.Default.showOutputWindowFlag = showOutputWindowFlag;
-            Properties.Settings.Default.previewFlag = previewFlag;
-            Properties.Settings.Default.deleteTmpFileFlag = deleteTmpFileFlag;
-            Properties.Settings.Default.ignoreErrorFlag = ignoreErrorFlag;
+            Properties.Settings.Default.showOutputWindowFlag = ShowOutputWindowFlag;
+            Properties.Settings.Default.previewFlag = PreviewFlag;
+            Properties.Settings.Default.deleteTmpFileFlag = DeleteTmpFileFlag;
+            Properties.Settings.Default.ignoreErrorFlag = IgnoreErrorFlag;
 
             Properties.Settings.Default.outputFile = outputFileNameTextBox.Text;
             Properties.Settings.Default.inputFile = inputFileNameTextBox.Text;
             Properties.Settings.Default.inputFromTextBox = InputFromTextboxRadioButton.Checked;
             Properties.Settings.Default.preamble = myPreambleForm.PreambleTextBox.Text;
 
-            Properties.Settings.Default.settingTabIndex = settingTabIndex;
+            Properties.Settings.Default.settingTabIndex = SettingTabIndex;
 
             Properties.Settings.Default.Save();
         }
@@ -328,7 +267,7 @@ namespace TeX2img {
 
         #region その他のイベントハンドラ
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e) {
-            if(saveSettings_)saveSettings();
+            if(saveSettingsFlag)saveSettings();
         }
 
         private void sourceTextBox_KeyDown(object sender, KeyEventArgs e) {
@@ -409,16 +348,16 @@ namespace TeX2img {
 
         private void GenerateButton_Click(object sender, EventArgs arg) {
             clearOutputTextBox();
-            if(showOutputWindowFlag) showOutputWindow(true);
+            if(ShowOutputWindowFlag) showOutputWindow(true);
             this.Enabled = false;
 
             convertWorker.RunWorkerAsync(100);
         }
 
         private void convertWorker_DoWork(object sender, DoWorkEventArgs e) {
-            Converter converter = new Converter(platexPath, dvipdfmxPath, gsPath,
-                   resolutionScale, leftmargin, rightmargin, topmargin, bottommargin,yohakuunitbp_,
-                         useMagickFlag, transparentPngFlag, showOutputWindowFlag, previewFlag, deleteTmpFileFlag, ignoreErrorFlag,
+            Converter converter = new Converter(PlatexPath, DvipdfmxPath, GsPath,Encode,
+                   ResolutionScale, LeftMargin, RightMargin, TopMargin, BottomMargin,YohakuUnitBP,
+                         UseMagickFlag, TransparentPngFlag, ShowOutputWindowFlag, PreviewFlag, DeleteTmpFileFlag, IgnoreErrorFlag,
                             this);
 
             string outputFilePath = outputFileNameTextBox.Text;
@@ -450,8 +389,18 @@ namespace TeX2img {
             }
 
             // 直接入力の場合 tex ソースを出力
+            // BOM付きUTF-8にすることで，文字コードの推定を確実にさせる．
             if(InputFromTextboxRadioButton.Checked) {
-                using(StreamWriter sw = new StreamWriter(Path.Combine(tmpDir, tmpTeXFileName), false, Encoding.GetEncoding("shift_jis"))) {
+                string enc = Encode;
+                if(enc.Substring(0, 1) == "_") enc = enc.Remove(0, 1);
+                Encoding encoding;
+                switch(enc) {
+                case "sjis": encoding = Encoding.GetEncoding("shift_jis");break;
+                case "euc": encoding = Encoding.GetEncoding("euc-jp");break;
+                case "jis": encoding = Encoding.GetEncoding("iso-2022-jp"); break;
+                default: encoding = Encoding.UTF8; break;
+                }
+                using(StreamWriter sw = new StreamWriter(Path.Combine(tmpDir, tmpTeXFileName), false, encoding)) {
                     try {
                         sw.Write(myPreambleForm.PreambleTextBox.Text);
                         sw.Write("\\begin{document}");

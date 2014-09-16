@@ -64,10 +64,10 @@ namespace TeX2img.Properties {
         [global::System.Configuration.DefaultSettingValueAttribute("True")]
         public bool deleteTmpFileFlag {
             get {
-                return ((bool)(this["deleteTmpFileFlag"]));
+                return ((bool)(this["DeleteTmpFileFlag"]));
             }
             set {
-                this["deleteTmpFileFlag"] = value;
+                this["DeleteTmpFileFlag"] = value;
             }
         }
         
@@ -185,10 +185,10 @@ namespace TeX2img.Properties {
         [global::System.Configuration.DefaultSettingValueAttribute("True")]
         public bool transparentPngFlag {
             get {
-                return ((bool)(this["transparentPngFlag"]));
+                return ((bool)(this["TransparentPngFlag"]));
             }
             set {
-                this["transparentPngFlag"] = value;
+                this["TransparentPngFlag"] = value;
             }
         }
         
@@ -197,10 +197,10 @@ namespace TeX2img.Properties {
         [global::System.Configuration.DefaultSettingValueAttribute("6")]
         public int resolutionScale {
             get {
-                return ((int)(this["resolutionScale"]));
+                return ((int)(this["ResolutionScale"]));
             }
             set {
-                this["resolutionScale"] = value;
+                this["ResolutionScale"] = value;
             }
         }
         
@@ -257,10 +257,10 @@ namespace TeX2img.Properties {
         [global::System.Configuration.DefaultSettingValueAttribute("")]
         public string platexPath {
             get {
-                return ((string)(this["platexPath"]));
+                return ((string)(this["PlatexPath"]));
             }
             set {
-                this["platexPath"] = value;
+                this["PlatexPath"] = value;
             }
         }
         
@@ -269,10 +269,10 @@ namespace TeX2img.Properties {
         [global::System.Configuration.DefaultSettingValueAttribute("")]
         public string dvipdfmxPath {
             get {
-                return ((string)(this["dvipdfmxPath"]));
+                return ((string)(this["DvipdfmxPath"]));
             }
             set {
-                this["dvipdfmxPath"] = value;
+                this["DvipdfmxPath"] = value;
             }
         }
         
@@ -281,10 +281,10 @@ namespace TeX2img.Properties {
         [global::System.Configuration.DefaultSettingValueAttribute("")]
         public string gsPath {
             get {
-                return ((string)(this["gsPath"]));
+                return ((string)(this["GsPath"]));
             }
             set {
-                this["gsPath"] = value;
+                this["GsPath"] = value;
             }
         }
         
@@ -293,10 +293,10 @@ namespace TeX2img.Properties {
         [global::System.Configuration.DefaultSettingValueAttribute("True")]
         public bool showOutputWindowFlag {
             get {
-                return ((bool)(this["showOutputWindowFlag"]));
+                return ((bool)(this["ShowOutputWindowFlag"]));
             }
             set {
-                this["showOutputWindowFlag"] = value;
+                this["ShowOutputWindowFlag"] = value;
             }
         }
         
@@ -305,10 +305,10 @@ namespace TeX2img.Properties {
         [global::System.Configuration.DefaultSettingValueAttribute("True")]
         public bool previewFlag {
             get {
-                return ((bool)(this["previewFlag"]));
+                return ((bool)(this["PreviewFlag"]));
             }
             set {
-                this["previewFlag"] = value;
+                this["PreviewFlag"] = value;
             }
         }
         
@@ -317,10 +317,10 @@ namespace TeX2img.Properties {
         [global::System.Configuration.DefaultSettingValueAttribute("0")]
         public int settingTabIndex {
             get {
-                return ((int)(this["settingTabIndex"]));
+                return ((int)(this["SettingTabIndex"]));
             }
             set {
-                this["settingTabIndex"] = value;
+                this["SettingTabIndex"] = value;
             }
         }
         
@@ -329,10 +329,10 @@ namespace TeX2img.Properties {
         [global::System.Configuration.DefaultSettingValueAttribute("False")]
         public bool useMagickFlag {
             get {
-                return ((bool)(this["useMagickFlag"]));
+                return ((bool)(this["UseMagickFlag"]));
             }
             set {
-                this["useMagickFlag"] = value;
+                this["UseMagickFlag"] = value;
             }
         }
         
@@ -341,10 +341,10 @@ namespace TeX2img.Properties {
         [global::System.Configuration.DefaultSettingValueAttribute("False")]
         public bool ignoreErrorFlag {
             get {
-                return ((bool)(this["ignoreErrorFlag"]));
+                return ((bool)(this["IgnoreErrorFlag"]));
             }
             set {
-                this["ignoreErrorFlag"] = value;
+                this["IgnoreErrorFlag"] = value;
             }
         }
         
@@ -357,6 +357,18 @@ namespace TeX2img.Properties {
             }
             set {
                 this["yohakuUnitBP"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("_sjis")]
+        public string encode {
+            get {
+                return ((string)(this["encode"]));
+            }
+            set {
+                this["encode"] = value;
             }
         }
     }

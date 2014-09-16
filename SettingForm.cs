@@ -11,9 +11,40 @@ using System.Diagnostics;
 namespace TeX2img {
     public partial class SettingForm : Form {
         MainForm mainForm;
+        DataTable EncodeComboboxData = new DataTable();
         public SettingForm(MainForm _mainForm) {
             mainForm = _mainForm;
             InitializeComponent();
+
+            DataRow row;
+            EncodeComboboxData.Columns.Add("DATA",typeof(string));
+            EncodeComboboxData.Columns.Add("SHOW",typeof(string));
+            row = EncodeComboboxData.NewRow();
+            row["DATA"] = "_utf8"; row["SHOW"] = "指定しない（内部 UTF-8 ）";
+            EncodeComboboxData.Rows.Add(row);
+            row = EncodeComboboxData.NewRow();
+            row["DATA"] = "_sjis"; row["SHOW"] = "指定しない（内部 Shift_JIS ）";
+            EncodeComboboxData.Rows.Add(row);
+            row = EncodeComboboxData.NewRow();
+            row["DATA"] = "utf8"; row["SHOW"] = "UTF-8";
+            EncodeComboboxData.Rows.Add(row);
+            row = EncodeComboboxData.NewRow();
+            row["DATA"] = "sjis"; row["SHOW"] = "Shift_JIS";
+            EncodeComboboxData.Rows.Add(row);
+            row = EncodeComboboxData.NewRow();
+            row["DATA"] = "euc"; row["SHOW"] = "EUC-JP";
+            EncodeComboboxData.Rows.Add(row);
+            row = EncodeComboboxData.NewRow();
+            row["DATA"] = "jis"; row["SHOW"] = "JIS";
+            EncodeComboboxData.Rows.Add(row);
+
+            EncodeComboboxData.AcceptChanges();
+
+            encodeComboBox.DataSource = EncodeComboboxData;
+            encodeComboBox.DisplayMember = "SHOW";
+            encodeComboBox.ValueMember = "DATA";
+
+            encodeComboBox.SelectedValue = mainForm.Encode;
 
             platexTextBox.Text = mainForm.PlatexPath;
             dvipdfmxTextBox.Text = mainForm.DvipdfmxPath;
@@ -79,6 +110,7 @@ namespace TeX2img {
             mainForm.PlatexPath = platexTextBox.Text;
             mainForm.DvipdfmxPath = dvipdfmxTextBox.Text;
             mainForm.GsPath = gsTextBox.Text;
+            mainForm.Encode = (string)encodeComboBox.SelectedValue;
 
             mainForm.ResolutionScale = (int) (resolutionScaleUpDown.Value);
             mainForm.LeftMargin = leftMarginUpDown.Value;
@@ -107,7 +139,6 @@ namespace TeX2img {
 
         private void openTmpFolderButton_Click(object sender, EventArgs e) {
             Process.Start(Path.GetTempPath());
-
         }
 
         private void imageMagickLinkLabel_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {

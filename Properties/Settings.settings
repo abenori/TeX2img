@@ -90,5 +90,8 @@
     <Setting Name="yohakuUnitBP" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
+    <Setting Name="encode" Type="System.String" Scope="User">
+      <Value Profile="(Default)">_sjis</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

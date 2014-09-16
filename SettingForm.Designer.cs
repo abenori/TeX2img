@@ -31,6 +31,8 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SettingForm));
             this.SettingTab = new System.Windows.Forms.TabControl();
             this.PathSettingTab = new System.Windows.Forms.TabPage();
+            this.encodeComboBox = new System.Windows.Forms.ComboBox();
+            this.label10 = new System.Windows.Forms.Label();
             this.ignoreErrorCheckBox = new System.Windows.Forms.CheckBox();
             this.gsBrowseButton = new System.Windows.Forms.Button();
             this.gsTextBox = new System.Windows.Forms.TextBox();
@@ -104,6 +106,8 @@
             // 
             // PathSettingTab
             // 
+            this.PathSettingTab.Controls.Add(this.encodeComboBox);
+            this.PathSettingTab.Controls.Add(this.label10);
             this.PathSettingTab.Controls.Add(this.ignoreErrorCheckBox);
             this.PathSettingTab.Controls.Add(this.gsBrowseButton);
             this.PathSettingTab.Controls.Add(this.gsTextBox);
@@ -122,6 +126,24 @@
             this.PathSettingTab.TabIndex = 0;
             this.PathSettingTab.Text = "パスの設定";
             this.PathSettingTab.UseVisualStyleBackColor = true;
+            // 
+            // encodeComboBox
+            // 
+            this.encodeComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.encodeComboBox.FormattingEnabled = true;
+            this.encodeComboBox.Location = new System.Drawing.Point(120, 181);
+            this.encodeComboBox.Name = "encodeComboBox";
+            this.encodeComboBox.Size = new System.Drawing.Size(419, 26);
+            this.encodeComboBox.TabIndex = 20;
+            // 
+            // label10
+            // 
+            this.label10.AutoSize = true;
+            this.label10.Location = new System.Drawing.Point(14, 184);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(84, 18);
+            this.label10.TabIndex = 19;
+            this.label10.Text = "文字コード";
             // 
             // ignoreErrorCheckBox
             // 
@@ -662,5 +684,7 @@
         private System.Windows.Forms.RadioButton radioButtonpx;
         private System.Windows.Forms.Label label9;
         private System.Windows.Forms.RadioButton radioButtonbp;
+        private System.Windows.Forms.Label label10;
+        private System.Windows.Forms.ComboBox encodeComboBox;
     }
 }
