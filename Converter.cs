@@ -132,7 +132,8 @@ namespace TeX2img {
 
         private bool tex2dvi(string fileName) {
             string baseName = Path.GetFileNameWithoutExtension(fileName);
-            if(platexPath_ == "" || !File.Exists(platexPath_)) {
+            string dummy;
+            if(platexPath_ == "" || !File.Exists(setProcStartInfo(platexPath_,out dummy))) {
                 controller_.showPathError("platex.exe", "TeX ディストリビューション");
                 return false;
             }
@@ -167,7 +168,8 @@ namespace TeX2img {
 
         private bool dvi2pdf(string fileName) {
             string baseName = Path.GetFileNameWithoutExtension(fileName);
-            if(dvipdfmxPath_ == "" || !File.Exists(dvipdfmxPath_)) {
+            string dummy;
+            if(dvipdfmxPath_ == "" || !File.Exists(setProcStartInfo(dvipdfmxPath_,out dummy))) {
                 controller_.showPathError("dvipdfmx.exe", "TeX ディストリビューション");
                 return false;
             }
