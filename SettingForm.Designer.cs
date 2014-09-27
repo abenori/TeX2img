@@ -28,6 +28,13 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.Windows.Forms.ListViewItem listViewItem1 = new System.Windows.Forms.ListViewItem("テキスト");
+            System.Windows.Forms.ListViewItem listViewItem2 = new System.Windows.Forms.ListViewItem("選択範囲");
+            System.Windows.Forms.ListViewItem listViewItem3 = new System.Windows.Forms.ListViewItem("コントロールシークエンス");
+            System.Windows.Forms.ListViewItem listViewItem4 = new System.Windows.Forms.ListViewItem("コメント");
+            System.Windows.Forms.ListViewItem listViewItem5 = new System.Windows.Forms.ListViewItem("$");
+            System.Windows.Forms.ListViewItem listViewItem6 = new System.Windows.Forms.ListViewItem("中 / 大括弧");
+            System.Windows.Forms.ListViewItem listViewItem7 = new System.Windows.Forms.ListViewItem("改行，EOF");
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SettingForm));
             this.SettingTab = new System.Windows.Forms.TabControl();
             this.PathSettingTab = new System.Windows.Forms.TabPage();
@@ -69,11 +76,23 @@
             this.previewCheckBox = new System.Windows.Forms.CheckBox();
             this.openTmpFolderButton = new System.Windows.Forms.Button();
             this.deleteTmpFilesCheckBox = new System.Windows.Forms.CheckBox();
+            this.EditorSettingTab = new System.Windows.Forms.TabPage();
+            this.label12 = new System.Windows.Forms.Label();
+            this.FontColorGroup = new System.Windows.Forms.GroupBox();
+            this.FontColorButton = new System.Windows.Forms.Button();
+            this.BackColorButton = new System.Windows.Forms.Button();
+            this.FontColorListView = new System.Windows.Forms.ListView();
+            this.ChangeFontButton = new System.Windows.Forms.Button();
+            this.FontDataText = new System.Windows.Forms.TextBox();
+            this.label11 = new System.Windows.Forms.Label();
             this.OKButton = new System.Windows.Forms.Button();
             this.cancelButton = new System.Windows.Forms.Button();
             this.platexOpenFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.dvipdfmxOpenFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.gsOpenFileDialog = new System.Windows.Forms.OpenFileDialog();
+            this.label13 = new System.Windows.Forms.Label();
+            this.label14 = new System.Windows.Forms.Label();
+            this.label15 = new System.Windows.Forms.Label();
             this.SettingTab.SuspendLayout();
             this.PathSettingTab.SuspendLayout();
             this.OutputImgSettingTab.SuspendLayout();
@@ -87,6 +106,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.topMarginUpDown)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.resolutionScaleUpDown)).BeginInit();
             this.AfterCompilingTab.SuspendLayout();
+            this.EditorSettingTab.SuspendLayout();
+            this.FontColorGroup.SuspendLayout();
             this.SuspendLayout();
             // 
             // SettingTab
@@ -97,6 +118,7 @@
             this.SettingTab.Controls.Add(this.PathSettingTab);
             this.SettingTab.Controls.Add(this.OutputImgSettingTab);
             this.SettingTab.Controls.Add(this.AfterCompilingTab);
+            this.SettingTab.Controls.Add(this.EditorSettingTab);
             this.SettingTab.Location = new System.Drawing.Point(22, 20);
             this.SettingTab.Margin = new System.Windows.Forms.Padding(5, 4, 5, 4);
             this.SettingTab.Name = "SettingTab";
@@ -372,9 +394,9 @@
             this.label9.AutoSize = true;
             this.label9.Location = new System.Drawing.Point(181, 28);
             this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(223, 18);
+            this.label9.Size = new System.Drawing.Size(209, 18);
             this.label9.TabIndex = 2;
-            this.label9.Text = "（PDF / EPS は　bp　で固定）";
+            this.label9.Text = "（PDF / EPS は bp で固定）";
             // 
             // radioButtonbp
             // 
@@ -563,6 +585,108 @@
             this.deleteTmpFilesCheckBox.Text = "コンパイル後作業ファイルを削除する（推奨）";
             this.deleteTmpFilesCheckBox.UseVisualStyleBackColor = true;
             // 
+            // EditorSettingTab
+            // 
+            this.EditorSettingTab.Controls.Add(this.label15);
+            this.EditorSettingTab.Controls.Add(this.label12);
+            this.EditorSettingTab.Controls.Add(this.FontColorGroup);
+            this.EditorSettingTab.Controls.Add(this.FontColorListView);
+            this.EditorSettingTab.Controls.Add(this.ChangeFontButton);
+            this.EditorSettingTab.Controls.Add(this.FontDataText);
+            this.EditorSettingTab.Controls.Add(this.label11);
+            this.EditorSettingTab.Location = new System.Drawing.Point(4, 28);
+            this.EditorSettingTab.Name = "EditorSettingTab";
+            this.EditorSettingTab.Padding = new System.Windows.Forms.Padding(3);
+            this.EditorSettingTab.Size = new System.Drawing.Size(675, 468);
+            this.EditorSettingTab.TabIndex = 3;
+            this.EditorSettingTab.Text = "エディタの設定";
+            this.EditorSettingTab.UseVisualStyleBackColor = true;
+            // 
+            // label12
+            // 
+            this.label12.AutoSize = true;
+            this.label12.Location = new System.Drawing.Point(20, 85);
+            this.label12.Name = "label12";
+            this.label12.Size = new System.Drawing.Size(77, 18);
+            this.label12.TabIndex = 7;
+            this.label12.Text = "色の設定";
+            // 
+            // FontColorGroup
+            // 
+            this.FontColorGroup.Controls.Add(this.label14);
+            this.FontColorGroup.Controls.Add(this.label13);
+            this.FontColorGroup.Controls.Add(this.FontColorButton);
+            this.FontColorGroup.Controls.Add(this.BackColorButton);
+            this.FontColorGroup.Location = new System.Drawing.Point(394, 85);
+            this.FontColorGroup.Name = "FontColorGroup";
+            this.FontColorGroup.Size = new System.Drawing.Size(245, 190);
+            this.FontColorGroup.TabIndex = 6;
+            this.FontColorGroup.TabStop = false;
+            // 
+            // FontColorButton
+            // 
+            this.FontColorButton.Location = new System.Drawing.Point(152, 33);
+            this.FontColorButton.Name = "FontColorButton";
+            this.FontColorButton.Size = new System.Drawing.Size(76, 32);
+            this.FontColorButton.TabIndex = 4;
+            this.FontColorButton.UseVisualStyleBackColor = true;
+            this.FontColorButton.Click += new System.EventHandler(this.FontColorButton_Click);
+            // 
+            // BackColorButton
+            // 
+            this.BackColorButton.Location = new System.Drawing.Point(152, 83);
+            this.BackColorButton.Name = "BackColorButton";
+            this.BackColorButton.Size = new System.Drawing.Size(76, 30);
+            this.BackColorButton.TabIndex = 5;
+            this.BackColorButton.UseVisualStyleBackColor = true;
+            this.BackColorButton.Click += new System.EventHandler(this.BackColorButton_Click);
+            // 
+            // FontColorListView
+            // 
+            this.FontColorListView.Items.AddRange(new System.Windows.Forms.ListViewItem[] {
+            listViewItem1,
+            listViewItem2,
+            listViewItem3,
+            listViewItem4,
+            listViewItem5,
+            listViewItem6,
+            listViewItem7});
+            this.FontColorListView.Location = new System.Drawing.Point(134, 85);
+            this.FontColorListView.MultiSelect = false;
+            this.FontColorListView.Name = "FontColorListView";
+            this.FontColorListView.Size = new System.Drawing.Size(219, 190);
+            this.FontColorListView.TabIndex = 3;
+            this.FontColorListView.UseCompatibleStateImageBehavior = false;
+            this.FontColorListView.View = System.Windows.Forms.View.List;
+            this.FontColorListView.SelectedIndexChanged += new System.EventHandler(this.FontColorListView_SelectedIndexChanged);
+            // 
+            // ChangeFontButton
+            // 
+            this.ChangeFontButton.Location = new System.Drawing.Point(564, 23);
+            this.ChangeFontButton.Name = "ChangeFontButton";
+            this.ChangeFontButton.Size = new System.Drawing.Size(75, 30);
+            this.ChangeFontButton.TabIndex = 2;
+            this.ChangeFontButton.Text = "変更...";
+            this.ChangeFontButton.UseVisualStyleBackColor = true;
+            this.ChangeFontButton.Click += new System.EventHandler(this.ChangeFontButton_Click);
+            // 
+            // FontDataText
+            // 
+            this.FontDataText.Location = new System.Drawing.Point(134, 22);
+            this.FontDataText.Name = "FontDataText";
+            this.FontDataText.ReadOnly = true;
+            this.FontDataText.Size = new System.Drawing.Size(387, 25);
+            this.FontDataText.TabIndex = 1;
+            // 
+            // label11
+            // 
+            this.label11.AutoSize = true;
+            this.label11.Location = new System.Drawing.Point(20, 27);
+            this.label11.Name = "label11";
+            this.label11.Size = new System.Drawing.Size(94, 18);
+            this.label11.TabIndex = 0;
+            this.label11.Text = "フォント設定";
+            // 
             // OKButton
             // 
             this.OKButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
@@ -602,6 +726,33 @@
             this.gsOpenFileDialog.FileName = "gswin32c.exe";
             this.gsOpenFileDialog.Filter = "exe ファイル (*.exe)|*.exe|bat ファイル (*.bat)|*.bat|すべてのファイル (*.*)|*.*";
             // 
+            // label13
+            // 
+            this.label13.AutoSize = true;
+            this.label13.Location = new System.Drawing.Point(22, 88);
+            this.label13.Name = "label13";
+            this.label13.Size = new System.Drawing.Size(74, 18);
+            this.label13.TabIndex = 6;
+            this.label13.Text = "背景色...";
+            // 
+            // label14
+            // 
+            this.label14.AutoSize = true;
+            this.label14.Location = new System.Drawing.Point(22, 40);
+            this.label14.Name = "label14";
+            this.label14.Size = new System.Drawing.Size(74, 18);
+            this.label14.TabIndex = 7;
+            this.label14.Text = "文字色...";
+            // 
+            // label15
+            // 
+            this.label15.AutoSize = true;
+            this.label15.Location = new System.Drawing.Point(345, 297);
+            this.label15.Name = "label15";
+            this.label15.Size = new System.Drawing.Size(294, 18);
+            this.label15.TabIndex = 8;
+            this.label15.Text = "改行，EOFの背景色は設定できません．";
+            // 
             // SettingForm
             // 
             this.AcceptButton = this.OKButton;
@@ -612,8 +763,10 @@
             this.Controls.Add(this.cancelButton);
             this.Controls.Add(this.OKButton);
             this.Controls.Add(this.SettingTab);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Margin = new System.Windows.Forms.Padding(5, 4, 5, 4);
+            this.MaximizeBox = false;
             this.Name = "SettingForm";
             this.Text = "オプション";
             this.SettingTab.ResumeLayout(false);
@@ -635,6 +788,10 @@
             ((System.ComponentModel.ISupportInitialize)(this.resolutionScaleUpDown)).EndInit();
             this.AfterCompilingTab.ResumeLayout(false);
             this.AfterCompilingTab.PerformLayout();
+            this.EditorSettingTab.ResumeLayout(false);
+            this.EditorSettingTab.PerformLayout();
+            this.FontColorGroup.ResumeLayout(false);
+            this.FontColorGroup.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -686,5 +843,17 @@
         private System.Windows.Forms.RadioButton radioButtonbp;
         private System.Windows.Forms.Label label10;
         private System.Windows.Forms.ComboBox encodeComboBox;
+        private System.Windows.Forms.TabPage EditorSettingTab;
+        private System.Windows.Forms.Label label11;
+        private System.Windows.Forms.TextBox FontDataText;
+        private System.Windows.Forms.Button ChangeFontButton;
+        private System.Windows.Forms.Button FontColorButton;
+        private System.Windows.Forms.ListView FontColorListView;
+        private System.Windows.Forms.Button BackColorButton;
+        private System.Windows.Forms.GroupBox FontColorGroup;
+        private System.Windows.Forms.Label label12;
+        private System.Windows.Forms.Label label13;
+        private System.Windows.Forms.Label label14;
+        private System.Windows.Forms.Label label15;
     }
 }

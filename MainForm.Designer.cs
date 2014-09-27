@@ -196,10 +196,11 @@
             this.sourceTextBox.BackColor = System.Drawing.SystemColors.Window;
             this.sourceTextBox.ContextMenuStrip = this.sourceTextBoxMenu;
             this.sourceTextBox.Cursor = System.Windows.Forms.Cursors.IBeam;
-            this.sourceTextBox.DrawingOption = Sgry.Azuki.DrawingOption.HighlightsMatchedBracket;
-            this.sourceTextBox.DrawsEolCode = false;
-            this.sourceTextBox.DrawsFullWidthSpace = false;
-            this.sourceTextBox.DrawsTab = false;
+            this.sourceTextBox.DrawingOption = ((Sgry.Azuki.DrawingOption)(((((Sgry.Azuki.DrawingOption.DrawsFullWidthSpace | Sgry.Azuki.DrawingOption.DrawsTab) 
+            | Sgry.Azuki.DrawingOption.DrawsEol) 
+            | Sgry.Azuki.DrawingOption.DrawsEof) 
+            | Sgry.Azuki.DrawingOption.HighlightsMatchedBracket)));
+            this.sourceTextBox.DrawsEofMark = true;
             this.sourceTextBox.FirstVisibleLine = 0;
             this.sourceTextBox.Font = new System.Drawing.Font("ＭＳ ゴシック", 12F);
             fontInfo1.Name = "ＭＳ ゴシック";

@@ -64,10 +64,10 @@ namespace TeX2img.Properties {
         [global::System.Configuration.DefaultSettingValueAttribute("True")]
         public bool deleteTmpFileFlag {
             get {
-                return ((bool)(this["DeleteTmpFileFlag"]));
+                return ((bool)(this["deleteTmpFileFlag"]));
             }
             set {
-                this["DeleteTmpFileFlag"] = value;
+                this["deleteTmpFileFlag"] = value;
             }
         }
         
@@ -185,10 +185,10 @@ namespace TeX2img.Properties {
         [global::System.Configuration.DefaultSettingValueAttribute("True")]
         public bool transparentPngFlag {
             get {
-                return ((bool)(this["TransparentPngFlag"]));
+                return ((bool)(this["transparentPngFlag"]));
             }
             set {
-                this["TransparentPngFlag"] = value;
+                this["transparentPngFlag"] = value;
             }
         }
         
@@ -197,10 +197,10 @@ namespace TeX2img.Properties {
         [global::System.Configuration.DefaultSettingValueAttribute("6")]
         public int resolutionScale {
             get {
-                return ((int)(this["ResolutionScale"]));
+                return ((int)(this["resolutionScale"]));
             }
             set {
-                this["ResolutionScale"] = value;
+                this["resolutionScale"] = value;
             }
         }
         
@@ -257,10 +257,10 @@ namespace TeX2img.Properties {
         [global::System.Configuration.DefaultSettingValueAttribute("")]
         public string platexPath {
             get {
-                return ((string)(this["PlatexPath"]));
+                return ((string)(this["platexPath"]));
             }
             set {
-                this["PlatexPath"] = value;
+                this["platexPath"] = value;
             }
         }
         
@@ -269,10 +269,10 @@ namespace TeX2img.Properties {
         [global::System.Configuration.DefaultSettingValueAttribute("")]
         public string dvipdfmxPath {
             get {
-                return ((string)(this["DvipdfmxPath"]));
+                return ((string)(this["dvipdfmxPath"]));
             }
             set {
-                this["DvipdfmxPath"] = value;
+                this["dvipdfmxPath"] = value;
             }
         }
         
@@ -281,10 +281,10 @@ namespace TeX2img.Properties {
         [global::System.Configuration.DefaultSettingValueAttribute("")]
         public string gsPath {
             get {
-                return ((string)(this["GsPath"]));
+                return ((string)(this["gsPath"]));
             }
             set {
-                this["GsPath"] = value;
+                this["gsPath"] = value;
             }
         }
         
@@ -293,10 +293,10 @@ namespace TeX2img.Properties {
         [global::System.Configuration.DefaultSettingValueAttribute("True")]
         public bool showOutputWindowFlag {
             get {
-                return ((bool)(this["ShowOutputWindowFlag"]));
+                return ((bool)(this["showOutputWindowFlag"]));
             }
             set {
-                this["ShowOutputWindowFlag"] = value;
+                this["showOutputWindowFlag"] = value;
             }
         }
         
@@ -305,10 +305,10 @@ namespace TeX2img.Properties {
         [global::System.Configuration.DefaultSettingValueAttribute("True")]
         public bool previewFlag {
             get {
-                return ((bool)(this["PreviewFlag"]));
+                return ((bool)(this["previewFlag"]));
             }
             set {
-                this["PreviewFlag"] = value;
+                this["previewFlag"] = value;
             }
         }
         
@@ -317,10 +317,10 @@ namespace TeX2img.Properties {
         [global::System.Configuration.DefaultSettingValueAttribute("0")]
         public int settingTabIndex {
             get {
-                return ((int)(this["SettingTabIndex"]));
+                return ((int)(this["settingTabIndex"]));
             }
             set {
-                this["SettingTabIndex"] = value;
+                this["settingTabIndex"] = value;
             }
         }
         
@@ -329,10 +329,10 @@ namespace TeX2img.Properties {
         [global::System.Configuration.DefaultSettingValueAttribute("False")]
         public bool useMagickFlag {
             get {
-                return ((bool)(this["UseMagickFlag"]));
+                return ((bool)(this["useMagickFlag"]));
             }
             set {
-                this["UseMagickFlag"] = value;
+                this["useMagickFlag"] = value;
             }
         }
         
@@ -341,10 +341,10 @@ namespace TeX2img.Properties {
         [global::System.Configuration.DefaultSettingValueAttribute("False")]
         public bool ignoreErrorFlag {
             get {
-                return ((bool)(this["IgnoreErrorFlag"]));
+                return ((bool)(this["ignoreErrorFlag"]));
             }
             set {
-                this["IgnoreErrorFlag"] = value;
+                this["ignoreErrorFlag"] = value;
             }
         }
         
@@ -369,6 +369,174 @@ namespace TeX2img.Properties {
             }
             set {
                 this["encode"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("ＭＳ ゴシック, 12pt")]
+        public global::System.Drawing.Font editorFont {
+            get {
+                return ((global::System.Drawing.Font)(this["editorFont"]));
+            }
+            set {
+                this["editorFont"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("WindowText")]
+        public global::System.Drawing.Color editorNormalColorFont {
+            get {
+                return ((global::System.Drawing.Color)(this["editorNormalColorFont"]));
+            }
+            set {
+                this["editorNormalColorFont"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Window")]
+        public global::System.Drawing.Color editorNormalColorBack {
+            get {
+                return ((global::System.Drawing.Color)(this["editorNormalColorBack"]));
+            }
+            set {
+                this["editorNormalColorBack"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("HighlightText")]
+        public global::System.Drawing.Color editorSelectedColorFont {
+            get {
+                return ((global::System.Drawing.Color)(this["editorSelectedColorFont"]));
+            }
+            set {
+                this["editorSelectedColorFont"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Highlight")]
+        public global::System.Drawing.Color editorSelectedColorBack {
+            get {
+                return ((global::System.Drawing.Color)(this["editorSelectedColorBack"]));
+            }
+            set {
+                this["editorSelectedColorBack"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Blue")]
+        public global::System.Drawing.Color editorCommandColorFont {
+            get {
+                return ((global::System.Drawing.Color)(this["editorCommandColorFont"]));
+            }
+            set {
+                this["editorCommandColorFont"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Window")]
+        public global::System.Drawing.Color editorCommandColorBack {
+            get {
+                return ((global::System.Drawing.Color)(this["editorCommandColorBack"]));
+            }
+            set {
+                this["editorCommandColorBack"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Red")]
+        public global::System.Drawing.Color editorEquationColorFont {
+            get {
+                return ((global::System.Drawing.Color)(this["editorEquationColorFont"]));
+            }
+            set {
+                this["editorEquationColorFont"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("White")]
+        public global::System.Drawing.Color editorEquationColorBack {
+            get {
+                return ((global::System.Drawing.Color)(this["editorEquationColorBack"]));
+            }
+            set {
+                this["editorEquationColorBack"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Maroon")]
+        public global::System.Drawing.Color editorBracketColorFont {
+            get {
+                return ((global::System.Drawing.Color)(this["editorBracketColorFont"]));
+            }
+            set {
+                this["editorBracketColorFont"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("White")]
+        public global::System.Drawing.Color editorBracketColorBack {
+            get {
+                return ((global::System.Drawing.Color)(this["editorBracketColorBack"]));
+            }
+            set {
+                this["editorBracketColorBack"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Green")]
+        public global::System.Drawing.Color editorCommentColorFont {
+            get {
+                return ((global::System.Drawing.Color)(this["editorCommentColorFont"]));
+            }
+            set {
+                this["editorCommentColorFont"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("White")]
+        public global::System.Drawing.Color editorCommentColorBack {
+            get {
+                return ((global::System.Drawing.Color)(this["editorCommentColorBack"]));
+            }
+            set {
+                this["editorCommentColorBack"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0, 192, 192")]
+        public global::System.Drawing.Color editorEOFColorFont {
+            get {
+                return ((global::System.Drawing.Color)(this["editorEOFColorFont"]));
+            }
+            set {
+                this["editorEOFColorFont"] = value;
             }
         }
     }

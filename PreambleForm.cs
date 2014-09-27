@@ -15,6 +15,7 @@ namespace TeX2img
         {
             mainForm = _mainForm;
             InitializeComponent();
+            preambleTextBox.Font = mainForm.EditorFont;
 			preambleTextBox.Highlighter = Sgry.Azuki.Highlighter.Highlighters.Latex;
             ActiveControl = preambleTextBox;
         }
@@ -41,7 +42,6 @@ namespace TeX2img
                 e.Cancel = true;
                 mainForm.showPreambleWindow(false);
             }
-
         }
 
         private void backToDefaultButton_Click(object sender, EventArgs e)

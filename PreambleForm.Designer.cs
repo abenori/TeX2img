@@ -66,9 +66,11 @@
             this.preambleTextBox.BackColor = System.Drawing.Color.White;
             this.preambleTextBox.ContextMenuStrip = this.preambleTextBoxMenu;
             this.preambleTextBox.Cursor = System.Windows.Forms.Cursors.IBeam;
-            this.preambleTextBox.DrawingOption = ((Sgry.Azuki.DrawingOption)((((Sgry.Azuki.DrawingOption.DrawsFullWidthSpace | Sgry.Azuki.DrawingOption.DrawsTab) 
+            this.preambleTextBox.DrawingOption = ((Sgry.Azuki.DrawingOption)(((((Sgry.Azuki.DrawingOption.DrawsFullWidthSpace | Sgry.Azuki.DrawingOption.DrawsTab) 
             | Sgry.Azuki.DrawingOption.DrawsEol) 
+            | Sgry.Azuki.DrawingOption.DrawsEof) 
             | Sgry.Azuki.DrawingOption.HighlightsMatchedBracket)));
+            this.preambleTextBox.DrawsEofMark = true;
             this.preambleTextBox.FirstVisibleLine = 0;
             this.preambleTextBox.Font = new System.Drawing.Font("ＭＳ ゴシック", 12F);
             fontInfo1.Name = "ＭＳ ゴシック";
@@ -86,7 +88,7 @@
             this.preambleTextBox.ShowsHScrollBar = false;
             this.preambleTextBox.ShowsLineNumber = false;
             this.preambleTextBox.Size = new System.Drawing.Size(580, 442);
-            this.preambleTextBox.TabIndex = 2;
+            this.preambleTextBox.TabIndex = 4;
             this.preambleTextBox.ViewWidth = 4097;
             // 
             // preambleTextBoxMenu

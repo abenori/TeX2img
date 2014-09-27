@@ -11,6 +11,9 @@ using System.Diagnostics;
 namespace TeX2img {
     public partial class SettingForm : Form {
         MainForm mainForm;
+        private Font EditorFont;
+        Dictionary<string, MainForm.FontColor> EditorFontColor = new Dictionary<string,MainForm.FontColor>();
+
         DataTable EncodeComboboxData = new DataTable();
         public SettingForm(MainForm _mainForm) {
             mainForm = _mainForm;
@@ -20,10 +23,10 @@ namespace TeX2img {
             EncodeComboboxData.Columns.Add("DATA",typeof(string));
             EncodeComboboxData.Columns.Add("SHOW",typeof(string));
             row = EncodeComboboxData.NewRow();
-            row["DATA"] = "_utf8"; row["SHOW"] = "指定しない（内部 UTF-8 ）";
+            row["DATA"] = "_utf8"; row["SHOW"] = "指定しない（入力 UTF-8 ）";
             EncodeComboboxData.Rows.Add(row);
             row = EncodeComboboxData.NewRow();
-            row["DATA"] = "_sjis"; row["SHOW"] = "指定しない（内部 Shift_JIS ）";
+            row["DATA"] = "_sjis"; row["SHOW"] = "指定しない（入力 Shift_JIS ）";
             EncodeComboboxData.Rows.Add(row);
             row = EncodeComboboxData.NewRow();
             row["DATA"] = "utf8"; row["SHOW"] = "UTF-8";
@@ -45,6 +48,25 @@ namespace TeX2img {
             encodeComboBox.ValueMember = "DATA";
 
             encodeComboBox.SelectedValue = mainForm.Encode;
+
+            EditorFontColor["テキスト"] = mainForm.EditorNormalFontColor;
+            EditorFontColor["選択範囲"] = mainForm.EditorSelectedFontColor;
+            EditorFontColor["コントロールシークエンス"] = mainForm.EditorCommandFontColor;
+            EditorFontColor["$"] = mainForm.EditorEquationFontColor;
+            EditorFontColor["中 / 大括弧"] = mainForm.EditorBracketFontColor;
+            EditorFontColor["コメント"] = mainForm.EditorCommentFontColor;
+            EditorFontColor["改行，EOF"] = mainForm.EditorEOFFontColor;
+
+            for(int i = 0 ; i < FontColorListView.Items.Count ; ++i) {
+                MainForm.FontColor val = EditorFontColor[FontColorListView.Items[i].Text];
+                FontColorListView.Items[i].ForeColor = val.Font;
+                FontColorListView.Items[i].BackColor = val.Back;
+            }
+            FontColorListView.Items[0].Selected = true;
+            for(int i = 1 ; i < FontColorListView.Items.Count ; ++i) {
+                FontColorListView.Items[i].Selected = false;
+            }
+//            FontColorListView_SelectedIndexChanged();
 
             platexTextBox.Text = mainForm.PlatexPath;
             dvipdfmxTextBox.Text = mainForm.DvipdfmxPath;
@@ -68,6 +90,11 @@ namespace TeX2img {
 
             radioButtonbp.Checked = mainForm.YohakuUnitBP;
             radioButtonpx.Checked = !mainForm.YohakuUnitBP;
+
+            EditorFont = mainForm.EditorFont;
+            FontDataText.Text = EditorFont.Name + " " + EditorFont.Size + " pt" +
+                (EditorFont.Bold ? " 太字" : "") +
+                (EditorFont.Italic ? " 斜体" : "");
         }
 
         private void platexBrowseButton_Click(object sender, EventArgs e) {
@@ -130,6 +157,17 @@ namespace TeX2img {
 
             mainForm.YohakuUnitBP = radioButtonbp.Checked;
 
+            mainForm.EditorFont = EditorFont;
+
+            mainForm.EditorNormalFontColor = EditorFontColor["テキスト"];
+            mainForm.EditorSelectedFontColor = EditorFontColor["選択範囲"];
+            mainForm.EditorCommandFontColor = EditorFontColor["コントロールシークエンス"];
+            mainForm.EditorEquationFontColor = EditorFontColor["$"];
+            mainForm.EditorBracketFontColor = EditorFontColor["中 / 大括弧"];
+            mainForm.EditorCommentFontColor = EditorFontColor["コメント"];
+            mainForm.EditorEOFFontColor = EditorFontColor["改行，EOF"];
+
+            mainForm.ChangeSetting();
             this.Close();
         }
 
@@ -143,6 +181,52 @@ namespace TeX2img {
 
         private void imageMagickLinkLabel_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {
             Process.Start("http://imagemagick.org/script/binary-releases.php#windows");
+        }
+
+        private void ChangeFontButton_Click(object sender, EventArgs e) {
+            FontDialog fd = new FontDialog();
+            fd.Font = EditorFont;
+            fd.ShowEffects = false;
+            if(fd.ShowDialog() != DialogResult.Cancel) {
+                EditorFont = fd.Font;
+                FontDataText.Text = EditorFont.Name + " " + EditorFont.Size + " pt" + 
+                    (EditorFont.Bold ? " 太字" : "") +
+                    (EditorFont.Italic ? " 斜体" : "");
+            }
+        }
+
+        private void FontColorListView_SelectedIndexChanged(object sender, EventArgs e) {
+            if(FontColorListView.SelectedIndices.Count == 0) return;
+            string item = FontColorListView.SelectedItems[0].Text;
+            FontColorGroup.Text = item;
+            FontColorButton.BackColor = EditorFontColor[item].Font;
+            BackColorButton.BackColor = EditorFontColor[item].Back;
+            if(item == "改行，EOF") BackColorButton.Enabled = false;
+            else BackColorButton.Enabled = true;
+        }
+
+        private void FontColorButton_Click(object sender, EventArgs e) {
+            if(FontColorListView.SelectedIndices.Count == 0) return;
+            string item = FontColorListView.SelectedItems[0].Text;
+            ColorDialog cd = new ColorDialog();
+            cd.Color = EditorFontColor[item].Font;
+            if(cd.ShowDialog() == DialogResult.OK) {
+                EditorFontColor[item].Font = cd.Color;
+                FontColorButton.BackColor = cd.Color;
+                FontColorListView.SelectedItems[0].ForeColor = cd.Color;
+            }
+        }
+
+        private void BackColorButton_Click(object sender, EventArgs e) {
+            if(FontColorListView.SelectedIndices.Count == 0) return;
+            string item = FontColorListView.SelectedItems[0].Text;
+            ColorDialog cd = new ColorDialog();
+            cd.Color = EditorFontColor[item].Back;
+            if(cd.ShowDialog() == DialogResult.OK) {
+                EditorFontColor[item].Back = cd.Color;
+                BackColorButton.BackColor = cd.Color;
+                FontColorListView.SelectedItems[0].BackColor = cd.Color;
+            }
         }
 
     }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
+using System.Drawing;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
@@ -21,11 +22,25 @@ namespace TeX2img {
         public bool IgnoreErrorFlag {get; set;}
         public decimal TopMargin  { get; set; }
         public decimal BottomMargin { get; set; }
-        public decimal LeftMargin {get; set;}
-        public decimal RightMargin {get; set;}
-        public int SettingTabIndex {get; set;}
-        public bool YohakuUnitBP {get; set;}
+        public decimal LeftMargin { get; set; }
+        public decimal RightMargin { get; set; }
+        public int SettingTabIndex { get; set; }
+        public bool YohakuUnitBP { get; set; }
         private bool saveSettingsFlag;
+        public Font EditorFont {
+            get { return sourceTextBox.Font; }
+            set { sourceTextBox.Font = value; }
+        }
+
+        public class FontColor { public Color Font, Back; public FontColor() { } }
+        
+        public FontColor EditorNormalFontColor { get; set; }
+        public FontColor EditorSelectedFontColor { get; set; }
+        public FontColor EditorCommandFontColor { get; set; }
+        public FontColor EditorEquationFontColor { get; set; }
+        public FontColor EditorBracketFontColor { get; set; }
+        public FontColor EditorCommentFontColor { get; set; }
+        public FontColor EditorEOFFontColor { get; set; }
 
         // 文字コードを表す utf8,sjis,jis,euc
         // _utf8, _sjisは文字コードを推定に任せ，それぞれ入力されたソースをUTF-8/Shift_JISで扱う
@@ -50,6 +65,14 @@ namespace TeX2img {
             saveSettingsFlag = true;
             YohakuUnitBP = false;
 
+            EditorNormalFontColor = new FontColor();
+            EditorSelectedFontColor = new FontColor();
+            EditorCommandFontColor = new FontColor();
+            EditorEquationFontColor = new FontColor();
+            EditorBracketFontColor = new FontColor();
+            EditorCommentFontColor = new FontColor();
+            EditorEOFFontColor = new FontColor();
+
             InitializeComponent();
             saveFileDialog1.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
             myPreambleForm = new PreambleForm(this);
@@ -58,6 +81,7 @@ namespace TeX2img {
             loadCommandLine();
             setPath();
             sourceTextBox.Highlighter = Sgry.Azuki.Highlighter.Highlighters.Latex;
+
             if(InputFromTextboxRadioButton.Checked) ActiveControl = sourceTextBox;
             else ActiveControl = inputFileNameTextBox;
         }
@@ -157,6 +181,23 @@ namespace TeX2img {
             inputFileNameTextBox.Text = Properties.Settings.Default.inputFile;
             InputFromTextboxRadioButton.Checked = Properties.Settings.Default.inputFromTextBox;
             InputFromFileRadioButton.Checked = !InputFromTextboxRadioButton.Checked;
+
+            EditorFont = Properties.Settings.Default.editorFont;
+            EditorNormalFontColor.Font = Properties.Settings.Default.editorNormalColorFont;
+            EditorNormalFontColor.Back = Properties.Settings.Default.editorNormalColorBack;
+            EditorSelectedFontColor.Font = Properties.Settings.Default.editorSelectedColorFont;
+            EditorSelectedFontColor.Back = Properties.Settings.Default.editorSelectedColorBack;
+            EditorCommandFontColor.Font = Properties.Settings.Default.editorCommandColorFont;
+            EditorCommandFontColor.Back = Properties.Settings.Default.editorCommandColorBack;
+            EditorEquationFontColor.Font = Properties.Settings.Default.editorEquationColorFont;
+            EditorEquationFontColor.Back = Properties.Settings.Default.editorEquationColorBack;
+            EditorBracketFontColor.Font = Properties.Settings.Default.editorBracketColorFont;
+            EditorBracketFontColor.Back = Properties.Settings.Default.editorBracketColorBack;
+            EditorCommentFontColor.Font = Properties.Settings.Default.editorCommentColorFont;
+            EditorCommentFontColor.Back = Properties.Settings.Default.editorCommentColorBack;
+            EditorEOFFontColor.Font = Properties.Settings.Default.editorEOFColorFont;
+            EditorEOFFontColor.Back = Properties.Settings.Default.editorNormalColorBack;
+
             setEnabled();
 
             Sgry.Azuki.WinForms.AzukiControl preambleTextBox = myPreambleForm.PreambleTextBox;
@@ -165,6 +206,8 @@ namespace TeX2img {
             //            preambleTextBox.SelectionStart = preambleTextBox.Text.Length;
             preambleTextBox.Focus();
             preambleTextBox.ScrollToCaret();
+
+            ChangeSetting();
         }
 
         private void saveSettings() {
@@ -202,12 +245,28 @@ namespace TeX2img {
             Properties.Settings.Default.inputFromTextBox = InputFromTextboxRadioButton.Checked;
             Properties.Settings.Default.preamble = myPreambleForm.PreambleTextBox.Text;
 
+            Properties.Settings.Default.editorFont = EditorFont;
+
+            Properties.Settings.Default.editorNormalColorFont = EditorNormalFontColor.Font;
+            Properties.Settings.Default.editorNormalColorBack = EditorNormalFontColor.Back;
+            Properties.Settings.Default.editorSelectedColorFont = EditorSelectedFontColor.Font;
+            Properties.Settings.Default.editorSelectedColorBack = EditorSelectedFontColor.Back;
+            Properties.Settings.Default.editorCommandColorFont = EditorCommandFontColor.Font;
+            Properties.Settings.Default.editorCommandColorBack = EditorCommandFontColor.Back;
+            Properties.Settings.Default.editorEquationColorFont = EditorEquationFontColor.Font;
+            Properties.Settings.Default.editorEquationColorBack = EditorEquationFontColor.Back;
+            Properties.Settings.Default.editorBracketColorFont = EditorBracketFontColor.Font;
+            Properties.Settings.Default.editorBracketColorBack = EditorBracketFontColor.Back;
+            Properties.Settings.Default.editorCommentColorFont = EditorCommentFontColor.Font;
+            Properties.Settings.Default.editorCommentColorBack = EditorCommentFontColor.Back;
+            Properties.Settings.Default.editorEOFColorFont = EditorEOFFontColor.Font;
+            Properties.Settings.Default.editorNormalColorBack = EditorEOFFontColor.Back;
+
             Properties.Settings.Default.settingTabIndex = SettingTabIndex;
 
             Properties.Settings.Default.Save();
         }
         #endregion
-
 
         #region 参照ボタンクリックのイベントハンドラ
         private void OutputBrowseButton_Click(object sender, EventArgs e) {
@@ -423,6 +482,35 @@ namespace TeX2img {
             this.Enabled = true;
         }
 
+        #region 設定変更通知関連
+        public void ChangeSetting() {
+            myPreambleForm.PreambleTextBox.Font = sourceTextBox.Font;
+            ChangeColorSchemeOfEditor(sourceTextBox);
+            ChangeColorSchemeOfEditor(myPreambleForm.PreambleTextBox);
+        }
+
+        public void ChangeColorSchemeOfEditor(Sgry.Azuki.WinForms.AzukiControl textBox) {
+            if(textBox == null) return;
+            textBox.ColorScheme.ForeColor = EditorNormalFontColor.Font;
+            textBox.ColorScheme.BackColor = EditorNormalFontColor.Back;
+            textBox.ColorScheme.SetColor(Sgry.Azuki.CharClass.Normal,EditorNormalFontColor.Font,EditorNormalFontColor.Back);
+            textBox.ColorScheme.SetColor(Sgry.Azuki.CharClass.Heading1, EditorNormalFontColor.Font, EditorNormalFontColor.Back);
+            textBox.ColorScheme.SetColor(Sgry.Azuki.CharClass.Heading2, EditorNormalFontColor.Font, EditorNormalFontColor.Back);
+            textBox.ColorScheme.SetColor(Sgry.Azuki.CharClass.Heading3, EditorNormalFontColor.Font, EditorNormalFontColor.Back);
+            textBox.ColorScheme.SelectionFore = EditorSelectedFontColor.Font;
+            textBox.ColorScheme.SelectionBack = EditorSelectedFontColor.Back;
+            textBox.ColorScheme.SetColor(Sgry.Azuki.CharClass.LatexCommand, EditorCommandFontColor.Font, EditorCommandFontColor.Back);
+            textBox.ColorScheme.SetColor(Sgry.Azuki.CharClass.LatexEquation, EditorEquationFontColor.Font, EditorEquationFontColor.Back);
+            textBox.ColorScheme.SetColor(Sgry.Azuki.CharClass.LatexBracket, EditorBracketFontColor.Font, EditorBracketFontColor.Back);
+            textBox.ColorScheme.SetColor(Sgry.Azuki.CharClass.LatexCurlyBracket, EditorBracketFontColor.Font, EditorBracketFontColor.Back);
+            textBox.ColorScheme.SetColor(Sgry.Azuki.CharClass.Comment, EditorCommentFontColor.Font, EditorCommentFontColor.Back);
+            textBox.ColorScheme.EofColor = EditorEOFFontColor.Font;
+            textBox.ColorScheme.EolColor = EditorEOFFontColor.Font;
+        }
+
+        #endregion
+
+        #region 右クリック
         private void Undo_Click(object sender, EventArgs e) {
             sourceTextBox.Undo();
         }
@@ -450,5 +538,6 @@ namespace TeX2img {
         private void Redo_Click(object sender, EventArgs e) {
             sourceTextBox.Redo();
         }
+        #endregion
     }
 }
