@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Drawing;
@@ -9,80 +10,26 @@ using System.ComponentModel;
 
 namespace TeX2img {
     public partial class MainForm : Form, IOutputController {
-        #region プロパティの設定
-        public string PlatexPath {get; set;}
-        public string DvipdfmxPath {get; set;}
-        public string GsPath {get; set;}
-        public int ResolutionScale {get; set;}
-        public bool UseMagickFlag {get; set;}
-        public bool TransparentPngFlag {get; set;}
-        public bool ShowOutputWindowFlag {get; set;}
-        public bool PreviewFlag {get; set;}
-        public bool DeleteTmpFileFlag {get; set;}
-        public bool IgnoreErrorFlag {get; set;}
-        public decimal TopMargin  { get; set; }
-        public decimal BottomMargin { get; set; }
-        public decimal LeftMargin { get; set; }
-        public decimal RightMargin { get; set; }
-        public int SettingTabIndex { get; set; }
-        public bool YohakuUnitBP { get; set; }
         private bool saveSettingsFlag;
-        public Font EditorFont {
-            get { return sourceTextBox.Font; }
-            set { sourceTextBox.Font = value; }
-        }
-
-        public class FontColor { public Color Font, Back; public FontColor() { } }
-        
-        public FontColor EditorNormalFontColor { get; set; }
-        public FontColor EditorSelectedFontColor { get; set; }
-        public FontColor EditorCommandFontColor { get; set; }
-        public FontColor EditorEquationFontColor { get; set; }
-        public FontColor EditorBracketFontColor { get; set; }
-        public FontColor EditorCommentFontColor { get; set; }
-        public FontColor EditorEOFFontColor { get; set; }
-        public FontColor EditorMatchedBracketFontColor { get; set; }
-
-        // 文字コードを表す utf8,sjis,jis,euc
-        // _utf8, _sjisは文字コードを推定に任せ，それぞれ入力されたソースをUTF-8/Shift_JISで扱う
-        public string Encode {get; set;}
-
-        #endregion
-
+        public SettingForm.Settings SettingData { get; set; }
         private OutputForm myOutputForm;
         private PreambleForm myPreambleForm;
 
         #region コンストラクタおよび初期化処理関連のメソッド
         public MainForm() {
-            TopMargin = 0;
-            BottomMargin = 0;
-            LeftMargin = 0;
-            RightMargin = 0;
-            ShowOutputWindowFlag = true;
-            PreviewFlag = true;
-            DeleteTmpFileFlag = true;
-            IgnoreErrorFlag = false;
-            SettingTabIndex = 0;
+            SettingData = new SettingForm.Settings();
             saveSettingsFlag = true;
-            YohakuUnitBP = false;
-
-            EditorNormalFontColor = new FontColor();
-            EditorSelectedFontColor = new FontColor();
-            EditorCommandFontColor = new FontColor();
-            EditorEquationFontColor = new FontColor();
-            EditorBracketFontColor = new FontColor();
-            EditorCommentFontColor = new FontColor();
-            EditorEOFFontColor = new FontColor();
-            EditorMatchedBracketFontColor = new FontColor();
 
             InitializeComponent();
+            
             saveFileDialog1.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
             myPreambleForm = new PreambleForm(this);
             myOutputForm = new OutputForm(this);
+
+            sourceTextBox.Highlighter = Sgry.Azuki.Highlighter.Highlighters.Latex;
             loadSettings();
             loadCommandLine();
             setPath();
-            sourceTextBox.Highlighter = Sgry.Azuki.Highlighter.Highlighters.Latex;
 
             if(InputFromTextboxRadioButton.Checked) ActiveControl = sourceTextBox;
             else ActiveControl = inputFileNameTextBox;
@@ -96,17 +43,17 @@ namespace TeX2img {
                 case "/platex":
                     ++i;
                     if(i == cmds.Length) break;
-                    PlatexPath = cmds[i];
+                    SettingData.PlatexPath = cmds[i];
                     break;
                 case "/dvipdfmx":
                     ++i;
                     if(i == cmds.Length) break;
-                    DvipdfmxPath = cmds[i];
+                    SettingData.DvipdfmxPath = cmds[i];
                     break;
                 case "/gs":
                     ++i;
                     if(i == cmds.Length) break;
-                    GsPath = cmds[i];
+                    SettingData.GsPath = cmds[i];
                     break;
                 case "/exit":
                     exit = true;
@@ -119,23 +66,23 @@ namespace TeX2img {
                 }
             }
             if(exit) {
-                if(saveSettingsFlag)saveSettings();
+                if(saveSettingsFlag) saveSettings();
                 Environment.Exit(0);
             }
         }
 
 
         private void setPath() {
-            if(PlatexPath == String.Empty || DvipdfmxPath == String.Empty || GsPath == String.Empty) {
-                if(PlatexPath == String.Empty) PlatexPath = Converter.which("platex");
-                if(DvipdfmxPath == String.Empty) DvipdfmxPath = Converter.which("dvipdfmx");
-                if(GsPath == String.Empty) GsPath = Converter.guessgsPath();
+            if(SettingData.PlatexPath == String.Empty || SettingData.DvipdfmxPath == String.Empty || SettingData.GsPath == String.Empty) {
+                if(SettingData.PlatexPath == String.Empty) SettingData.PlatexPath = Converter.which("platex");
+                if(SettingData.DvipdfmxPath == String.Empty) SettingData.DvipdfmxPath = Converter.which("dvipdfmx");
+                if(SettingData.GsPath == String.Empty) SettingData.GsPath = Converter.guessgsPath();
 
-                if(PlatexPath == String.Empty || DvipdfmxPath == String.Empty || GsPath == String.Empty) {
+                if(SettingData.PlatexPath == String.Empty || SettingData.DvipdfmxPath == String.Empty || SettingData.GsPath == String.Empty) {
                     MessageBox.Show("platex / dvipdfmx / gs のパス設定に失敗しました。\n環境設定画面で手動で設定してください。");
                     (new SettingForm(this)).ShowDialog();
                 } else {
-                    MessageBox.Show(String.Format("TeX 関連プログラムのパスを\n {0}\n {1}\n {2}\nに設定しました。\n違っている場合は環境設定画面で手動で変更してください。", PlatexPath, DvipdfmxPath, GsPath));
+                    MessageBox.Show(String.Format("TeX 関連プログラムのパスを\n {0}\n {1}\n {2}\nに設定しました。\n違っている場合は環境設定画面で手動で変更してください。", SettingData.PlatexPath, SettingData.DvipdfmxPath, SettingData.GsPath));
                 }
             }
         }
@@ -144,20 +91,7 @@ namespace TeX2img {
 
         #region 設定値の読み書き
         private void loadSettings() {
-            PlatexPath = Properties.Settings.Default.platexPath;
-            DvipdfmxPath = Properties.Settings.Default.dvipdfmxPath;
-            GsPath = Properties.Settings.Default.gsPath;
-            Encode = Properties.Settings.Default.encode;
-
-            TransparentPngFlag = Properties.Settings.Default.transparentPngFlag;
-            ResolutionScale = Properties.Settings.Default.resolutionScale;
-            TopMargin = Properties.Settings.Default.topMargin;
-            LeftMargin = Properties.Settings.Default.leftMargin;
-            RightMargin = Properties.Settings.Default.rightMargin;
-            BottomMargin = Properties.Settings.Default.bottomMargin;
-            YohakuUnitBP = Properties.Settings.Default.yohakuUnitBP;
-
-            UseMagickFlag = Properties.Settings.Default.useMagickFlag;
+            SettingData.LoadSetting();
 
             this.Height = Properties.Settings.Default.Height;
             this.Width = Properties.Settings.Default.Width;
@@ -168,13 +102,6 @@ namespace TeX2img {
             myOutputForm.Height = Properties.Settings.Default.outputWindowHeight;
             myOutputForm.Width = Properties.Settings.Default.outputWindowWidth;
 
-            ShowOutputWindowFlag = Properties.Settings.Default.showOutputWindowFlag;
-            PreviewFlag = Properties.Settings.Default.previewFlag;
-            DeleteTmpFileFlag = Properties.Settings.Default.deleteTmpFileFlag;
-            IgnoreErrorFlag = Properties.Settings.Default.ignoreErrorFlag;
-
-            SettingTabIndex = Properties.Settings.Default.settingTabIndex;
-
             if(Properties.Settings.Default.outputFile != "") {
                 outputFileNameTextBox.Text = Properties.Settings.Default.outputFile;
             } else {
@@ -184,30 +111,12 @@ namespace TeX2img {
             InputFromTextboxRadioButton.Checked = Properties.Settings.Default.inputFromTextBox;
             InputFromFileRadioButton.Checked = !InputFromTextboxRadioButton.Checked;
 
-            EditorFont = Properties.Settings.Default.editorFont;
-            EditorNormalFontColor.Font = Properties.Settings.Default.editorNormalColorFont;
-            EditorNormalFontColor.Back = Properties.Settings.Default.editorNormalColorBack;
-            EditorSelectedFontColor.Font = Properties.Settings.Default.editorSelectedColorFont;
-            EditorSelectedFontColor.Back = Properties.Settings.Default.editorSelectedColorBack;
-            EditorCommandFontColor.Font = Properties.Settings.Default.editorCommandColorFont;
-            EditorCommandFontColor.Back = Properties.Settings.Default.editorCommandColorBack;
-            EditorEquationFontColor.Font = Properties.Settings.Default.editorEquationColorFont;
-            EditorEquationFontColor.Back = Properties.Settings.Default.editorEquationColorBack;
-            EditorBracketFontColor.Font = Properties.Settings.Default.editorBracketColorFont;
-            EditorBracketFontColor.Back = Properties.Settings.Default.editorBracketColorBack;
-            EditorCommentFontColor.Font = Properties.Settings.Default.editorCommentColorFont;
-            EditorCommentFontColor.Back = Properties.Settings.Default.editorCommentColorBack;
-            EditorEOFFontColor.Font = Properties.Settings.Default.editorEOFColorFont;
-            EditorEOFFontColor.Back = Properties.Settings.Default.editorNormalColorBack;
-            EditorMatchedBracketFontColor.Font = Properties.Settings.Default.editorMatchedBracketColorFont;
-            EditorMatchedBracketFontColor.Back = Properties.Settings.Default.editorMatchedBracketColorBack;
-
             setEnabled();
 
             Sgry.Azuki.WinForms.AzukiControl preambleTextBox = myPreambleForm.PreambleTextBox;
             preambleTextBox.Text = Properties.Settings.Default.preamble;
             // プリアンブルフォームのキャレットを最後に持っていく
-            //            preambleTextBox.SelectionStart = preambleTextBox.Text.Length;
+            preambleTextBox.SetSelection(preambleTextBox.TextLength, preambleTextBox.TextLength);
             preambleTextBox.Focus();
             preambleTextBox.ScrollToCaret();
 
@@ -215,21 +124,8 @@ namespace TeX2img {
         }
 
         private void saveSettings() {
-            Properties.Settings.Default.platexPath = PlatexPath;
-            Properties.Settings.Default.dvipdfmxPath = DvipdfmxPath;
-            Properties.Settings.Default.gsPath = GsPath;
-            Properties.Settings.Default.encode = Encode;
-
-            Properties.Settings.Default.resolutionScale = ResolutionScale;
-            Properties.Settings.Default.transparentPngFlag = TransparentPngFlag;
-            Properties.Settings.Default.topMargin = TopMargin;
-            Properties.Settings.Default.leftMargin = LeftMargin;
-            Properties.Settings.Default.rightMargin = RightMargin;
-            Properties.Settings.Default.bottomMargin = BottomMargin;
-            Properties.Settings.Default.yohakuUnitBP = YohakuUnitBP;
-
-            Properties.Settings.Default.useMagickFlag = UseMagickFlag;
-
+            SettingData.SaveSettings();
+ 
             Properties.Settings.Default.Height = this.Height;
             Properties.Settings.Default.Width = this.Width;
             Properties.Settings.Default.Left = this.Left;
@@ -239,36 +135,11 @@ namespace TeX2img {
             Properties.Settings.Default.outputWindowHeight = myOutputForm.Height;
             Properties.Settings.Default.outputWindowWidth = myOutputForm.Width;
 
-            Properties.Settings.Default.showOutputWindowFlag = ShowOutputWindowFlag;
-            Properties.Settings.Default.previewFlag = PreviewFlag;
-            Properties.Settings.Default.deleteTmpFileFlag = DeleteTmpFileFlag;
-            Properties.Settings.Default.ignoreErrorFlag = IgnoreErrorFlag;
 
             Properties.Settings.Default.outputFile = outputFileNameTextBox.Text;
             Properties.Settings.Default.inputFile = inputFileNameTextBox.Text;
             Properties.Settings.Default.inputFromTextBox = InputFromTextboxRadioButton.Checked;
             Properties.Settings.Default.preamble = myPreambleForm.PreambleTextBox.Text;
-
-            Properties.Settings.Default.editorFont = EditorFont;
-
-            Properties.Settings.Default.editorNormalColorFont = EditorNormalFontColor.Font;
-            Properties.Settings.Default.editorNormalColorBack = EditorNormalFontColor.Back;
-            Properties.Settings.Default.editorSelectedColorFont = EditorSelectedFontColor.Font;
-            Properties.Settings.Default.editorSelectedColorBack = EditorSelectedFontColor.Back;
-            Properties.Settings.Default.editorCommandColorFont = EditorCommandFontColor.Font;
-            Properties.Settings.Default.editorCommandColorBack = EditorCommandFontColor.Back;
-            Properties.Settings.Default.editorEquationColorFont = EditorEquationFontColor.Font;
-            Properties.Settings.Default.editorEquationColorBack = EditorEquationFontColor.Back;
-            Properties.Settings.Default.editorBracketColorFont = EditorBracketFontColor.Font;
-            Properties.Settings.Default.editorBracketColorBack = EditorBracketFontColor.Back;
-            Properties.Settings.Default.editorCommentColorFont = EditorCommentFontColor.Font;
-            Properties.Settings.Default.editorCommentColorBack = EditorCommentFontColor.Back;
-            Properties.Settings.Default.editorEOFColorFont = EditorEOFFontColor.Font;
-            Properties.Settings.Default.editorNormalColorBack = EditorEOFFontColor.Back;
-            Properties.Settings.Default.editorMatchedBracketColorFont = EditorMatchedBracketFontColor.Font;
-            Properties.Settings.Default.editorMatchedBracketColorBack = EditorMatchedBracketFontColor.Back;
-
-            Properties.Settings.Default.settingTabIndex = SettingTabIndex;
 
             Properties.Settings.Default.Save();
         }
@@ -413,17 +284,14 @@ namespace TeX2img {
 
         private void GenerateButton_Click(object sender, EventArgs arg) {
             clearOutputTextBox();
-            if(ShowOutputWindowFlag) showOutputWindow(true);
+            if(SettingData.ShowOutputWindowFlag) showOutputWindow(true);
             this.Enabled = false;
 
             convertWorker.RunWorkerAsync(100);
         }
 
         private void convertWorker_DoWork(object sender, DoWorkEventArgs e) {
-            Converter converter = new Converter(PlatexPath, DvipdfmxPath, GsPath,Encode,
-                   ResolutionScale, LeftMargin, RightMargin, TopMargin, BottomMargin,YohakuUnitBP,
-                         UseMagickFlag, TransparentPngFlag, ShowOutputWindowFlag, PreviewFlag, DeleteTmpFileFlag, IgnoreErrorFlag,
-                            this);
+            Converter converter = new Converter(SettingData,this);
 
             string outputFilePath = outputFileNameTextBox.Text;
             if(!converter.CheckFormat(outputFilePath)) {
@@ -456,7 +324,8 @@ namespace TeX2img {
             // 直接入力の場合 tex ソースを出力
             // BOM付きUTF-8にすることで，文字コードの推定を確実にさせる．
             if(InputFromTextboxRadioButton.Checked) {
-                string enc = Encode;
+                if(SettingData.Encode == "") SettingData.Encode = "_sjis";// あり得ないはずだけど
+                string enc = SettingData.Encode;
                 if(enc.Substring(0, 1) == "_") enc = enc.Remove(0, 1);
                 Encoding encoding;
                 switch(enc) {
@@ -490,30 +359,31 @@ namespace TeX2img {
 
         #region 設定変更通知関連
         public void ChangeSetting() {
-            myPreambleForm.PreambleTextBox.Font = sourceTextBox.Font;
+            sourceTextBox.Font = SettingData.EditorFont;
+            myPreambleForm.PreambleTextBox.Font = SettingData.EditorFont;
             ChangeColorSchemeOfEditor(sourceTextBox);
             ChangeColorSchemeOfEditor(myPreambleForm.PreambleTextBox);
         }
 
         public void ChangeColorSchemeOfEditor(Sgry.Azuki.WinForms.AzukiControl textBox) {
             if(textBox == null) return;
-            textBox.ColorScheme.ForeColor = EditorNormalFontColor.Font;
-            textBox.ColorScheme.BackColor = EditorNormalFontColor.Back;
-            textBox.ColorScheme.SetColor(Sgry.Azuki.CharClass.Normal,EditorNormalFontColor.Font,EditorNormalFontColor.Back);
-            textBox.ColorScheme.SetColor(Sgry.Azuki.CharClass.Heading1, EditorNormalFontColor.Font, EditorNormalFontColor.Back);
-            textBox.ColorScheme.SetColor(Sgry.Azuki.CharClass.Heading2, EditorNormalFontColor.Font, EditorNormalFontColor.Back);
-            textBox.ColorScheme.SetColor(Sgry.Azuki.CharClass.Heading3, EditorNormalFontColor.Font, EditorNormalFontColor.Back);
-            textBox.ColorScheme.SelectionFore = EditorSelectedFontColor.Font;
-            textBox.ColorScheme.SelectionBack = EditorSelectedFontColor.Back;
-            textBox.ColorScheme.SetColor(Sgry.Azuki.CharClass.LatexCommand, EditorCommandFontColor.Font, EditorCommandFontColor.Back);
-            textBox.ColorScheme.SetColor(Sgry.Azuki.CharClass.LatexEquation, EditorEquationFontColor.Font, EditorEquationFontColor.Back);
-            textBox.ColorScheme.SetColor(Sgry.Azuki.CharClass.LatexBracket, EditorBracketFontColor.Font, EditorBracketFontColor.Back);
-            textBox.ColorScheme.SetColor(Sgry.Azuki.CharClass.LatexCurlyBracket, EditorBracketFontColor.Font, EditorBracketFontColor.Back);
-            textBox.ColorScheme.SetColor(Sgry.Azuki.CharClass.Comment, EditorCommentFontColor.Font, EditorCommentFontColor.Back);
-            textBox.ColorScheme.EofColor = EditorEOFFontColor.Font;
-            textBox.ColorScheme.EolColor = EditorEOFFontColor.Font;
-            textBox.ColorScheme.MatchedBracketFore = EditorMatchedBracketFontColor.Font;
-            textBox.ColorScheme.MatchedBracketBack = EditorMatchedBracketFontColor.Back;
+            textBox.ColorScheme.ForeColor = SettingData.EditorFontColor["テキスト"].Font;
+            textBox.ColorScheme.BackColor = SettingData.EditorFontColor["テキスト"].Back;
+            textBox.ColorScheme.SetColor(Sgry.Azuki.CharClass.Normal, SettingData.EditorFontColor["テキスト"].Font, SettingData.EditorFontColor["テキスト"].Back);
+            textBox.ColorScheme.SetColor(Sgry.Azuki.CharClass.Heading1, SettingData.EditorFontColor["テキスト"].Font, SettingData.EditorFontColor["テキスト"].Back);
+            textBox.ColorScheme.SetColor(Sgry.Azuki.CharClass.Heading2, SettingData.EditorFontColor["テキスト"].Font, SettingData.EditorFontColor["テキスト"].Back);
+            textBox.ColorScheme.SetColor(Sgry.Azuki.CharClass.Heading3, SettingData.EditorFontColor["テキスト"].Font, SettingData.EditorFontColor["テキスト"].Back);
+            textBox.ColorScheme.SelectionFore = SettingData.EditorFontColor["選択範囲"].Font;
+            textBox.ColorScheme.SelectionBack = SettingData.EditorFontColor["選択範囲"].Back;
+            textBox.ColorScheme.SetColor(Sgry.Azuki.CharClass.LatexCommand, SettingData.EditorFontColor["コントロールシークエンス"].Font, SettingData.EditorFontColor["コントロールシークエンス"].Back);
+            textBox.ColorScheme.SetColor(Sgry.Azuki.CharClass.LatexEquation, SettingData.EditorFontColor["$"].Font, SettingData.EditorFontColor["$"].Back);
+            textBox.ColorScheme.SetColor(Sgry.Azuki.CharClass.LatexBracket, SettingData.EditorFontColor["中 / 大括弧"].Font, SettingData.EditorFontColor["中 / 大括弧"].Back);
+            textBox.ColorScheme.SetColor(Sgry.Azuki.CharClass.LatexCurlyBracket, SettingData.EditorFontColor["中 / 大括弧"].Font, SettingData.EditorFontColor["中 / 大括弧"].Back);
+            textBox.ColorScheme.SetColor(Sgry.Azuki.CharClass.Comment, SettingData.EditorFontColor["コメント"].Font, SettingData.EditorFontColor["コメント"].Back);
+            textBox.ColorScheme.EofColor = SettingData.EditorFontColor["改行，EOF"].Font;
+            textBox.ColorScheme.EolColor = SettingData.EditorFontColor["改行，EOF"].Font;
+            textBox.ColorScheme.MatchedBracketFore = SettingData.EditorFontColor["対応する括弧"].Font;
+            textBox.ColorScheme.MatchedBracketBack = SettingData.EditorFontColor["対応する括弧"].Back;
         }
 
         #endregion

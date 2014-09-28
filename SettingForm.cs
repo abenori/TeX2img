@@ -11,8 +11,172 @@ using System.Diagnostics;
 namespace TeX2img {
     public partial class SettingForm : Form {
         MainForm mainForm;
-        private Font EditorFont;
-        Dictionary<string, MainForm.FontColor> EditorFontColor = new Dictionary<string,MainForm.FontColor>();
+        // 設定データ
+        public class Settings {
+            public string PlatexPath { get; set; }
+            public string DvipdfmxPath { get; set; }
+            public string GsPath { get; set; }
+            public int ResolutionScale { get; set; }
+            public bool UseMagickFlag { get; set; }
+            public bool TransparentPngFlag { get; set; }
+            public bool ShowOutputWindowFlag { get; set; }
+            public bool PreviewFlag { get; set; }
+            public bool DeleteTmpFileFlag { get; set; }
+            public bool IgnoreErrorFlag { get; set; }
+            public decimal TopMargin { get; set; }
+            public decimal BottomMargin { get; set; }
+            public decimal LeftMargin { get; set; }
+            public decimal RightMargin { get; set; }
+            public int SettingTabIndex { get; set; }
+            public bool YohakuUnitBP { get; set; }
+            public Font EditorFont { get; set; }
+
+            public class FontColor : ICloneable{
+                public Color Font, Back;
+                public FontColor() { }
+                public FontColor(Color f, Color b) { Font = f; Back = b; }
+                public Object Clone() { return MemberwiseClone(); }
+            }
+
+            public class FontColorCollection : Dictionary<string, FontColor> {
+                public new FontColor this[string key] {
+                    get {
+                        if(key == "改行，EOF") base["改行，EOF"].Back = base["テキスト"].Back;
+                        return base[key];
+                    }
+                    set {
+                        base[key] = value;
+                        if(key == "改行，EOF")base["改行，EOF"].Back = base["テキスト"].Back;
+                    }
+                }
+
+            }
+
+            public FontColorCollection EditorFontColor { get; set; }
+
+            // 文字コードを表す utf8,sjis,jis,euc
+            // _utf8, _sjisは文字コードを推定に任せ，それぞれ入力されたソースをUTF-8/Shift_JISで扱う
+            public string Encode { get; set; }
+
+            public Settings() {
+                TopMargin = 0;
+                BottomMargin = 0;
+                LeftMargin = 0;
+                RightMargin = 0;
+                ShowOutputWindowFlag = true;
+                PreviewFlag = true;
+                DeleteTmpFileFlag = true;
+                IgnoreErrorFlag = false;
+                SettingTabIndex = 0;
+                YohakuUnitBP = false;
+                Encode = "_sjis";
+
+                EditorFontColor = new FontColorCollection();
+            }
+
+            protected Settings(Settings s) {
+                PlatexPath = (string)s.PlatexPath.Clone();
+                DvipdfmxPath = (string)s.DvipdfmxPath.Clone();
+                GsPath = (string)s.GsPath.Clone();
+                ResolutionScale = s.ResolutionScale;
+                UseMagickFlag = s.UseMagickFlag;
+                TransparentPngFlag = s.TransparentPngFlag;
+                ShowOutputWindowFlag = s.ShowOutputWindowFlag;
+                PreviewFlag = s.PreviewFlag;
+                DeleteTmpFileFlag = s.DeleteTmpFileFlag;
+                IgnoreErrorFlag = s.IgnoreErrorFlag;
+                TopMargin = s.TopMargin;
+                BottomMargin = s.BottomMargin;
+                LeftMargin = s.LeftMargin;
+                RightMargin = s.RightMargin;
+                SettingTabIndex = s.SettingTabIndex;
+                YohakuUnitBP = s.YohakuUnitBP;
+                EditorFont = (Font)s.EditorFont.Clone();
+                EditorFontColor = new FontColorCollection() ;
+                foreach(var item in s.EditorFontColor) {
+                    EditorFontColor[item.Key] = (FontColor)item.Value.Clone();
+                }
+                Encode = s.Encode;
+            }
+
+            public Settings DeepCopy() { return new Settings(this); }
+            
+            public void LoadSetting() {
+                PlatexPath = Properties.Settings.Default.platexPath;
+                DvipdfmxPath = Properties.Settings.Default.dvipdfmxPath;
+                GsPath = Properties.Settings.Default.gsPath;
+                Encode = Properties.Settings.Default.encode;
+
+                TransparentPngFlag = Properties.Settings.Default.transparentPngFlag;
+                ResolutionScale = Properties.Settings.Default.resolutionScale;
+                TopMargin = Properties.Settings.Default.topMargin;
+                LeftMargin = Properties.Settings.Default.leftMargin;
+                RightMargin = Properties.Settings.Default.rightMargin;
+                BottomMargin = Properties.Settings.Default.bottomMargin;
+                YohakuUnitBP = Properties.Settings.Default.yohakuUnitBP;
+
+                UseMagickFlag = Properties.Settings.Default.useMagickFlag;
+
+                ShowOutputWindowFlag = Properties.Settings.Default.showOutputWindowFlag;
+                PreviewFlag = Properties.Settings.Default.previewFlag;
+                DeleteTmpFileFlag = Properties.Settings.Default.deleteTmpFileFlag;
+                IgnoreErrorFlag = Properties.Settings.Default.ignoreErrorFlag;
+
+                SettingTabIndex = Properties.Settings.Default.settingTabIndex;
+
+                EditorFontColor["テキスト"] = new FontColor(Properties.Settings.Default.editorNormalColorFont, Properties.Settings.Default.editorNormalColorBack);
+                EditorFontColor["選択範囲"] = new FontColor(Properties.Settings.Default.editorSelectedColorFont,Properties.Settings.Default.editorSelectedColorBack);
+                EditorFontColor["コントロールシークエンス"] = new FontColor(Properties.Settings.Default.editorCommandColorFont,Properties.Settings.Default.editorCommandColorBack);
+                EditorFontColor["$"] = new FontColor(Properties.Settings.Default.editorEquationColorFont,Properties.Settings.Default.editorEquationColorBack);
+                EditorFontColor["中 / 大括弧"] = new FontColor(Properties.Settings.Default.editorBracketColorFont,Properties.Settings.Default.editorBracketColorBack);
+                EditorFontColor["コメント"] = new FontColor(Properties.Settings.Default.editorCommentColorFont,Properties.Settings.Default.editorCommentColorBack);
+                EditorFontColor["改行，EOF"] = new FontColor(Properties.Settings.Default.editorEOFColorFont,Properties.Settings.Default.editorNormalColorBack);
+                EditorFontColor["対応する括弧"] = new FontColor(Properties.Settings.Default.editorMatchedBracketColorFont,Properties.Settings.Default.editorMatchedBracketColorBack);
+                EditorFont = Properties.Settings.Default.editorFont;
+            }
+
+            public void SaveSettings() {
+                Properties.Settings.Default.platexPath = PlatexPath;
+                Properties.Settings.Default.dvipdfmxPath = DvipdfmxPath;
+                Properties.Settings.Default.gsPath = GsPath;
+                Properties.Settings.Default.encode = Encode;
+
+                Properties.Settings.Default.resolutionScale = ResolutionScale;
+                Properties.Settings.Default.transparentPngFlag = TransparentPngFlag;
+                Properties.Settings.Default.topMargin = TopMargin;
+                Properties.Settings.Default.leftMargin = LeftMargin;
+                Properties.Settings.Default.rightMargin = RightMargin;
+                Properties.Settings.Default.bottomMargin = BottomMargin;
+                Properties.Settings.Default.yohakuUnitBP = YohakuUnitBP;
+
+                Properties.Settings.Default.useMagickFlag = UseMagickFlag;
+                Properties.Settings.Default.showOutputWindowFlag = ShowOutputWindowFlag;
+                Properties.Settings.Default.previewFlag = PreviewFlag;
+                Properties.Settings.Default.deleteTmpFileFlag = DeleteTmpFileFlag;
+                Properties.Settings.Default.ignoreErrorFlag = IgnoreErrorFlag;
+
+                Properties.Settings.Default.editorFont = EditorFont;
+                Properties.Settings.Default.settingTabIndex = SettingTabIndex;
+                Properties.Settings.Default.editorNormalColorFont = EditorFontColor["テキスト"].Font;
+                Properties.Settings.Default.editorNormalColorBack = EditorFontColor["テキスト"].Back;
+                Properties.Settings.Default.editorSelectedColorFont = EditorFontColor["選択範囲"].Font;
+                Properties.Settings.Default.editorSelectedColorBack = EditorFontColor["選択範囲"].Back;
+                Properties.Settings.Default.editorCommandColorFont = EditorFontColor["コントロールシークエンス"].Font;
+                Properties.Settings.Default.editorCommandColorBack = EditorFontColor["コントロールシークエンス"].Back;
+                Properties.Settings.Default.editorEquationColorFont = EditorFontColor["$"].Font;
+                Properties.Settings.Default.editorEquationColorBack = EditorFontColor["$"].Back;
+                Properties.Settings.Default.editorBracketColorFont = EditorFontColor["中 / 大括弧"].Font;
+                Properties.Settings.Default.editorBracketColorBack = EditorFontColor["中 / 大括弧"].Back;
+                Properties.Settings.Default.editorCommentColorFont = EditorFontColor["コメント"].Font;
+                Properties.Settings.Default.editorCommentColorBack = EditorFontColor["コメント"].Back;
+                Properties.Settings.Default.editorEOFColorFont = EditorFontColor["改行，EOF"].Font;
+                Properties.Settings.Default.editorMatchedBracketColorFont = EditorFontColor["対応する括弧"].Font;
+                Properties.Settings.Default.editorMatchedBracketColorBack = EditorFontColor["対応する括弧"].Back;
+            }
+
+        }
+
+        Settings SettingData;
 
         DataTable EncodeComboboxData = new DataTable();
         public SettingForm(MainForm _mainForm) {
@@ -47,19 +211,10 @@ namespace TeX2img {
             encodeComboBox.DisplayMember = "SHOW";
             encodeComboBox.ValueMember = "DATA";
 
-            encodeComboBox.SelectedValue = mainForm.Encode;
-
-            EditorFontColor["テキスト"] = mainForm.EditorNormalFontColor;
-            EditorFontColor["選択範囲"] = mainForm.EditorSelectedFontColor;
-            EditorFontColor["コントロールシークエンス"] = mainForm.EditorCommandFontColor;
-            EditorFontColor["$"] = mainForm.EditorEquationFontColor;
-            EditorFontColor["中 / 大括弧"] = mainForm.EditorBracketFontColor;
-            EditorFontColor["コメント"] = mainForm.EditorCommentFontColor;
-            EditorFontColor["改行，EOF"] = mainForm.EditorEOFFontColor;
-            EditorFontColor["対応する括弧"] = mainForm.EditorMatchedBracketFontColor;
+            SettingData = mainForm.SettingData.DeepCopy();
 
             for(int i = 0 ; i < FontColorListView.Items.Count ; ++i) {
-                MainForm.FontColor val = EditorFontColor[FontColorListView.Items[i].Text];
+                Settings.FontColor val = SettingData.EditorFontColor[FontColorListView.Items[i].Text];
                 FontColorListView.Items[i].ForeColor = val.Font;
                 FontColorListView.Items[i].BackColor = val.Back;
             }
@@ -69,33 +224,33 @@ namespace TeX2img {
             }
 //            FontColorListView_SelectedIndexChanged();
 
-            platexTextBox.Text = mainForm.PlatexPath;
-            dvipdfmxTextBox.Text = mainForm.DvipdfmxPath;
-            gsTextBox.Text = mainForm.GsPath;
+            platexTextBox.Text = SettingData.PlatexPath;
+            dvipdfmxTextBox.Text = SettingData.DvipdfmxPath;
+            gsTextBox.Text = SettingData.GsPath;
+            encodeComboBox.SelectedValue = SettingData.Encode;
 
-            resolutionScaleUpDown.Value = mainForm.ResolutionScale;
-            leftMarginUpDown.Value = mainForm.LeftMargin;
-            topMarginUpDown.Value = mainForm.TopMargin;
-            rightMarginUpDown.Value = mainForm.RightMargin;
-            bottomMarginUpDown.Value = mainForm.BottomMargin;
+            resolutionScaleUpDown.Value = SettingData.ResolutionScale;
+            leftMarginUpDown.Value = SettingData.LeftMargin;
+            topMarginUpDown.Value = SettingData.TopMargin;
+            rightMarginUpDown.Value = SettingData.RightMargin;
+            bottomMarginUpDown.Value = SettingData.BottomMargin;
 
-            useMagickCheckBox.Checked = mainForm.UseMagickFlag;
-            transparentPngCheckBox.Checked = mainForm.TransparentPngFlag;
+            useMagickCheckBox.Checked = SettingData.UseMagickFlag;
+            transparentPngCheckBox.Checked = SettingData.TransparentPngFlag;
 
-            showOutputWindowCheckBox.Checked = mainForm.ShowOutputWindowFlag;
-            previewCheckBox.Checked = mainForm.PreviewFlag;
-            deleteTmpFilesCheckBox.Checked = mainForm.DeleteTmpFileFlag;
-            ignoreErrorCheckBox.Checked = mainForm.IgnoreErrorFlag;
+            showOutputWindowCheckBox.Checked = SettingData.ShowOutputWindowFlag;
+            previewCheckBox.Checked = SettingData.PreviewFlag;
+            deleteTmpFilesCheckBox.Checked = SettingData.DeleteTmpFileFlag;
+            ignoreErrorCheckBox.Checked = SettingData.IgnoreErrorFlag;
 
-            SettingTab.SelectedIndex = mainForm.SettingTabIndex;
+            SettingTab.SelectedIndex = SettingData.SettingTabIndex;
 
-            radioButtonbp.Checked = mainForm.YohakuUnitBP;
-            radioButtonpx.Checked = !mainForm.YohakuUnitBP;
+            radioButtonbp.Checked = SettingData.YohakuUnitBP;
+            radioButtonpx.Checked = !SettingData.YohakuUnitBP;
 
-            EditorFont = mainForm.EditorFont;
-            FontDataText.Text = EditorFont.Name + " " + EditorFont.Size + " pt" +
-                (EditorFont.Bold ? " 太字" : "") +
-                (EditorFont.Italic ? " 斜体" : "");
+            FontDataText.Text = SettingData.EditorFont.Name + " " + SettingData.EditorFont.Size + " pt" +
+                (SettingData.EditorFont.Bold ? " 太字" : "") +
+                (SettingData.EditorFont.Italic ? " 斜体" : "");
         }
 
         private void platexBrowseButton_Click(object sender, EventArgs e) {
@@ -135,40 +290,30 @@ namespace TeX2img {
                 return;
             }
 
-            mainForm.PlatexPath = platexTextBox.Text;
-            mainForm.DvipdfmxPath = dvipdfmxTextBox.Text;
-            mainForm.GsPath = gsTextBox.Text;
-            mainForm.Encode = (string)encodeComboBox.SelectedValue;
+            SettingData.PlatexPath = platexTextBox.Text;
+            SettingData.DvipdfmxPath = dvipdfmxTextBox.Text;
+            SettingData.GsPath = gsTextBox.Text;
+            SettingData.Encode = (string)encodeComboBox.SelectedValue;
 
-            mainForm.ResolutionScale = (int) (resolutionScaleUpDown.Value);
-            mainForm.LeftMargin = leftMarginUpDown.Value;
-            mainForm.TopMargin = topMarginUpDown.Value;
-            mainForm.RightMargin = rightMarginUpDown.Value;
-            mainForm.BottomMargin = bottomMarginUpDown.Value;
+            SettingData.ResolutionScale = (int) (resolutionScaleUpDown.Value);
+            SettingData.LeftMargin = leftMarginUpDown.Value;
+            SettingData.TopMargin = topMarginUpDown.Value;
+            SettingData.RightMargin = rightMarginUpDown.Value;
+            SettingData.BottomMargin = bottomMarginUpDown.Value;
 
-            mainForm.UseMagickFlag = useMagickCheckBox.Checked;
-            mainForm.TransparentPngFlag = transparentPngCheckBox.Checked;
+            SettingData.UseMagickFlag = useMagickCheckBox.Checked;
+            SettingData.TransparentPngFlag = transparentPngCheckBox.Checked;
 
-            mainForm.ShowOutputWindowFlag = showOutputWindowCheckBox.Checked;
-            mainForm.PreviewFlag = previewCheckBox.Checked;
-            mainForm.DeleteTmpFileFlag = deleteTmpFilesCheckBox.Checked;
-            mainForm.IgnoreErrorFlag = ignoreErrorCheckBox.Checked;
+            SettingData.ShowOutputWindowFlag = showOutputWindowCheckBox.Checked;
+            SettingData.PreviewFlag = previewCheckBox.Checked;
+            SettingData.DeleteTmpFileFlag = deleteTmpFilesCheckBox.Checked;
+            SettingData.IgnoreErrorFlag = ignoreErrorCheckBox.Checked;
 
-            mainForm.SettingTabIndex = SettingTab.SelectedIndex;
+            SettingData.SettingTabIndex = SettingTab.SelectedIndex;
 
-            mainForm.YohakuUnitBP = radioButtonbp.Checked;
+            SettingData.YohakuUnitBP = radioButtonbp.Checked;
 
-            mainForm.EditorFont = EditorFont;
-
-            mainForm.EditorNormalFontColor = EditorFontColor["テキスト"];
-            mainForm.EditorSelectedFontColor = EditorFontColor["選択範囲"];
-            mainForm.EditorCommandFontColor = EditorFontColor["コントロールシークエンス"];
-            mainForm.EditorEquationFontColor = EditorFontColor["$"];
-            mainForm.EditorBracketFontColor = EditorFontColor["中 / 大括弧"];
-            mainForm.EditorCommentFontColor = EditorFontColor["コメント"];
-            mainForm.EditorEOFFontColor = EditorFontColor["改行，EOF"];
-            mainForm.EditorMatchedBracketFontColor = EditorFontColor["対応する括弧"];
-
+            mainForm.SettingData = SettingData.DeepCopy();
             mainForm.ChangeSetting();
             this.Close();
         }
@@ -187,13 +332,13 @@ namespace TeX2img {
 
         private void ChangeFontButton_Click(object sender, EventArgs e) {
             FontDialog fd = new FontDialog();
-            fd.Font = EditorFont;
+            fd.Font = SettingData.EditorFont;
             fd.ShowEffects = false;
             if(fd.ShowDialog() != DialogResult.Cancel) {
-                EditorFont = fd.Font;
-                FontDataText.Text = EditorFont.Name + " " + EditorFont.Size + " pt" + 
-                    (EditorFont.Bold ? " 太字" : "") +
-                    (EditorFont.Italic ? " 斜体" : "");
+                SettingData.EditorFont = fd.Font;
+                FontDataText.Text = SettingData.EditorFont.Name + " " + SettingData.EditorFont.Size + " pt" +
+                    (SettingData.EditorFont.Bold ? " 太字" : "") +
+                    (SettingData.EditorFont.Italic ? " 斜体" : "");
             }
         }
 
@@ -201,8 +346,8 @@ namespace TeX2img {
             if(FontColorListView.SelectedIndices.Count == 0) return;
             string item = FontColorListView.SelectedItems[0].Text;
             FontColorGroup.Text = item;
-            FontColorButton.BackColor = EditorFontColor[item].Font;
-            BackColorButton.BackColor = EditorFontColor[item].Back;
+            FontColorButton.BackColor = SettingData.EditorFontColor[item].Font;
+            BackColorButton.BackColor = SettingData.EditorFontColor[item].Back;
             if(item == "改行，EOF") BackColorButton.Enabled = false;
             else BackColorButton.Enabled = true;
         }
@@ -211,9 +356,9 @@ namespace TeX2img {
             if(FontColorListView.SelectedIndices.Count == 0) return;
             string item = FontColorListView.SelectedItems[0].Text;
             ColorDialog cd = new ColorDialog();
-            cd.Color = EditorFontColor[item].Font;
+            cd.Color = SettingData.EditorFontColor[item].Font;
             if(cd.ShowDialog() == DialogResult.OK) {
-                EditorFontColor[item].Font = cd.Color;
+                SettingData.EditorFontColor[item].Font = cd.Color;
                 FontColorButton.BackColor = cd.Color;
                 FontColorListView.SelectedItems[0].ForeColor = cd.Color;
             }
@@ -223,11 +368,18 @@ namespace TeX2img {
             if(FontColorListView.SelectedIndices.Count == 0) return;
             string item = FontColorListView.SelectedItems[0].Text;
             ColorDialog cd = new ColorDialog();
-            cd.Color = EditorFontColor[item].Back;
+            cd.Color = SettingData.EditorFontColor[item].Back;
             if(cd.ShowDialog() == DialogResult.OK) {
-                EditorFontColor[item].Back = cd.Color;
+                SettingData.EditorFontColor[item].Back = cd.Color;
                 BackColorButton.BackColor = cd.Color;
                 FontColorListView.SelectedItems[0].BackColor = cd.Color;
+                if(item == "テキスト") {
+                    for(int i = 0 ; i < FontColorListView.Items.Count ; ++i) {
+                        if(FontColorListView.Items[i].Text == "改行，EOF") {
+                            FontColorListView.Items[i].BackColor = cd.Color;
+                        }
+                    }
+                }
             }
         }
 

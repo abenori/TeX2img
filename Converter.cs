@@ -30,34 +30,14 @@ namespace TeX2img {
             return string.Empty;
         }
 
-        string platexPath_, dvipdfmxPath_, gsPath_,encode_;
-        int resolutionScale_;
-        decimal leftMargin_, rightMargin_, topMargin_, bottomMargin_;
-        bool useMagickFlag_, transparentPngFlag_, showOutputWindowFlag_, previewFlag_, deleteTmpFileFlag_, ignoreErrorFlag_,yohakuUnitBP_;
+        SettingForm.Settings SettingData;
+
         IOutputController controller_;
         Process proc_;
         const int epsResolution_ = 20016;
 
-        public Converter(string platexPath, string dvipdfmxPath, string gsPath,string encode,
-                  int resolutionScale, decimal leftMargin, decimal rightMargin, decimal topMargin, decimal bottomMargin,bool yohakuUnitBP,
-                        bool useMagickFlag, bool transparentPngFlag, bool showOutputWindowFlag, bool previewFlag, bool deleteTmpFileFlag, bool ignoreErrorFlag,
-                            IOutputController controller) {
-            platexPath_ = platexPath;
-            dvipdfmxPath_ = dvipdfmxPath;
-            gsPath_ = gsPath;
-            encode_ = encode;
-            resolutionScale_ = resolutionScale;
-            leftMargin_ = leftMargin;
-            rightMargin_ = rightMargin;
-            topMargin_ = topMargin;
-            bottomMargin_ = bottomMargin;
-            useMagickFlag_ = useMagickFlag;
-            transparentPngFlag_ = transparentPngFlag;
-            showOutputWindowFlag_ = showOutputWindowFlag;
-            previewFlag_ = previewFlag;
-            deleteTmpFileFlag_ = deleteTmpFileFlag;
-            ignoreErrorFlag_ = ignoreErrorFlag;
-            yohakuUnitBP_ = yohakuUnitBP;
+        public Converter(SettingForm.Settings set,IOutputController controller) {
+            SettingData = set;
             controller_ = controller;
         }
 
@@ -73,7 +53,7 @@ namespace TeX2img {
         public void Convert(string inputTeXFilePath, string outputFilePath) {
             generate(inputTeXFilePath, outputFilePath);
 
-            if(deleteTmpFileFlag_) {
+            if(SettingData.DeleteTmpFileFlag) {
                 try {
                     string tmpFileBaseName = Path.GetFileNameWithoutExtension(inputTeXFilePath);
                     File.Delete(tmpFileBaseName + ".tex");
@@ -133,15 +113,15 @@ namespace TeX2img {
         private bool tex2dvi(string fileName) {
             string baseName = Path.GetFileNameWithoutExtension(fileName);
             string dummy;
-            if(platexPath_ == "" || !File.Exists(setProcStartInfo(platexPath_,out dummy))) {
+            if(SettingData.PlatexPath == "" || !File.Exists(setProcStartInfo(SettingData.PlatexPath, out dummy))) {
                 controller_.showPathError("platex.exe", "TeX ディストリビューション");
                 return false;
             }
 
             string arg;
-            proc_.StartInfo.FileName = setProcStartInfo(platexPath_, out arg);
+            proc_.StartInfo.FileName = setProcStartInfo(SettingData.PlatexPath, out arg);
             proc_.StartInfo.Arguments = arg;
-            if(encode_.Substring(0, 1) != "_") proc_.StartInfo.Arguments += "-no-guess-input-enc -kanji=" + encode_ + " ";
+            if(SettingData.Encode.Substring(0, 1) != "_") proc_.StartInfo.Arguments += "-no-guess-input-enc -kanji=" + SettingData.Encode + " ";
             proc_.StartInfo.Arguments += "-interaction=nonstopmode " + baseName + ".tex";
 
             try {
@@ -157,7 +137,7 @@ namespace TeX2img {
 
             controller_.appendOutput("\r\n\r\n");
 
-            if((!ignoreErrorFlag_ && proc_.ExitCode != 0) || !File.Exists(baseName + ".dvi")) {
+            if((!SettingData.IgnoreErrorFlag && proc_.ExitCode != 0) || !File.Exists(baseName + ".dvi")) {
                 controller_.appendOutput(proc_.StandardError.ReadToEnd());
                 controller_.showGenerateError();
                 return false;
@@ -169,13 +149,13 @@ namespace TeX2img {
         private bool dvi2pdf(string fileName) {
             string baseName = Path.GetFileNameWithoutExtension(fileName);
             string dummy;
-            if(dvipdfmxPath_ == "" || !File.Exists(setProcStartInfo(dvipdfmxPath_,out dummy))) {
+            if(SettingData.DvipdfmxPath == "" || !File.Exists(setProcStartInfo(SettingData.DvipdfmxPath, out dummy))) {
                 controller_.showPathError("dvipdfmx.exe", "TeX ディストリビューション");
                 return false;
             }
 
             string arg;
-            proc_.StartInfo.FileName = setProcStartInfo(dvipdfmxPath_, out arg);
+            proc_.StartInfo.FileName = setProcStartInfo(SettingData.DvipdfmxPath, out arg);
             proc_.StartInfo.Arguments = arg + "-vv -o " + baseName + ".pdf " + baseName + ".dvi";
 
             try {
@@ -198,7 +178,7 @@ namespace TeX2img {
 
         private bool pdf2eps(string inputFileName, string outputFileName,int resolution) {
             string arg;
-            proc_.StartInfo.FileName = setProcStartInfo(gsPath_, out arg);
+            proc_.StartInfo.FileName = setProcStartInfo(SettingData.GsPath, out arg);
             proc_.StartInfo.Arguments = arg + "-q -sDEVICE=epswrite -sOutputFile=\"" + outputFileName + "\" -dNOPAUSE -dBATCH -r" + resolution + " \"" + inputFileName + "\"";
 
             try {
@@ -207,7 +187,7 @@ namespace TeX2img {
                 proc_.WaitForExit();
             }
             catch(Win32Exception) {
-                controller_.showPathError(Path.GetFileName(gsPath_), "Ghostscript ");
+                controller_.showPathError(Path.GetFileName(SettingData.GsPath), "Ghostscript ");
                 return false;
             }
             if(proc_.ExitCode != 0) {
@@ -238,8 +218,8 @@ namespace TeX2img {
                             righttop_x = System.Convert.ToDecimal(match.Groups[4].ToString());
                             righttop_y = System.Convert.ToDecimal(match.Groups[5].ToString());
                             string HiRes = match.Groups[1].Value;
-                            if(HiRes == "") lines.Add(String.Format("%%BoundingBox: {0} {1} {2} {3}", (int) (leftbottom_x - leftMargin_), (int) (leftbottom_y - bottomMargin_), (int) (righttop_x + rightMargin_), (int) (righttop_y + topMargin_)));
-                            else lines.Add(String.Format("%%HiResBoundingBox: {0} {1} {2} {3}", leftbottom_x - leftMargin_, leftbottom_y - bottomMargin_, righttop_x + rightMargin_, righttop_y + topMargin_));
+                            if(HiRes == "") lines.Add(String.Format("%%BoundingBox: {0} {1} {2} {3}", (int) (leftbottom_x - SettingData.LeftMargin), (int) (leftbottom_y - SettingData.BottomMargin), (int) (righttop_x + SettingData.RightMargin), (int) (righttop_y + SettingData.TopMargin)));
+                            else lines.Add(String.Format("%%HiResBoundingBox: {0} {1} {2} {3}", leftbottom_x - SettingData.LeftMargin, leftbottom_y - SettingData.BottomMargin, righttop_x + SettingData.RightMargin, righttop_y + SettingData.TopMargin));
                             continue;
                         }
 
@@ -297,7 +277,7 @@ namespace TeX2img {
         private bool pdfcrop(string inputFileName, string outputFileName, bool addMargine) {
             proc_.StartInfo.FileName = Converter.which("pdfcrop.exe");
             if(proc_.StartInfo.FileName == "") return false;
-            if(addMargine) proc_.StartInfo.Arguments = String.Format("--margins \"{0} {1} {2} {3}\" ", leftMargin_, topMargin_, rightMargin_, bottomMargin_);
+            if(addMargine) proc_.StartInfo.Arguments = String.Format("--margins \"{0} {1} {2} {3}\" ", SettingData.LeftMargin, SettingData.TopMargin, SettingData.RightMargin, SettingData.BottomMargin);
             else proc_.StartInfo.Arguments = "";
             proc_.StartInfo.Arguments += inputFileName + " " + outputFileName;
             try {
@@ -323,49 +303,49 @@ namespace TeX2img {
             string baseName = Path.GetFileNameWithoutExtension(inputFileName);
             string inputEpsFileName = baseName + ".eps";
 
-            if(useMagickFlag_) {
+            if(SettingData.UseMagickFlag) {
                 // ImageMagick を利用した画像変換
                 #region ImageMagick を利用して JPEG/PNG を生成
 
                 proc_.StartInfo.FileName = getImageMagickPath();
                 if(proc_.StartInfo.FileName == "") return false;
                 try {
-                    proc_.StartInfo.Arguments = "-density " + (72 * resolutionScale_) + "x" + (72 * resolutionScale_) + "% " + inputEpsFileName + " " + outputFileName;
+                    proc_.StartInfo.Arguments = "-density " + (72 * SettingData.ResolutionScale) + "x" + (72 * SettingData.ResolutionScale) + "% " + inputEpsFileName + " " + outputFileName;
                     printCommandLine();
                     proc_.Start();
                     proc_.WaitForExit();
-                    int margintimes = yohakuUnitBP_ ? resolutionScale_ : 1;
+                    int margintimes = SettingData.YohakuUnitBP ? SettingData.ResolutionScale : 1;
 
-                    if(topMargin_ > 0) {
+                    if(SettingData.TopMargin > 0) {
 //                        proc_.StartInfo.Arguments = "-splice 0x" + topMargin_ + " -gravity north " + outputFileName + " " + outputFileName;
-                        proc_.StartInfo.Arguments = "-splice 0x" + topMargin_ * margintimes + " -gravity north " + outputFileName + " " + outputFileName;
+                        proc_.StartInfo.Arguments = "-splice 0x" + SettingData.TopMargin * margintimes + " -gravity north " + outputFileName + " " + outputFileName;
                         printCommandLine();
                         proc_.Start();
                         proc_.WaitForExit();
                     }
-                    if(bottomMargin_ > 0) {
+                    if(SettingData.BottomMargin > 0) {
 //                        proc_.StartInfo.Arguments = "-splice 0x" + bottomMargin_ + " -gravity south " + outputFileName + " " + outputFileName;
-                        proc_.StartInfo.Arguments = "-splice 0x" + bottomMargin_ * margintimes + " -gravity south " + outputFileName + " " + outputFileName;
+                        proc_.StartInfo.Arguments = "-splice 0x" + SettingData.BottomMargin * margintimes + " -gravity south " + outputFileName + " " + outputFileName;
                         printCommandLine();
                         proc_.Start();
                         proc_.WaitForExit();
                     }
-                    if(rightMargin_ > 0) {
+                    if(SettingData.RightMargin > 0) {
 //                        proc_.StartInfo.Arguments = "-splice " + rightMargin_ + "x0 -gravity east " + outputFileName + " " + outputFileName;
-                        proc_.StartInfo.Arguments = "-splice " + rightMargin_ * margintimes + "x0 -gravity east " + outputFileName + " " + outputFileName;
+                        proc_.StartInfo.Arguments = "-splice " + SettingData.RightMargin * margintimes + "x0 -gravity east " + outputFileName + " " + outputFileName;
                         printCommandLine();
                         proc_.Start();
                         proc_.WaitForExit();
                     }
-                    if(leftMargin_ > 0) {
+                    if(SettingData.LeftMargin > 0) {
 //                        proc_.StartInfo.Arguments = "-splice " + leftMargin_ + "x0 -gravity west " + outputFileName + " " + outputFileName;
-                        proc_.StartInfo.Arguments = "-splice " + leftMargin_ * margintimes + "x0 -gravity west " + outputFileName + " " + outputFileName;
+                        proc_.StartInfo.Arguments = "-splice " + SettingData.LeftMargin * margintimes + "x0 -gravity west " + outputFileName + " " + outputFileName;
                         printCommandLine();
                         proc_.Start();
                         proc_.WaitForExit();
                     }
                     if(extension == ".png") {
-                        if(transparentPngFlag_) proc_.StartInfo.Arguments = "-transparent white " + outputFileName + " " + outputFileName;
+                        if(SettingData.TransparentPngFlag) proc_.StartInfo.Arguments = "-transparent white " + outputFileName + " " + outputFileName;
                         else proc_.StartInfo.Arguments = "-background white -alpha off " + outputFileName + " " + outputFileName;
                         printCommandLine();
                         proc_.Start();
@@ -388,11 +368,11 @@ namespace TeX2img {
                 #region まずは生成したEPSファイルのバウンディングボックスを取得
                 decimal leftbottom_x, leftbottom_y, righttop_x, righttop_y;
                 readBB(inputEpsFileName, out leftbottom_x, out leftbottom_y, out righttop_x, out righttop_y);
-                int margindevide = yohakuUnitBP_ ? 1 : resolutionScale_;
-                leftbottom_x -= leftMargin_ / margindevide;
-                leftbottom_y -= bottomMargin_ / margindevide;
-                righttop_x += rightMargin_ / margindevide;
-                righttop_y += topMargin_ / margindevide;
+                int margindevide = SettingData.YohakuUnitBP ? 1 : SettingData.ResolutionScale;
+                leftbottom_x -= SettingData.LeftMargin / margindevide;
+                leftbottom_y -= SettingData.BottomMargin / margindevide;
+                righttop_x += SettingData.RightMargin / margindevide;
+                righttop_y += SettingData.TopMargin / margindevide;
                 #endregion
 
                 #region 次にトリミングするためのEPSファイルを作成
@@ -420,12 +400,12 @@ namespace TeX2img {
                 string device = "jpeg";
 
                 if(extension == ".png") {
-                    device = transparentPngFlag_ ? "pngalpha" : "png256";
+                    device = SettingData.TransparentPngFlag ? "pngalpha" : "png256";
                 }
 
                 string arg;
-                proc_.StartInfo.FileName = setProcStartInfo(gsPath_, out arg);
-                proc_.StartInfo.Arguments = arg + String.Format("-q -sDEVICE={0} -sOutputFile={1} -dNOPAUSE -dBATCH -dPDFFitPage -r{2} -g{3}x{4} {5}", device, outputFileName, 72 * resolutionScale_, (int) ((righttop_x - leftbottom_x) * resolutionScale_), (int) ((righttop_y - leftbottom_y) * resolutionScale_), trimEpsFileName);
+                proc_.StartInfo.FileName = setProcStartInfo(SettingData.GsPath, out arg);
+                proc_.StartInfo.Arguments = arg + String.Format("-q -sDEVICE={0} -sOutputFile={1} -dNOPAUSE -dBATCH -dPDFFitPage -r{2} -g{3}x{4} {5}", device, outputFileName, 72 * SettingData.ResolutionScale, (int) ((righttop_x - leftbottom_x) * SettingData.ResolutionScale), (int) ((righttop_y - leftbottom_y) * SettingData.ResolutionScale), trimEpsFileName);
                 try {
                     printCommandLine();
                     proc_.Start();
@@ -467,7 +447,7 @@ namespace TeX2img {
                 */
             // Ghostscript を使った PDF 生成
             string arg;
-            proc_.StartInfo.FileName = setProcStartInfo(gsPath_, out arg);
+            proc_.StartInfo.FileName = setProcStartInfo(SettingData.GsPath, out arg);
             proc_.StartInfo.Arguments = arg + "-q -sDEVICE=pdfwrite -dNOPAUSE -dBATCH -dEPSCrop -sOutputFile=\"" + outputFileName + "\" \"" + inputFileName + "\"";
             try {
                 printCommandLine();
@@ -502,10 +482,10 @@ namespace TeX2img {
             proc_.StartInfo.RedirectStandardError = true;
 
             // ImageMagickのための準備
-            if(gsPath_ != "") {
+            if(SettingData.GsPath != "") {
                 try {
                     string dummy;
-                    string path = Converter.setProcStartInfo(gsPath_, out dummy);
+                    string path = Converter.setProcStartInfo(SettingData.GsPath, out dummy);
                     if(Path.GetFileName(path).ToLower() == "rungs.exe") {
                         if(Environment.GetEnvironmentVariable("MAGICK_GHOSTSCRIPT_PATH") == null
                             && !proc_.StartInfo.EnvironmentVariables.ContainsKey("MAGICK_GHOSTSCRIPT_PATH")
@@ -534,8 +514,8 @@ namespace TeX2img {
 
             // epsに変換する
             int resolution;
-            if(useMagickFlag_ || extension == ".eps" || extension == ".pdf") resolution = epsResolution_;
-            else resolution = 72 * resolutionScale_;
+            if(SettingData.UseMagickFlag || extension == ".eps" || extension == ".pdf") resolution = epsResolution_;
+            else resolution = 72 * SettingData.ResolutionScale;
             if(!pdf2eps(tmpFileBaseName + ".pdf", tmpEpsFile,resolution)) return;
             // 何枚できたか数える
             int page = 1;
@@ -546,7 +526,7 @@ namespace TeX2img {
             File.Delete(tmpFileBaseName + "-" + page + ".eps");
             --page;
             // そして変換
-            bool addMargin = ((leftMargin_ + rightMargin_ + topMargin_ + bottomMargin_) > 0);
+            bool addMargin = ((SettingData.LeftMargin + SettingData.RightMargin + SettingData.TopMargin + SettingData.BottomMargin) > 0);
             for(int i = 1 ; i <= page ; ++i) {
                 if(extension == ".pdf") {
                     if(addMargin) enlargeBB(tmpFileBaseName + "-" + i + ".eps");
@@ -572,14 +552,14 @@ namespace TeX2img {
             try {
                 if(page == 1) {
                     File.Copy(tmpFileBaseName + "-1" + extension, outputFilePath,true);
-                    if(previewFlag_) Process.Start(outputFilePath);
+                    if(SettingData.PreviewFlag) Process.Start(outputFilePath);
                 } else {
                     string outputFilePathBaseName = Path.GetDirectoryName(outputFilePath) + "\\" + Path.GetFileNameWithoutExtension(outputFilePath);
                     for(int i = 1 ; i <= page ; ++i) {
                         File.Copy(tmpFileBaseName + "-" + i + extension, outputFilePathBaseName + "-" + i + extension,true);
                     }
                     outputFilePath = outputFilePathBaseName + "-1" + extension;
-                    if(previewFlag_) Process.Start(outputFilePath);
+                    if(SettingData.PreviewFlag) Process.Start(outputFilePath);
                 }
 
             }

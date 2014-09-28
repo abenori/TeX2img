@@ -89,6 +89,7 @@
             this.preambleTextBox.ShowsLineNumber = false;
             this.preambleTextBox.Size = new System.Drawing.Size(580, 442);
             this.preambleTextBox.TabIndex = 4;
+            this.preambleTextBox.TabWidth = 4;
             this.preambleTextBox.ViewWidth = 4097;
             // 
             // preambleTextBoxMenu
