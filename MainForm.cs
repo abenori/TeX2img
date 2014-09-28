@@ -41,6 +41,7 @@ namespace TeX2img {
         public FontColor EditorBracketFontColor { get; set; }
         public FontColor EditorCommentFontColor { get; set; }
         public FontColor EditorEOFFontColor { get; set; }
+        public FontColor EditorMatchedBracketFontColor { get; set; }
 
         // 文字コードを表す utf8,sjis,jis,euc
         // _utf8, _sjisは文字コードを推定に任せ，それぞれ入力されたソースをUTF-8/Shift_JISで扱う
@@ -72,6 +73,7 @@ namespace TeX2img {
             EditorBracketFontColor = new FontColor();
             EditorCommentFontColor = new FontColor();
             EditorEOFFontColor = new FontColor();
+            EditorMatchedBracketFontColor = new FontColor();
 
             InitializeComponent();
             saveFileDialog1.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
@@ -197,6 +199,8 @@ namespace TeX2img {
             EditorCommentFontColor.Back = Properties.Settings.Default.editorCommentColorBack;
             EditorEOFFontColor.Font = Properties.Settings.Default.editorEOFColorFont;
             EditorEOFFontColor.Back = Properties.Settings.Default.editorNormalColorBack;
+            EditorMatchedBracketFontColor.Font = Properties.Settings.Default.editorMatchedBracketColorFont;
+            EditorMatchedBracketFontColor.Back = Properties.Settings.Default.editorMatchedBracketColorBack;
 
             setEnabled();
 
@@ -261,6 +265,8 @@ namespace TeX2img {
             Properties.Settings.Default.editorCommentColorBack = EditorCommentFontColor.Back;
             Properties.Settings.Default.editorEOFColorFont = EditorEOFFontColor.Font;
             Properties.Settings.Default.editorNormalColorBack = EditorEOFFontColor.Back;
+            Properties.Settings.Default.editorMatchedBracketColorFont = EditorMatchedBracketFontColor.Font;
+            Properties.Settings.Default.editorMatchedBracketColorBack = EditorMatchedBracketFontColor.Back;
 
             Properties.Settings.Default.settingTabIndex = SettingTabIndex;
 
@@ -506,6 +512,8 @@ namespace TeX2img {
             textBox.ColorScheme.SetColor(Sgry.Azuki.CharClass.Comment, EditorCommentFontColor.Font, EditorCommentFontColor.Back);
             textBox.ColorScheme.EofColor = EditorEOFFontColor.Font;
             textBox.ColorScheme.EolColor = EditorEOFFontColor.Font;
+            textBox.ColorScheme.MatchedBracketFore = EditorMatchedBracketFontColor.Font;
+            textBox.ColorScheme.MatchedBracketBack = EditorMatchedBracketFontColor.Back;
         }
 
         #endregion

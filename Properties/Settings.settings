@@ -133,7 +133,13 @@
       <Value Profile="(Default)">White</Value>
     </Setting>
     <Setting Name="editorEOFColorFont" Type="System.Drawing.Color" Scope="User">
-      <Value Profile="(Default)">0, 192, 192</Value>
+      <Value Profile="(Default)">Teal</Value>
+    </Setting>
+    <Setting Name="editorMatchedBracketColorFont" Type="System.Drawing.Color" Scope="User">
+      <Value Profile="(Default)">Black</Value>
+    </Setting>
+    <Setting Name="editorMatchedBracketColorBack" Type="System.Drawing.Color" Scope="User">
+      <Value Profile="(Default)">128, 255, 255</Value>
     </Setting>
   </Settings>
 </SettingsFile>

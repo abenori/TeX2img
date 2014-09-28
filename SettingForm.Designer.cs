@@ -35,6 +35,7 @@
             System.Windows.Forms.ListViewItem listViewItem5 = new System.Windows.Forms.ListViewItem("$");
             System.Windows.Forms.ListViewItem listViewItem6 = new System.Windows.Forms.ListViewItem("中 / 大括弧");
             System.Windows.Forms.ListViewItem listViewItem7 = new System.Windows.Forms.ListViewItem("改行，EOF");
+            System.Windows.Forms.ListViewItem listViewItem8 = new System.Windows.Forms.ListViewItem("対応する括弧");
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SettingForm));
             this.SettingTab = new System.Windows.Forms.TabControl();
             this.PathSettingTab = new System.Windows.Forms.TabPage();
@@ -77,8 +78,11 @@
             this.openTmpFolderButton = new System.Windows.Forms.Button();
             this.deleteTmpFilesCheckBox = new System.Windows.Forms.CheckBox();
             this.EditorSettingTab = new System.Windows.Forms.TabPage();
+            this.label15 = new System.Windows.Forms.Label();
             this.label12 = new System.Windows.Forms.Label();
             this.FontColorGroup = new System.Windows.Forms.GroupBox();
+            this.label14 = new System.Windows.Forms.Label();
+            this.label13 = new System.Windows.Forms.Label();
             this.FontColorButton = new System.Windows.Forms.Button();
             this.BackColorButton = new System.Windows.Forms.Button();
             this.FontColorListView = new System.Windows.Forms.ListView();
@@ -90,9 +94,6 @@
             this.platexOpenFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.dvipdfmxOpenFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.gsOpenFileDialog = new System.Windows.Forms.OpenFileDialog();
-            this.label13 = new System.Windows.Forms.Label();
-            this.label14 = new System.Windows.Forms.Label();
-            this.label15 = new System.Windows.Forms.Label();
             this.SettingTab.SuspendLayout();
             this.PathSettingTab.SuspendLayout();
             this.OutputImgSettingTab.SuspendLayout();
@@ -161,7 +162,7 @@
             // label10
             // 
             this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(14, 184);
+            this.label10.Location = new System.Drawing.Point(14, 186);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(84, 18);
             this.label10.TabIndex = 19;
@@ -384,19 +385,19 @@
             this.groupBox3.Controls.Add(this.radioButtonpx);
             this.groupBox3.Location = new System.Drawing.Point(13, 190);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(591, 58);
+            this.groupBox3.Size = new System.Drawing.Size(577, 58);
             this.groupBox3.TabIndex = 7;
             this.groupBox3.TabStop = false;
-            this.groupBox3.Text = "余白の単位（JPEG / PNG）";
+            this.groupBox3.Text = "余白の単位（ JPEG / PNG ）";
             // 
             // label9
             // 
             this.label9.AutoSize = true;
             this.label9.Location = new System.Drawing.Point(181, 28);
             this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(209, 18);
+            this.label9.Size = new System.Drawing.Size(214, 18);
             this.label9.TabIndex = 2;
-            this.label9.Text = "（PDF / EPS は bp で固定）";
+            this.label9.Text = "（ PDF / EPS は bp で固定）";
             // 
             // radioButtonbp
             // 
@@ -602,6 +603,17 @@
             this.EditorSettingTab.Text = "エディタの設定";
             this.EditorSettingTab.UseVisualStyleBackColor = true;
             // 
+            // label15
+            // 
+            this.label15.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.label15.AutoSize = true;
+            this.label15.Location = new System.Drawing.Point(131, 293);
+            this.label15.Name = "label15";
+            this.label15.Size = new System.Drawing.Size(294, 18);
+            this.label15.TabIndex = 8;
+            this.label15.Text = "改行，EOFの背景色は設定できません．";
+            this.label15.TextAlign = System.Drawing.ContentAlignment.TopRight;
+            // 
             // label12
             // 
             this.label12.AutoSize = true;
@@ -622,6 +634,24 @@
             this.FontColorGroup.Size = new System.Drawing.Size(245, 190);
             this.FontColorGroup.TabIndex = 6;
             this.FontColorGroup.TabStop = false;
+            // 
+            // label14
+            // 
+            this.label14.AutoSize = true;
+            this.label14.Location = new System.Drawing.Point(22, 40);
+            this.label14.Name = "label14";
+            this.label14.Size = new System.Drawing.Size(74, 18);
+            this.label14.TabIndex = 7;
+            this.label14.Text = "文字色...";
+            // 
+            // label13
+            // 
+            this.label13.AutoSize = true;
+            this.label13.Location = new System.Drawing.Point(22, 88);
+            this.label13.Name = "label13";
+            this.label13.Size = new System.Drawing.Size(74, 18);
+            this.label13.TabIndex = 6;
+            this.label13.Text = "背景色...";
             // 
             // FontColorButton
             // 
@@ -650,7 +680,8 @@
             listViewItem4,
             listViewItem5,
             listViewItem6,
-            listViewItem7});
+            listViewItem7,
+            listViewItem8});
             this.FontColorListView.Location = new System.Drawing.Point(134, 85);
             this.FontColorListView.MultiSelect = false;
             this.FontColorListView.Name = "FontColorListView";
@@ -725,33 +756,6 @@
             // 
             this.gsOpenFileDialog.FileName = "gswin32c.exe";
             this.gsOpenFileDialog.Filter = "exe ファイル (*.exe)|*.exe|bat ファイル (*.bat)|*.bat|すべてのファイル (*.*)|*.*";
-            // 
-            // label13
-            // 
-            this.label13.AutoSize = true;
-            this.label13.Location = new System.Drawing.Point(22, 88);
-            this.label13.Name = "label13";
-            this.label13.Size = new System.Drawing.Size(74, 18);
-            this.label13.TabIndex = 6;
-            this.label13.Text = "背景色...";
-            // 
-            // label14
-            // 
-            this.label14.AutoSize = true;
-            this.label14.Location = new System.Drawing.Point(22, 40);
-            this.label14.Name = "label14";
-            this.label14.Size = new System.Drawing.Size(74, 18);
-            this.label14.TabIndex = 7;
-            this.label14.Text = "文字色...";
-            // 
-            // label15
-            // 
-            this.label15.AutoSize = true;
-            this.label15.Location = new System.Drawing.Point(345, 297);
-            this.label15.Name = "label15";
-            this.label15.Size = new System.Drawing.Size(294, 18);
-            this.label15.TabIndex = 8;
-            this.label15.Text = "改行，EOFの背景色は設定できません．";
             // 
             // SettingForm
             // 

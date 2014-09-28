@@ -56,6 +56,7 @@ namespace TeX2img {
             EditorFontColor["中 / 大括弧"] = mainForm.EditorBracketFontColor;
             EditorFontColor["コメント"] = mainForm.EditorCommentFontColor;
             EditorFontColor["改行，EOF"] = mainForm.EditorEOFFontColor;
+            EditorFontColor["対応する括弧"] = mainForm.EditorMatchedBracketFontColor;
 
             for(int i = 0 ; i < FontColorListView.Items.Count ; ++i) {
                 MainForm.FontColor val = EditorFontColor[FontColorListView.Items[i].Text];
@@ -166,6 +167,7 @@ namespace TeX2img {
             mainForm.EditorBracketFontColor = EditorFontColor["中 / 大括弧"];
             mainForm.EditorCommentFontColor = EditorFontColor["コメント"];
             mainForm.EditorEOFFontColor = EditorFontColor["改行，EOF"];
+            mainForm.EditorMatchedBracketFontColor = EditorFontColor["対応する括弧"];
 
             mainForm.ChangeSetting();
             this.Close();

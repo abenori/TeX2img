@@ -327,9 +327,9 @@
             this.InputFromFileRadioButton.Location = new System.Drawing.Point(10, 361);
             this.InputFromFileRadioButton.Margin = new System.Windows.Forms.Padding(5, 4, 5, 4);
             this.InputFromFileRadioButton.Name = "InputFromFileRadioButton";
-            this.InputFromFileRadioButton.Size = new System.Drawing.Size(239, 22);
+            this.InputFromFileRadioButton.Size = new System.Drawing.Size(244, 22);
             this.InputFromFileRadioButton.TabIndex = 4;
-            this.InputFromFileRadioButton.Text = "TeXソースファイルを読み込む";
+            this.InputFromFileRadioButton.Text = "TeX ソースファイルを読み込む";
             this.InputFromFileRadioButton.UseVisualStyleBackColor = true;
             // 
             // InputFromTextboxRadioButton
@@ -340,10 +340,10 @@
             this.InputFromTextboxRadioButton.Location = new System.Drawing.Point(10, 27);
             this.InputFromTextboxRadioButton.Margin = new System.Windows.Forms.Padding(5, 4, 5, 4);
             this.InputFromTextboxRadioButton.Name = "InputFromTextboxRadioButton";
-            this.InputFromTextboxRadioButton.Size = new System.Drawing.Size(548, 22);
+            this.InputFromTextboxRadioButton.Size = new System.Drawing.Size(553, 22);
             this.InputFromTextboxRadioButton.TabIndex = 1;
             this.InputFromTextboxRadioButton.TabStop = true;
-            this.InputFromTextboxRadioButton.Text = "TeXコードを直接入力（ \\begin{document} ～ \\end{document} の内部 ）";
+            this.InputFromTextboxRadioButton.Text = "TeX コードを直接入力（ \\begin{document} ～ \\end{document} の内部 ）";
             this.InputFromTextboxRadioButton.UseVisualStyleBackColor = true;
             this.InputFromTextboxRadioButton.CheckedChanged += new System.EventHandler(this.setEnabled);
             // 
@@ -360,7 +360,7 @@
             this.groupBox2.Size = new System.Drawing.Size(1075, 69);
             this.groupBox2.TabIndex = 2;
             this.groupBox2.TabStop = false;
-            this.groupBox2.Text = "出力先ファイル（拡張子.eps/.png/.jpg/.pdf）";
+            this.groupBox2.Text = "出力先ファイル（拡張子 .eps / .png / .jpg / .pdf ）";
             // 
             // OutputBrowseButton
             // 

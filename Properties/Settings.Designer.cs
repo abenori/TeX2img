@@ -530,13 +530,37 @@ namespace TeX2img.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("0, 192, 192")]
+        [global::System.Configuration.DefaultSettingValueAttribute("Teal")]
         public global::System.Drawing.Color editorEOFColorFont {
             get {
                 return ((global::System.Drawing.Color)(this["editorEOFColorFont"]));
             }
             set {
                 this["editorEOFColorFont"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Black")]
+        public global::System.Drawing.Color editorMatchedBracketColorFont {
+            get {
+                return ((global::System.Drawing.Color)(this["editorMatchedBracketColorFont"]));
+            }
+            set {
+                this["editorMatchedBracketColorFont"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("128, 255, 255")]
+        public global::System.Drawing.Color editorMatchedBracketColorBack {
+            get {
+                return ((global::System.Drawing.Color)(this["editorMatchedBracketColorBack"]));
+            }
+            set {
+                this["editorMatchedBracketColorBack"] = value;
             }
         }
     }
