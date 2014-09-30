@@ -220,6 +220,7 @@
             this.sourceTextBox.Size = new System.Drawing.Size(1047, 293);
             this.sourceTextBox.TabIndex = 3;
             this.sourceTextBox.TabWidth = 4;
+            this.sourceTextBox.ViewType = Sgry.Azuki.ViewType.WrappedProportional;
             this.sourceTextBox.ViewWidth = 4097;
             // 
             // sourceTextBoxMenu

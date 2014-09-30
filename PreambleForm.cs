@@ -17,6 +17,7 @@ namespace TeX2img
             InitializeComponent();
             if(mainForm.SettingData.EditorFont != null)preambleTextBox.Font = mainForm.SettingData.EditorFont;
 			preambleTextBox.Highlighter = Sgry.Azuki.Highlighter.Highlighters.Latex;
+            preambleTextBox.Resize += delegate { preambleTextBox.ViewWidth = preambleTextBox.ClientSize.Width; };
             ActiveControl = preambleTextBox;
         }
 
@@ -48,7 +49,7 @@ namespace TeX2img
         {
             if(DialogResult.Yes == MessageBox.Show("現在のプリアンブル設定を破棄して，初期設定に戻してよろしいですか？", "確認", MessageBoxButtons.YesNo, MessageBoxIcon.Question))
             {
-                preambleTextBox.Text = "\\documentclass{jarticle}\r\n\\usepackage{amsmath,amssymb}\r\n\\usepackage{enumerate}\r\n\\pagestyle{empty}\r\n";
+                preambleTextBox.Text = "\\documentclass{jsarticle}\r\n\\usepackage{amsmath,amssymb}\r\n\\usepackage{enumerate}\r\n\\pagestyle{empty}\r\n";
             }
         }
 

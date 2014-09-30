@@ -41,12 +41,12 @@ namespace TeX2img {
             public class FontColorCollection : Dictionary<string, FontColor> {
                 public new FontColor this[string key] {
                     get {
-                        if(key == "改行，EOF") base["改行，EOF"].Back = base["テキスト"].Back;
+                        if(key == "改行，EOF" && base.ContainsKey(key)) base["改行，EOF"].Back = base["テキスト"].Back;
                         return base[key];
                     }
                     set {
                         base[key] = value;
-                        if(key == "改行，EOF")base["改行，EOF"].Back = base["テキスト"].Back;
+                        if(key == "改行，EOF" && base.ContainsKey(key)) base["改行，EOF"].Back = base["テキスト"].Back;
                     }
                 }
 
@@ -96,7 +96,7 @@ namespace TeX2img {
                 foreach(var item in s.EditorFontColor) {
                     EditorFontColor[item.Key] = (FontColor)item.Value.Clone();
                 }
-                Encode = s.Encode;
+                Encode = (string)s.Encode.Clone();
             }
 
             public Settings DeepCopy() { return new Settings(this); }

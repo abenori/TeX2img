@@ -27,6 +27,7 @@ namespace TeX2img {
             myOutputForm = new OutputForm(this);
 
             sourceTextBox.Highlighter = Sgry.Azuki.Highlighter.Highlighters.Latex;
+            sourceTextBox.Resize += delegate { sourceTextBox.ViewWidth = sourceTextBox.ClientSize.Width; };
             loadSettings();
             loadCommandLine();
             setPath();
@@ -359,14 +360,13 @@ namespace TeX2img {
 
         #region 設定変更通知関連
         public void ChangeSetting() {
-            sourceTextBox.Font = SettingData.EditorFont;
-            myPreambleForm.PreambleTextBox.Font = SettingData.EditorFont;
-            ChangeColorSchemeOfEditor(sourceTextBox);
-            ChangeColorSchemeOfEditor(myPreambleForm.PreambleTextBox);
+            ChangeSettingofEditor(sourceTextBox);
+            ChangeSettingofEditor(myPreambleForm.PreambleTextBox);
         }
 
-        public void ChangeColorSchemeOfEditor(Sgry.Azuki.WinForms.AzukiControl textBox) {
+        public void ChangeSettingofEditor(Sgry.Azuki.WinForms.AzukiControl textBox) {
             if(textBox == null) return;
+            textBox.FontInfo = new Sgry.Azuki.FontInfo(SettingData.EditorFont);
             textBox.ColorScheme.ForeColor = SettingData.EditorFontColor["テキスト"].Font;
             textBox.ColorScheme.BackColor = SettingData.EditorFontColor["テキスト"].Back;
             textBox.ColorScheme.SetColor(Sgry.Azuki.CharClass.Normal, SettingData.EditorFontColor["テキスト"].Font, SettingData.EditorFontColor["テキスト"].Back);
