@@ -124,7 +124,7 @@
             this.SettingTab.Margin = new System.Windows.Forms.Padding(5, 4, 5, 4);
             this.SettingTab.Name = "SettingTab";
             this.SettingTab.SelectedIndex = 0;
-            this.SettingTab.Size = new System.Drawing.Size(683, 500);
+            this.SettingTab.Size = new System.Drawing.Size(683, 503);
             this.SettingTab.TabIndex = 1;
             // 
             // PathSettingTab
@@ -145,7 +145,7 @@
             this.PathSettingTab.Margin = new System.Windows.Forms.Padding(5, 4, 5, 4);
             this.PathSettingTab.Name = "PathSettingTab";
             this.PathSettingTab.Padding = new System.Windows.Forms.Padding(5, 4, 5, 4);
-            this.PathSettingTab.Size = new System.Drawing.Size(675, 468);
+            this.PathSettingTab.Size = new System.Drawing.Size(675, 471);
             this.PathSettingTab.TabIndex = 0;
             this.PathSettingTab.Text = "パスの設定";
             this.PathSettingTab.UseVisualStyleBackColor = true;
@@ -722,7 +722,7 @@
             // OKButton
             // 
             this.OKButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.OKButton.Location = new System.Drawing.Point(445, 529);
+            this.OKButton.Location = new System.Drawing.Point(445, 532);
             this.OKButton.Margin = new System.Windows.Forms.Padding(5, 4, 5, 4);
             this.OKButton.Name = "OKButton";
             this.OKButton.Size = new System.Drawing.Size(125, 34);
@@ -735,7 +735,7 @@
             // 
             this.cancelButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.cancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.cancelButton.Location = new System.Drawing.Point(580, 529);
+            this.cancelButton.Location = new System.Drawing.Point(580, 532);
             this.cancelButton.Margin = new System.Windows.Forms.Padding(5, 4, 5, 4);
             this.cancelButton.Name = "cancelButton";
             this.cancelButton.Size = new System.Drawing.Size(125, 34);
@@ -764,7 +764,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(10F, 18F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.cancelButton;
-            this.ClientSize = new System.Drawing.Size(725, 582);
+            this.ClientSize = new System.Drawing.Size(725, 585);
             this.Controls.Add(this.cancelButton);
             this.Controls.Add(this.OKButton);
             this.Controls.Add(this.SettingTab);

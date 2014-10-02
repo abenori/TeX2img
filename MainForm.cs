@@ -112,8 +112,6 @@ namespace TeX2img {
             InputFromTextboxRadioButton.Checked = Properties.Settings.Default.inputFromTextBox;
             InputFromFileRadioButton.Checked = !InputFromTextboxRadioButton.Checked;
 
-            setEnabled();
-
             Sgry.Azuki.WinForms.AzukiControl preambleTextBox = myPreambleForm.PreambleTextBox;
             preambleTextBox.Text = Properties.Settings.Default.preamble;
             // プリアンブルフォームのキャレットを最後に持っていく
@@ -122,6 +120,7 @@ namespace TeX2img {
             preambleTextBox.ScrollToCaret();
 
             ChangeSetting();
+            setEnabled();
         }
 
         private void saveSettings() {
@@ -166,7 +165,7 @@ namespace TeX2img {
         }
 
         private void setEnabled() {
-            sourceTextBox.BackColor = (InputFromTextboxRadioButton.Checked ? System.Drawing.SystemColors.Window : System.Drawing.SystemColors.ButtonFace);
+            sourceTextBox.BackColor = (InputFromTextboxRadioButton.Checked ? SettingData.EditorFontColor["テキスト"].Back : System.Drawing.SystemColors.ButtonFace);
             sourceTextBox.Enabled = InputFromTextboxRadioButton.Checked;
             inputFileNameTextBox.Enabled = InputFileBrowseButton.Enabled = InputFromFileRadioButton.Checked;
         }
@@ -368,7 +367,10 @@ namespace TeX2img {
             if(textBox == null) return;
             textBox.FontInfo = new Sgry.Azuki.FontInfo(SettingData.EditorFont);
             textBox.ColorScheme.ForeColor = SettingData.EditorFontColor["テキスト"].Font;
-            textBox.ColorScheme.BackColor = SettingData.EditorFontColor["テキスト"].Back;
+            Color backColor = new Color();
+            if(textBox.Enabled) backColor = SettingData.EditorFontColor["テキスト"].Back;
+            else backColor = System.Drawing.SystemColors.ButtonFace;
+            textBox.ColorScheme.BackColor = backColor;
             textBox.ColorScheme.SetColor(Sgry.Azuki.CharClass.Normal, SettingData.EditorFontColor["テキスト"].Font, SettingData.EditorFontColor["テキスト"].Back);
             textBox.ColorScheme.SetColor(Sgry.Azuki.CharClass.Heading1, SettingData.EditorFontColor["テキスト"].Font, SettingData.EditorFontColor["テキスト"].Back);
             textBox.ColorScheme.SetColor(Sgry.Azuki.CharClass.Heading2, SettingData.EditorFontColor["テキスト"].Font, SettingData.EditorFontColor["テキスト"].Back);

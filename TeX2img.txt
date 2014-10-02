@@ -1,4 +1,4 @@
-﻿TeX2img
+TeX2img
 
 (C)Abe Noriyuki http://www.math.sci.hokudai.ac.jp/~abenori/
 
@@ -56,7 +56,7 @@ http://island.geocities.jp/loveinequality/
 http://sgry.b.sourceforge.jp/
 
 # ライセンス
-修正 BSD ライセンスです．license.txt を参照．
+修正 BSD ライセンスです．詳しくは license.txt を参照してください．
 なお，Azuki エディタコンポーネント Azuki.dll には zlib ライセンスが適用されています．
 http://sgry.b.sourceforge.jp/introduction/license/
 
@@ -78,3 +78,5 @@ http://sgry.b.sourceforge.jp/introduction/license/
 ** 文字コードの指定を設定できるようにした．
 ** ソースコードのフォント及び色を変更できるようにした．またデフォルトの色も変更した．
 
+* 1.2.3
+** TeX ソースを直接入力 / 読み込むのボタンの切り替えと TeX ソース入力エリアの色が連動できていなかったのを修正．
