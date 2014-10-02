@@ -61,7 +61,7 @@ http://sgry.b.sourceforge.jp/
 http://sgry.b.sourceforge.jp/introduction/license/
 
 # 履歴（1.2以降）
-* Version 1.2
+* Version 1.2 (2014/9/15)
 ** 開発を引き継いだ．
 ** emf のサポートをやめた．
 ** 環境設定用の起動オプションを追加．
@@ -71,10 +71,10 @@ http://sgry.b.sourceforge.jp/introduction/license/
 ** JPEG / PNG 時には，余白設定を従来のpxに加え，「bp」でも指定できるようにした．（EPS / PDF の出力と同様の空白が得られるはず．）
 ** ライセンスを修正 BSD ライセンスへと変更
 
-* 1.2.1
+* 1.2.1 (2014/9/18)
 ** platex / dvipdfmx のパス設定にオプションが含まれていると実行できないバグ修正．
 
-* 
+* 1.2.2 (2014/9/30)
 ** 文字コードの指定を設定できるようにした．
 ** ソースコードのフォント及び色を変更できるようにした．またデフォルトの色も変更した．
 
