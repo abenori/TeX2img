@@ -673,6 +673,7 @@
             // 
             // FontColorListView
             // 
+            this.FontColorListView.HideSelection = false;
             this.FontColorListView.Items.AddRange(new System.Windows.Forms.ListViewItem[] {
             listViewItem1,
             listViewItem2,
