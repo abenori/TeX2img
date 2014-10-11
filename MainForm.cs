@@ -77,7 +77,22 @@ namespace TeX2img {
             if(SettingData.PlatexPath == String.Empty || SettingData.DvipdfmxPath == String.Empty || SettingData.GsPath == String.Empty) {
                 if(SettingData.PlatexPath == String.Empty) SettingData.PlatexPath = Converter.which("platex");
                 if(SettingData.DvipdfmxPath == String.Empty) SettingData.DvipdfmxPath = Converter.which("dvipdfmx");
-                if(SettingData.GsPath == String.Empty) SettingData.GsPath = Converter.guessgsPath();
+                if(SettingData.GsPath == String.Empty) {
+                    SettingData.GsPath = Converter.which("gswin32c.exe");
+                    if(SettingData.GsPath == "") {
+                        SettingData.GsPath = Converter.which("gswin64c.exe");
+                        if(SettingData.GsPath == "") {
+                            SettingData.GsPath = Converter.which("rungs.exe");
+                            if(SettingData.GsPath == "") {
+                                if(SettingData.PlatexPath != "") {
+                                    SettingData.GsPath = System.IO.Path.GetDirectoryName(SettingData.PlatexPath) + "\\rungs.exe";
+                                    if(!System.IO.File.Exists(SettingData.GsPath)) SettingData.GsPath = "";
+                                }
+                            }
+                        }
+                    }
+                }
+
 
                 if(SettingData.PlatexPath == String.Empty || SettingData.DvipdfmxPath == String.Empty || SettingData.GsPath == String.Empty) {
                     MessageBox.Show("platex / dvipdfmx / gs のパス設定に失敗しました。\n環境設定画面で手動で設定してください。");
@@ -86,6 +101,34 @@ namespace TeX2img {
                     MessageBox.Show(String.Format("TeX 関連プログラムのパスを\n {0}\n {1}\n {2}\nに設定しました。\n違っている場合は環境設定画面で手動で変更してください。", SettingData.PlatexPath, SettingData.DvipdfmxPath, SettingData.GsPath));
                 }
             }
+
+            if(SettingData.GsDevice == "" && SettingData.GsPath != "") {
+                // Ghostscriptのバージョンを取得する．
+                Process proc = new Process();
+                proc.StartInfo.RedirectStandardError = proc.StartInfo.RedirectStandardOutput = true;
+                proc.StartInfo.UseShellExecute = false;
+                proc.StartInfo.CreateNoWindow = true;
+                proc.StartInfo.FileName = SettingData.GsPath;
+                proc.StartInfo.Arguments = "-v";
+                proc.Start();
+                proc.WaitForExit(2000);
+                if(!proc.HasExited) proc.Kill();
+                string msg = proc.StandardOutput.ReadToEnd() + proc.StandardError.ReadToEnd();
+                Regex reg = new Regex("Ghostscript ([0-9]+)\\.([0-9]+)", System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+                var m = reg.Match(msg);
+                if(m.Success) {
+                    try {
+                        int major = int.Parse(m.Groups[1].Value);
+                        int minor = int.Parse(m.Groups[2].Value);
+                        //System.Diagnostics.Debug.WriteLine("major = " + major.ToString() + ", minor = " + minor.ToString());
+                        // 9.14以上ならばeps2write，そうでないならepwsrite
+                        if(major > 9 || (major == 9 && minor >= 14)) SettingData.GsDevice = "eps2write";
+                        else SettingData.GsDevice = "epswrite";
+                    }
+                    catch(FormatException) { }
+                }
+            }
+            if(SettingData.GsDevice == "") SettingData.GsDevice = "epswrite";
         }
 
         #endregion
@@ -298,6 +341,14 @@ namespace TeX2img {
                 return;
             }
 
+            if(InputFromFileRadioButton.Checked) {
+                string inputTeXFilePath = inputFileNameTextBox.Text;
+                if(!File.Exists(inputTeXFilePath)) {
+                    MessageBox.Show(inputTeXFilePath + "  が存在しません。", "エラー", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                    return;
+                }
+            }
+
             string extension = Path.GetExtension(outputFilePath).ToLower();
 
             string tmpFilePath = Path.GetTempFileName();
@@ -314,10 +365,6 @@ namespace TeX2img {
             // 外部ファイルから入力する場合はテンポラリディレクトリにコピー
             if(InputFromFileRadioButton.Checked) {
                 string inputTeXFilePath = inputFileNameTextBox.Text;
-                if(!File.Exists(inputTeXFilePath)) {
-                    MessageBox.Show(inputTeXFilePath + "  が存在しません。", "エラー", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-                    return;
-                }
                 File.Copy(inputTeXFilePath, tmpTeXFileName, true);
             }
 

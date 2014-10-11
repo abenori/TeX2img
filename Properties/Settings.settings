@@ -27,7 +27,7 @@
       <Value Profile="(Default)">100</Value>
     </Setting>
     <Setting Name="preamble" Type="System.String" Scope="User">
-      <Value Profile="(Default)">\documentclass[fleqn]{jarticle}
+      <Value Profile="(Default)">\documentclass[fleqn]{jsarticle}
 \usepackage{amsmath,amssymb}
 \usepackage{enumerate}
 \pagestyle{empty}
@@ -140,6 +140,9 @@
     </Setting>
     <Setting Name="editorMatchedBracketColorBack" Type="System.Drawing.Color" Scope="User">
       <Value Profile="(Default)">128, 255, 255</Value>
+    </Setting>
+    <Setting Name="gsDevice" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
     </Setting>
   </Settings>
 </SettingsFile>

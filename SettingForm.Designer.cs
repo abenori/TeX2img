@@ -39,6 +39,7 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SettingForm));
             this.SettingTab = new System.Windows.Forms.TabControl();
             this.PathSettingTab = new System.Windows.Forms.TabPage();
+            this.GSUseepswriteCheckButton = new System.Windows.Forms.CheckBox();
             this.encodeComboBox = new System.Windows.Forms.ComboBox();
             this.label10 = new System.Windows.Forms.Label();
             this.ignoreErrorCheckBox = new System.Windows.Forms.CheckBox();
@@ -129,6 +130,7 @@
             // 
             // PathSettingTab
             // 
+            this.PathSettingTab.Controls.Add(this.GSUseepswriteCheckButton);
             this.PathSettingTab.Controls.Add(this.encodeComboBox);
             this.PathSettingTab.Controls.Add(this.label10);
             this.PathSettingTab.Controls.Add(this.ignoreErrorCheckBox);
@@ -150,11 +152,21 @@
             this.PathSettingTab.Text = "パスの設定";
             this.PathSettingTab.UseVisualStyleBackColor = true;
             // 
+            // GSUseepswriteCheckButton
+            // 
+            this.GSUseepswriteCheckButton.AutoSize = true;
+            this.GSUseepswriteCheckButton.Location = new System.Drawing.Point(17, 163);
+            this.GSUseepswriteCheckButton.Name = "GSUseepswriteCheckButton";
+            this.GSUseepswriteCheckButton.Size = new System.Drawing.Size(390, 22);
+            this.GSUseepswriteCheckButton.TabIndex = 21;
+            this.GSUseepswriteCheckButton.Text = "Ghostscript の DEVICE には epswrite を指定する";
+            this.GSUseepswriteCheckButton.UseVisualStyleBackColor = true;
+            // 
             // encodeComboBox
             // 
             this.encodeComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.encodeComboBox.FormattingEnabled = true;
-            this.encodeComboBox.Location = new System.Drawing.Point(120, 181);
+            this.encodeComboBox.Location = new System.Drawing.Point(120, 212);
             this.encodeComboBox.Name = "encodeComboBox";
             this.encodeComboBox.Size = new System.Drawing.Size(419, 26);
             this.encodeComboBox.TabIndex = 20;
@@ -162,7 +174,7 @@
             // label10
             // 
             this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(14, 186);
+            this.label10.Location = new System.Drawing.Point(14, 217);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(84, 18);
             this.label10.TabIndex = 19;
@@ -284,7 +296,7 @@
             this.OutputImgSettingTab.Margin = new System.Windows.Forms.Padding(5, 4, 5, 4);
             this.OutputImgSettingTab.Name = "OutputImgSettingTab";
             this.OutputImgSettingTab.Padding = new System.Windows.Forms.Padding(5, 4, 5, 4);
-            this.OutputImgSettingTab.Size = new System.Drawing.Size(675, 468);
+            this.OutputImgSettingTab.Size = new System.Drawing.Size(675, 471);
             this.OutputImgSettingTab.TabIndex = 1;
             this.OutputImgSettingTab.Text = "出力画像設定";
             this.OutputImgSettingTab.UseVisualStyleBackColor = true;
@@ -531,7 +543,7 @@
             this.AfterCompilingTab.Margin = new System.Windows.Forms.Padding(5, 4, 5, 4);
             this.AfterCompilingTab.Name = "AfterCompilingTab";
             this.AfterCompilingTab.Padding = new System.Windows.Forms.Padding(5, 4, 5, 4);
-            this.AfterCompilingTab.Size = new System.Drawing.Size(675, 468);
+            this.AfterCompilingTab.Size = new System.Drawing.Size(675, 471);
             this.AfterCompilingTab.TabIndex = 2;
             this.AfterCompilingTab.Text = "コンパイル後処理";
             this.AfterCompilingTab.UseVisualStyleBackColor = true;
@@ -598,7 +610,7 @@
             this.EditorSettingTab.Location = new System.Drawing.Point(4, 28);
             this.EditorSettingTab.Name = "EditorSettingTab";
             this.EditorSettingTab.Padding = new System.Windows.Forms.Padding(3);
-            this.EditorSettingTab.Size = new System.Drawing.Size(675, 468);
+            this.EditorSettingTab.Size = new System.Drawing.Size(675, 471);
             this.EditorSettingTab.TabIndex = 3;
             this.EditorSettingTab.Text = "エディタの設定";
             this.EditorSettingTab.UseVisualStyleBackColor = true;
@@ -840,7 +852,6 @@
         private System.Windows.Forms.CheckBox previewCheckBox;
         private System.Windows.Forms.CheckBox ignoreErrorCheckBox;
         private System.Windows.Forms.GroupBox groupBox4;
-        private System.Windows.Forms.LinkLabel imageMagickLinkLabel;
         private System.Windows.Forms.CheckBox useMagickCheckBox;
         private System.Windows.Forms.GroupBox groupBox3;
         private System.Windows.Forms.RadioButton radioButtonpx;
@@ -860,5 +871,7 @@
         private System.Windows.Forms.Label label13;
         private System.Windows.Forms.Label label14;
         private System.Windows.Forms.Label label15;
+        private System.Windows.Forms.CheckBox GSUseepswriteCheckButton;
+        private System.Windows.Forms.LinkLabel imageMagickLinkLabel;
     }
 }

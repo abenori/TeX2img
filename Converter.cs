@@ -127,8 +127,24 @@ namespace TeX2img {
             try {
                 printCommandLine();
                 proc_.Start();
+                while(true) {
+                    // 10秒待つ
+                    proc_.WaitForExit(10000);
+                    if(proc_.HasExited) break;
+                    else {
+                        if(MessageBox.Show(
+                            "TeX ソースのコンパイルに時間がかかっているようです．\n" +
+                            "フリーズしている可能性もありますが，このまま実行を続けますか？",
+                            "TeX2img",
+                            MessageBoxButtons.YesNo) == DialogResult.Yes) {
+                            continue;
+                        } else {
+                            proc_.Kill();
+                            break;
+                        }
+                    }
+                }
                 controller_.appendOutput(proc_.StandardOutput.ReadToEnd());
-                proc_.WaitForExit();
             }
             catch(Win32Exception) {
                 controller_.showPathError("platex.exe", "TeX ディストリビューション");
@@ -161,15 +177,33 @@ namespace TeX2img {
             try {
                 printCommandLine();
                 proc_.Start();
+                while(true) {
+                    // 10秒待つ
+                    proc_.WaitForExit(10000);
+                    if(proc_.HasExited) break;
+                    else {
+                        if(MessageBox.Show(
+                            "dvi から pdf への変換に時間がかかっているようです．\n" +
+                            "フリーズしている可能性もありますが，このまま実行を続けますか？",
+                            "TeX2img",
+                            MessageBoxButtons.YesNo) == DialogResult.Yes) {
+                            continue;
+                        } else {
+                            proc_.Kill();
+                            break;
+                        }
+                    }
+                }
                 controller_.appendOutput(proc_.StandardOutput.ReadToEnd());
-                proc_.WaitForExit();
+                controller_.appendOutput(proc_.StandardError.ReadToEnd());
+                controller_.appendOutput("\r\n\r\n");
             }
             catch(Win32Exception) {
                 controller_.showPathError("dvipdfmx.exe", "TeX ディストリビューション");
                 return false;
             }
             if(proc_.ExitCode != 0 || !File.Exists(baseName + ".pdf")) {
-                controller_.appendOutput(proc_.StandardError.ReadToEnd());
+                //controller_.appendOutput(proc_.StandardError.ReadToEnd());
                 controller_.showPathError("dvipdfmx.exe", "TeX ディストリビューション");
                 return false;
             }
@@ -179,19 +213,20 @@ namespace TeX2img {
         private bool pdf2eps(string inputFileName, string outputFileName,int resolution) {
             string arg;
             proc_.StartInfo.FileName = setProcStartInfo(SettingData.GsPath, out arg);
-            proc_.StartInfo.Arguments = arg + "-q -sDEVICE=epswrite -sOutputFile=\"" + outputFileName + "\" -dNOPAUSE -dBATCH -r" + resolution + " \"" + inputFileName + "\"";
+            proc_.StartInfo.Arguments = arg + "-q -sDEVICE=" + SettingData.GsDevice + " -sOutputFile=\"" + outputFileName + "\" -dNOPAUSE -dBATCH -r" + resolution + " \"" + inputFileName + "\"";
 
             try {
                 printCommandLine();
                 proc_.Start();
                 proc_.WaitForExit();
+                controller_.appendOutput(proc_.StandardOutput.ReadToEnd());
+                controller_.appendOutput("\r\n");
             }
             catch(Win32Exception) {
                 controller_.showPathError(Path.GetFileName(SettingData.GsPath), "Ghostscript ");
                 return false;
             }
             if(proc_.ExitCode != 0) {
-                controller_.appendOutput(proc_.StandardOutput.ReadToEnd());
                 controller_.appendOutput(proc_.StandardError.ReadToEnd());
                 controller_.showGenerateError();
                 return false;
@@ -570,18 +605,6 @@ namespace TeX2img {
                 controller_.showIOError(outputFilePath);
             }
 
-        }
-
-        public static string guessgsPath() {
-            string gs = Converter.which("gswin32c.exe");
-            if(gs != "") return gs;
-            gs = Converter.which("gswin64c.exe");
-            if(gs != "") return gs;
-            string platex = which("platex.exe");
-            if(platex == "") return "";
-            gs = System.IO.Path.GetDirectoryName(platex) + "\\rungs.exe";
-            if(System.IO.File.Exists(gs)) return gs;
-            else return "";
         }
 
         private string getImageMagickPath() {

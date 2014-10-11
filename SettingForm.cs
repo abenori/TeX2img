@@ -16,6 +16,7 @@ namespace TeX2img {
             public string PlatexPath { get; set; }
             public string DvipdfmxPath { get; set; }
             public string GsPath { get; set; }
+            public string GsDevice { get; set; }
             public int ResolutionScale { get; set; }
             public bool UseMagickFlag { get; set; }
             public bool TransparentPngFlag { get; set; }
@@ -70,6 +71,7 @@ namespace TeX2img {
                 SettingTabIndex = 0;
                 YohakuUnitBP = false;
                 Encode = "_sjis";
+                GsDevice = "eps2write";
 
                 EditorFontColor = new FontColorCollection();
             }
@@ -78,6 +80,7 @@ namespace TeX2img {
                 PlatexPath = (string)s.PlatexPath.Clone();
                 DvipdfmxPath = (string)s.DvipdfmxPath.Clone();
                 GsPath = (string)s.GsPath.Clone();
+                GsDevice = (string) s.GsDevice.Clone();
                 ResolutionScale = s.ResolutionScale;
                 UseMagickFlag = s.UseMagickFlag;
                 TransparentPngFlag = s.TransparentPngFlag;
@@ -105,6 +108,7 @@ namespace TeX2img {
                 PlatexPath = Properties.Settings.Default.platexPath;
                 DvipdfmxPath = Properties.Settings.Default.dvipdfmxPath;
                 GsPath = Properties.Settings.Default.gsPath;
+                GsDevice = Properties.Settings.Default.gsDevice;
                 Encode = Properties.Settings.Default.encode;
 
                 TransparentPngFlag = Properties.Settings.Default.transparentPngFlag;
@@ -139,6 +143,7 @@ namespace TeX2img {
                 Properties.Settings.Default.platexPath = PlatexPath;
                 Properties.Settings.Default.dvipdfmxPath = DvipdfmxPath;
                 Properties.Settings.Default.gsPath = GsPath;
+                Properties.Settings.Default.gsDevice = GsDevice;
                 Properties.Settings.Default.encode = Encode;
 
                 Properties.Settings.Default.resolutionScale = ResolutionScale;
@@ -228,6 +233,7 @@ namespace TeX2img {
             dvipdfmxTextBox.Text = SettingData.DvipdfmxPath;
             gsTextBox.Text = SettingData.GsPath;
             encodeComboBox.SelectedValue = SettingData.Encode;
+            GSUseepswriteCheckButton.Checked = (SettingData.GsDevice == "epswrite");
 
             resolutionScaleUpDown.Value = SettingData.ResolutionScale;
             leftMarginUpDown.Value = SettingData.LeftMargin;
@@ -248,9 +254,7 @@ namespace TeX2img {
             radioButtonbp.Checked = SettingData.YohakuUnitBP;
             radioButtonpx.Checked = !SettingData.YohakuUnitBP;
 
-            FontDataText.Text = SettingData.EditorFont.Name + " " + SettingData.EditorFont.Size + " pt" +
-                (SettingData.EditorFont.Bold ? " 太字" : "") +
-                (SettingData.EditorFont.Italic ? " 斜体" : "");
+            FontDataText.Text = GetFontString(SettingData.EditorFont);
         }
 
         private void platexBrowseButton_Click(object sender, EventArgs e) {
@@ -293,6 +297,7 @@ namespace TeX2img {
             SettingData.PlatexPath = platexTextBox.Text;
             SettingData.DvipdfmxPath = dvipdfmxTextBox.Text;
             SettingData.GsPath = gsTextBox.Text;
+            SettingData.GsDevice = GSUseepswriteCheckButton.Checked ? "epswrite" : "eps2write";
             SettingData.Encode = (string)encodeComboBox.SelectedValue;
 
             SettingData.ResolutionScale = (int) (resolutionScaleUpDown.Value);
@@ -336,10 +341,15 @@ namespace TeX2img {
             fd.ShowEffects = false;
             if(fd.ShowDialog() != DialogResult.Cancel) {
                 SettingData.EditorFont = fd.Font;
-                FontDataText.Text = SettingData.EditorFont.Name + " " + SettingData.EditorFont.Size + " pt" +
-                    (SettingData.EditorFont.Bold ? " 太字" : "") +
-                    (SettingData.EditorFont.Italic ? " 斜体" : "");
+                FontDataText.Text = GetFontString(SettingData.EditorFont);
             }
+        }
+
+        string GetFontString(Font f) {
+            int fontsize = (int) f.Size;
+            if(f.Size - fontsize > 0.5) ++fontsize;
+
+            return f.Name + " " + fontsize + " pt" + (f.Bold ? " 太字" : "") + (f.Italic ? " 斜体" : "");
         }
 
         private void FontColorListView_SelectedIndexChanged(object sender, EventArgs e) {
