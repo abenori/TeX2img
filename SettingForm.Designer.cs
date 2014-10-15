@@ -38,7 +38,8 @@
             System.Windows.Forms.ListViewItem listViewItem8 = new System.Windows.Forms.ListViewItem("対応する括弧");
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SettingForm));
             this.SettingTab = new System.Windows.Forms.TabControl();
-            this.PathSettingTab = new System.Windows.Forms.TabPage();
+            this.BasicSettingTab = new System.Windows.Forms.TabPage();
+            this.UseLowResolutionCheckBox = new System.Windows.Forms.CheckBox();
             this.GSUseepswriteCheckButton = new System.Windows.Forms.CheckBox();
             this.encodeComboBox = new System.Windows.Forms.ComboBox();
             this.label10 = new System.Windows.Forms.Label();
@@ -96,7 +97,7 @@
             this.dvipdfmxOpenFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.gsOpenFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.SettingTab.SuspendLayout();
-            this.PathSettingTab.SuspendLayout();
+            this.BasicSettingTab.SuspendLayout();
             this.OutputImgSettingTab.SuspendLayout();
             this.groupBox4.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -117,7 +118,7 @@
             this.SettingTab.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.SettingTab.Controls.Add(this.PathSettingTab);
+            this.SettingTab.Controls.Add(this.BasicSettingTab);
             this.SettingTab.Controls.Add(this.OutputImgSettingTab);
             this.SettingTab.Controls.Add(this.AfterCompilingTab);
             this.SettingTab.Controls.Add(this.EditorSettingTab);
@@ -128,29 +129,40 @@
             this.SettingTab.Size = new System.Drawing.Size(683, 503);
             this.SettingTab.TabIndex = 1;
             // 
-            // PathSettingTab
+            // BasicSettingTab
             // 
-            this.PathSettingTab.Controls.Add(this.GSUseepswriteCheckButton);
-            this.PathSettingTab.Controls.Add(this.encodeComboBox);
-            this.PathSettingTab.Controls.Add(this.label10);
-            this.PathSettingTab.Controls.Add(this.ignoreErrorCheckBox);
-            this.PathSettingTab.Controls.Add(this.gsBrowseButton);
-            this.PathSettingTab.Controls.Add(this.gsTextBox);
-            this.PathSettingTab.Controls.Add(this.label3);
-            this.PathSettingTab.Controls.Add(this.dvipdfmxBrowseButton);
-            this.PathSettingTab.Controls.Add(this.dvipdfmxTextBox);
-            this.PathSettingTab.Controls.Add(this.label2);
-            this.PathSettingTab.Controls.Add(this.platexBrowseButton);
-            this.PathSettingTab.Controls.Add(this.platexTextBox);
-            this.PathSettingTab.Controls.Add(this.label1);
-            this.PathSettingTab.Location = new System.Drawing.Point(4, 28);
-            this.PathSettingTab.Margin = new System.Windows.Forms.Padding(5, 4, 5, 4);
-            this.PathSettingTab.Name = "PathSettingTab";
-            this.PathSettingTab.Padding = new System.Windows.Forms.Padding(5, 4, 5, 4);
-            this.PathSettingTab.Size = new System.Drawing.Size(675, 471);
-            this.PathSettingTab.TabIndex = 0;
-            this.PathSettingTab.Text = "パスの設定";
-            this.PathSettingTab.UseVisualStyleBackColor = true;
+            this.BasicSettingTab.Controls.Add(this.UseLowResolutionCheckBox);
+            this.BasicSettingTab.Controls.Add(this.GSUseepswriteCheckButton);
+            this.BasicSettingTab.Controls.Add(this.encodeComboBox);
+            this.BasicSettingTab.Controls.Add(this.label10);
+            this.BasicSettingTab.Controls.Add(this.ignoreErrorCheckBox);
+            this.BasicSettingTab.Controls.Add(this.gsBrowseButton);
+            this.BasicSettingTab.Controls.Add(this.gsTextBox);
+            this.BasicSettingTab.Controls.Add(this.label3);
+            this.BasicSettingTab.Controls.Add(this.dvipdfmxBrowseButton);
+            this.BasicSettingTab.Controls.Add(this.dvipdfmxTextBox);
+            this.BasicSettingTab.Controls.Add(this.label2);
+            this.BasicSettingTab.Controls.Add(this.platexBrowseButton);
+            this.BasicSettingTab.Controls.Add(this.platexTextBox);
+            this.BasicSettingTab.Controls.Add(this.label1);
+            this.BasicSettingTab.Location = new System.Drawing.Point(4, 28);
+            this.BasicSettingTab.Margin = new System.Windows.Forms.Padding(5, 4, 5, 4);
+            this.BasicSettingTab.Name = "BasicSettingTab";
+            this.BasicSettingTab.Padding = new System.Windows.Forms.Padding(5, 4, 5, 4);
+            this.BasicSettingTab.Size = new System.Drawing.Size(675, 471);
+            this.BasicSettingTab.TabIndex = 0;
+            this.BasicSettingTab.Text = "基本設定";
+            this.BasicSettingTab.UseVisualStyleBackColor = true;
+            // 
+            // UseLowResolutionCheckBox
+            // 
+            this.UseLowResolutionCheckBox.AutoSize = true;
+            this.UseLowResolutionCheckBox.Location = new System.Drawing.Point(17, 191);
+            this.UseLowResolutionCheckBox.Name = "UseLowResolutionCheckBox";
+            this.UseLowResolutionCheckBox.Size = new System.Drawing.Size(215, 22);
+            this.UseLowResolutionCheckBox.TabIndex = 22;
+            this.UseLowResolutionCheckBox.Text = "低解像度での処理を行う";
+            this.UseLowResolutionCheckBox.UseVisualStyleBackColor = true;
             // 
             // GSUseepswriteCheckButton
             // 
@@ -166,7 +178,7 @@
             // 
             this.encodeComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.encodeComboBox.FormattingEnabled = true;
-            this.encodeComboBox.Location = new System.Drawing.Point(120, 212);
+            this.encodeComboBox.Location = new System.Drawing.Point(120, 235);
             this.encodeComboBox.Name = "encodeComboBox";
             this.encodeComboBox.Size = new System.Drawing.Size(419, 26);
             this.encodeComboBox.TabIndex = 20;
@@ -174,7 +186,7 @@
             // label10
             // 
             this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(14, 217);
+            this.label10.Location = new System.Drawing.Point(14, 240);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(84, 18);
             this.label10.TabIndex = 19;
@@ -787,8 +799,8 @@
             this.Name = "SettingForm";
             this.Text = "オプション";
             this.SettingTab.ResumeLayout(false);
-            this.PathSettingTab.ResumeLayout(false);
-            this.PathSettingTab.PerformLayout();
+            this.BasicSettingTab.ResumeLayout(false);
+            this.BasicSettingTab.PerformLayout();
             this.OutputImgSettingTab.ResumeLayout(false);
             this.groupBox4.ResumeLayout(false);
             this.groupBox4.PerformLayout();
@@ -816,7 +828,7 @@
         #endregion
 
         private System.Windows.Forms.TabControl SettingTab;
-        private System.Windows.Forms.TabPage PathSettingTab;
+        private System.Windows.Forms.TabPage BasicSettingTab;
         private System.Windows.Forms.TabPage OutputImgSettingTab;
         private System.Windows.Forms.TabPage AfterCompilingTab;
         private System.Windows.Forms.Button OKButton;
@@ -873,5 +885,6 @@
         private System.Windows.Forms.Label label15;
         private System.Windows.Forms.CheckBox GSUseepswriteCheckButton;
         private System.Windows.Forms.LinkLabel imageMagickLinkLabel;
+        private System.Windows.Forms.CheckBox UseLowResolutionCheckBox;
     }
 }

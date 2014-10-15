@@ -33,12 +33,18 @@ namespace TeX2img {
         SettingForm.Settings SettingData;
 
         IOutputController controller_;
-        Process proc_;
-        const int epsResolution_ = 20016;
+        Process proc_ = new Process();
+        int epsResolution_ = 20016;
 
         public Converter(SettingForm.Settings set,IOutputController controller) {
             SettingData = set;
             controller_ = controller;
+            proc_.OutputDataReceived += proc_OutputDataReceived;
+        }
+
+        void proc_OutputDataReceived(object sender, DataReceivedEventArgs e) {
+            controller_.appendOutput(e.Data);
+            controller_.scrollOutputTextBoxToEnd();
         }
 
         public bool CheckFormat(string outputFilePath) {
@@ -108,6 +114,7 @@ namespace TeX2img {
 
         private void printCommandLine() {
             controller_.appendOutput(proc_.StartInfo.WorkingDirectory + ">\"" + proc_.StartInfo.FileName + "\" " + proc_.StartInfo.Arguments + "\r\n");
+            controller_.scrollOutputTextBoxToEnd();
         }
 
         private bool tex2dvi(string fileName) {
@@ -127,34 +134,15 @@ namespace TeX2img {
             try {
                 printCommandLine();
                 proc_.Start();
-                while(true) {
-                    // 10秒待つ
-                    proc_.WaitForExit(10000);
-                    if(proc_.HasExited) break;
-                    else {
-                        if(MessageBox.Show(
-                            "TeX ソースのコンパイルに時間がかかっているようです．\n" +
-                            "フリーズしている可能性もありますが，このまま実行を続けますか？",
-                            "TeX2img",
-                            MessageBoxButtons.YesNo) == DialogResult.Yes) {
-                            continue;
-                        } else {
-                            proc_.Kill();
-                            break;
-                        }
-                    }
-                }
-                controller_.appendOutput(proc_.StandardOutput.ReadToEnd());
+                ReadOutputs("TeX ソースのコンパイル");
             }
             catch(Win32Exception) {
                 controller_.showPathError("platex.exe", "TeX ディストリビューション");
                 return false;
             }
 
-            controller_.appendOutput("\r\n\r\n");
 
             if((!SettingData.IgnoreErrorFlag && proc_.ExitCode != 0) || !File.Exists(baseName + ".dvi")) {
-                controller_.appendOutput(proc_.StandardError.ReadToEnd());
                 controller_.showGenerateError();
                 return false;
             }
@@ -177,34 +165,14 @@ namespace TeX2img {
             try {
                 printCommandLine();
                 proc_.Start();
-                while(true) {
-                    // 10秒待つ
-                    proc_.WaitForExit(10000);
-                    if(proc_.HasExited) break;
-                    else {
-                        if(MessageBox.Show(
-                            "dvi から pdf への変換に時間がかかっているようです．\n" +
-                            "フリーズしている可能性もありますが，このまま実行を続けますか？",
-                            "TeX2img",
-                            MessageBoxButtons.YesNo) == DialogResult.Yes) {
-                            continue;
-                        } else {
-                            proc_.Kill();
-                            break;
-                        }
-                    }
-                }
-                controller_.appendOutput(proc_.StandardOutput.ReadToEnd());
-                controller_.appendOutput(proc_.StandardError.ReadToEnd());
-                controller_.appendOutput("\r\n\r\n");
+                ReadOutputs("DVI から PDF への変換");
             }
             catch(Win32Exception) {
                 controller_.showPathError("dvipdfmx.exe", "TeX ディストリビューション");
                 return false;
             }
             if(proc_.ExitCode != 0 || !File.Exists(baseName + ".pdf")) {
-                //controller_.appendOutput(proc_.StandardError.ReadToEnd());
-                controller_.showPathError("dvipdfmx.exe", "TeX ディストリビューション");
+                controller_.showGenerateError();
                 return false;
             }
             return true;
@@ -213,23 +181,25 @@ namespace TeX2img {
         private bool pdf2eps(string inputFileName, string outputFileName,int resolution) {
             string arg;
             proc_.StartInfo.FileName = setProcStartInfo(SettingData.GsPath, out arg);
-            proc_.StartInfo.Arguments = arg + "-q -sDEVICE=" + SettingData.GsDevice + " -sOutputFile=\"" + outputFileName + "\" -dNOPAUSE -dBATCH -r" + resolution + " \"" + inputFileName + "\"";
+            proc_.StartInfo.Arguments = arg + "-q -sDEVICE=" + SettingData.GsDevice;
+            if(SettingData.GsDevice == "eps2write")proc_.StartInfo.Arguments += " -dNoOutputFonts";
+			proc_.StartInfo.Arguments += " -sOutputFile=\"" + outputFileName + "\" -dNOPAUSE -dBATCH -r" + resolution + " \"" + inputFileName + "\"";
 
             try {
                 printCommandLine();
                 proc_.Start();
-                proc_.WaitForExit();
-                controller_.appendOutput(proc_.StandardOutput.ReadToEnd());
-                controller_.appendOutput("\r\n");
+                ReadOutputs("PDF から EPS への変換");
             }
             catch(Win32Exception) {
                 controller_.showPathError(Path.GetFileName(SettingData.GsPath), "Ghostscript ");
                 return false;
             }
             if(proc_.ExitCode != 0) {
-                controller_.appendOutput(proc_.StandardError.ReadToEnd());
-                controller_.showGenerateError();
-                return false;
+                string outputfiletest = outputFileName.Replace("%d", "1");
+                if(!File.Exists(outputfiletest)) {
+                    controller_.showGenerateError();
+                    return false;
+                }
             }
 
             return true;
@@ -239,41 +209,63 @@ namespace TeX2img {
         private void enlargeBB(string inputEpsFileName) {
             Regex regexBB = new Regex(@"^\%\%(HiRes|)BoundingBox\: ([\d\.]+) ([\d\.]+) ([\d\.]+) ([\d\.]+)$");
             
-            decimal leftbottom_x, leftbottom_y, righttop_x, righttop_y;
-            List<String> lines = new List<string>();
+            FileStream fs = new FileStream(inputEpsFileName, FileMode.Open, FileAccess.Read);
+            if(fs.CanRead){
+                byte[] inbuf = new byte[fs.Length];
+                byte[] outbuf = new byte[fs.Length + 200];
+                byte[] tmpbuf;
+                byte[] lbbuf = new byte[2];
+                fs.Read(inbuf, 0, (int)fs.Length);
 
-            using(StreamReader sr = new StreamReader(inputEpsFileName, Encoding.GetEncoding("shift_jis"))) {
-                try {
-                    string line;
-                    while((line = sr.ReadLine()) != null) {
+                // 現在読んでいるinufの「行」の先頭
+                int inp = 0;
+                // inbufの現在読んでいる場所
+                int q = 0;
+                // outbufに書き込んだ量
+                int outp = 0;
+                bool bbfound = false, hiresbbfound = false;
+                while(true) {
+                    if(q == inbuf.Length - 1 || inbuf[q] == '\r' || inbuf[q] == '\n') {
+                        tmpbuf = new byte[q - inp];
+                        System.Array.Copy(inbuf, inp, tmpbuf, 0, q - inp);
+                        string line = System.Text.Encoding.ASCII.GetString(tmpbuf);
                         Match match = regexBB.Match(line);
                         if(match.Success) {
-                            leftbottom_x = System.Convert.ToDecimal(match.Groups[2].ToString());
-                            leftbottom_y = System.Convert.ToDecimal(match.Groups[3].ToString());
-                            righttop_x = System.Convert.ToDecimal(match.Groups[4].ToString());
-                            righttop_y = System.Convert.ToDecimal(match.Groups[5].ToString());
+                            decimal leftbottom_x = System.Convert.ToDecimal(match.Groups[2].Value);
+                            decimal leftbottom_y = System.Convert.ToDecimal(match.Groups[3].Value);
+                            decimal righttop_x = System.Convert.ToDecimal(match.Groups[4].Value);
+                            decimal righttop_y = System.Convert.ToDecimal(match.Groups[5].Value);
                             string HiRes = match.Groups[1].Value;
-                            if(HiRes == "") lines.Add(String.Format("%%BoundingBox: {0} {1} {2} {3}", (int) (leftbottom_x - SettingData.LeftMargin), (int) (leftbottom_y - SettingData.BottomMargin), (int) (righttop_x + SettingData.RightMargin), (int) (righttop_y + SettingData.TopMargin)));
-                            else lines.Add(String.Format("%%HiResBoundingBox: {0} {1} {2} {3}", leftbottom_x - SettingData.LeftMargin, leftbottom_y - SettingData.BottomMargin, righttop_x + SettingData.RightMargin, righttop_y + SettingData.TopMargin));
-                            continue;
+                            if(HiRes == "") {
+                                bbfound = true;
+                                line = String.Format("%%BoundingBox: {0} {1} {2} {3}", (int) (leftbottom_x - SettingData.LeftMargin), (int) (leftbottom_y - SettingData.BottomMargin), (int) (righttop_x + SettingData.RightMargin), (int) (righttop_y + SettingData.TopMargin));
+                            } else {
+                                hiresbbfound = true;
+                                line = String.Format("%%HiResBoundingBox: {0} {1} {2} {3}", leftbottom_x - SettingData.LeftMargin, leftbottom_y - SettingData.BottomMargin, righttop_x + SettingData.RightMargin, righttop_y + SettingData.TopMargin);
+                            }
+                            tmpbuf = System.Text.Encoding.ASCII.GetBytes(line);
+                            System.Array.Copy(tmpbuf, 0, outbuf, outp, tmpbuf.Length);
+                            outp += tmpbuf.Length;
+                            if(bbfound && hiresbbfound) {
+                                System.Array.Copy(inbuf, q, outbuf, outp, inbuf.Length - q);
+                                outp += inbuf.Length - q;
+                                break;
+                            }
+                        } else {
+                            System.Array.Copy(tmpbuf, 0, outbuf, outp, q - inp);
+                            outp += q - inp;
                         }
-
-                        lines.Add(line.TrimEnd('\r', '\n'));
-                    }
+                        inp = q;
+                        while(q < inbuf.Length - 1 && (inbuf[q] == '\r' || inbuf[q] == '\n')) ++q;
+                        System.Array.Copy(inbuf, inp, outbuf, outp, q - inp);
+                        outp += q - inp;
+                        inp = q;
+                        if(q == inbuf.Length - 1) break;
+                    } else ++q;
                 }
-                finally {
-                    if(sr != null) sr.Close();
-                }
-            }
-
-            using(StreamWriter sw = new StreamWriter(inputEpsFileName, false, Encoding.GetEncoding("shift_jis"))) {
-                try {
-                    foreach(string line in lines) {
-                        sw.WriteLine(line);
-                    }
-                }
-                finally {
-                    if(sw != null) sw.Close();
+                fs.Dispose();
+                using(FileStream wfs = new System.IO.FileStream(inputEpsFileName, FileMode.Open, FileAccess.Write)) {
+                    wfs.Write(outbuf, 0, outp);
                 }
             }
         }
@@ -292,10 +284,10 @@ namespace TeX2img {
                     while((line = sr.ReadLine()) != null) {
                         Match match = regex.Match(line);
                         if(match.Success) {
-                            leftbottom_x = System.Convert.ToDecimal(match.Groups[1].ToString());
-                            leftbottom_y = System.Convert.ToDecimal(match.Groups[2].ToString());
-                            righttop_x = System.Convert.ToDecimal(match.Groups[3].ToString());
-                            righttop_y = System.Convert.ToDecimal(match.Groups[4].ToString());
+                            leftbottom_x = System.Convert.ToDecimal(match.Groups[1].Value);
+                            leftbottom_y = System.Convert.ToDecimal(match.Groups[2].Value);
+                            righttop_x = System.Convert.ToDecimal(match.Groups[3].Value);
+                            righttop_y = System.Convert.ToDecimal(match.Groups[4].Value);
                             break;
                         }
                     }
@@ -306,31 +298,6 @@ namespace TeX2img {
                     }
                 }
             }
-        }
-
-
-        private bool pdfcrop(string inputFileName, string outputFileName, bool addMargine) {
-            proc_.StartInfo.FileName = Converter.which("pdfcrop.exe");
-            if(proc_.StartInfo.FileName == "") return false;
-            if(addMargine) proc_.StartInfo.Arguments = String.Format("--margins \"{0} {1} {2} {3}\" ", SettingData.LeftMargin, SettingData.TopMargin, SettingData.RightMargin, SettingData.BottomMargin);
-            else proc_.StartInfo.Arguments = "";
-            proc_.StartInfo.Arguments += inputFileName + " " + outputFileName;
-            try {
-                printCommandLine();
-                proc_.Start();
-                proc_.WaitForExit();
-                if(proc_.ExitCode == 0) return true;
-                else {
-                    controller_.appendOutput(proc_.StandardOutput.ReadToEnd());
-                    controller_.appendOutput(proc_.StandardError.ReadToEnd());
-                    controller_.showGenerateError();
-                    return false;
-                }
-            }
-            catch(Win32Exception) {
-                controller_.showPathError("pdfcrop.exe", "pdfcrop.exe");
-            }
-            return false;
         }
 
         private bool eps2img(string inputFileName, string outputFileName) {
@@ -348,7 +315,7 @@ namespace TeX2img {
                     proc_.StartInfo.Arguments = "-density " + (72 * SettingData.ResolutionScale) + "x" + (72 * SettingData.ResolutionScale) + "% " + inputEpsFileName + " " + outputFileName;
                     printCommandLine();
                     proc_.Start();
-                    proc_.WaitForExit();
+                    ReadOutputs("Imagemagick の実行");
                     int margintimes = SettingData.YohakuUnitBP ? SettingData.ResolutionScale : 1;
 
                     if(SettingData.TopMargin > 0) {
@@ -356,35 +323,32 @@ namespace TeX2img {
                         proc_.StartInfo.Arguments = "-splice 0x" + SettingData.TopMargin * margintimes + " -gravity north " + outputFileName + " " + outputFileName;
                         printCommandLine();
                         proc_.Start();
-                        proc_.WaitForExit();
+                        ReadOutputs("Imagemagick の実行");
                     }
                     if(SettingData.BottomMargin > 0) {
-//                        proc_.StartInfo.Arguments = "-splice 0x" + bottomMargin_ + " -gravity south " + outputFileName + " " + outputFileName;
                         proc_.StartInfo.Arguments = "-splice 0x" + SettingData.BottomMargin * margintimes + " -gravity south " + outputFileName + " " + outputFileName;
                         printCommandLine();
                         proc_.Start();
-                        proc_.WaitForExit();
+                        ReadOutputs("Imagemagick の実行");
                     }
                     if(SettingData.RightMargin > 0) {
-//                        proc_.StartInfo.Arguments = "-splice " + rightMargin_ + "x0 -gravity east " + outputFileName + " " + outputFileName;
                         proc_.StartInfo.Arguments = "-splice " + SettingData.RightMargin * margintimes + "x0 -gravity east " + outputFileName + " " + outputFileName;
                         printCommandLine();
                         proc_.Start();
-                        proc_.WaitForExit();
+                        ReadOutputs("Imagemagick の実行");
                     }
                     if(SettingData.LeftMargin > 0) {
-//                        proc_.StartInfo.Arguments = "-splice " + leftMargin_ + "x0 -gravity west " + outputFileName + " " + outputFileName;
                         proc_.StartInfo.Arguments = "-splice " + SettingData.LeftMargin * margintimes + "x0 -gravity west " + outputFileName + " " + outputFileName;
                         printCommandLine();
                         proc_.Start();
-                        proc_.WaitForExit();
+                        ReadOutputs("Imagemagick の実行");
                     }
                     if(extension == ".png") {
                         if(SettingData.TransparentPngFlag) proc_.StartInfo.Arguments = "-transparent white " + outputFileName + " " + outputFileName;
                         else proc_.StartInfo.Arguments = "-background white -alpha off " + outputFileName + " " + outputFileName;
                         printCommandLine();
                         proc_.Start();
-                        proc_.WaitForExit();
+                        ReadOutputs("Imagemagick の実行");
                     }
                 }
                 catch(Win32Exception) {
@@ -444,7 +408,7 @@ namespace TeX2img {
                 try {
                     printCommandLine();
                     proc_.Start();
-                    proc_.WaitForExit();
+                    ReadOutputs("Ghostscript の実行");
                 }
                 catch(Win32Exception) {
                     controller_.showPathError(Path.GetFileName(proc_.StartInfo.FileName), "Ghostscript ");
@@ -457,37 +421,14 @@ namespace TeX2img {
         }
 
         public bool eps2pdf(string inputFileName, string outputFileName) {
-            /*
-            if(useMagickFlag_) {
-                proc_.StartInfo.FileName = getImageMagickPath();
-                if(proc_.StartInfo.FileName == "") return false;
-                proc_.StartInfo.Arguments = "\"" + inputFileName + "\" \"" + outputFileName + "\"";
-                try {
-                    printCommandLine();
-                    proc_.Start();
-                    proc_.WaitForExit();
-                    if(proc_.ExitCode == 0) return true;
-                    else {
-                        controller_.appendOutput(proc_.StandardOutput.ReadToEnd());
-                        controller_.appendOutput(proc_.StandardError.ReadToEnd());
-                        controller_.showGenerateError();
-                        return false;
-                    }
-                }
-                catch(Win32Exception) {
-                    controller_.showImageMagickError();
-                    return false;
-                }
-            } else {
-                */
-            // Ghostscript を使った PDF 生成
             string arg;
             proc_.StartInfo.FileName = setProcStartInfo(SettingData.GsPath, out arg);
             proc_.StartInfo.Arguments = arg + "-q -sDEVICE=pdfwrite -dNOPAUSE -dBATCH -dEPSCrop -sOutputFile=\"" + outputFileName + "\" \"" + inputFileName + "\"";
             try {
                 printCommandLine();
                 proc_.Start();
-                proc_.WaitForExit();
+                ReadOutputs("Imagemagick の実行");
+
             }
             catch(Win32Exception) {
                 controller_.showPathError(Path.GetFileName(proc_.StartInfo.FileName), "Ghostscript ");
@@ -497,7 +438,6 @@ namespace TeX2img {
                 controller_.showPathError(Path.GetFileName(proc_.StartInfo.FileName), "Ghostscript ");
                 return false;
             } else return true;
-            //            }
         }
 
   
@@ -509,7 +449,6 @@ namespace TeX2img {
 
             string tmpFileBaseName = Path.GetFileNameWithoutExtension(inputTeXFilePath);
 
-            proc_ = new Process();
             proc_.StartInfo.WorkingDirectory = tmpDir;
             proc_.StartInfo.UseShellExecute = false;
             proc_.StartInfo.CreateNoWindow = true;
@@ -543,12 +482,12 @@ namespace TeX2img {
             if(!tex2dvi(tmpFileBaseName + ".tex") || !dvi2pdf(tmpFileBaseName + ".dvi")) return;
 
             string tmpEpsFile;
-//            if(extension == ".pdf") tmpEpsFile = tmpFileBaseName + ".eps";
-//            else tmpEpsFile = tmpFileBaseName + "-%d.eps";
             tmpEpsFile = tmpFileBaseName + "-%d.eps";
 
             // epsに変換する
             int resolution;
+            if(SettingData.UseLowResolution) epsResolution_ = 72 * SettingData.ResolutionScale;
+            else epsResolution_ = 20016;
             if(SettingData.UseMagickFlag || extension == ".eps" || extension == ".pdf") resolution = epsResolution_;
             else resolution = 72 * SettingData.ResolutionScale;
             if(!pdf2eps(tmpFileBaseName + ".pdf", tmpEpsFile,resolution)) return;
@@ -614,6 +553,37 @@ namespace TeX2img {
                 return "";
             } else return convertPath;
 
+        }
+
+        // Error -> 同期，Output -> 非同期
+        // でとりあえずデッドロックしなくなったのでこれでよしとする．
+        // 両方非同期で駄目な理由がわかりません……．
+        void ReadOutputs(string freezemsg) {
+            proc_.BeginOutputReadLine();
+            while(true) {
+                controller_.appendOutput(proc_.StandardError.ReadToEnd());
+	            controller_.scrollOutputTextBoxToEnd();
+                // 10秒待つ
+                proc_.WaitForExit(10000);
+                if(proc_.HasExited) break;
+                else {
+                    if(MessageBox.Show(
+                        freezemsg + "に時間がかかっているようです．\n" +
+                        "フリーズしている可能性もありますが，このまま実行を続けますか？",
+                        "TeX2img",
+                        MessageBoxButtons.YesNo) == DialogResult.Yes) {
+                        continue;
+                    } else {
+                        proc_.Kill();
+                        break;
+                    }
+                }
+            }
+            controller_.appendOutput(proc_.StandardError.ReadToEnd());
+            controller_.scrollOutputTextBoxToEnd();
+            proc_.CancelOutputRead();
+            controller_.appendOutput("\r\n");
+            controller_.scrollOutputTextBoxToEnd();
         }
 
     }

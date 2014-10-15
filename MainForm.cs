@@ -292,13 +292,8 @@ namespace TeX2img {
             if(output.InvokeRequired) {
                 this.Invoke(new scrollOutputTextBoxToEndDelegate(scrollOutputTextBoxToEnd));
             } else {
-                //output.SelectionLength = 0;
-                //output.Text += "";
-                //output.Select(output.Text.Length, 0);
                 output.SelectionStart = output.Text.Length;
                 output.ScrollToCaret();
-                //output.Focus();
-                //output.Refresh();
             }
         }
 

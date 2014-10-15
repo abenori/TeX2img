@@ -9,7 +9,8 @@ using System.IO;
 using System.Diagnostics;
 
 namespace TeX2img {
-    public partial class SettingForm : Form {
+    public partial class 
+        SettingForm : Form {
         MainForm mainForm;
         // 設定データ
         public class Settings {
@@ -17,6 +18,7 @@ namespace TeX2img {
             public string DvipdfmxPath { get; set; }
             public string GsPath { get; set; }
             public string GsDevice { get; set; }
+            public bool UseLowResolution { get; set; }
             public int ResolutionScale { get; set; }
             public bool UseMagickFlag { get; set; }
             public bool TransparentPngFlag { get; set; }
@@ -72,6 +74,7 @@ namespace TeX2img {
                 YohakuUnitBP = false;
                 Encode = "_sjis";
                 GsDevice = "eps2write";
+                UseLowResolution = false;
 
                 EditorFontColor = new FontColorCollection();
             }
@@ -81,6 +84,7 @@ namespace TeX2img {
                 DvipdfmxPath = (string)s.DvipdfmxPath.Clone();
                 GsPath = (string)s.GsPath.Clone();
                 GsDevice = (string) s.GsDevice.Clone();
+                UseLowResolution = s.UseLowResolution;
                 ResolutionScale = s.ResolutionScale;
                 UseMagickFlag = s.UseMagickFlag;
                 TransparentPngFlag = s.TransparentPngFlag;
@@ -109,6 +113,7 @@ namespace TeX2img {
                 DvipdfmxPath = Properties.Settings.Default.dvipdfmxPath;
                 GsPath = Properties.Settings.Default.gsPath;
                 GsDevice = Properties.Settings.Default.gsDevice;
+                UseLowResolution = Properties.Settings.Default.useLowResolution;
                 Encode = Properties.Settings.Default.encode;
 
                 TransparentPngFlag = Properties.Settings.Default.transparentPngFlag;
@@ -144,6 +149,7 @@ namespace TeX2img {
                 Properties.Settings.Default.dvipdfmxPath = DvipdfmxPath;
                 Properties.Settings.Default.gsPath = GsPath;
                 Properties.Settings.Default.gsDevice = GsDevice;
+                Properties.Settings.Default.useLowResolution = UseLowResolution;
                 Properties.Settings.Default.encode = Encode;
 
                 Properties.Settings.Default.resolutionScale = ResolutionScale;
@@ -234,6 +240,7 @@ namespace TeX2img {
             gsTextBox.Text = SettingData.GsPath;
             encodeComboBox.SelectedValue = SettingData.Encode;
             GSUseepswriteCheckButton.Checked = (SettingData.GsDevice == "epswrite");
+            UseLowResolutionCheckBox.Checked = SettingData.UseLowResolution;
 
             resolutionScaleUpDown.Value = SettingData.ResolutionScale;
             leftMarginUpDown.Value = SettingData.LeftMargin;
@@ -298,6 +305,7 @@ namespace TeX2img {
             SettingData.DvipdfmxPath = dvipdfmxTextBox.Text;
             SettingData.GsPath = gsTextBox.Text;
             SettingData.GsDevice = GSUseepswriteCheckButton.Checked ? "epswrite" : "eps2write";
+            SettingData.UseLowResolution = UseLowResolutionCheckBox.Checked;
             SettingData.Encode = (string)encodeComboBox.SelectedValue;
 
             SettingData.ResolutionScale = (int) (resolutionScaleUpDown.Value);

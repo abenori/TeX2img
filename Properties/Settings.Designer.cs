@@ -575,5 +575,29 @@ namespace TeX2img.Properties {
                 this["gsDevice"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool IsUpgraded {
+            get {
+                return ((bool)(this["IsUpgraded"]));
+            }
+            set {
+                this["IsUpgraded"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool useLowResolution {
+            get {
+                return ((bool)(this["useLowResolution"]));
+            }
+            set {
+                this["useLowResolution"] = value;
+            }
+        }
     }
 }
