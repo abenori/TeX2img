@@ -121,8 +121,8 @@ namespace TeX2img {
                         int major = int.Parse(m.Groups[1].Value);
                         int minor = int.Parse(m.Groups[2].Value);
                         //System.Diagnostics.Debug.WriteLine("major = " + major.ToString() + ", minor = " + minor.ToString());
-                        // 9.14以上ならばeps2write，そうでないならepwsrite
-                        if(major > 9 || (major == 9 && minor >= 14)) SettingData.GsDevice = "eps2write";
+                        // 9.15以上ならばeps2write，そうでないならepwsrite
+                        if(major > 9 || (major == 9 && minor >= 15)) SettingData.GsDevice = "eps2write";
                         else SettingData.GsDevice = "epswrite";
                     }
                     catch(FormatException) { }
@@ -379,13 +379,13 @@ namespace TeX2img {
                 using(StreamWriter sw = new StreamWriter(Path.Combine(tmpDir, tmpTeXFileName), false, encoding)) {
                     try {
                         sw.Write(myPreambleForm.PreambleTextBox.Text);
-                        sw.Write("\\begin{document}");
+                        sw.WriteLine("\\begin{document}");
                         sw.Write(sourceTextBox.Text);
-                        sw.Write("\\end{document}");
+                        sw.WriteLine("\\end{document}");
                     }
                     finally {
                         if(sw != null) {
-                            sw.Close();
+                            sw.Dispose();
                         }
                     }
                 }
@@ -409,10 +409,6 @@ namespace TeX2img {
             if(textBox == null) return;
             textBox.FontInfo = new Sgry.Azuki.FontInfo(SettingData.EditorFont);
             textBox.ColorScheme.ForeColor = SettingData.EditorFontColor["テキスト"].Font;
-            Color backColor = new Color();
-            if(textBox.Enabled) backColor = SettingData.EditorFontColor["テキスト"].Back;
-            else backColor = System.Drawing.SystemColors.ButtonFace;
-            textBox.ColorScheme.BackColor = backColor;
             textBox.ColorScheme.SetColor(Sgry.Azuki.CharClass.Normal, SettingData.EditorFontColor["テキスト"].Font, SettingData.EditorFontColor["テキスト"].Back);
             textBox.ColorScheme.SetColor(Sgry.Azuki.CharClass.Heading1, SettingData.EditorFontColor["テキスト"].Font, SettingData.EditorFontColor["テキスト"].Back);
             textBox.ColorScheme.SetColor(Sgry.Azuki.CharClass.Heading2, SettingData.EditorFontColor["テキスト"].Font, SettingData.EditorFontColor["テキスト"].Back);
@@ -428,6 +424,10 @@ namespace TeX2img {
             textBox.ColorScheme.EolColor = SettingData.EditorFontColor["改行，EOF"].Font;
             textBox.ColorScheme.MatchedBracketFore = SettingData.EditorFontColor["対応する括弧"].Font;
             textBox.ColorScheme.MatchedBracketBack = SettingData.EditorFontColor["対応する括弧"].Back;
+            Color backColor = new Color();
+            if(textBox.Enabled) backColor = SettingData.EditorFontColor["テキスト"].Back;
+            else backColor = System.Drawing.SystemColors.ButtonFace;
+            textBox.ColorScheme.BackColor = backColor;
         }
 
         #endregion

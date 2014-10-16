@@ -219,21 +219,21 @@
             // 
             this.gsTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.gsTextBox.Location = new System.Drawing.Point(120, 96);
+            this.gsTextBox.Location = new System.Drawing.Point(135, 96);
             this.gsTextBox.Margin = new System.Windows.Forms.Padding(5, 4, 5, 4);
             this.gsTextBox.Name = "gsTextBox";
-            this.gsTextBox.Size = new System.Drawing.Size(419, 25);
+            this.gsTextBox.Size = new System.Drawing.Size(404, 25);
             this.gsTextBox.TabIndex = 14;
             // 
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(12, 100);
+            this.label3.Location = new System.Drawing.Point(5, 99);
             this.label3.Margin = new System.Windows.Forms.Padding(5, 0, 5, 0);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(90, 18);
+            this.label3.Size = new System.Drawing.Size(108, 18);
             this.label3.TabIndex = 17;
-            this.label3.Text = "gswin32c ：";
+            this.label3.Text = "Ghostscript ：";
             // 
             // dvipdfmxBrowseButton
             // 
@@ -251,16 +251,16 @@
             // 
             this.dvipdfmxTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.dvipdfmxTextBox.Location = new System.Drawing.Point(120, 58);
+            this.dvipdfmxTextBox.Location = new System.Drawing.Point(135, 58);
             this.dvipdfmxTextBox.Margin = new System.Windows.Forms.Padding(5, 4, 5, 4);
             this.dvipdfmxTextBox.Name = "dvipdfmxTextBox";
-            this.dvipdfmxTextBox.Size = new System.Drawing.Size(419, 25);
+            this.dvipdfmxTextBox.Size = new System.Drawing.Size(404, 25);
             this.dvipdfmxTextBox.TabIndex = 12;
             // 
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(13, 63);
+            this.label2.Location = new System.Drawing.Point(25, 63);
             this.label2.Margin = new System.Windows.Forms.Padding(5, 0, 5, 0);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(88, 18);
@@ -283,16 +283,16 @@
             // 
             this.platexTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.platexTextBox.Location = new System.Drawing.Point(120, 21);
+            this.platexTextBox.Location = new System.Drawing.Point(135, 21);
             this.platexTextBox.Margin = new System.Windows.Forms.Padding(5, 4, 5, 4);
             this.platexTextBox.Name = "platexTextBox";
-            this.platexTextBox.Size = new System.Drawing.Size(419, 25);
+            this.platexTextBox.Size = new System.Drawing.Size(404, 25);
             this.platexTextBox.TabIndex = 9;
             // 
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(38, 26);
+            this.label1.Location = new System.Drawing.Point(46, 26);
             this.label1.Margin = new System.Windows.Forms.Padding(5, 0, 5, 0);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(67, 18);
@@ -519,7 +519,7 @@
             // 
             // resolutionScaleUpDown
             // 
-            this.resolutionScaleUpDown.Location = new System.Drawing.Point(391, 34);
+            this.resolutionScaleUpDown.Location = new System.Drawing.Point(206, 34);
             this.resolutionScaleUpDown.Margin = new System.Windows.Forms.Padding(5, 4, 5, 4);
             this.resolutionScaleUpDown.Minimum = new decimal(new int[] {
             1,
@@ -541,9 +541,9 @@
             this.label8.Location = new System.Drawing.Point(10, 38);
             this.label8.Margin = new System.Windows.Forms.Padding(5, 0, 5, 0);
             this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(348, 18);
+            this.label8.Size = new System.Drawing.Size(187, 18);
             this.label8.TabIndex = 0;
-            this.label8.Text = "解像度レベル（1～100 PNG / JPEG 用設定）：";
+            this.label8.Text = "解像度レベル（1～100）：";
             // 
             // AfterCompilingTab
             // 

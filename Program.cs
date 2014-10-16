@@ -25,6 +25,14 @@ namespace TeX2img {
 
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
+            /*
+            SettingForm.Settings SettingData = new SettingForm.Settings();
+            SettingData.LoadSetting();
+            Converter conv = new Converter(SettingData,new CUIOutput());
+            SettingData.DeleteTmpFileFlag = false;
+            conv.Convert(@"C:\Users\Abe_Noriyuki\Documents\mywrite\tex\test.tex", @"C:\Users\Abe_Noriyuki\Documents\mywrite\tex\test.pdf");
+            return;
+             */
             Application.Run(new MainForm());
         }
     }

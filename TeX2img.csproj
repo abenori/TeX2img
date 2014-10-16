@@ -70,6 +70,7 @@
       <DependentUpon>AboutDialog.cs</DependentUpon>
     </Compile>
     <Compile Include="Converter.cs" />
+    <Compile Include="CUIOutput.cs" />
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
     </Compile>

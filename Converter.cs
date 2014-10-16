@@ -39,6 +39,10 @@ namespace TeX2img {
         public Converter(SettingForm.Settings set,IOutputController controller) {
             SettingData = set;
             controller_ = controller;
+            proc_.StartInfo.UseShellExecute = false;
+            proc_.StartInfo.CreateNoWindow = true;
+            proc_.StartInfo.RedirectStandardOutput = true;
+            proc_.StartInfo.RedirectStandardError = true;
             proc_.OutputDataReceived += proc_OutputDataReceived;
         }
 
@@ -57,6 +61,9 @@ namespace TeX2img {
         }
 
         public void Convert(string inputTeXFilePath, string outputFilePath) {
+            proc_.StartInfo.WorkingDirectory = Path.GetDirectoryName(inputTeXFilePath);
+            Directory.SetCurrentDirectory(Path.GetDirectoryName(inputTeXFilePath));
+
             generate(inputTeXFilePath, outputFilePath);
 
             if(SettingData.DeleteTmpFileFlag) {
@@ -178,10 +185,48 @@ namespace TeX2img {
             return true;
         }
 
-        private bool pdf2eps(string inputFileName, string outputFileName,int resolution) {
+        int pdfpages(string pdfFile) {
+            // 標準入力を読まないとならないので，新しくProcessを作る．
+            using(Process proc = new Process()) {
+                proc.StartInfo = proc_.StartInfo;
+                proc.ErrorDataReceived += proc_OutputDataReceived;
+                string dummy;
+                proc.StartInfo.FileName = Path.GetDirectoryName(setProcStartInfo(SettingData.PlatexPath,out dummy)) + "\\pdfinfo.exe";
+                if(!File.Exists(proc.StartInfo.FileName)) proc.StartInfo.FileName = which("pdfinfo.exe");
+                if(!File.Exists(proc.StartInfo.FileName)) { 
+                    controller_.showPathError("pdfinfo.exe", "TeX ディストリビューション");
+                    return -1;
+                }
+                proc.StartInfo.Arguments = "\"" + pdfFile + "\"";
+                try {
+                    proc.Start();
+                    proc.BeginErrorReadLine();
+                    Regex reg = new Regex("^Pages:[ \t]*([0-9]+)");
+                    int page = -1;
+                    while(proc.StandardOutput.Peek() != -1) {
+                        string line = proc.StandardOutput.ReadLine();
+                        var m = reg.Match(line);
+                        if(m.Success) {
+                            page = Int32.Parse(m.Groups[1].Value);
+                            proc.StandardOutput.ReadToEnd();
+                            break;
+                        }
+                    }
+                    proc.WaitForExit();
+                    proc.CancelErrorRead();
+                    return page;
+                }
+                catch(Win32Exception) {
+                    controller_.showPathError("pdfinfo.exe", "TeX ディストリビューション");
+                    return -1;
+                }
+            }
+        }
+
+        private bool pdf2eps(string inputFileName, string outputFileName,int resolution,int page){
             string arg;
             proc_.StartInfo.FileName = setProcStartInfo(SettingData.GsPath, out arg);
-            proc_.StartInfo.Arguments = arg + "-q -sDEVICE=" + SettingData.GsDevice;
+            proc_.StartInfo.Arguments = arg + "-q -sDEVICE=" + SettingData.GsDevice + " -dFirstPage=" + page + " -dLastPage=" + page;
             if(SettingData.GsDevice == "eps2write")proc_.StartInfo.Arguments += " -dNoOutputFonts";
 			proc_.StartInfo.Arguments += " -sOutputFile=\"" + outputFileName + "\" -dNOPAUSE -dBATCH -r" + resolution + " \"" + inputFileName + "\"";
 
@@ -194,13 +239,11 @@ namespace TeX2img {
                 controller_.showPathError(Path.GetFileName(SettingData.GsPath), "Ghostscript ");
                 return false;
             }
-            if(proc_.ExitCode != 0) {
-                string outputfiletest = outputFileName.Replace("%d", "1");
-                if(!File.Exists(outputfiletest)) {
-                    controller_.showGenerateError();
-                    return false;
-                }
+            if(proc_.ExitCode != 0 || !File.Exists(outputFileName)) {
+                controller_.showGenerateError();
+                return false;
             }
+            
 
             return true;
         }
@@ -224,7 +267,7 @@ namespace TeX2img {
                 // outbufに書き込んだ量
                 int outp = 0;
                 bool bbfound = false, hiresbbfound = false;
-                while(true) {
+                while(q < inbuf.Length) {
                     if(q == inbuf.Length - 1 || inbuf[q] == '\r' || inbuf[q] == '\n') {
                         tmpbuf = new byte[q - inp];
                         System.Array.Copy(inbuf, inp, tmpbuf, 0, q - inp);
@@ -449,12 +492,6 @@ namespace TeX2img {
 
             string tmpFileBaseName = Path.GetFileNameWithoutExtension(inputTeXFilePath);
 
-            proc_.StartInfo.WorkingDirectory = tmpDir;
-            proc_.StartInfo.UseShellExecute = false;
-            proc_.StartInfo.CreateNoWindow = true;
-            proc_.StartInfo.RedirectStandardOutput = true;
-            proc_.StartInfo.RedirectStandardError = true;
-
             // ImageMagickのための準備
             if(SettingData.GsPath != "") {
                 try {
@@ -481,25 +518,23 @@ namespace TeX2img {
             // とりあえずPDFを作る
             if(!tex2dvi(tmpFileBaseName + ".tex") || !dvi2pdf(tmpFileBaseName + ".dvi")) return;
 
-            string tmpEpsFile;
-            tmpEpsFile = tmpFileBaseName + "-%d.eps";
-
+            
+            // ページ数を取得
+            int page = pdfpages(tmpFileBaseName + ".pdf");
+            if(page == -1) {
+                controller_.showGenerateError();
+                return;
+            }
             // epsに変換する
             int resolution;
             if(SettingData.UseLowResolution) epsResolution_ = 72 * SettingData.ResolutionScale;
             else epsResolution_ = 20016;
             if(SettingData.UseMagickFlag || extension == ".eps" || extension == ".pdf") resolution = epsResolution_;
             else resolution = 72 * SettingData.ResolutionScale;
-            if(!pdf2eps(tmpFileBaseName + ".pdf", tmpEpsFile,resolution)) return;
-            // 何枚できたか数える
-            int page = 1;
-            for( ; ; ++page) {
-                if(!File.Exists(tmpFileBaseName + "-" + (page + 1) + ".eps")) break;
+            for(int i = 1 ; i <= page ; ++i) {
+                if(!pdf2eps(tmpFileBaseName + ".pdf",tmpFileBaseName + "-" + i + ".eps",resolution,i))return;
             }
-            // 何故か一枚多くできるのよね
-            File.Delete(tmpFileBaseName + "-" + page + ".eps");
-            --page;
-            // そして変換
+            // そして最終的な変換
             bool addMargin = ((SettingData.LeftMargin + SettingData.RightMargin + SettingData.TopMargin + SettingData.BottomMargin) > 0);
             for(int i = 1 ; i <= page ; ++i) {
                 if(extension == ".pdf") {
@@ -511,8 +546,6 @@ namespace TeX2img {
                     if(addMargin) enlargeBB(tmpFileBaseName + "-" + i + ".eps");
                 }
             }
-
-
 
             // 出力テキストボックスを最後の行までスクロール
             controller_.scrollOutputTextBoxToEnd();
