@@ -519,7 +519,7 @@
             // 
             // resolutionScaleUpDown
             // 
-            this.resolutionScaleUpDown.Location = new System.Drawing.Point(206, 34);
+            this.resolutionScaleUpDown.Location = new System.Drawing.Point(226, 34);
             this.resolutionScaleUpDown.Margin = new System.Windows.Forms.Padding(5, 4, 5, 4);
             this.resolutionScaleUpDown.Minimum = new decimal(new int[] {
             1,

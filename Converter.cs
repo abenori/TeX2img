@@ -101,6 +101,11 @@ namespace TeX2img {
 
         // path に指定されたオプション引数を解釈する
         // 戻り値 = FileName
+        
+        public static string setProcStartInfo(String path) {
+			string dummy;
+			return setProcStartInfo(path,out dummy);
+		}
         public static string setProcStartInfo(String path, out string Arguments) {
             // "がないならばFileName = path
             string FileName = path;
@@ -126,14 +131,12 @@ namespace TeX2img {
 
         private bool tex2dvi(string fileName) {
             string baseName = Path.GetFileNameWithoutExtension(fileName);
-            string dummy;
-            if(SettingData.PlatexPath == "" || !File.Exists(setProcStartInfo(SettingData.PlatexPath, out dummy))) {
+            string arg;
+            proc_.StartInfo.FileName = setProcStartInfo(SettingData.PlatexPath, out arg);
+            if(SettingData.PlatexPath == "" || !File.Exists(proc_.StartInfo.FileName)) {
                 controller_.showPathError("platex.exe", "TeX ディストリビューション");
                 return false;
             }
-
-            string arg;
-            proc_.StartInfo.FileName = setProcStartInfo(SettingData.PlatexPath, out arg);
             proc_.StartInfo.Arguments = arg;
             if(SettingData.Encode.Substring(0, 1) != "_") proc_.StartInfo.Arguments += "-no-guess-input-enc -kanji=" + SettingData.Encode + " ";
             proc_.StartInfo.Arguments += "-interaction=nonstopmode " + baseName + ".tex";
@@ -159,19 +162,18 @@ namespace TeX2img {
 
         private bool dvi2pdf(string fileName) {
             string baseName = Path.GetFileNameWithoutExtension(fileName);
-            string dummy;
-            if(SettingData.DvipdfmxPath == "" || !File.Exists(setProcStartInfo(SettingData.DvipdfmxPath, out dummy))) {
+            string arg;
+            proc_.StartInfo.FileName = setProcStartInfo(SettingData.DvipdfmxPath, out arg);
+            if(SettingData.DvipdfmxPath == "" || !File.Exists(proc_.StartInfo.FileName)) {
                 controller_.showPathError("dvipdfmx.exe", "TeX ディストリビューション");
                 return false;
             }
-
-            string arg;
-            proc_.StartInfo.FileName = setProcStartInfo(SettingData.DvipdfmxPath, out arg);
             proc_.StartInfo.Arguments = arg + "-vv -o " + baseName + ".pdf " + baseName + ".dvi";
 
             try {
                 printCommandLine();
                 proc_.Start();
+                // 出力は何故か標準エラー出力から出てくる
                 ReadOutputs("DVI から PDF への変換");
             }
             catch(Win32Exception) {
@@ -190,8 +192,7 @@ namespace TeX2img {
             using(Process proc = new Process()) {
                 proc.StartInfo = proc_.StartInfo;
                 proc.ErrorDataReceived += proc_OutputDataReceived;
-                string dummy;
-                proc.StartInfo.FileName = Path.GetDirectoryName(setProcStartInfo(SettingData.PlatexPath,out dummy)) + "\\pdfinfo.exe";
+                proc.StartInfo.FileName = Path.GetDirectoryName(setProcStartInfo(SettingData.PlatexPath)) + "\\pdfinfo.exe";
                 if(!File.Exists(proc.StartInfo.FileName)) proc.StartInfo.FileName = which("pdfinfo.exe");
                 if(!File.Exists(proc.StartInfo.FileName)) { 
                     controller_.showPathError("pdfinfo.exe", "TeX ディストリビューション");
@@ -201,7 +202,7 @@ namespace TeX2img {
                 try {
                     proc.Start();
                     proc.BeginErrorReadLine();
-                    Regex reg = new Regex("^Pages:[ \t]*([0-9]+)");
+                    Regex reg = new Regex("^Pages:[ \t]*([0-9]+)", System.Text.RegularExpressions.RegexOptions.IgnoreCase);
                     int page = -1;
                     while(proc.StandardOutput.Peek() != -1) {
                         string line = proc.StandardOutput.ReadLine();
@@ -257,7 +258,6 @@ namespace TeX2img {
                 byte[] inbuf = new byte[fs.Length];
                 byte[] outbuf = new byte[fs.Length + 200];
                 byte[] tmpbuf;
-                byte[] lbbuf = new byte[2];
                 fs.Read(inbuf, 0, (int)fs.Length);
 
                 // 現在読んでいるinufの「行」の先頭
@@ -269,9 +269,7 @@ namespace TeX2img {
                 bool bbfound = false, hiresbbfound = false;
                 while(q < inbuf.Length) {
                     if(q == inbuf.Length - 1 || inbuf[q] == '\r' || inbuf[q] == '\n') {
-                        tmpbuf = new byte[q - inp];
-                        System.Array.Copy(inbuf, inp, tmpbuf, 0, q - inp);
-                        string line = System.Text.Encoding.ASCII.GetString(tmpbuf);
+                        string line = System.Text.Encoding.ASCII.GetString(inbuf,inp,q - inp);
                         Match match = regexBB.Match(line);
                         if(match.Success) {
                             decimal leftbottom_x = System.Convert.ToDecimal(match.Groups[2].Value);
@@ -295,7 +293,7 @@ namespace TeX2img {
                                 break;
                             }
                         } else {
-                            System.Array.Copy(tmpbuf, 0, outbuf, outp, q - inp);
+                            System.Array.Copy(inbuf, inp, outbuf, outp, q - inp);
                             outp += q - inp;
                         }
                         inp = q;
@@ -470,7 +468,7 @@ namespace TeX2img {
             try {
                 printCommandLine();
                 proc_.Start();
-                ReadOutputs("Imagemagick の実行");
+                ReadOutputs("Ghostscript の実行");
 
             }
             catch(Win32Exception) {
@@ -495,8 +493,7 @@ namespace TeX2img {
             // ImageMagickのための準備
             if(SettingData.GsPath != "") {
                 try {
-                    string dummy;
-                    string path = Converter.setProcStartInfo(SettingData.GsPath, out dummy);
+                    string path = Converter.setProcStartInfo(SettingData.GsPath);
                     if(Path.GetFileName(path).ToLower() == "rungs.exe") {
                         if(Environment.GetEnvironmentVariable("MAGICK_GHOSTSCRIPT_PATH") == null
                             && !proc_.StartInfo.EnvironmentVariables.ContainsKey("MAGICK_GHOSTSCRIPT_PATH")

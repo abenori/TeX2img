@@ -209,7 +209,7 @@
             this.sourceTextBox.FontInfo = fontInfo1;
             this.sourceTextBox.ForeColor = System.Drawing.Color.Black;
             this.sourceTextBox.HighlightsCurrentLine = false;
-            this.sourceTextBox.Location = new System.Drawing.Point(10, 60);
+            this.sourceTextBox.Location = new System.Drawing.Point(26, 57);
             this.sourceTextBox.Margin = new System.Windows.Forms.Padding(5, 4, 5, 4);
             this.sourceTextBox.Name = "sourceTextBox";
             this.sourceTextBox.ScrollPos = new System.Drawing.Point(0, 0);
@@ -301,6 +301,7 @@
             // 
             this.InputFileBrowseButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.InputFileBrowseButton.Enabled = false;
+            this.InputFileBrowseButton.ImeMode = System.Windows.Forms.ImeMode.NoControl;
             this.InputFileBrowseButton.Location = new System.Drawing.Point(945, 392);
             this.InputFileBrowseButton.Margin = new System.Windows.Forms.Padding(5, 4, 5, 4);
             this.InputFileBrowseButton.Name = "InputFileBrowseButton";
@@ -325,6 +326,7 @@
             // 
             this.InputFromFileRadioButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.InputFromFileRadioButton.AutoSize = true;
+            this.InputFromFileRadioButton.ImeMode = System.Windows.Forms.ImeMode.NoControl;
             this.InputFromFileRadioButton.Location = new System.Drawing.Point(10, 361);
             this.InputFromFileRadioButton.Margin = new System.Windows.Forms.Padding(5, 4, 5, 4);
             this.InputFromFileRadioButton.Name = "InputFromFileRadioButton";
@@ -338,13 +340,14 @@
             this.InputFromTextboxRadioButton.AutoSize = true;
             this.InputFromTextboxRadioButton.Checked = global::TeX2img.Properties.Settings.Default.inputFromTextBox;
             this.InputFromTextboxRadioButton.DataBindings.Add(new System.Windows.Forms.Binding("Checked", global::TeX2img.Properties.Settings.Default, "inputFromTextBox", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
+            this.InputFromTextboxRadioButton.ImeMode = System.Windows.Forms.ImeMode.NoControl;
             this.InputFromTextboxRadioButton.Location = new System.Drawing.Point(10, 27);
             this.InputFromTextboxRadioButton.Margin = new System.Windows.Forms.Padding(5, 4, 5, 4);
             this.InputFromTextboxRadioButton.Name = "InputFromTextboxRadioButton";
-            this.InputFromTextboxRadioButton.Size = new System.Drawing.Size(553, 22);
+            this.InputFromTextboxRadioButton.Size = new System.Drawing.Size(571, 22);
             this.InputFromTextboxRadioButton.TabIndex = 1;
             this.InputFromTextboxRadioButton.TabStop = true;
-            this.InputFromTextboxRadioButton.Text = "TeX コードを直接入力（ \\begin{document} ～ \\end{document} の内部 ）";
+            this.InputFromTextboxRadioButton.Text = "TeX コードを直接入力（ \\\\begin{document} ～ \\\\end{document} の内部 ）";
             this.InputFromTextboxRadioButton.UseVisualStyleBackColor = true;
             this.InputFromTextboxRadioButton.CheckedChanged += new System.EventHandler(this.setEnabled);
             // 
@@ -366,6 +369,7 @@
             // OutputBrowseButton
             // 
             this.OutputBrowseButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.OutputBrowseButton.ImeMode = System.Windows.Forms.ImeMode.NoControl;
             this.OutputBrowseButton.Location = new System.Drawing.Point(945, 27);
             this.OutputBrowseButton.Margin = new System.Windows.Forms.Padding(5, 4, 5, 4);
             this.OutputBrowseButton.Name = "OutputBrowseButton";
@@ -388,6 +392,7 @@
             // GenerateButton
             // 
             this.GenerateButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.GenerateButton.ImeMode = System.Windows.Forms.ImeMode.NoControl;
             this.GenerateButton.Location = new System.Drawing.Point(881, 564);
             this.GenerateButton.Margin = new System.Windows.Forms.Padding(5, 4, 5, 4);
             this.GenerateButton.Name = "GenerateButton";
@@ -425,6 +430,7 @@
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.menuStrip1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.ImeMode = System.Windows.Forms.ImeMode.NoControl;
             this.MainMenuStrip = this.menuStrip1;
             this.Margin = new System.Windows.Forms.Padding(5, 4, 5, 4);
             this.Name = "MainForm";
