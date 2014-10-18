@@ -16,8 +16,8 @@ namespace TeX2img {
         private PreambleForm myPreambleForm;
 
         #region コンストラクタおよび初期化処理関連のメソッド
-        public MainForm() {
-            SettingData = new SettingForm.Settings();
+        public MainForm(SettingForm.Settings set,List<string> files) {
+            SettingData = set;
             saveSettingsFlag = true;
 
             InitializeComponent();
@@ -29,49 +29,12 @@ namespace TeX2img {
             sourceTextBox.Highlighter = Sgry.Azuki.Highlighter.Highlighters.Latex;
             sourceTextBox.Resize += delegate { sourceTextBox.ViewWidth = sourceTextBox.ClientSize.Width; };
             loadSettings();
-            loadCommandLine();
             setPath();
 
             if(InputFromTextboxRadioButton.Checked) ActiveControl = sourceTextBox;
             else ActiveControl = inputFileNameTextBox;
-        }
 
-        private void loadCommandLine() {
-            string[] cmds = Environment.GetCommandLineArgs();
-            bool exit = false;
-            for(int i = 0 ; i < cmds.Length ; ++i) {
-                switch(cmds[i]) {
-                case "/platex":
-                    ++i;
-                    if(i == cmds.Length) break;
-                    SettingData.PlatexPath = cmds[i];
-                    break;
-                case "/dvipdfmx":
-                    ++i;
-                    if(i == cmds.Length) break;
-                    SettingData.DvipdfmxPath = cmds[i];
-                    break;
-                case "/gs":
-                    ++i;
-                    if(i == cmds.Length) break;
-                    SettingData.GsPath = cmds[i];
-                    break;
-                case "/exit":
-                    exit = true;
-                    break;
-                case "/nosavesetting":
-                    saveSettingsFlag = false;
-                    break;
-                default:
-                    break;
-                }
-            }
-            if(exit) {
-                if(saveSettingsFlag) saveSettings();
-                Environment.Exit(0);
-            }
         }
-
 
         private void setPath() {
             if(SettingData.PlatexPath == String.Empty || SettingData.DvipdfmxPath == String.Empty || SettingData.GsPath == String.Empty) {
@@ -135,8 +98,6 @@ namespace TeX2img {
 
         #region 設定値の読み書き
         private void loadSettings() {
-            SettingData.LoadSetting();
-
             this.Height = Properties.Settings.Default.Height;
             this.Width = Properties.Settings.Default.Width;
             this.Left = Properties.Settings.Default.Left;
@@ -167,8 +128,6 @@ namespace TeX2img {
         }
 
         private void saveSettings() {
-            SettingData.SaveSettings();
- 
             Properties.Settings.Default.Height = this.Height;
             Properties.Settings.Default.Width = this.Width;
             Properties.Settings.Default.Left = this.Left;
@@ -183,8 +142,6 @@ namespace TeX2img {
             Properties.Settings.Default.inputFile = inputFileNameTextBox.Text;
             Properties.Settings.Default.inputFromTextBox = InputFromTextboxRadioButton.Checked;
             Properties.Settings.Default.preamble = myPreambleForm.PreambleTextBox.Text;
-
-            Properties.Settings.Default.Save();
         }
         #endregion
 
@@ -352,15 +309,14 @@ namespace TeX2img {
 
             string tmpTeXFileName = tmpFileBaseName + ".tex";
             string tmpDir = Path.GetDirectoryName(tmpFilePath);
-            Directory.SetCurrentDirectory(tmpDir);
-            File.Delete(tmpTeXFileName);
-            File.Move(tmpFileName, tmpTeXFileName);
+            File.Delete(Path.Combine(tmpDir,tmpTeXFileName));
+            File.Move(Path.Combine(tmpDir,tmpFileName),Path.Combine(tmpDir,tmpTeXFileName));
 
             #region TeX ソースファイルの準備
             // 外部ファイルから入力する場合はテンポラリディレクトリにコピー
             if(InputFromFileRadioButton.Checked) {
                 string inputTeXFilePath = inputFileNameTextBox.Text;
-                File.Copy(inputTeXFilePath, tmpTeXFileName, true);
+                File.Copy(inputTeXFilePath, Path.Combine(tmpDir,tmpTeXFileName), true);
             }
 
             // 直接入力の場合 tex ソースを出力

@@ -35,7 +35,7 @@ namespace TeX2img {
         IOutputController controller_;
         Process proc_ = new Process();
         int epsResolution_ = 20016;
-
+        string workingDir;
         public Converter(SettingForm.Settings set,IOutputController controller) {
             SettingData = set;
             controller_ = controller;
@@ -61,14 +61,13 @@ namespace TeX2img {
         }
 
         public void Convert(string inputTeXFilePath, string outputFilePath) {
-            proc_.StartInfo.WorkingDirectory = Path.GetDirectoryName(inputTeXFilePath);
-            Directory.SetCurrentDirectory(Path.GetDirectoryName(inputTeXFilePath));
-
+            workingDir = Path.GetDirectoryName(inputTeXFilePath);
+            proc_.StartInfo.WorkingDirectory = workingDir;
             generate(inputTeXFilePath, outputFilePath);
 
             if(SettingData.DeleteTmpFileFlag) {
                 try {
-                    string tmpFileBaseName = Path.GetFileNameWithoutExtension(inputTeXFilePath);
+                    string tmpFileBaseName = Path.Combine(workingDir,Path.GetFileNameWithoutExtension(inputTeXFilePath));
                     File.Delete(tmpFileBaseName + ".tex");
                     File.Delete(tmpFileBaseName + ".dvi");
                     File.Delete(tmpFileBaseName + ".log");
@@ -152,7 +151,7 @@ namespace TeX2img {
             }
 
 
-            if((!SettingData.IgnoreErrorFlag && proc_.ExitCode != 0) || !File.Exists(baseName + ".dvi")) {
+            if((!SettingData.IgnoreErrorFlag && proc_.ExitCode != 0) || !File.Exists(Path.Combine(workingDir, baseName + ".dvi"))) {
                 controller_.showGenerateError();
                 return false;
             }
@@ -180,7 +179,7 @@ namespace TeX2img {
                 controller_.showPathError("dvipdfmx.exe", "TeX ディストリビューション");
                 return false;
             }
-            if(proc_.ExitCode != 0 || !File.Exists(baseName + ".pdf")) {
+            if(proc_.ExitCode != 0 || !File.Exists(Path.Combine(workingDir, baseName + ".pdf"))) {
                 controller_.showGenerateError();
                 return false;
             }
@@ -240,7 +239,7 @@ namespace TeX2img {
                 controller_.showPathError(Path.GetFileName(SettingData.GsPath), "Ghostscript ");
                 return false;
             }
-            if(proc_.ExitCode != 0 || !File.Exists(outputFileName)) {
+            if(proc_.ExitCode != 0 || !File.Exists(Path.Combine(workingDir, outputFileName))) {
                 controller_.showGenerateError();
                 return false;
             }
@@ -253,7 +252,7 @@ namespace TeX2img {
         private void enlargeBB(string inputEpsFileName) {
             Regex regexBB = new Regex(@"^\%\%(HiRes|)BoundingBox\: ([\d\.]+) ([\d\.]+) ([\d\.]+) ([\d\.]+)$");
             
-            FileStream fs = new FileStream(inputEpsFileName, FileMode.Open, FileAccess.Read);
+            FileStream fs = new FileStream(Path.Combine(workingDir,inputEpsFileName), FileMode.Open, FileAccess.Read);
             if(fs.CanRead){
                 byte[] inbuf = new byte[fs.Length];
                 byte[] outbuf = new byte[fs.Length + 200];
@@ -305,7 +304,7 @@ namespace TeX2img {
                     } else ++q;
                 }
                 fs.Dispose();
-                using(FileStream wfs = new System.IO.FileStream(inputEpsFileName, FileMode.Open, FileAccess.Write)) {
+                using(FileStream wfs = new System.IO.FileStream(Path.Combine(workingDir ,inputEpsFileName), FileMode.Open, FileAccess.Write)) {
                     wfs.Write(outbuf, 0, outp);
                 }
             }
@@ -319,7 +318,7 @@ namespace TeX2img {
             righttop_x = 0;
             righttop_y = 0;
 
-            using(StreamReader sr = new StreamReader(inputEpsFileName, Encoding.GetEncoding("shift_jis"))) {
+            using(StreamReader sr = new StreamReader(Path.Combine(workingDir,inputEpsFileName), Encoding.GetEncoding("shift_jis"))) {
                 try {
                     string line;
                     while((line = sr.ReadLine()) != null) {
@@ -396,7 +395,7 @@ namespace TeX2img {
                     controller_.showImageMagickError();
                     return false;
                 }
-                if(!File.Exists(outputFileName)) {
+                if(!File.Exists(Path.Combine(workingDir, outputFileName))) {
                     controller_.showImageMagickError();
                     return false;
                 }
@@ -417,7 +416,7 @@ namespace TeX2img {
 
                 #region 次にトリミングするためのEPSファイルを作成
                 string trimEpsFileName = baseName + "-trim.eps";
-                using(StreamWriter sw = new StreamWriter(trimEpsFileName, false, Encoding.GetEncoding("shift_jis"))) {
+                using(StreamWriter sw = new StreamWriter(Path.Combine(workingDir, trimEpsFileName), false, Encoding.GetEncoding("shift_jis"))) {
                     try {
                         sw.WriteLine("/NumbDict countdictstack def");
                         sw.WriteLine("1 dict begin");
@@ -475,7 +474,7 @@ namespace TeX2img {
                 controller_.showPathError(Path.GetFileName(proc_.StartInfo.FileName), "Ghostscript ");
                 return false;
             }
-            if(!File.Exists(outputFileName)) {
+            if(!File.Exists(Path.Combine(workingDir, outputFileName))) {
                 controller_.showPathError(Path.GetFileName(proc_.StartInfo.FileName), "Ghostscript ");
                 return false;
             } else return true;
@@ -485,8 +484,6 @@ namespace TeX2img {
 
         public void generate(string inputTeXFilePath, string outputFilePath) {
             string extension = Path.GetExtension(outputFilePath).ToLower();
-            string tmpDir = Path.GetDirectoryName(inputTeXFilePath);
-            Directory.SetCurrentDirectory(tmpDir);
 
             string tmpFileBaseName = Path.GetFileNameWithoutExtension(inputTeXFilePath);
 
@@ -555,12 +552,12 @@ namespace TeX2img {
             // 出力ファイルをターゲットディレクトリにコピー
             try {
                 if(page == 1) {
-                    File.Copy(tmpFileBaseName + "-1" + extension, outputFilePath,true);
+                    File.Copy(Path.Combine(workingDir,tmpFileBaseName + "-1" + extension), outputFilePath,true);
                     if(SettingData.PreviewFlag) Process.Start(outputFilePath);
                 } else {
-                    string outputFilePathBaseName = Path.GetDirectoryName(outputFilePath) + "\\" + Path.GetFileNameWithoutExtension(outputFilePath);
+                    string outputFilePathBaseName = Path.Combine(Path.GetDirectoryName(outputFilePath),Path.GetFileNameWithoutExtension(outputFilePath));
                     for(int i = 1 ; i <= page ; ++i) {
-                        File.Copy(tmpFileBaseName + "-" + i + extension, outputFilePathBaseName + "-" + i + extension,true);
+                        File.Copy(Path.Combine(workingDir,tmpFileBaseName + "-" + i + extension), outputFilePathBaseName + "-" + i + extension,true);
                     }
                     outputFilePath = outputFilePathBaseName + "-1" + extension;
                     if(SettingData.PreviewFlag) Process.Start(outputFilePath);
