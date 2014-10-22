@@ -54,7 +54,7 @@ namespace TeX2img {
         public bool CheckFormat(string outputFilePath) {
             string extension = Path.GetExtension(outputFilePath).ToLower();
             if(extension != ".eps" && extension != ".png" && extension != ".jpg" && extension != ".pdf") {
-                controller_.showExtensionError();
+                controller_.showExtensionError(outputFilePath);
                 return false;
             }
             return true;

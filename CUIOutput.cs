@@ -8,8 +8,8 @@ namespace TeX2img {
             Console.WriteLine(exeName + " を起動することができませんでした。\n" + necessary + "がインストールされているか，\n" + exeName + " のパスの設定が正しいかどうか，\n確認してください。");
         }
 
-        public void showExtensionError() {
-            Console.WriteLine("出力ファイルの拡張子は eps/png/jpg/pdf のいずれかにしてください。");
+        public void showExtensionError(string file) {
+            Console.WriteLine(file + ": 出力ファイルの拡張子は eps/png/jpg/pdf のいずれかにしてください。");
         }
 
         public void appendOutput(string log) {

@@ -7,7 +7,7 @@ namespace TeX2img
 {
     interface IOutputController
     {
-        void showExtensionError();
+        void showExtensionError(string file);
         void showPathError(string exeName, string necessary);
         void appendOutput(string log);
         void showGenerateError();
