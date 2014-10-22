@@ -73,14 +73,14 @@ namespace TeX2img {
                 proc.StartInfo.CreateNoWindow = true;
                 proc.StartInfo.FileName = SettingData.GsPath;
                 proc.StartInfo.Arguments = "-v";
+                try {
                 proc.Start();
-                string msg = proc.StandardOutput.ReadToEnd() + proc.StandardError.ReadToEnd();
+                    string msg = proc.StandardOutput.ReadToEnd() + proc.StandardError.ReadToEnd();
                 proc.WaitForExit(2000);
                 if(!proc.HasExited) proc.Kill();
                 Regex reg = new Regex("Ghostscript ([0-9]+)\\.([0-9]+)", System.Text.RegularExpressions.RegexOptions.IgnoreCase);
                 var m = reg.Match(msg);
                 if(m.Success) {
-                    try {
                         int major = int.Parse(m.Groups[1].Value);
                         int minor = int.Parse(m.Groups[2].Value);
                         //System.Diagnostics.Debug.WriteLine("major = " + major.ToString() + ", minor = " + minor.ToString());
@@ -88,8 +88,10 @@ namespace TeX2img {
                         if(major > 9 || (major == 9 && minor >= 15)) SettingData.GsDevice = "eps2write";
                         else SettingData.GsDevice = "epswrite";
                     }
-                    catch(FormatException) { }
                 }
+                    catch(FormatException) { }
+                catch(Win32Exception) { }
+
             }
             if(SettingData.GsDevice == "") SettingData.GsDevice = "epswrite";
         }
