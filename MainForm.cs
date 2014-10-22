@@ -113,8 +113,8 @@ namespace TeX2img {
                 try {
                     proc.Start();
                     proc.WaitForExit(2000);
-                    if(!proc.HasExited) proc.Kill();
                     string msg = proc.StandardOutput.ReadToEnd() + proc.StandardError.ReadToEnd();
+                    if(!proc.HasExited) proc.Kill();
                     Regex reg = new Regex("Ghostscript ([0-9]+)\\.([0-9]+)", System.Text.RegularExpressions.RegexOptions.IgnoreCase);
                     var m = reg.Match(msg);
                     if(m.Success) {
