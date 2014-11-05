@@ -77,7 +77,7 @@ namespace TeX2img {
                 System.Console.SetOut(stdout);
                 Console.WriteLine();
                 // これがないと化けるのだけど，これがあると挙動がおかしい……
-                // 英語モードに勝手になって，表示できないからか落ちる．
+                // 英語モードに勝手になって，表示できないからかTeX2imgが落ちる．
                 Console.OutputEncoding = new System.Text.UTF8Encoding();
                 consoleattached = true;
             }
