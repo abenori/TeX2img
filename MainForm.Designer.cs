@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            Sgry.Azuki.FontInfo fontInfo1 = new Sgry.Azuki.FontInfo();
+            Sgry.Azuki.FontInfo fontInfo2 = new Sgry.Azuki.FontInfo();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.FileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -57,7 +57,6 @@
             this.InputFileBrowseButton = new System.Windows.Forms.Button();
             this.inputFileNameTextBox = new System.Windows.Forms.TextBox();
             this.InputFromFileRadioButton = new System.Windows.Forms.RadioButton();
-            this.InputFromTextboxRadioButton = new System.Windows.Forms.RadioButton();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.OutputBrowseButton = new System.Windows.Forms.Button();
             this.outputFileNameTextBox = new System.Windows.Forms.TextBox();
@@ -65,6 +64,7 @@
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.convertWorker = new System.ComponentModel.BackgroundWorker();
+            this.InputFromTextboxRadioButton = new System.Windows.Forms.RadioButton();
             this.menuStrip1.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.sourceTextBoxMenu.SuspendLayout();
@@ -203,10 +203,10 @@
             this.sourceTextBox.DrawsEofMark = true;
             this.sourceTextBox.FirstVisibleLine = 0;
             this.sourceTextBox.Font = new System.Drawing.Font("ＭＳ ゴシック", 12F);
-            fontInfo1.Name = "ＭＳ ゴシック";
-            fontInfo1.Size = 12;
-            fontInfo1.Style = System.Drawing.FontStyle.Regular;
-            this.sourceTextBox.FontInfo = fontInfo1;
+            fontInfo2.Name = "ＭＳ ゴシック";
+            fontInfo2.Size = 12;
+            fontInfo2.Style = System.Drawing.FontStyle.Regular;
+            this.sourceTextBox.FontInfo = fontInfo2;
             this.sourceTextBox.ForeColor = System.Drawing.Color.Black;
             this.sourceTextBox.HighlightsCurrentLine = false;
             this.sourceTextBox.Location = new System.Drawing.Point(26, 57);
@@ -335,22 +335,6 @@
             this.InputFromFileRadioButton.Text = "TeX ソースファイルを読み込む";
             this.InputFromFileRadioButton.UseVisualStyleBackColor = true;
             // 
-            // InputFromTextboxRadioButton
-            // 
-            this.InputFromTextboxRadioButton.AutoSize = true;
-            this.InputFromTextboxRadioButton.Checked = global::TeX2img.Properties.Settings.Default.inputFromTextBox;
-            this.InputFromTextboxRadioButton.DataBindings.Add(new System.Windows.Forms.Binding("Checked", global::TeX2img.Properties.Settings.Default, "inputFromTextBox", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
-            this.InputFromTextboxRadioButton.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-            this.InputFromTextboxRadioButton.Location = new System.Drawing.Point(10, 27);
-            this.InputFromTextboxRadioButton.Margin = new System.Windows.Forms.Padding(5, 4, 5, 4);
-            this.InputFromTextboxRadioButton.Name = "InputFromTextboxRadioButton";
-            this.InputFromTextboxRadioButton.Size = new System.Drawing.Size(571, 22);
-            this.InputFromTextboxRadioButton.TabIndex = 1;
-            this.InputFromTextboxRadioButton.TabStop = true;
-            this.InputFromTextboxRadioButton.Text = "TeX コードを直接入力（ \\\\begin{document} ～ \\\\end{document} の内部 ）";
-            this.InputFromTextboxRadioButton.UseVisualStyleBackColor = true;
-            this.InputFromTextboxRadioButton.CheckedChanged += new System.EventHandler(this.setEnabled);
-            // 
             // groupBox2
             // 
             this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
@@ -406,8 +390,8 @@
             // 
             this.saveFileDialog1.DefaultExt = "eps";
             this.saveFileDialog1.FileName = "equation.eps";
-            this.saveFileDialog1.Filter = "EPSファイル (*.eps)|*.eps|JPEGファイル (*.jpg)|*.jpg|PNGファイル (*.png)|*.png|すべてのファイル (*.*)" +
-    "|*.*";
+            this.saveFileDialog1.Filter = "EPS ファイル (*.eps)|*.eps|JPEG ファイル (*.jpg)|*.jpg|PNG ファイル (*.png)|*.png|PDF ファイル (*" +
+    ".pdf)|*.pdf|すべてのファイル (*.*)|*.*";
             // 
             // openFileDialog1
             // 
@@ -420,6 +404,22 @@
             this.convertWorker.DoWork += new System.ComponentModel.DoWorkEventHandler(this.convertWorker_DoWork);
             this.convertWorker.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.convertWorker_RunWorkerCompleted);
             // 
+            // InputFromTextboxRadioButton
+            // 
+            this.InputFromTextboxRadioButton.AutoSize = true;
+            this.InputFromTextboxRadioButton.Checked = global::TeX2img.Properties.Settings.Default.inputFromTextBox;
+            this.InputFromTextboxRadioButton.DataBindings.Add(new System.Windows.Forms.Binding("Checked", global::TeX2img.Properties.Settings.Default, "inputFromTextBox", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
+            this.InputFromTextboxRadioButton.ImeMode = System.Windows.Forms.ImeMode.NoControl;
+            this.InputFromTextboxRadioButton.Location = new System.Drawing.Point(10, 27);
+            this.InputFromTextboxRadioButton.Margin = new System.Windows.Forms.Padding(5, 4, 5, 4);
+            this.InputFromTextboxRadioButton.Name = "InputFromTextboxRadioButton";
+            this.InputFromTextboxRadioButton.Size = new System.Drawing.Size(571, 22);
+            this.InputFromTextboxRadioButton.TabIndex = 1;
+            this.InputFromTextboxRadioButton.TabStop = true;
+            this.InputFromTextboxRadioButton.Text = "TeX コードを直接入力（ \\\\begin{document} ～ \\\\end{document} の内部 ）";
+            this.InputFromTextboxRadioButton.UseVisualStyleBackColor = true;
+            this.InputFromTextboxRadioButton.CheckedChanged += new System.EventHandler(this.setEnabled);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(10F, 18F);
@@ -430,7 +430,6 @@
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.menuStrip1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.ImeMode = System.Windows.Forms.ImeMode.NoControl;
             this.MainMenuStrip = this.menuStrip1;
             this.Margin = new System.Windows.Forms.Padding(5, 4, 5, 4);
             this.Name = "MainForm";

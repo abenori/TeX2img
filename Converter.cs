@@ -594,9 +594,10 @@ namespace TeX2img {
                 controller_.appendOutput(proc_.StandardError.ReadToEnd());
 	            controller_.scrollOutputTextBoxToEnd();
                 // 10秒待つ
-                proc_.WaitForExit(10000);
-                if(proc_.HasExited) break;
-                else {
+                proc_.WaitForExit(1000);
+                if(proc_.HasExited) {
+                    break;
+                } else {
                     if(MessageBox.Show(
                         freezemsg + "に時間がかかっているようです．\n" +
                         "フリーズしている可能性もありますが，このまま実行を続けますか？",

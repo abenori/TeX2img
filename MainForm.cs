@@ -381,8 +381,10 @@ namespace TeX2img {
                 using(StreamWriter sw = new StreamWriter(Path.Combine(tmpDir, tmpTeXFileName), false, encoding)) {
                     try {
                         sw.Write(myPreambleForm.PreambleTextBox.Text);
+                        sw.WriteLine("");
                         sw.WriteLine("\\begin{document}");
                         sw.Write(sourceTextBox.Text);
+                        sw.WriteLine("");
                         sw.WriteLine("\\end{document}");
                     }
                     finally {
