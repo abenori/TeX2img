@@ -111,13 +111,13 @@ namespace TeX2img {
                 proc.StartInfo.FileName = SettingData.GsPath;
                 proc.StartInfo.Arguments = "-v";
                 try {
-                proc.Start();
-                string msg = proc.StandardOutput.ReadToEnd() + proc.StandardError.ReadToEnd();
-                proc.WaitForExit(2000);
-                if(!proc.HasExited) proc.Kill();
-                Regex reg = new Regex("Ghostscript ([0-9]+)\\.([0-9]+)", System.Text.RegularExpressions.RegexOptions.IgnoreCase);
-                var m = reg.Match(msg);
-                if(m.Success) {
+                    proc.Start();
+                    string msg = proc.StandardOutput.ReadToEnd() + proc.StandardError.ReadToEnd();
+                    proc.WaitForExit(2000);
+                    if(!proc.HasExited) proc.Kill();
+                    Regex reg = new Regex("Ghostscript ([0-9]+)\\.([0-9]+)", System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+                    var m = reg.Match(msg);
+                    if(m.Success) {
                         int major = int.Parse(m.Groups[1].Value);
                         int minor = int.Parse(m.Groups[2].Value);
                         //System.Diagnostics.Debug.WriteLine("major = " + major.ToString() + ", minor = " + minor.ToString());
@@ -126,7 +126,7 @@ namespace TeX2img {
                         else SettingData.GsDevice = "epswrite";
                     }
                 }
-                    catch(FormatException) { }
+                catch(FormatException) { }
                 catch(Win32Exception) { }
 
             }
@@ -381,8 +381,10 @@ namespace TeX2img {
                 using(StreamWriter sw = new StreamWriter(Path.Combine(tmpDir, tmpTeXFileName), false, encoding)) {
                     try {
                         sw.Write(myPreambleForm.PreambleTextBox.Text);
+                        sw.WriteLine("");
                         sw.WriteLine("\\begin{document}");
                         sw.Write(sourceTextBox.Text);
+                        sw.WriteLine("");
                         sw.WriteLine("\\end{document}");
                     }
                     finally {
