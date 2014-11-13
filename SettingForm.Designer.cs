@@ -570,7 +570,7 @@
             this.showOutputWindowCheckBox.Name = "showOutputWindowCheckBox";
             this.showOutputWindowCheckBox.Size = new System.Drawing.Size(336, 22);
             this.showOutputWindowCheckBox.TabIndex = 0;
-            this.showOutputWindowCheckBox.Text = "コンパイル後出力ウィンドウを自動的に表示";
+            this.showOutputWindowCheckBox.Text = "コンパイル時出力ウィンドウを自動的に表示";
             this.showOutputWindowCheckBox.UseVisualStyleBackColor = true;
             // 
             // previewCheckBox

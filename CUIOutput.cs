@@ -4,16 +4,20 @@ using System.Text;
 
 namespace TeX2img {
     class CUIOutput : IOutputController {
+        bool quiet = false;
+        public CUIOutput(bool q) { quiet = q; }
+        public CUIOutput() { }
+
         public void showPathError(string exeName, string necessary) {
             Console.WriteLine(exeName + " を起動することができませんでした。\n" + necessary + "がインストールされているか，\n" + exeName + " のパスの設定が正しいかどうか，\n確認してください。");
         }
 
-        public void showExtensionError() {
-            Console.WriteLine("出力ファイルの拡張子は eps/png/jpg/pdf のいずれかにしてください。");
+        public void showExtensionError(string file) {
+            Console.WriteLine(file + ": 出力ファイルの拡張子は eps/png/jpg/pdf のいずれかにしてください。");
         }
 
         public void appendOutput(string log) {
-            Console.Write(log);
+            if(!quiet)Console.Write(log);
         }
 
         public void showGenerateError() {

@@ -11,13 +11,11 @@ using System.ComponentModel;
 namespace TeX2img {
     public partial class MainForm : Form, IOutputController {
         private bool saveSettingsFlag;
-        public SettingForm.Settings SettingData { get; set; }
         private OutputForm myOutputForm;
         private PreambleForm myPreambleForm;
 
         #region コンストラクタおよび初期化処理関連のメソッド
-        public MainForm() {
-            SettingData = new SettingForm.Settings();
+        public MainForm(List<string> files) {
             saveSettingsFlag = true;
 
             InitializeComponent();
@@ -29,64 +27,27 @@ namespace TeX2img {
             sourceTextBox.Highlighter = Sgry.Azuki.Highlighter.Highlighters.Latex;
             sourceTextBox.Resize += delegate { sourceTextBox.ViewWidth = sourceTextBox.ClientSize.Width; };
             loadSettings();
-            loadCommandLine();
             setPath();
 
             if(InputFromTextboxRadioButton.Checked) ActiveControl = sourceTextBox;
             else ActiveControl = inputFileNameTextBox;
-        }
 
-        private void loadCommandLine() {
-            string[] cmds = Environment.GetCommandLineArgs();
-            bool exit = false;
-            for(int i = 0 ; i < cmds.Length ; ++i) {
-                switch(cmds[i]) {
-                case "/platex":
-                    ++i;
-                    if(i == cmds.Length) break;
-                    SettingData.PlatexPath = cmds[i];
-                    break;
-                case "/dvipdfmx":
-                    ++i;
-                    if(i == cmds.Length) break;
-                    SettingData.DvipdfmxPath = cmds[i];
-                    break;
-                case "/gs":
-                    ++i;
-                    if(i == cmds.Length) break;
-                    SettingData.GsPath = cmds[i];
-                    break;
-                case "/exit":
-                    exit = true;
-                    break;
-                case "/nosavesetting":
-                    saveSettingsFlag = false;
-                    break;
-                default:
-                    break;
-                }
-            }
-            if(exit) {
-                if(saveSettingsFlag) saveSettings();
-                Environment.Exit(0);
-            }
         }
-
 
         private void setPath() {
-            if(SettingData.PlatexPath == String.Empty || SettingData.DvipdfmxPath == String.Empty || SettingData.GsPath == String.Empty) {
-                if(SettingData.PlatexPath == String.Empty) SettingData.PlatexPath = Converter.which("platex");
-                if(SettingData.DvipdfmxPath == String.Empty) SettingData.DvipdfmxPath = Converter.which("dvipdfmx");
-                if(SettingData.GsPath == String.Empty) {
-                    SettingData.GsPath = Converter.which("gswin32c.exe");
-                    if(SettingData.GsPath == "") {
-                        SettingData.GsPath = Converter.which("gswin64c.exe");
-                        if(SettingData.GsPath == "") {
-                            SettingData.GsPath = Converter.which("rungs.exe");
-                            if(SettingData.GsPath == "") {
-                                if(SettingData.PlatexPath != "") {
-                                    SettingData.GsPath = System.IO.Path.GetDirectoryName(SettingData.PlatexPath) + "\\rungs.exe";
-                                    if(!System.IO.File.Exists(SettingData.GsPath)) SettingData.GsPath = "";
+            if(Properties.Settings.Default.platexPath == String.Empty || Properties.Settings.Default.dvipdfmxPath == String.Empty || Properties.Settings.Default.gsPath == String.Empty) {
+                if(Properties.Settings.Default.platexPath == String.Empty) Properties.Settings.Default.platexPath = Converter.which("platex");
+                if(Properties.Settings.Default.dvipdfmxPath == String.Empty) Properties.Settings.Default.dvipdfmxPath = Converter.which("dvipdfmx");
+                if(Properties.Settings.Default.gsPath == String.Empty) {
+                    Properties.Settings.Default.gsPath = Converter.which("gswin32c.exe");
+                    if(Properties.Settings.Default.gsPath == "") {
+                        Properties.Settings.Default.gsPath = Converter.which("gswin64c.exe");
+                        if(Properties.Settings.Default.gsPath == "") {
+                            Properties.Settings.Default.gsPath = Converter.which("rungs.exe");
+                            if(Properties.Settings.Default.gsPath == "") {
+                                if(Properties.Settings.Default.platexPath != "") {
+                                    Properties.Settings.Default.gsPath = System.IO.Path.GetDirectoryName(Properties.Settings.Default.platexPath) + "\\rungs.exe";
+                                    if(!System.IO.File.Exists(Properties.Settings.Default.gsPath)) Properties.Settings.Default.gsPath = "";
                                 }
                             }
                         }
@@ -94,51 +55,50 @@ namespace TeX2img {
                 }
 
 
-                if(SettingData.PlatexPath == String.Empty || SettingData.DvipdfmxPath == String.Empty || SettingData.GsPath == String.Empty) {
+                if(Properties.Settings.Default.platexPath == String.Empty || Properties.Settings.Default.dvipdfmxPath == String.Empty || Properties.Settings.Default.gsPath == String.Empty) {
                     MessageBox.Show("platex / dvipdfmx / gs のパス設定に失敗しました。\n環境設定画面で手動で設定してください。");
-                    (new SettingForm(this)).ShowDialog();
+                    (new SettingForm()).ShowDialog();
                 } else {
-                    MessageBox.Show(String.Format("TeX 関連プログラムのパスを\n {0}\n {1}\n {2}\nに設定しました。\n違っている場合は環境設定画面で手動で変更してください。", SettingData.PlatexPath, SettingData.DvipdfmxPath, SettingData.GsPath));
+                    MessageBox.Show(String.Format("TeX 関連プログラムのパスを\n {0}\n {1}\n {2}\nに設定しました。\n違っている場合は環境設定画面で手動で変更してください。", Properties.Settings.Default.platexPath, Properties.Settings.Default.dvipdfmxPath, Properties.Settings.Default.gsPath));
                 }
             }
 
-            if(SettingData.GsDevice == "" && SettingData.GsPath != "") {
+            if(Properties.Settings.Default.gsDevice == "" && Properties.Settings.Default.gsPath != "") {
                 // Ghostscriptのバージョンを取得する．
                 Process proc = new Process();
                 proc.StartInfo.RedirectStandardError = proc.StartInfo.RedirectStandardOutput = true;
                 proc.StartInfo.UseShellExecute = false;
                 proc.StartInfo.CreateNoWindow = true;
-                proc.StartInfo.FileName = SettingData.GsPath;
+                proc.StartInfo.FileName = Properties.Settings.Default.gsPath;
                 proc.StartInfo.Arguments = "-v";
                 try {
-                    proc.Start();
+                proc.Start();
                     string msg = proc.StandardOutput.ReadToEnd() + proc.StandardError.ReadToEnd();
-                    proc.WaitForExit(2000);
-                    if(!proc.HasExited) proc.Kill();
-                    Regex reg = new Regex("Ghostscript ([0-9]+)\\.([0-9]+)", System.Text.RegularExpressions.RegexOptions.IgnoreCase);
-                    var m = reg.Match(msg);
-                    if(m.Success) {
+                proc.WaitForExit(2000);
+                if(!proc.HasExited) proc.Kill();
+                Regex reg = new Regex("Ghostscript ([0-9]+)\\.([0-9]+)", System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+                var m = reg.Match(msg);
+                if(m.Success) {
                         int major = int.Parse(m.Groups[1].Value);
                         int minor = int.Parse(m.Groups[2].Value);
                         //System.Diagnostics.Debug.WriteLine("major = " + major.ToString() + ", minor = " + minor.ToString());
                         // 9.15以上ならばeps2write，そうでないならepwsrite
-                        if(major > 9 || (major == 9 && minor >= 15)) SettingData.GsDevice = "eps2write";
-                        else SettingData.GsDevice = "epswrite";
+                        if(major > 9 || (major == 9 && minor >= 15)) Properties.Settings.Default.gsDevice = "eps2write";
+                        else Properties.Settings.Default.gsDevice = "epswrite";
                     }
                 }
-                catch(FormatException) { }
+                    catch(FormatException) { }
                 catch(Win32Exception) { }
 
             }
-            if(SettingData.GsDevice == "") SettingData.GsDevice = "epswrite";
+            if(Properties.Settings.Default.gsDevice == "") Properties.Settings.Default.gsDevice = "epswrite";
+            Properties.Settings.Default.Save();
         }
 
         #endregion
 
         #region 設定値の読み書き
         private void loadSettings() {
-            SettingData.LoadSetting();
-
             this.Height = Properties.Settings.Default.Height;
             this.Width = Properties.Settings.Default.Width;
             this.Left = Properties.Settings.Default.Left;
@@ -169,8 +129,6 @@ namespace TeX2img {
         }
 
         private void saveSettings() {
-            SettingData.SaveSettings();
- 
             Properties.Settings.Default.Height = this.Height;
             Properties.Settings.Default.Width = this.Width;
             Properties.Settings.Default.Left = this.Left;
@@ -185,8 +143,6 @@ namespace TeX2img {
             Properties.Settings.Default.inputFile = inputFileNameTextBox.Text;
             Properties.Settings.Default.inputFromTextBox = InputFromTextboxRadioButton.Checked;
             Properties.Settings.Default.preamble = myPreambleForm.PreambleTextBox.Text;
-
-            Properties.Settings.Default.Save();
         }
         #endregion
 
@@ -210,7 +166,7 @@ namespace TeX2img {
         }
 
         private void setEnabled() {
-            sourceTextBox.BackColor = (InputFromTextboxRadioButton.Checked ? SettingData.EditorFontColor["テキスト"].Back : System.Drawing.SystemColors.ButtonFace);
+            sourceTextBox.BackColor = (InputFromTextboxRadioButton.Checked ? Properties.Settings.Default.editorFontColor["テキスト"].Back : System.Drawing.SystemColors.ButtonFace);
             sourceTextBox.Enabled = InputFromTextboxRadioButton.Checked;
             inputFileNameTextBox.Enabled = InputFileBrowseButton.Enabled = InputFromFileRadioButton.Checked;
         }
@@ -238,7 +194,8 @@ namespace TeX2img {
         }
 
         private void SettingToolStripMenuItem_Click(object sender, EventArgs e) {
-            (new SettingForm(this)).ShowDialog();
+            (new SettingForm()).ShowDialog();
+            ChangeSetting();
         }
 
         private void AboutToolStripMenuItem_Click(object sender, EventArgs e) {
@@ -263,7 +220,7 @@ namespace TeX2img {
             MessageBox.Show(exeName + " を起動することができませんでした。\n" + necessary + "がインストールされているか，\n" + exeName + " のパスの設定が正しいかどうか，\n確認してください。", "失敗", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
         }
 
-        public void showExtensionError() {
+        public void showExtensionError(string file) {
             MessageBox.Show("出力ファイルの拡張子は eps/png/jpg/pdf のいずれかにしてください。", "ファイル形式エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
 
@@ -272,7 +229,7 @@ namespace TeX2img {
             if(myOutputForm.InvokeRequired) {
                 this.Invoke(new appendOutputDelegate(appendOutput), new Object[] { log });
             } else {
-                myOutputForm.getOutputTextBox().Text += log;
+                myOutputForm.getOutputTextBox().Text += (log + "\r\n");
             }
         }
 
@@ -324,14 +281,14 @@ namespace TeX2img {
 
         private void GenerateButton_Click(object sender, EventArgs arg) {
             clearOutputTextBox();
-            if(SettingData.ShowOutputWindowFlag) showOutputWindow(true);
+            if(Properties.Settings.Default.showOutputWindowFlag) showOutputWindow(true);
             this.Enabled = false;
 
             convertWorker.RunWorkerAsync(100);
         }
 
         private void convertWorker_DoWork(object sender, DoWorkEventArgs e) {
-            Converter converter = new Converter(SettingData,this);
+            Converter converter = new Converter(this);
 
             string outputFilePath = outputFileNameTextBox.Text;
             if(!converter.CheckFormat(outputFilePath)) {
@@ -354,22 +311,21 @@ namespace TeX2img {
 
             string tmpTeXFileName = tmpFileBaseName + ".tex";
             string tmpDir = Path.GetDirectoryName(tmpFilePath);
-            Directory.SetCurrentDirectory(tmpDir);
-            File.Delete(tmpTeXFileName);
-            File.Move(tmpFileName, tmpTeXFileName);
+            File.Delete(Path.Combine(tmpDir,tmpTeXFileName));
+            File.Move(Path.Combine(tmpDir,tmpFileName),Path.Combine(tmpDir,tmpTeXFileName));
 
             #region TeX ソースファイルの準備
             // 外部ファイルから入力する場合はテンポラリディレクトリにコピー
             if(InputFromFileRadioButton.Checked) {
                 string inputTeXFilePath = inputFileNameTextBox.Text;
-                File.Copy(inputTeXFilePath, tmpTeXFileName, true);
+                File.Copy(inputTeXFilePath, Path.Combine(tmpDir,tmpTeXFileName), true);
             }
 
             // 直接入力の場合 tex ソースを出力
             // BOM付きUTF-8にすることで，文字コードの推定を確実にさせる．
             if(InputFromTextboxRadioButton.Checked) {
-                if(SettingData.Encode == "") SettingData.Encode = "_sjis";// あり得ないはずだけど
-                string enc = SettingData.Encode;
+                if(Properties.Settings.Default.encode == "") Properties.Settings.Default.encode = "_sjis";// あり得ないはずだけど
+                string enc = Properties.Settings.Default.encode;
                 if(enc.Substring(0, 1) == "_") enc = enc.Remove(0, 1);
                 Encoding encoding;
                 switch(enc) {
@@ -381,10 +337,8 @@ namespace TeX2img {
                 using(StreamWriter sw = new StreamWriter(Path.Combine(tmpDir, tmpTeXFileName), false, encoding)) {
                     try {
                         sw.Write(myPreambleForm.PreambleTextBox.Text);
-                        sw.WriteLine("");
                         sw.WriteLine("\\begin{document}");
                         sw.Write(sourceTextBox.Text);
-                        sw.WriteLine("");
                         sw.WriteLine("\\end{document}");
                     }
                     finally {
@@ -411,25 +365,26 @@ namespace TeX2img {
 
         public void ChangeSettingofEditor(Sgry.Azuki.WinForms.AzukiControl textBox) {
             if(textBox == null) return;
-            textBox.FontInfo = new Sgry.Azuki.FontInfo(SettingData.EditorFont);
-            textBox.ColorScheme.ForeColor = SettingData.EditorFontColor["テキスト"].Font;
-            textBox.ColorScheme.SetColor(Sgry.Azuki.CharClass.Normal, SettingData.EditorFontColor["テキスト"].Font, SettingData.EditorFontColor["テキスト"].Back);
-            textBox.ColorScheme.SetColor(Sgry.Azuki.CharClass.Heading1, SettingData.EditorFontColor["テキスト"].Font, SettingData.EditorFontColor["テキスト"].Back);
-            textBox.ColorScheme.SetColor(Sgry.Azuki.CharClass.Heading2, SettingData.EditorFontColor["テキスト"].Font, SettingData.EditorFontColor["テキスト"].Back);
-            textBox.ColorScheme.SetColor(Sgry.Azuki.CharClass.Heading3, SettingData.EditorFontColor["テキスト"].Font, SettingData.EditorFontColor["テキスト"].Back);
-            textBox.ColorScheme.SelectionFore = SettingData.EditorFontColor["選択範囲"].Font;
-            textBox.ColorScheme.SelectionBack = SettingData.EditorFontColor["選択範囲"].Back;
-            textBox.ColorScheme.SetColor(Sgry.Azuki.CharClass.LatexCommand, SettingData.EditorFontColor["コントロールシークエンス"].Font, SettingData.EditorFontColor["コントロールシークエンス"].Back);
-            textBox.ColorScheme.SetColor(Sgry.Azuki.CharClass.LatexEquation, SettingData.EditorFontColor["$"].Font, SettingData.EditorFontColor["$"].Back);
-            textBox.ColorScheme.SetColor(Sgry.Azuki.CharClass.LatexBracket, SettingData.EditorFontColor["中 / 大括弧"].Font, SettingData.EditorFontColor["中 / 大括弧"].Back);
-            textBox.ColorScheme.SetColor(Sgry.Azuki.CharClass.LatexCurlyBracket, SettingData.EditorFontColor["中 / 大括弧"].Font, SettingData.EditorFontColor["中 / 大括弧"].Back);
-            textBox.ColorScheme.SetColor(Sgry.Azuki.CharClass.Comment, SettingData.EditorFontColor["コメント"].Font, SettingData.EditorFontColor["コメント"].Back);
-            textBox.ColorScheme.EofColor = SettingData.EditorFontColor["改行，EOF"].Font;
-            textBox.ColorScheme.EolColor = SettingData.EditorFontColor["改行，EOF"].Font;
-            textBox.ColorScheme.MatchedBracketFore = SettingData.EditorFontColor["対応する括弧"].Font;
-            textBox.ColorScheme.MatchedBracketBack = SettingData.EditorFontColor["対応する括弧"].Back;
+            textBox.FontInfo = new Sgry.Azuki.FontInfo(Properties.Settings.Default.editorFont);
+            var x = Properties.Settings.Default.editorFontColor;
+            textBox.ColorScheme.ForeColor = Properties.Settings.Default.editorFontColor["テキスト"].Font;
+            textBox.ColorScheme.SetColor(Sgry.Azuki.CharClass.Normal, Properties.Settings.Default.editorFontColor["テキスト"].Font, Properties.Settings.Default.editorFontColor["テキスト"].Back);
+            textBox.ColorScheme.SetColor(Sgry.Azuki.CharClass.Heading1, Properties.Settings.Default.editorFontColor["テキスト"].Font, Properties.Settings.Default.editorFontColor["テキスト"].Back);
+            textBox.ColorScheme.SetColor(Sgry.Azuki.CharClass.Heading2, Properties.Settings.Default.editorFontColor["テキスト"].Font, Properties.Settings.Default.editorFontColor["テキスト"].Back);
+            textBox.ColorScheme.SetColor(Sgry.Azuki.CharClass.Heading3, Properties.Settings.Default.editorFontColor["テキスト"].Font, Properties.Settings.Default.editorFontColor["テキスト"].Back);
+            textBox.ColorScheme.SelectionFore = Properties.Settings.Default.editorFontColor["選択範囲"].Font;
+            textBox.ColorScheme.SelectionBack = Properties.Settings.Default.editorFontColor["選択範囲"].Back;
+            textBox.ColorScheme.SetColor(Sgry.Azuki.CharClass.LatexCommand, Properties.Settings.Default.editorFontColor["コントロールシークエンス"].Font, Properties.Settings.Default.editorFontColor["コントロールシークエンス"].Back);
+            textBox.ColorScheme.SetColor(Sgry.Azuki.CharClass.LatexEquation, Properties.Settings.Default.editorFontColor["$"].Font, Properties.Settings.Default.editorFontColor["$"].Back);
+            textBox.ColorScheme.SetColor(Sgry.Azuki.CharClass.LatexBracket, Properties.Settings.Default.editorFontColor["中 / 大括弧"].Font, Properties.Settings.Default.editorFontColor["中 / 大括弧"].Back);
+            textBox.ColorScheme.SetColor(Sgry.Azuki.CharClass.LatexCurlyBracket, Properties.Settings.Default.editorFontColor["中 / 大括弧"].Font, Properties.Settings.Default.editorFontColor["中 / 大括弧"].Back);
+            textBox.ColorScheme.SetColor(Sgry.Azuki.CharClass.Comment, Properties.Settings.Default.editorFontColor["コメント"].Font, Properties.Settings.Default.editorFontColor["コメント"].Back);
+            textBox.ColorScheme.EofColor = Properties.Settings.Default.editorFontColor["改行，EOF"].Font;
+            textBox.ColorScheme.EolColor = Properties.Settings.Default.editorFontColor["改行，EOF"].Font;
+            textBox.ColorScheme.MatchedBracketFore = Properties.Settings.Default.editorFontColor["対応する括弧"].Font;
+            textBox.ColorScheme.MatchedBracketBack = Properties.Settings.Default.editorFontColor["対応する括弧"].Back;
             Color backColor = new Color();
-            if(textBox.Enabled) backColor = SettingData.EditorFontColor["テキスト"].Back;
+            if(textBox.Enabled) backColor = Properties.Settings.Default.editorFontColor["テキスト"].Back;
             else backColor = System.Drawing.SystemColors.ButtonFace;
             textBox.ColorScheme.BackColor = backColor;
         }
