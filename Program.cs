@@ -32,13 +32,15 @@ namespace TeX2img {
             public string GenerateHelp() {
                 string rv = "";
                 int maxlength = 0;
-                foreach(var oh in this) maxlength = Math.Max(maxlength, oh.option.Length + (oh.withvalue ? 3 : 0));
+                foreach(var oh in this)if(oh.help != null)maxlength = Math.Max(maxlength, oh.option.Length + (oh.withvalue ? 3 : 0));
                 maxlength += 2;
                 foreach(var oh in this) {
-                    string opstr = "/" + oh.option + (oh.withvalue ? "VAL" : "");
-                    rv += opstr;
-                    rv += new string(' ', maxlength - opstr.Length);
-                    rv += oh.help.Replace("\n","\n" + new string(' ',maxlength + 1)) + "\n";
+                    if(oh.help != null) {
+                        string opstr = "/" + oh.option + (oh.withvalue ? "VAL" : "");
+                        rv += opstr;
+                        rv += new string(' ', maxlength - opstr.Length);
+                        rv += oh.help.Replace("\n", "\n" + new string(' ', maxlength + 1)) + "\n";
+                    }
                 }
                 if(rv != "" && rv.Substring(rv.Length - 1, 1) == "\n") rv = rv.Remove(rv.Length - 1, 1);
                 return rv;
@@ -109,7 +111,6 @@ namespace TeX2img {
             files.RemoveAt(0);
             if(nosavesetting == null) Properties.Settings.Default.NoSaveSettings = nogui;
             else Properties.Settings.Default.NoSaveSettings = (bool)nosavesetting;
-            //MessageBox.Show(Environment.CommandLine);
 
             // すぐに終了
             if(exit) {

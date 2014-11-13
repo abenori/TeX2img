@@ -15,11 +15,11 @@ namespace TeX2imgc {
             }
             using(Process proc = new Process()) {
                 proc.StartInfo.FileName = tex2img;
-                proc.StartInfo.Arguments = "/nogui";
-                for(int i = 0 ; i < args.Length ; ++i) {
-                    proc.StartInfo.Arguments += " \"" + args[i] + "\"";
-                }
-                //Console.WriteLine(proc.StartInfo.Arguments);
+                proc.StartInfo.Arguments = "/nogui ";
+                var reg = new System.Text.RegularExpressions.Regex("^[^ ]*(\".*\")*[ ^]* ");
+                var m = reg.Match(Environment.CommandLine);
+                if(m.Success) proc.StartInfo.Arguments += Environment.CommandLine.Substring(m.Length);
+                else proc.StartInfo.Arguments += Environment.CommandLine;
                 proc.StartInfo.RedirectStandardOutput = true;
                 proc.StartInfo.CreateNoWindow = true;
                 proc.StartInfo.UseShellExecute = false;
