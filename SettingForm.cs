@@ -11,187 +11,10 @@ using System.Diagnostics;
 namespace TeX2img {
     public partial class 
         SettingForm : Form {
-        MainForm mainForm;
-        // 設定データ
-        public class Settings {
-            public string PlatexPath { get; set; }
-            public string DvipdfmxPath { get; set; }
-            public string GsPath { get; set; }
-            public string GsDevice { get; set; }
-            public bool UseLowResolution { get; set; }
-            public int ResolutionScale { get; set; }
-            public bool UseMagickFlag { get; set; }
-            public bool TransparentPngFlag { get; set; }
-            public bool ShowOutputWindowFlag { get; set; }
-            public bool PreviewFlag { get; set; }
-            public bool DeleteTmpFileFlag { get; set; }
-            public bool IgnoreErrorFlag { get; set; }
-            public decimal TopMargin { get; set; }
-            public decimal BottomMargin { get; set; }
-            public decimal LeftMargin { get; set; }
-            public decimal RightMargin { get; set; }
-            public int SettingTabIndex { get; set; }
-            public bool YohakuUnitBP { get; set; }
-            public Font EditorFont { get; set; }
 
-            public class FontColor : ICloneable{
-                public Color Font, Back;
-                public FontColor() { }
-                public FontColor(Color f, Color b) { Font = f; Back = b; }
-                public Object Clone() { return MemberwiseClone(); }
-            }
-
-            public class FontColorCollection : Dictionary<string, FontColor> {
-                public new FontColor this[string key] {
-                    get {
-                        if(key == "改行，EOF" && base.ContainsKey(key)) base["改行，EOF"].Back = base["テキスト"].Back;
-                        return base[key];
-                    }
-                    set {
-                        base[key] = value;
-                        if(key == "改行，EOF" && base.ContainsKey(key)) base["改行，EOF"].Back = base["テキスト"].Back;
-                    }
-                }
-
-            }
-
-            public FontColorCollection EditorFontColor { get; set; }
-
-            // 文字コードを表す utf8,sjis,jis,euc
-            // _utf8, _sjisは文字コードを推定に任せ，それぞれ入力されたソースをUTF-8/Shift_JISで扱う
-            public string Encode { get; set; }
-
-            public Settings() {
-                TopMargin = 0;
-                BottomMargin = 0;
-                LeftMargin = 0;
-                RightMargin = 0;
-                ShowOutputWindowFlag = true;
-                PreviewFlag = true;
-                DeleteTmpFileFlag = true;
-                IgnoreErrorFlag = false;
-                SettingTabIndex = 0;
-                YohakuUnitBP = false;
-                Encode = "_sjis";
-                GsDevice = "eps2write";
-                UseLowResolution = false;
-
-                EditorFontColor = new FontColorCollection();
-            }
-
-            protected Settings(Settings s) {
-                PlatexPath = (string)s.PlatexPath.Clone();
-                DvipdfmxPath = (string)s.DvipdfmxPath.Clone();
-                GsPath = (string)s.GsPath.Clone();
-                GsDevice = (string) s.GsDevice.Clone();
-                UseLowResolution = s.UseLowResolution;
-                ResolutionScale = s.ResolutionScale;
-                UseMagickFlag = s.UseMagickFlag;
-                TransparentPngFlag = s.TransparentPngFlag;
-                ShowOutputWindowFlag = s.ShowOutputWindowFlag;
-                PreviewFlag = s.PreviewFlag;
-                DeleteTmpFileFlag = s.DeleteTmpFileFlag;
-                IgnoreErrorFlag = s.IgnoreErrorFlag;
-                TopMargin = s.TopMargin;
-                BottomMargin = s.BottomMargin;
-                LeftMargin = s.LeftMargin;
-                RightMargin = s.RightMargin;
-                SettingTabIndex = s.SettingTabIndex;
-                YohakuUnitBP = s.YohakuUnitBP;
-                EditorFont = (Font)s.EditorFont.Clone();
-                EditorFontColor = new FontColorCollection() ;
-                foreach(var item in s.EditorFontColor) {
-                    EditorFontColor[item.Key] = (FontColor)item.Value.Clone();
-                }
-                Encode = (string)s.Encode.Clone();
-            }
-
-            public Settings DeepCopy() { return new Settings(this); }
-            
-            public void LoadSetting() {
-                PlatexPath = Properties.Settings.Default.platexPath;
-                DvipdfmxPath = Properties.Settings.Default.dvipdfmxPath;
-                GsPath = Properties.Settings.Default.gsPath;
-                GsDevice = Properties.Settings.Default.gsDevice;
-                UseLowResolution = Properties.Settings.Default.useLowResolution;
-                Encode = Properties.Settings.Default.encode;
-
-                TransparentPngFlag = Properties.Settings.Default.transparentPngFlag;
-                ResolutionScale = Properties.Settings.Default.resolutionScale;
-                TopMargin = Properties.Settings.Default.topMargin;
-                LeftMargin = Properties.Settings.Default.leftMargin;
-                RightMargin = Properties.Settings.Default.rightMargin;
-                BottomMargin = Properties.Settings.Default.bottomMargin;
-                YohakuUnitBP = Properties.Settings.Default.yohakuUnitBP;
-
-                UseMagickFlag = Properties.Settings.Default.useMagickFlag;
-
-                ShowOutputWindowFlag = Properties.Settings.Default.showOutputWindowFlag;
-                PreviewFlag = Properties.Settings.Default.previewFlag;
-                DeleteTmpFileFlag = Properties.Settings.Default.deleteTmpFileFlag;
-                IgnoreErrorFlag = Properties.Settings.Default.ignoreErrorFlag;
-
-                SettingTabIndex = Properties.Settings.Default.settingTabIndex;
-
-                EditorFontColor["テキスト"] = new FontColor(Properties.Settings.Default.editorNormalColorFont, Properties.Settings.Default.editorNormalColorBack);
-                EditorFontColor["選択範囲"] = new FontColor(Properties.Settings.Default.editorSelectedColorFont,Properties.Settings.Default.editorSelectedColorBack);
-                EditorFontColor["コントロールシークエンス"] = new FontColor(Properties.Settings.Default.editorCommandColorFont,Properties.Settings.Default.editorCommandColorBack);
-                EditorFontColor["$"] = new FontColor(Properties.Settings.Default.editorEquationColorFont,Properties.Settings.Default.editorEquationColorBack);
-                EditorFontColor["中 / 大括弧"] = new FontColor(Properties.Settings.Default.editorBracketColorFont,Properties.Settings.Default.editorBracketColorBack);
-                EditorFontColor["コメント"] = new FontColor(Properties.Settings.Default.editorCommentColorFont,Properties.Settings.Default.editorCommentColorBack);
-                EditorFontColor["改行，EOF"] = new FontColor(Properties.Settings.Default.editorEOFColorFont,Properties.Settings.Default.editorNormalColorBack);
-                EditorFontColor["対応する括弧"] = new FontColor(Properties.Settings.Default.editorMatchedBracketColorFont,Properties.Settings.Default.editorMatchedBracketColorBack);
-                EditorFont = Properties.Settings.Default.editorFont;
-            }
-
-            public void SaveSettings() {
-                Properties.Settings.Default.platexPath = PlatexPath;
-                Properties.Settings.Default.dvipdfmxPath = DvipdfmxPath;
-                Properties.Settings.Default.gsPath = GsPath;
-                Properties.Settings.Default.gsDevice = GsDevice;
-                Properties.Settings.Default.useLowResolution = UseLowResolution;
-                Properties.Settings.Default.encode = Encode;
-
-                Properties.Settings.Default.resolutionScale = ResolutionScale;
-                Properties.Settings.Default.transparentPngFlag = TransparentPngFlag;
-                Properties.Settings.Default.topMargin = TopMargin;
-                Properties.Settings.Default.leftMargin = LeftMargin;
-                Properties.Settings.Default.rightMargin = RightMargin;
-                Properties.Settings.Default.bottomMargin = BottomMargin;
-                Properties.Settings.Default.yohakuUnitBP = YohakuUnitBP;
-
-                Properties.Settings.Default.useMagickFlag = UseMagickFlag;
-                Properties.Settings.Default.showOutputWindowFlag = ShowOutputWindowFlag;
-                Properties.Settings.Default.previewFlag = PreviewFlag;
-                Properties.Settings.Default.deleteTmpFileFlag = DeleteTmpFileFlag;
-                Properties.Settings.Default.ignoreErrorFlag = IgnoreErrorFlag;
-
-                Properties.Settings.Default.editorFont = EditorFont;
-                Properties.Settings.Default.settingTabIndex = SettingTabIndex;
-                Properties.Settings.Default.editorNormalColorFont = EditorFontColor["テキスト"].Font;
-                Properties.Settings.Default.editorNormalColorBack = EditorFontColor["テキスト"].Back;
-                Properties.Settings.Default.editorSelectedColorFont = EditorFontColor["選択範囲"].Font;
-                Properties.Settings.Default.editorSelectedColorBack = EditorFontColor["選択範囲"].Back;
-                Properties.Settings.Default.editorCommandColorFont = EditorFontColor["コントロールシークエンス"].Font;
-                Properties.Settings.Default.editorCommandColorBack = EditorFontColor["コントロールシークエンス"].Back;
-                Properties.Settings.Default.editorEquationColorFont = EditorFontColor["$"].Font;
-                Properties.Settings.Default.editorEquationColorBack = EditorFontColor["$"].Back;
-                Properties.Settings.Default.editorBracketColorFont = EditorFontColor["中 / 大括弧"].Font;
-                Properties.Settings.Default.editorBracketColorBack = EditorFontColor["中 / 大括弧"].Back;
-                Properties.Settings.Default.editorCommentColorFont = EditorFontColor["コメント"].Font;
-                Properties.Settings.Default.editorCommentColorBack = EditorFontColor["コメント"].Back;
-                Properties.Settings.Default.editorEOFColorFont = EditorFontColor["改行，EOF"].Font;
-                Properties.Settings.Default.editorMatchedBracketColorFont = EditorFontColor["対応する括弧"].Font;
-                Properties.Settings.Default.editorMatchedBracketColorBack = EditorFontColor["対応する括弧"].Back;
-            }
-
-        }
-
-        Settings SettingData;
 
         DataTable EncodeComboboxData = new DataTable();
-        public SettingForm(MainForm _mainForm) {
-            mainForm = _mainForm;
+        public SettingForm() {
             InitializeComponent();
 
             DataRow row;
@@ -222,10 +45,8 @@ namespace TeX2img {
             encodeComboBox.DisplayMember = "SHOW";
             encodeComboBox.ValueMember = "DATA";
 
-            SettingData = mainForm.SettingData.DeepCopy();
-
             for(int i = 0 ; i < FontColorListView.Items.Count ; ++i) {
-                Settings.FontColor val = SettingData.EditorFontColor[FontColorListView.Items[i].Text];
+                var val = Properties.Settings.Default.editorFontColor[FontColorListView.Items[i].Text];
                 FontColorListView.Items[i].ForeColor = val.Font;
                 FontColorListView.Items[i].BackColor = val.Back;
             }
@@ -235,33 +56,33 @@ namespace TeX2img {
             }
 //            FontColorListView_SelectedIndexChanged();
 
-            platexTextBox.Text = SettingData.PlatexPath;
-            dvipdfmxTextBox.Text = SettingData.DvipdfmxPath;
-            gsTextBox.Text = SettingData.GsPath;
-            encodeComboBox.SelectedValue = SettingData.Encode;
-            GSUseepswriteCheckButton.Checked = (SettingData.GsDevice == "epswrite");
-            UseLowResolutionCheckBox.Checked = SettingData.UseLowResolution;
+            platexTextBox.Text = Properties.Settings.Default.platexPath;
+            dvipdfmxTextBox.Text = Properties.Settings.Default.dvipdfmxPath;
+            gsTextBox.Text = Properties.Settings.Default.gsPath;
+            encodeComboBox.SelectedValue = Properties.Settings.Default.encode;
+            GSUseepswriteCheckButton.Checked = (Properties.Settings.Default.gsDevice == "epswrite");
+            UseLowResolutionCheckBox.Checked = Properties.Settings.Default.useLowResolution;
 
-            resolutionScaleUpDown.Value = SettingData.ResolutionScale;
-            leftMarginUpDown.Value = SettingData.LeftMargin;
-            topMarginUpDown.Value = SettingData.TopMargin;
-            rightMarginUpDown.Value = SettingData.RightMargin;
-            bottomMarginUpDown.Value = SettingData.BottomMargin;
+            resolutionScaleUpDown.Value = Properties.Settings.Default.resolutionScale;
+            leftMarginUpDown.Value = Properties.Settings.Default.leftMargin;
+            topMarginUpDown.Value = Properties.Settings.Default.topMargin;
+            rightMarginUpDown.Value = Properties.Settings.Default.rightMargin;
+            bottomMarginUpDown.Value = Properties.Settings.Default.bottomMargin;
 
-            useMagickCheckBox.Checked = SettingData.UseMagickFlag;
-            transparentPngCheckBox.Checked = SettingData.TransparentPngFlag;
+            useMagickCheckBox.Checked = Properties.Settings.Default.useMagickFlag;
+            transparentPngCheckBox.Checked = Properties.Settings.Default.transparentPngFlag;
 
-            showOutputWindowCheckBox.Checked = SettingData.ShowOutputWindowFlag;
-            previewCheckBox.Checked = SettingData.PreviewFlag;
-            deleteTmpFilesCheckBox.Checked = SettingData.DeleteTmpFileFlag;
-            ignoreErrorCheckBox.Checked = SettingData.IgnoreErrorFlag;
+            showOutputWindowCheckBox.Checked = Properties.Settings.Default.showOutputWindowFlag;
+            previewCheckBox.Checked = Properties.Settings.Default.previewFlag;
+            deleteTmpFilesCheckBox.Checked = Properties.Settings.Default.deleteTmpFileFlag;
+            ignoreErrorCheckBox.Checked = Properties.Settings.Default.ignoreErrorFlag;
 
-            SettingTab.SelectedIndex = SettingData.SettingTabIndex;
+            SettingTab.SelectedIndex = Properties.Settings.Default.settingTabIndex;
 
-            radioButtonbp.Checked = SettingData.YohakuUnitBP;
-            radioButtonpx.Checked = !SettingData.YohakuUnitBP;
+            radioButtonbp.Checked = Properties.Settings.Default.yohakuUnitBP;
+            radioButtonpx.Checked = !Properties.Settings.Default.yohakuUnitBP;
 
-            FontDataText.Text = GetFontString(SettingData.EditorFont);
+            FontDataText.Text = GetFontString(Properties.Settings.Default.editorFont);
         }
 
         private void platexBrowseButton_Click(object sender, EventArgs e) {
@@ -283,6 +104,7 @@ namespace TeX2img {
         }
 
         private void cancelButton_Click(object sender, EventArgs e) {
+            Properties.Settings.Default.Reload();
             this.Close();
         }
 
@@ -301,33 +123,33 @@ namespace TeX2img {
                 return;
             }
 
-            SettingData.PlatexPath = platexTextBox.Text;
-            SettingData.DvipdfmxPath = dvipdfmxTextBox.Text;
-            SettingData.GsPath = gsTextBox.Text;
-            SettingData.GsDevice = GSUseepswriteCheckButton.Checked ? "epswrite" : "eps2write";
-            SettingData.UseLowResolution = UseLowResolutionCheckBox.Checked;
-            SettingData.Encode = (string)encodeComboBox.SelectedValue;
+            Properties.Settings.Default.platexPath = platexTextBox.Text;
+            Properties.Settings.Default.dvipdfmxPath = dvipdfmxTextBox.Text;
+            Properties.Settings.Default.gsPath = gsTextBox.Text;
+            Properties.Settings.Default.gsDevice = GSUseepswriteCheckButton.Checked ? "epswrite" : "eps2write";
+            Properties.Settings.Default.useLowResolution = UseLowResolutionCheckBox.Checked;
+            Properties.Settings.Default.encode = (string) encodeComboBox.SelectedValue;
 
-            SettingData.ResolutionScale = (int) (resolutionScaleUpDown.Value);
-            SettingData.LeftMargin = leftMarginUpDown.Value;
-            SettingData.TopMargin = topMarginUpDown.Value;
-            SettingData.RightMargin = rightMarginUpDown.Value;
-            SettingData.BottomMargin = bottomMarginUpDown.Value;
+            Properties.Settings.Default.resolutionScale = (int) (resolutionScaleUpDown.Value);
+            Properties.Settings.Default.leftMargin = leftMarginUpDown.Value;
+            Properties.Settings.Default.topMargin = topMarginUpDown.Value;
+            Properties.Settings.Default.rightMargin = rightMarginUpDown.Value;
+            Properties.Settings.Default.bottomMargin = bottomMarginUpDown.Value;
 
-            SettingData.UseMagickFlag = useMagickCheckBox.Checked;
-            SettingData.TransparentPngFlag = transparentPngCheckBox.Checked;
+            Properties.Settings.Default.useMagickFlag = useMagickCheckBox.Checked;
+            Properties.Settings.Default.transparentPngFlag = transparentPngCheckBox.Checked;
 
-            SettingData.ShowOutputWindowFlag = showOutputWindowCheckBox.Checked;
-            SettingData.PreviewFlag = previewCheckBox.Checked;
-            SettingData.DeleteTmpFileFlag = deleteTmpFilesCheckBox.Checked;
-            SettingData.IgnoreErrorFlag = ignoreErrorCheckBox.Checked;
+            Properties.Settings.Default.showOutputWindowFlag = showOutputWindowCheckBox.Checked;
+            Properties.Settings.Default.previewFlag = previewCheckBox.Checked;
+            Properties.Settings.Default.deleteTmpFileFlag = deleteTmpFilesCheckBox.Checked;
+            Properties.Settings.Default.ignoreErrorFlag = ignoreErrorCheckBox.Checked;
 
-            SettingData.SettingTabIndex = SettingTab.SelectedIndex;
+            Properties.Settings.Default.settingTabIndex = SettingTab.SelectedIndex;
 
-            SettingData.YohakuUnitBP = radioButtonbp.Checked;
+            Properties.Settings.Default.yohakuUnitBP = radioButtonbp.Checked;
 
-            mainForm.SettingData = SettingData.DeepCopy();
-            mainForm.ChangeSetting();
+            Properties.Settings.Default.Save();
+
             this.Close();
         }
 
@@ -345,11 +167,11 @@ namespace TeX2img {
 
         private void ChangeFontButton_Click(object sender, EventArgs e) {
             FontDialog fd = new FontDialog();
-            fd.Font = SettingData.EditorFont;
+            fd.Font = Properties.Settings.Default.editorFont;
             fd.ShowEffects = false;
             if(fd.ShowDialog() != DialogResult.Cancel) {
-                SettingData.EditorFont = fd.Font;
-                FontDataText.Text = GetFontString(SettingData.EditorFont);
+                Properties.Settings.Default.editorFont = fd.Font;
+                FontDataText.Text = GetFontString(Properties.Settings.Default.editorFont);
             }
         }
 
@@ -364,8 +186,8 @@ namespace TeX2img {
             if(FontColorListView.SelectedIndices.Count == 0) return;
             string item = FontColorListView.SelectedItems[0].Text;
             FontColorGroup.Text = item;
-            FontColorButton.BackColor = SettingData.EditorFontColor[item].Font;
-            BackColorButton.BackColor = SettingData.EditorFontColor[item].Back;
+            FontColorButton.BackColor = Properties.Settings.Default.editorFontColor[item].Font;
+            BackColorButton.BackColor = Properties.Settings.Default.editorFontColor[item].Back;
             if(item == "改行，EOF") BackColorButton.Enabled = false;
             else BackColorButton.Enabled = true;
         }
@@ -374,9 +196,9 @@ namespace TeX2img {
             if(FontColorListView.SelectedIndices.Count == 0) return;
             string item = FontColorListView.SelectedItems[0].Text;
             ColorDialog cd = new ColorDialog();
-            cd.Color = SettingData.EditorFontColor[item].Font;
+            cd.Color = Properties.Settings.Default.editorFontColor[item].Font;
             if(cd.ShowDialog() == DialogResult.OK) {
-                SettingData.EditorFontColor[item].Font = cd.Color;
+                Properties.Settings.Default.editorFontColor[item].Font = cd.Color;
                 FontColorButton.BackColor = cd.Color;
                 FontColorListView.SelectedItems[0].ForeColor = cd.Color;
             }
@@ -386,9 +208,9 @@ namespace TeX2img {
             if(FontColorListView.SelectedIndices.Count == 0) return;
             string item = FontColorListView.SelectedItems[0].Text;
             ColorDialog cd = new ColorDialog();
-            cd.Color = SettingData.EditorFontColor[item].Back;
+            cd.Color = Properties.Settings.Default.editorFontColor[item].Back;
             if(cd.ShowDialog() == DialogResult.OK) {
-                SettingData.EditorFontColor[item].Back = cd.Color;
+                Properties.Settings.Default.editorFontColor[item].Back = cd.Color;
                 BackColorButton.BackColor = cd.Color;
                 FontColorListView.SelectedItems[0].BackColor = cd.Color;
                 if(item == "テキスト") {

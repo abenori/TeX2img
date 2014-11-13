@@ -15,7 +15,7 @@ namespace TeX2img
         {
             mainForm = _mainForm;
             InitializeComponent();
-            if(mainForm.SettingData.EditorFont != null)preambleTextBox.Font = mainForm.SettingData.EditorFont;
+            if(Properties.Settings.Default.editorFont != null) preambleTextBox.Font = Properties.Settings.Default.editorFont;
 			preambleTextBox.Highlighter = Sgry.Azuki.Highlighter.Highlighters.Latex;
             preambleTextBox.Resize += delegate { preambleTextBox.ViewWidth = preambleTextBox.ClientSize.Width; };
             ActiveControl = preambleTextBox;
