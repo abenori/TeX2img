@@ -229,7 +229,7 @@ namespace TeX2img {
             if(myOutputForm.InvokeRequired) {
                 this.Invoke(new appendOutputDelegate(appendOutput), new Object[] { log });
             } else {
-                myOutputForm.getOutputTextBox().Text += (log + "\r\n");
+                myOutputForm.getOutputTextBox().Text += log;
             }
         }
 

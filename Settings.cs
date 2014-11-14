@@ -37,7 +37,7 @@
             base.OnSettingsLoaded(sender, e);
         }
 
-        public override void Save() {
+        protected override void OnSettingsSaving(object sender, System.ComponentModel.CancelEventArgs e) {
             editorNormalColorFont = editorFontColor["テキスト"].Font;
             editorNormalColorBack = editorFontColor["テキスト"].Back;
             editorSelectedColorFont = editorFontColor["選択範囲"].Font;
@@ -53,6 +53,10 @@
             editorEOFColorFont = editorFontColor["改行，EOF"].Font;
             editorMatchedBracketColorFont = editorFontColor["対応する括弧"].Font;
             editorMatchedBracketColorBack = editorFontColor["対応する括弧"].Back;
+            base.OnSettingsSaving(sender, e);
+        }
+
+        public override void Save() {
             if(!NoSaveSettings) base.Save();
         }
 

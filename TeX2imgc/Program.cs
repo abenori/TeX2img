@@ -16,7 +16,7 @@ namespace TeX2imgc {
             using(Process proc = new Process()) {
                 proc.StartInfo.FileName = tex2img;
                 proc.StartInfo.Arguments = "/nogui ";
-                var reg = new System.Text.RegularExpressions.Regex("^[^ ]*(\".*\")*[ ^]* ");
+                var reg = new System.Text.RegularExpressions.Regex("^[^ ]*(\".*\")*[ ^]* *");
                 var m = reg.Match(Environment.CommandLine);
                 if(m.Success) proc.StartInfo.Arguments += Environment.CommandLine.Substring(m.Length);
                 else proc.StartInfo.Arguments += Environment.CommandLine;

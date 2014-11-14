@@ -32,17 +32,18 @@ namespace TeX2img {
             public string GenerateHelp() {
                 string rv = "";
                 int maxlength = 0;
-                foreach(var oh in this)if(oh.help != null)maxlength = Math.Max(maxlength, oh.option.Length + (oh.withvalue ? 3 : 0));
+                foreach(var oh in this)if(oh.help != null)maxlength = Math.Max(maxlength, oh.option.Length + (oh.withvalue ? 5 : 0));
                 maxlength += 2;
                 foreach(var oh in this) {
                     if(oh.help != null) {
-                        string opstr = "/" + oh.option + (oh.withvalue ? "VAL" : "");
-                        rv += opstr;
+                        string opstr = "/" + oh.option;
+                        if(oh.withvalue) opstr = opstr.Remove(opstr.Length - 1) + " <VAL>";
+                        rv += "  " + opstr;
                         rv += new string(' ', maxlength - opstr.Length);
                         rv += oh.help.Replace("\n", "\n" + new string(' ', maxlength + 1)) + "\n";
                     }
                 }
-                if(rv != "" && rv.Substring(rv.Length - 1, 1) == "\n") rv = rv.Remove(rv.Length - 1, 1);
+                if(rv.EndsWith("\n")) rv = rv.Remove(rv.Length - 1, 1);
                 return rv;
             }
         }
@@ -105,15 +106,13 @@ namespace TeX2img {
                 {"version",val => {version = true;},"バージョン情報を表示する"}
             };
 
-            NDesk.Options.OptionSet opt;
-            try {
-                opt = options.GenerateOption();
-            }
+            var opt = options.GenerateOption();
+            List<string> files;
+            try { files = opt.Parse(Environment.GetCommandLineArgs()); }
             catch(NDesk.Options.OptionException e) {
-                Console.WriteLine(e.Message);
+                Console.WriteLine("オプション " + e.OptionName + " への入力が不正です．");
                 return;
             }
-            var files = opt.Parse(Environment.GetCommandLineArgs());
             // files[0]はTeX2img本体なので消しておく
             files.RemoveAt(0);
             if(nosavesetting == null) Properties.Settings.Default.NoSaveSettings = nogui;
@@ -167,7 +166,7 @@ namespace TeX2img {
             bool err = false;
             for(int i = 0 ; i < files.Count / 2 ; ++i) {
                 if(!File.Exists(files[2 * i])) {
-                    Console.WriteLine(files[2 * i] + " は見つかりませんでした．");
+                    Console.WriteLine("ファイル " + files[2 * i] + " は見つかりませんでした．");
                     err = true;
                     continue;
                 }
