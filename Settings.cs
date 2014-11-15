@@ -57,7 +57,7 @@
         }
 
         public override void Save() {
-            if(!NoSaveSettings) base.Save();
+            if(SaveSettings) base.Save();
         }
 
         public class FontColor {
@@ -80,6 +80,6 @@
             }
         }
         public FontColorCollection editorFontColor = new FontColorCollection();
-        public bool NoSaveSettings = false;
+        public bool SaveSettings = true;
     }
 }

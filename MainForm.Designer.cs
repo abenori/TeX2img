@@ -406,8 +406,8 @@
             // 
             this.saveFileDialog1.DefaultExt = "eps";
             this.saveFileDialog1.FileName = "equation.eps";
-            this.saveFileDialog1.Filter = "EPSファイル (*.eps)|*.eps|JPEGファイル (*.jpg)|*.jpg|PNGファイル (*.png)|*.png|すべてのファイル (*.*)" +
-    "|*.*";
+            this.saveFileDialog1.Filter = "EPSファイル (*.eps)|*.eps|JPEGファイル (*.jpg)|*.jpg|PNGファイル (*.png)|*.png|PDFファイル (*.pdf" +
+    ")|*.pdf|すべてのファイル (*.*)|*.*";
             // 
             // openFileDialog1
             // 
@@ -430,13 +430,11 @@
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.menuStrip1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.ImeMode = System.Windows.Forms.ImeMode.NoControl;
             this.MainMenuStrip = this.menuStrip1;
             this.Margin = new System.Windows.Forms.Padding(5, 4, 5, 4);
             this.Name = "MainForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
             this.Text = "TeX2img";
-            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainForm_FormClosing);
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
             this.groupBox1.ResumeLayout(false);

@@ -6,49 +6,37 @@ using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 
-namespace TeX2img
-{
-    public partial class PreambleForm : Form
-    {
+namespace TeX2img {
+    public partial class PreambleForm : Form {
         private MainForm mainForm;
-        public PreambleForm(MainForm _mainForm)
-        {
+        public PreambleForm(MainForm _mainForm) {
             mainForm = _mainForm;
             InitializeComponent();
             if(Properties.Settings.Default.editorFont != null) preambleTextBox.Font = Properties.Settings.Default.editorFont;
-			preambleTextBox.Highlighter = Sgry.Azuki.Highlighter.Highlighters.Latex;
-            preambleTextBox.Resize += delegate { preambleTextBox.ViewWidth = preambleTextBox.ClientSize.Width; };
+            preambleTextBox.Highlighter = Sgry.Azuki.Highlighter.Highlighters.Latex;
+            preambleTextBox.Resize += ((s, e) => { preambleTextBox.ViewWidth = preambleTextBox.ClientSize.Width; });
             ActiveControl = preambleTextBox;
         }
 
-        public Sgry.Azuki.WinForms.AzukiControl PreambleTextBox
-        {
-            get
-            {
-                return preambleTextBox;
-            }
+        public Sgry.Azuki.WinForms.AzukiControl PreambleTextBox {
+            get { return preambleTextBox; }
         }
 
-        public void setLocation(int x, int y)
-        {
+        public void setLocation(int x, int y) {
             this.Location = new Point(x, y);
         }
 
-        private void PreambleForm_FormClosing(object sender, FormClosingEventArgs e)
-        {
+        private void PreambleForm_FormClosing(object sender, FormClosingEventArgs e) {
             // ユーザの操作によりウィンドウが閉じられようとしたときはそれをキャンセルし，
             // 単にウィンドウを非表示にする
-            if(e.CloseReason == CloseReason.UserClosing)
-            {
+            if(e.CloseReason == CloseReason.UserClosing) {
                 e.Cancel = true;
                 mainForm.showPreambleWindow(false);
             }
         }
 
-        private void backToDefaultButton_Click(object sender, EventArgs e)
-        {
-            if(DialogResult.Yes == MessageBox.Show("現在のプリアンブル設定を破棄して，初期設定に戻してよろしいですか？", "確認", MessageBoxButtons.YesNo, MessageBoxIcon.Question))
-            {
+        private void backToDefaultButton_Click(object sender, EventArgs e) {
+            if(DialogResult.Yes == MessageBox.Show("現在のプリアンブル設定を破棄して，初期設定に戻してよろしいですか？", "確認", MessageBoxButtons.YesNo, MessageBoxIcon.Question)) {
                 preambleTextBox.Text = "\\documentclass[fleqn]{jsarticle}\r\n\\usepackage{amsmath,amssymb}\r\n\\usepackage{enumerate}\r\n\\pagestyle{empty}\r\n";
             }
         }

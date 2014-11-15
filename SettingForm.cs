@@ -9,17 +9,14 @@ using System.IO;
 using System.Diagnostics;
 
 namespace TeX2img {
-    public partial class 
-        SettingForm : Form {
-
-
+    public partial class SettingForm : Form {
         DataTable EncodeComboboxData = new DataTable();
         public SettingForm() {
             InitializeComponent();
 
             DataRow row;
-            EncodeComboboxData.Columns.Add("DATA",typeof(string));
-            EncodeComboboxData.Columns.Add("SHOW",typeof(string));
+            EncodeComboboxData.Columns.Add("DATA", typeof(string));
+            EncodeComboboxData.Columns.Add("SHOW", typeof(string));
             row = EncodeComboboxData.NewRow();
             row["DATA"] = "_utf8"; row["SHOW"] = "指定しない（入力 UTF-8 ）";
             EncodeComboboxData.Rows.Add(row);
@@ -54,7 +51,7 @@ namespace TeX2img {
             for(int i = 1 ; i < FontColorListView.Items.Count ; ++i) {
                 FontColorListView.Items[i].Selected = false;
             }
-//            FontColorListView_SelectedIndexChanged();
+            //            FontColorListView_SelectedIndexChanged();
 
             platexTextBox.Text = Properties.Settings.Default.platexPath;
             dvipdfmxTextBox.Text = Properties.Settings.Default.dvipdfmxPath;
@@ -62,6 +59,8 @@ namespace TeX2img {
             encodeComboBox.SelectedValue = Properties.Settings.Default.encode;
             GSUseepswriteCheckButton.Checked = (Properties.Settings.Default.gsDevice == "epswrite");
             UseLowResolutionCheckBox.Checked = Properties.Settings.Default.useLowResolution;
+            GuessLaTeXCompileCheckBox.Checked = Properties.Settings.Default.guessLaTeXCompile;
+            LaTeXCompileNumbernumUpDown.Value = Properties.Settings.Default.LaTeXCompileMaxNumber;
 
             resolutionScaleUpDown.Value = Properties.Settings.Default.resolutionScale;
             leftMarginUpDown.Value = Properties.Settings.Default.leftMargin;
@@ -129,6 +128,8 @@ namespace TeX2img {
             Properties.Settings.Default.gsDevice = GSUseepswriteCheckButton.Checked ? "epswrite" : "eps2write";
             Properties.Settings.Default.useLowResolution = UseLowResolutionCheckBox.Checked;
             Properties.Settings.Default.encode = (string) encodeComboBox.SelectedValue;
+            Properties.Settings.Default.LaTeXCompileMaxNumber = (int) LaTeXCompileNumbernumUpDown.Value;
+            Properties.Settings.Default.guessLaTeXCompile = GuessLaTeXCompileCheckBox.Checked;
 
             Properties.Settings.Default.resolutionScale = (int) (resolutionScaleUpDown.Value);
             Properties.Settings.Default.leftMargin = leftMarginUpDown.Value;

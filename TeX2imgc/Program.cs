@@ -8,7 +8,7 @@ namespace TeX2imgc {
     class Program {
         static void Main(string[] args) {
             string dir = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
-            string tex2img = dir + "\\tex2img.exe";
+            string tex2img = Path.Combine(dir,"tex2img.exe");
             if(!File.Exists(tex2img)) {
                 Console.WriteLine("TeX2img.exe が見つかりませんでした．");
                 Environment.Exit(-1);
@@ -16,7 +16,9 @@ namespace TeX2imgc {
             using(Process proc = new Process()) {
                 proc.StartInfo.FileName = tex2img;
                 proc.StartInfo.Arguments = "/nogui ";
-                var reg = new System.Text.RegularExpressions.Regex("^[^ ]*(\".*\")*[ ^]* *");
+                // Environmet.CommandLine からTeX2imgc.exe... の部分を除去する．
+                // Environment.GetCommandLineArgsを使うと"が完全に再現できないと思うので．
+                var reg = new System.Text.RegularExpressions.Regex("^[^\" ]*(\"[^\"]*\")*[^\" ]* *");
                 var m = reg.Match(Environment.CommandLine);
                 if(m.Success) proc.StartInfo.Arguments += Environment.CommandLine.Substring(m.Length);
                 else proc.StartInfo.Arguments += Environment.CommandLine;

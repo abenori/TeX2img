@@ -39,6 +39,9 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SettingForm));
             this.SettingTab = new System.Windows.Forms.TabControl();
             this.BasicSettingTab = new System.Windows.Forms.TabPage();
+            this.label16 = new System.Windows.Forms.Label();
+            this.LaTeXCompileNumbernumUpDown = new System.Windows.Forms.NumericUpDown();
+            this.GuessLaTeXCompileCheckBox = new System.Windows.Forms.CheckBox();
             this.UseLowResolutionCheckBox = new System.Windows.Forms.CheckBox();
             this.GSUseepswriteCheckButton = new System.Windows.Forms.CheckBox();
             this.encodeComboBox = new System.Windows.Forms.ComboBox();
@@ -98,6 +101,7 @@
             this.gsOpenFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.SettingTab.SuspendLayout();
             this.BasicSettingTab.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.LaTeXCompileNumbernumUpDown)).BeginInit();
             this.OutputImgSettingTab.SuspendLayout();
             this.groupBox4.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -131,6 +135,9 @@
             // 
             // BasicSettingTab
             // 
+            this.BasicSettingTab.Controls.Add(this.label16);
+            this.BasicSettingTab.Controls.Add(this.LaTeXCompileNumbernumUpDown);
+            this.BasicSettingTab.Controls.Add(this.GuessLaTeXCompileCheckBox);
             this.BasicSettingTab.Controls.Add(this.UseLowResolutionCheckBox);
             this.BasicSettingTab.Controls.Add(this.GSUseepswriteCheckButton);
             this.BasicSettingTab.Controls.Add(this.encodeComboBox);
@@ -154,23 +161,49 @@
             this.BasicSettingTab.Text = "基本設定";
             this.BasicSettingTab.UseVisualStyleBackColor = true;
             // 
+            // label16
+            // 
+            this.label16.AutoSize = true;
+            this.label16.Location = new System.Drawing.Point(17, 139);
+            this.label16.Name = "label16";
+            this.label16.Size = new System.Drawing.Size(236, 18);
+            this.label16.TabIndex = 25;
+            this.label16.Text = "LaTeX コンパイルの（最大）回数";
+            // 
+            // LaTeXCompileNumbernumUpDown
+            // 
+            this.LaTeXCompileNumbernumUpDown.Location = new System.Drawing.Point(288, 134);
+            this.LaTeXCompileNumbernumUpDown.Name = "LaTeXCompileNumbernumUpDown";
+            this.LaTeXCompileNumbernumUpDown.Size = new System.Drawing.Size(81, 25);
+            this.LaTeXCompileNumbernumUpDown.TabIndex = 6;
+            // 
+            // GuessLaTeXCompileCheckBox
+            // 
+            this.GuessLaTeXCompileCheckBox.AutoSize = true;
+            this.GuessLaTeXCompileCheckBox.Location = new System.Drawing.Point(404, 137);
+            this.GuessLaTeXCompileCheckBox.Name = "GuessLaTeXCompileCheckBox";
+            this.GuessLaTeXCompileCheckBox.Size = new System.Drawing.Size(149, 22);
+            this.GuessLaTeXCompileCheckBox.TabIndex = 7;
+            this.GuessLaTeXCompileCheckBox.Text = "回数を推定する";
+            this.GuessLaTeXCompileCheckBox.UseVisualStyleBackColor = true;
+            // 
             // UseLowResolutionCheckBox
             // 
             this.UseLowResolutionCheckBox.AutoSize = true;
-            this.UseLowResolutionCheckBox.Location = new System.Drawing.Point(17, 191);
+            this.UseLowResolutionCheckBox.Location = new System.Drawing.Point(19, 233);
             this.UseLowResolutionCheckBox.Name = "UseLowResolutionCheckBox";
             this.UseLowResolutionCheckBox.Size = new System.Drawing.Size(215, 22);
-            this.UseLowResolutionCheckBox.TabIndex = 22;
+            this.UseLowResolutionCheckBox.TabIndex = 10;
             this.UseLowResolutionCheckBox.Text = "低解像度での処理を行う";
             this.UseLowResolutionCheckBox.UseVisualStyleBackColor = true;
             // 
             // GSUseepswriteCheckButton
             // 
             this.GSUseepswriteCheckButton.AutoSize = true;
-            this.GSUseepswriteCheckButton.Location = new System.Drawing.Point(17, 163);
+            this.GSUseepswriteCheckButton.Location = new System.Drawing.Point(19, 205);
             this.GSUseepswriteCheckButton.Name = "GSUseepswriteCheckButton";
             this.GSUseepswriteCheckButton.Size = new System.Drawing.Size(390, 22);
-            this.GSUseepswriteCheckButton.TabIndex = 21;
+            this.GSUseepswriteCheckButton.TabIndex = 9;
             this.GSUseepswriteCheckButton.Text = "Ghostscript の DEVICE には epswrite を指定する";
             this.GSUseepswriteCheckButton.UseVisualStyleBackColor = true;
             // 
@@ -178,15 +211,15 @@
             // 
             this.encodeComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.encodeComboBox.FormattingEnabled = true;
-            this.encodeComboBox.Location = new System.Drawing.Point(120, 235);
+            this.encodeComboBox.Location = new System.Drawing.Point(122, 271);
             this.encodeComboBox.Name = "encodeComboBox";
             this.encodeComboBox.Size = new System.Drawing.Size(419, 26);
-            this.encodeComboBox.TabIndex = 20;
+            this.encodeComboBox.TabIndex = 11;
             // 
             // label10
             // 
             this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(14, 240);
+            this.label10.Location = new System.Drawing.Point(16, 276);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(84, 18);
             this.label10.TabIndex = 19;
@@ -195,11 +228,11 @@
             // ignoreErrorCheckBox
             // 
             this.ignoreErrorCheckBox.AutoSize = true;
-            this.ignoreErrorCheckBox.Location = new System.Drawing.Point(17, 134);
+            this.ignoreErrorCheckBox.Location = new System.Drawing.Point(19, 176);
             this.ignoreErrorCheckBox.Margin = new System.Windows.Forms.Padding(5, 4, 5, 4);
             this.ignoreErrorCheckBox.Name = "ignoreErrorCheckBox";
             this.ignoreErrorCheckBox.Size = new System.Drawing.Size(405, 22);
-            this.ignoreErrorCheckBox.TabIndex = 18;
+            this.ignoreErrorCheckBox.TabIndex = 8;
             this.ignoreErrorCheckBox.Text = "少々のコンパイルエラーは無視して画像化を強行する";
             this.ignoreErrorCheckBox.UseVisualStyleBackColor = true;
             // 
@@ -210,7 +243,7 @@
             this.gsBrowseButton.Margin = new System.Windows.Forms.Padding(5, 4, 5, 4);
             this.gsBrowseButton.Name = "gsBrowseButton";
             this.gsBrowseButton.Size = new System.Drawing.Size(98, 28);
-            this.gsBrowseButton.TabIndex = 15;
+            this.gsBrowseButton.TabIndex = 5;
             this.gsBrowseButton.Text = "参照...";
             this.gsBrowseButton.UseVisualStyleBackColor = true;
             this.gsBrowseButton.Click += new System.EventHandler(this.gsBrowseButton_Click);
@@ -223,7 +256,7 @@
             this.gsTextBox.Margin = new System.Windows.Forms.Padding(5, 4, 5, 4);
             this.gsTextBox.Name = "gsTextBox";
             this.gsTextBox.Size = new System.Drawing.Size(404, 25);
-            this.gsTextBox.TabIndex = 14;
+            this.gsTextBox.TabIndex = 4;
             // 
             // label3
             // 
@@ -242,7 +275,7 @@
             this.dvipdfmxBrowseButton.Margin = new System.Windows.Forms.Padding(5, 4, 5, 4);
             this.dvipdfmxBrowseButton.Name = "dvipdfmxBrowseButton";
             this.dvipdfmxBrowseButton.Size = new System.Drawing.Size(98, 28);
-            this.dvipdfmxBrowseButton.TabIndex = 13;
+            this.dvipdfmxBrowseButton.TabIndex = 3;
             this.dvipdfmxBrowseButton.Text = "参照...";
             this.dvipdfmxBrowseButton.UseVisualStyleBackColor = true;
             this.dvipdfmxBrowseButton.Click += new System.EventHandler(this.dvipdfmxBrowseButton_Click);
@@ -255,7 +288,7 @@
             this.dvipdfmxTextBox.Margin = new System.Windows.Forms.Padding(5, 4, 5, 4);
             this.dvipdfmxTextBox.Name = "dvipdfmxTextBox";
             this.dvipdfmxTextBox.Size = new System.Drawing.Size(404, 25);
-            this.dvipdfmxTextBox.TabIndex = 12;
+            this.dvipdfmxTextBox.TabIndex = 2;
             // 
             // label2
             // 
@@ -274,7 +307,7 @@
             this.platexBrowseButton.Margin = new System.Windows.Forms.Padding(5, 4, 5, 4);
             this.platexBrowseButton.Name = "platexBrowseButton";
             this.platexBrowseButton.Size = new System.Drawing.Size(98, 28);
-            this.platexBrowseButton.TabIndex = 11;
+            this.platexBrowseButton.TabIndex = 1;
             this.platexBrowseButton.Text = "参照...";
             this.platexBrowseButton.UseVisualStyleBackColor = true;
             this.platexBrowseButton.Click += new System.EventHandler(this.platexBrowseButton_Click);
@@ -287,7 +320,7 @@
             this.platexTextBox.Margin = new System.Windows.Forms.Padding(5, 4, 5, 4);
             this.platexTextBox.Name = "platexTextBox";
             this.platexTextBox.Size = new System.Drawing.Size(404, 25);
-            this.platexTextBox.TabIndex = 9;
+            this.platexTextBox.TabIndex = 0;
             // 
             // label1
             // 
@@ -801,6 +834,7 @@
             this.SettingTab.ResumeLayout(false);
             this.BasicSettingTab.ResumeLayout(false);
             this.BasicSettingTab.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.LaTeXCompileNumbernumUpDown)).EndInit();
             this.OutputImgSettingTab.ResumeLayout(false);
             this.groupBox4.ResumeLayout(false);
             this.groupBox4.PerformLayout();
@@ -886,5 +920,8 @@
         private System.Windows.Forms.CheckBox GSUseepswriteCheckButton;
         private System.Windows.Forms.LinkLabel imageMagickLinkLabel;
         private System.Windows.Forms.CheckBox UseLowResolutionCheckBox;
+        private System.Windows.Forms.CheckBox GuessLaTeXCompileCheckBox;
+        private System.Windows.Forms.Label label16;
+        private System.Windows.Forms.NumericUpDown LaTeXCompileNumbernumUpDown;
     }
 }

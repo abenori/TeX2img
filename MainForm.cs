@@ -10,13 +10,14 @@ using System.ComponentModel;
 
 namespace TeX2img {
     public partial class MainForm : Form, IOutputController {
-        private bool saveSettingsFlag;
         private OutputForm myOutputForm;
         private PreambleForm myPreambleForm;
 
         #region コンストラクタおよび初期化処理関連のメソッド
+        List<string> FirstFiles;
+
         public MainForm(List<string> files) {
-            saveSettingsFlag = true;
+            FirstFiles = files;
 
             InitializeComponent();
             
@@ -65,34 +66,48 @@ namespace TeX2img {
 
             if(Properties.Settings.Default.gsDevice == "" && Properties.Settings.Default.gsPath != "") {
                 // Ghostscriptのバージョンを取得する．
-                Process proc = new Process();
-                proc.StartInfo.RedirectStandardError = proc.StartInfo.RedirectStandardOutput = true;
-                proc.StartInfo.UseShellExecute = false;
-                proc.StartInfo.CreateNoWindow = true;
-                proc.StartInfo.FileName = Properties.Settings.Default.gsPath;
-                proc.StartInfo.Arguments = "-v";
-                try {
-                proc.Start();
-                    string msg = proc.StandardOutput.ReadToEnd() + proc.StandardError.ReadToEnd();
-                proc.WaitForExit(2000);
-                if(!proc.HasExited) proc.Kill();
-                Regex reg = new Regex("Ghostscript ([0-9]+)\\.([0-9]+)", System.Text.RegularExpressions.RegexOptions.IgnoreCase);
-                var m = reg.Match(msg);
-                if(m.Success) {
-                        int major = int.Parse(m.Groups[1].Value);
-                        int minor = int.Parse(m.Groups[2].Value);
-                        //System.Diagnostics.Debug.WriteLine("major = " + major.ToString() + ", minor = " + minor.ToString());
-                        // 9.15以上ならばeps2write，そうでないならepwsrite
-                        if(major > 9 || (major == 9 && minor >= 15)) Properties.Settings.Default.gsDevice = "eps2write";
-                        else Properties.Settings.Default.gsDevice = "epswrite";
+                using(var proc = new Process()) {
+                    proc.StartInfo.RedirectStandardOutput = true;
+                    proc.StartInfo.UseShellExecute = false;
+                    proc.StartInfo.CreateNoWindow = true;
+                    proc.StartInfo.FileName = Properties.Settings.Default.gsPath;
+                    proc.StartInfo.Arguments = "-v";
+                    //string errmsg = "";
+                    //proc.ErrorDataReceived += ((s, e) => { errmsg += e.Data; });
+                    try {
+                        proc.Start();
+                        //proc.BeginErrorReadLine();
+                        string msg = proc.StandardOutput.ReadToEnd();
+                        proc.WaitForExit(2000);
+                        //proc.CancelErrorRead();
+                        if(!proc.HasExited) proc.Kill();
+                        Regex reg = new Regex("Ghostscript ([0-9]+)\\.([0-9]+)", System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+                        var m = reg.Match(msg);
+                        if(m.Success) {
+                            int major = int.Parse(m.Groups[1].Value);
+                            int minor = int.Parse(m.Groups[2].Value);
+                            //System.Diagnostics.Debug.WriteLine("major = " + major.ToString() + ", minor = " + minor.ToString());
+                            // 9.15以上ならばeps2write，そうでないならepwsrite
+                            if(major > 9 || (major == 9 && minor >= 15)) Properties.Settings.Default.gsDevice = "eps2write";
+                            else Properties.Settings.Default.gsDevice = "epswrite";
+                        }
                     }
-                }
                     catch(FormatException) { }
-                catch(Win32Exception) { }
-
+                    catch(Win32Exception) { }
+                }
             }
             if(Properties.Settings.Default.gsDevice == "") Properties.Settings.Default.gsDevice = "epswrite";
             Properties.Settings.Default.Save();
+        }
+
+        protected override void OnShown(EventArgs e) {
+            if(FirstFiles.Count != 0) {
+                clearOutputTextBox();
+                if(Properties.Settings.Default.showOutputWindowFlag) showOutputWindow(true);
+                this.Enabled = false;
+                convertWorker.RunWorkerAsync(100);
+            }
+            base.OnShown(e);
         }
 
         #endregion
@@ -204,14 +219,9 @@ namespace TeX2img {
         #endregion
 
         #region その他のイベントハンドラ
-        private void MainForm_FormClosing(object sender, FormClosingEventArgs e) {
-            if(saveSettingsFlag)saveSettings();
-        }
-
-        private void sourceTextBox_KeyDown(object sender, KeyEventArgs e) {
-            if(e.Control && e.KeyCode == Keys.A) {
-                ((TextBox) sender).SelectAll();
-            }
+        protected override void OnClosing(CancelEventArgs e) {
+            if(Properties.Settings.Default.SaveSettings) saveSettings();
+            base.OnClosing(e);
         }
         #endregion
 
@@ -235,10 +245,6 @@ namespace TeX2img {
 
         public void showGenerateError() {
             MessageBox.Show("画像生成に失敗しました。\nソースコードにエラーがないか確認してください。", "画像生成失敗", MessageBoxButtons.OK, MessageBoxIcon.Error);
-        }
-
-        public void showPstoeditError() {
-            MessageBox.Show(@".\pstoedit\pstoedit.exe を起動することができませんでした。" + "\n付属の pstoedit フォルダを消さないでください。", "失敗", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
         }
 
         public void showImageMagickError() {
@@ -288,6 +294,20 @@ namespace TeX2img {
         }
 
         private void convertWorker_DoWork(object sender, DoWorkEventArgs e) {
+            if(FirstFiles.Count != 0) {
+                Converter conv = new Converter(this);
+                for(int i = 0 ; i < FirstFiles.Count / 2 ; ++i) {
+                    string file = FirstFiles[2 * i];
+                    string tmppath = Path.GetTempFileName();
+                    string tmptexfn = Path.Combine(Path.GetDirectoryName(tmppath), Path.GetFileNameWithoutExtension(tmppath) + ".tex");
+                    File.Delete(tmptexfn);
+                    File.Copy(file, tmptexfn, true);
+                    conv.Convert(tmptexfn, FirstFiles[2 * i + 1]);
+                }
+                FirstFiles.Clear();
+                return;
+            }
+
             Converter converter = new Converter(this);
 
             string outputFilePath = outputFileNameTextBox.Text;
@@ -311,34 +331,36 @@ namespace TeX2img {
 
             string tmpTeXFileName = tmpFileBaseName + ".tex";
             string tmpDir = Path.GetDirectoryName(tmpFilePath);
-            File.Delete(Path.Combine(tmpDir,tmpTeXFileName));
-            File.Move(Path.Combine(tmpDir,tmpFileName),Path.Combine(tmpDir,tmpTeXFileName));
+            File.Delete(Path.Combine(tmpDir, tmpTeXFileName));
+            File.Move(Path.Combine(tmpDir, tmpFileName), Path.Combine(tmpDir, tmpTeXFileName));
 
             #region TeX ソースファイルの準備
             // 外部ファイルから入力する場合はテンポラリディレクトリにコピー
             if(InputFromFileRadioButton.Checked) {
                 string inputTeXFilePath = inputFileNameTextBox.Text;
-                File.Copy(inputTeXFilePath, Path.Combine(tmpDir,tmpTeXFileName), true);
+                File.Copy(inputTeXFilePath, Path.Combine(tmpDir, tmpTeXFileName), true);
             }
 
             // 直接入力の場合 tex ソースを出力
-            // BOM付きUTF-8にすることで，文字コードの推定を確実にさせる．
             if(InputFromTextboxRadioButton.Checked) {
                 if(Properties.Settings.Default.encode == "") Properties.Settings.Default.encode = "_sjis";// あり得ないはずだけど
                 string enc = Properties.Settings.Default.encode;
                 if(enc.Substring(0, 1) == "_") enc = enc.Remove(0, 1);
                 Encoding encoding;
                 switch(enc) {
-                case "sjis": encoding = Encoding.GetEncoding("shift_jis");break;
-                case "euc": encoding = Encoding.GetEncoding("euc-jp");break;
+                case "sjis": encoding = Encoding.GetEncoding("shift_jis"); break;
+                case "euc": encoding = Encoding.GetEncoding("euc-jp"); break;
                 case "jis": encoding = Encoding.GetEncoding("iso-2022-jp"); break;
+                // BOM付きUTF-8にすることで，文字コードの推定を確実にさせる．
                 default: encoding = Encoding.UTF8; break;
                 }
                 using(StreamWriter sw = new StreamWriter(Path.Combine(tmpDir, tmpTeXFileName), false, encoding)) {
                     try {
                         sw.Write(myPreambleForm.PreambleTextBox.Text);
+                        sw.WriteLine("");
                         sw.WriteLine("\\begin{document}");
                         sw.Write(sourceTextBox.Text);
+                        sw.WriteLine("");
                         sw.WriteLine("\\end{document}");
                     }
                     finally {

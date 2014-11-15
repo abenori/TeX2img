@@ -10,6 +10,7 @@ namespace TeX2img {
         /// アプリケーションのメイン エントリ ポイントです。
         /// </summary>
 
+        // オプション引数，動作，ヘルプをまとめて扱うためのクラス
         struct OptionWithHelp {
             public string option, help;
             public Action<string> action;
@@ -72,7 +73,7 @@ namespace TeX2img {
 
             // コマンドライン解析
             bool exit = false;
-            bool? nosavesetting = null;
+            bool? savesetting = null;
             bool nogui = false;
             bool quiet = false;
             bool version = false;
@@ -83,9 +84,8 @@ namespace TeX2img {
                 {"dvipdfmx=",val =>{Properties.Settings.Default.dvipdfmxPath=val;},"dvpdfmx のパスを設定"},
                 {"gs=",val => {Properties.Settings.Default.gsPath = val;},"Ghostscript のパスを設定"},
                 {"exit", val => {exit = true;},"設定の保存のみを行い終了する．"},
-                {"nosavesettings",val => {nosavesetting = true;},"設定の保存を行わない．"},
                 {"nogui",val => {nogui = true;},"CUI モード"},
-                {"savesettings",val => {nosavesetting = false;},"設定の保存を行う．"},
+                {"savesettings=",val => {savesetting=(val.ToLower() == "true");},"設定の保存を行う（true/false）．"},
                 {"resolution=",val => {Properties.Settings.Default.resolutionScale = GetNumberWithErrorHandling(val,"resolution");},"解像度レベルを設定"},
                 {"left-margin=",val => {Properties.Settings.Default.leftMargin = GetNumberWithErrorHandling(val,"left-margin");},"左余白を設定"},
                 {"right-margin=",val => {Properties.Settings.Default.rightMargin = GetNumberWithErrorHandling(val,"right-margin");},"右余白を設定"},
@@ -102,6 +102,8 @@ namespace TeX2img {
                 {"ignore-errors",val => {Properties.Settings.Default.ignoreErrorFlag = true;},"少々のエラーは無視する"},
                 {"quiet",val => {quiet = true;},"Quiet モード"},
                 {"no-delete",val => {Properties.Settings.Default.deleteTmpFileFlag = false;},"一時ファイルを削除しない"},
+                {"num=",val => {Properties.Settings.Default.LaTeXCompileMaxNumber = GetNumberWithErrorHandling(val,"num");},"LaTeX ソースコンパイルの（最大）回数を設定"},
+                {"guess-compile=",val => {Properties.Settings.Default.guessLaTeXCompile = (val.ToLower() == "true");},"LaTeX ソースコンパイル回数を推定するか設定（true/false）"},
                 {"help",val => {help = true;},"このメッセージを表示する"},
                 {"version",val => {version = true;},"バージョン情報を表示する"}
             };
@@ -109,18 +111,38 @@ namespace TeX2img {
             var opt = options.GenerateOption();
             List<string> files;
             try { files = opt.Parse(Environment.GetCommandLineArgs()); }
+            //try { files = opt.Parse(new string[]{"TeX2img","a.tex","a.pdf"}); }
             catch(NDesk.Options.OptionException e) {
                 Console.WriteLine("オプション " + e.OptionName + " への入力が不正です．");
                 return;
             }
             // files[0]はTeX2img本体なので消しておく
-            files.RemoveAt(0);
-            if(nosavesetting == null) Properties.Settings.Default.NoSaveSettings = nogui;
-            else Properties.Settings.Default.NoSaveSettings = (bool)nosavesetting;
+            if(files.Count != 0)files.RemoveAt(0);
+            if(savesetting == null) Properties.Settings.Default.SaveSettings = !nogui;
+            else Properties.Settings.Default.SaveSettings = (bool)savesetting;
 
             // すぐに終了
             if(exit) {
-                if(nosavesetting != false) Properties.Settings.Default.Save();
+                Properties.Settings.Default.Save();
+                return;
+            }
+            // filesのチェック
+            string err = "";
+            if(files.Count == 0 && nogui) {
+                Console.WriteLine("入力ファイルが存在しません．");
+                return;
+            }
+            for(int i = 0 ; i < files.Count / 2 ; ++i) {
+                if(!File.Exists(files[2 * i])) {
+                    err += "ファイル " + files[2 * i] + " は見つかりませんでした．\n";
+                }
+                if(!Converter.CheckFormat(files[2 * i + 1],null)) {
+                    err += "ファイル " + files[2 * i + 1] + " の拡張子は eps/png/jpg/pdf のいずれでもありません．\n";
+                }
+            }
+            if(err != ""){
+                if(nogui)Console.WriteLine(err);
+                else MessageBox.Show(err,"TeX2img");
                 return;
             }
 
@@ -159,22 +181,6 @@ namespace TeX2img {
         // CUIモード
         static void CUIExec(IOutputController Output, List<string> files) {
             Converter conv = new Converter(Output);
-            if(files.Count == 0) {
-                Console.WriteLine("入力ファイルが存在しません．");
-                return;
-            }
-            bool err = false;
-            for(int i = 0 ; i < files.Count / 2 ; ++i) {
-                if(!File.Exists(files[2 * i])) {
-                    Console.WriteLine("ファイル " + files[2 * i] + " は見つかりませんでした．");
-                    err = true;
-                    continue;
-                }
-                if(!conv.CheckFormat(files[2 * i + 1])) {
-                    err = true;
-                }
-            }
-            if(err) return;
             for(int i = 0 ; i < files.Count / 2 ; ++i) {
                 string file = files[2 * i];
                 // 一時フォルダにコピー

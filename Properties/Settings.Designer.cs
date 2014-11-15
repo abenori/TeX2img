@@ -599,5 +599,29 @@ namespace TeX2img.Properties {
                 this["useLowResolution"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool guessLaTeXCompile {
+            get {
+                return ((bool)(this["guessLaTeXCompile"]));
+            }
+            set {
+                this["guessLaTeXCompile"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("10")]
+        public int LaTeXCompileMaxNumber {
+            get {
+                return ((int)(this["LaTeXCompileMaxNumber"]));
+            }
+            set {
+                this["LaTeXCompileMaxNumber"] = value;
+            }
+        }
     }
 }
