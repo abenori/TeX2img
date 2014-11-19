@@ -38,26 +38,28 @@ TeX2imgc.exe は CUI モードで動かすためのラッパです．TeX2img.exe
 TeX2img.exe または TeX2imgc.exe が受けつけるオプションです．なお，
 TeX2img.exe input output
 とすると起動直後に変換が行われます．
-/platex <VAL>        platex のパスを設定
-/dvipdfmx <VAL>      dvpdfmx のパスを設定
-/gs <VAL>            Ghostscript のパスを設定
-/exit                設定の保存のみを行い終了する．
-/nogui               CUI モード
-/savesettings <VAL>  設定の保存を行う（true/false）．
-/resolution <VAL>    解像度レベルを設定
-/left-margin <VAL>   左余白を設定
-/right-margin <VAL>  右余白を設定
-/top-margin <VAL>    上余白を設定
-/bottom-margin <VAL> 下余白を設定
-/unit <VAL>          余白の単位（bp/px）を設定
-/kanji <VAL>         文字コードの指定（utf8/sjis/jis/euc/)
-/ignore-errors       少々のエラーは無視する
-/quiet               Quiet モード
-/no-delete           一時ファイルを削除しない
-/num <VAL>           LaTeX ソースコンパイルの（最大）回数を設定
-/guess-compile <VAL> LaTeX ソースコンパイル回数を推定するか設定（true/false）
-/help                このメッセージを表示する
-/version             バージョン情報を表示する
+/platex <VAL>         platex のパス
+/dvipdfmx <VAL>       dvpdfmx のパス
+/gs <VAL>             Ghostscript のパス
+/exit                 設定の保存のみを行い終了する．
+/savesettings <VAL>   設定の保存を行う（true/false）．
+/resolution <VAL>     解像度レベル
+/left-margin <VAL>    左余白
+/right-margin <VAL>   右余白
+/top-margin <VAL>     上余白
+/bottom-margin <VAL>  下余白
+/unit <VAL>           余白の単位（bp/px）を設定
+/kanji <VAL>          文字コードの指定（utf8/sjis/jis/euc/_)
+/ignore-errors <VAL>  少々のエラーは無視する（true/false）
+/low-resolution <VAL> 低解像度で処理する（true/false）
+/quiet                Quiet モード
+/no-delete <VAL>      一時ファイルを削除しない（true/false）
+/num <VAL>            LaTeX ソースコンパイルの（最大）回数
+/guess-compile <VAL>  LaTeX ソースコンパイル回数を推定（true/false）
+/imagemagick <VAL>    ImageMagick を使う（true/false）
+/transparent <VAL>    透過 PNG を作る（true/false）
+/help                 このメッセージを表示する
+/version              バージョン情報を表示する
 
 # 参考
 * 元々の作者である寺田氏による，TeX2img 配布ページ
@@ -125,4 +127,5 @@ http://www.ndesk.org/Options
 ** 設定情報の格納などに関する内部処理を変更．
 ** 必須環境を .NET Framework 3.5 以上とした．
 ** LaTeX ソースの複数回コンパイルが行えるようになった．（回数指定または推定．推定時の回数指定は最大回数を意味する．）
+** 読み取り専用のファイルを読み込んで使用していた場合，一時ファイルの削除に失敗するバグを修正．
 

@@ -108,20 +108,6 @@ namespace TeX2img {
         }
 
         private void OKButton_Click(object sender, EventArgs e) {
-            string dummy;
-            if(!File.Exists(Converter.setProcStartInfo(platexTextBox.Text, out dummy))) {
-                showNotFoundError(Converter.setProcStartInfo(platexTextBox.Text, out dummy));
-                return;
-            }
-            if(!File.Exists(Converter.setProcStartInfo(dvipdfmxTextBox.Text, out dummy))) {
-                showNotFoundError(Converter.setProcStartInfo(dvipdfmxTextBox.Text, out dummy));
-                return;
-            }
-            if(!File.Exists(Converter.setProcStartInfo(gsTextBox.Text, out dummy))) {
-                showNotFoundError(Converter.setProcStartInfo(gsTextBox.Text, out dummy));
-                return;
-            }
-
             Properties.Settings.Default.platexPath = platexTextBox.Text;
             Properties.Settings.Default.dvipdfmxPath = dvipdfmxTextBox.Text;
             Properties.Settings.Default.gsPath = gsTextBox.Text;
@@ -152,10 +138,6 @@ namespace TeX2img {
             Properties.Settings.Default.Save();
 
             this.Close();
-        }
-
-        private void showNotFoundError(string filePath) {
-            MessageBox.Show(filePath + " が存在しません。", "エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
 
         private void openTmpFolderButton_Click(object sender, EventArgs e) {

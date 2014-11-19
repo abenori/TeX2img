@@ -52,16 +52,6 @@ namespace TeX2img {
 
         [STAThread]
         static void Main() {
-            // Azuki.dllの存在チェック
-            string[] chkfiles = new string[] { "Azuki.dll" };
-            foreach(var f in chkfiles) {
-                if(!System.IO.File.Exists(Path.Combine(System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location), f))) {
-                    if(Converter.which(f) == "") {
-                        MessageBox.Show(f + " が見つからないため，起動することができませんでした．", "TeX2img");
-                        Environment.Exit(-1);
-                    }
-                }
-            }
             // アップデートしていたら前バージョンの設定を読み込む
             if(!Properties.Settings.Default.IsUpgraded) {
                 Properties.Settings.Default.Upgrade();
@@ -78,32 +68,45 @@ namespace TeX2img {
             bool quiet = false;
             bool version = false;
             bool help = false;
+            bool? preview = null;
 
-            OptionWithHelpCollection options = new OptionWithHelpCollection(){
-                {"platex=", val => {Properties.Settings.Default.platexPath=val;},"platex のパスを設定"},
-                {"dvipdfmx=",val =>{Properties.Settings.Default.dvipdfmxPath=val;},"dvpdfmx のパスを設定"},
-                {"gs=",val => {Properties.Settings.Default.gsPath = val;},"Ghostscript のパスを設定"},
+            var options = new OptionWithHelpCollection(){
+                {"platex=", val => {Properties.Settings.Default.platexPath=val;},"platex のパス"},
+                {"dvipdfmx=",val =>{Properties.Settings.Default.dvipdfmxPath=val;},"dvpdfmx のパス"},
+                {"gs=",val => {Properties.Settings.Default.gsPath = val;},"Ghostscript のパス"},
+                {"gsdevice=",
+                    val => {Properties.Settings.Default.gsDevice = GetStringsFromArray("gsdevice",val,new string[]{"epswrite","eps2write"});},
+                    "Ghostscript の device の値（epswrite/eps2write）"
+                },
                 {"exit", val => {exit = true;},"設定の保存のみを行い終了する．"},
-                {"nogui",val => {nogui = true;},"CUI モード"},
-                {"savesettings=",val => {savesetting=(val.ToLower() == "true");},"設定の保存を行う（true/false）．"},
-                {"resolution=",val => {Properties.Settings.Default.resolutionScale = GetNumberWithErrorHandling(val,"resolution");},"解像度レベルを設定"},
-                {"left-margin=",val => {Properties.Settings.Default.leftMargin = GetNumberWithErrorHandling(val,"left-margin");},"左余白を設定"},
-                {"right-margin=",val => {Properties.Settings.Default.rightMargin = GetNumberWithErrorHandling(val,"right-margin");},"右余白を設定"},
-                {"top-margin=",val => {Properties.Settings.Default.topMargin = GetNumberWithErrorHandling(val,"top-margin");},"上余白を設定"},
-                {"bottom-margin=",val => {Properties.Settings.Default.bottomMargin = GetNumberWithErrorHandling(val,"bottom-margin");},"下余白を設定"},
+                {"nogui",val => {nogui = true;},null},
+                {"savesettings=",val => {savesetting = GetTrueorFalse("savesettings",val);},"設定の保存を行うかを指定する（true/false）．"},
+                {"resolution=",val => {Properties.Settings.Default.resolutionScale = GetNumberWithErrorHandling(val,"resolution");},"解像度レベル"},
+                {"left-margin=",val => {Properties.Settings.Default.leftMargin = GetNumberWithErrorHandling(val,"left-margin");},"左余白"},
+                {"right-margin=",val => {Properties.Settings.Default.rightMargin = GetNumberWithErrorHandling(val,"right-margin");},"右余白"},
+                {"top-margin=",val => {Properties.Settings.Default.topMargin = GetNumberWithErrorHandling(val,"top-margin");},"上余白"},
+                {"bottom-margin=",val => {Properties.Settings.Default.bottomMargin = GetNumberWithErrorHandling(val,"bottom-margin");},"下余白"},
                 {"unit=",val => {
-                    if(val == "bp") Properties.Settings.Default.yohakuUnitBP = true;
-                    else if(val == "px") Properties.Settings.Default.yohakuUnitBP = false;
-                },"余白の単位（bp/px）を設定"},
+					switch(val){
+                    case "bp": Properties.Settings.Default.yohakuUnitBP = true; return;
+                    case "px": Properties.Settings.Default.yohakuUnitBP = false; return;
+                    default: throw new NDesk.Options.OptionException("bp か bx のいずれかを指定してください．", "unit");
+                    }
+                },"余白の単位（bp/px）"},
                 {"kanji=",val => {
-                    if(val == "") Properties.Settings.Default.encode = "_utf8";
+                    string v = GetStringsFromArray("kanji", val, new string[] { "utf8", "sjis", "jis", "euc", "no" });
+                    if(v == "no") Properties.Settings.Default.encode = "_utf8";
                     else Properties.Settings.Default.encode = val;
-                },"文字コードの指定（utf8/sjis/jis/euc/)"},
-                {"ignore-errors",val => {Properties.Settings.Default.ignoreErrorFlag = true;},"少々のエラーは無視する"},
+                },"文字コードの指定（utf8/sjis/jis/euc/no)"},
+                {"ignore-errors=",val => {Properties.Settings.Default.ignoreErrorFlag = GetTrueorFalse("ignore-errors",val);},"少々のエラーは無視する（true/false）"},
+                {"low-resolution=",val => {Properties.Settings.Default.useLowResolution = GetTrueorFalse("low-resolution",val);},"低解像度で処理する（true/false）"},
                 {"quiet",val => {quiet = true;},"Quiet モード"},
-                {"no-delete",val => {Properties.Settings.Default.deleteTmpFileFlag = false;},"一時ファイルを削除しない"},
-                {"num=",val => {Properties.Settings.Default.LaTeXCompileMaxNumber = GetNumberWithErrorHandling(val,"num");},"LaTeX ソースコンパイルの（最大）回数を設定"},
-                {"guess-compile=",val => {Properties.Settings.Default.guessLaTeXCompile = (val.ToLower() == "true");},"LaTeX ソースコンパイル回数を推定するか設定（true/false）"},
+                {"no-delete=",val => {Properties.Settings.Default.deleteTmpFileFlag = !GetTrueorFalse("no-delete",val);},"一時ファイルを削除しない（true/false）"},
+                {"num=",val => {Properties.Settings.Default.LaTeXCompileMaxNumber = GetNumberWithErrorHandling(val,"num");},"LaTeX ソースコンパイルの（最大）回数"},
+                {"guess-compile=",val => {Properties.Settings.Default.guessLaTeXCompile = GetTrueorFalse("guess-cimpile",val);},"LaTeX ソースコンパイル回数を推定（true/false）"},
+                {"imagemagick=",val => {Properties.Settings.Default.useMagickFlag = GetTrueorFalse("imagemagick",val);},"ImageMagick を使う（true/false）"},
+                {"transparent=",val => {Properties.Settings.Default.transparentPngFlag = GetTrueorFalse("transparent",val);},"透過 PNG を作る（true/false）"},
+                {"preview",val => {preview = true;},"生成されたファイルを開く"},
                 {"help",val => {help = true;},"このメッセージを表示する"},
                 {"version",val => {version = true;},"バージョン情報を表示する"}
             };
@@ -111,41 +114,22 @@ namespace TeX2img {
             var opt = options.GenerateOption();
             List<string> files;
             try { files = opt.Parse(Environment.GetCommandLineArgs()); }
-            //try { files = opt.Parse(new string[]{"TeX2img","a.tex","a.pdf"}); }
+            //try { files = opt.Parse(new string[]{"TeX2img","/nogui","/platex"}); }
             catch(NDesk.Options.OptionException e) {
-                Console.WriteLine("オプション " + e.OptionName + " への入力が不正です．");
+                if(e.OptionName != null) Console.WriteLine("オプション " + e.OptionName + " への入力が不正です．");
+                Environment.ExitCode = 1;
                 return;
             }
             // files[0]はTeX2img本体なので消しておく
             if(files.Count != 0)files.RemoveAt(0);
-            if(savesetting == null) Properties.Settings.Default.SaveSettings = !nogui;
-            else Properties.Settings.Default.SaveSettings = (bool)savesetting;
+            Properties.Settings.Default.SaveSettings = savesetting ?? !nogui;
+            if(preview != null) Properties.Settings.Default.previewFlag = (bool)preview;
 
             // すぐに終了
             if(exit) {
                 Properties.Settings.Default.Save();
                 return;
             }
-            // filesのチェック
-            string err = "";
-            if(files.Count == 0 && nogui) {
-                Console.WriteLine("入力ファイルが存在しません．");
-                return;
-            }
-            for(int i = 0 ; i < files.Count / 2 ; ++i) {
-                if(!File.Exists(files[2 * i])) {
-                    err += "ファイル " + files[2 * i] + " は見つかりませんでした．\n";
-                }
-                if(!Converter.CheckFormat(files[2 * i + 1],null)) {
-                    err += "ファイル " + files[2 * i + 1] + " の拡張子は eps/png/jpg/pdf のいずれでもありません．\n";
-                }
-            }
-            if(err != ""){
-                if(nogui)Console.WriteLine(err);
-                else MessageBox.Show(err,"TeX2img");
-                return;
-            }
-
             if(nogui) {
                 if(version) {
                     ShowVersion();
@@ -155,11 +139,47 @@ namespace TeX2img {
                     ShowHelp(options.GenerateHelp());
                     return;
                 }
-                bool Preview = Properties.Settings.Default.showOutputWindowFlag;
-                Properties.Settings.Default.previewFlag = false;
+            }
+            // filesのチェック
+            string err = "";
+            for(int i = 0 ; i < files.Count / 2 ; ++i) {
+                if(!File.Exists(files[2 * i])) {
+                    err += "ファイル " + files[2 * i] + " は見つかりませんでした．\n";
+                }
+                if(!Converter.CheckFormat(files[2 * i + 1],null)) {
+                    err += "ファイル " + files[2 * i + 1] + " の拡張子は eps/png/jpg/pdf のいずれでもありません．\n";
+                }
+            }
+            if(files.Count % 2 != 0) {
+                err += "ファイル " + files[files.Count - 1] + " に対応する出力ファイルが指定されていません．\n";
+            }
+            if(err != ""){
+                err = err.Remove(err.Length - 1);// 最後の改行を削除
+                if(nogui)Console.WriteLine(err);
+                else MessageBox.Show(err,"TeX2img");
+                Environment.ExitCode = 2;
+                return;
+            }
+
+            if(nogui) {
+                if(preview == null) {
+                    preview = Properties.Settings.Default.previewFlag;
+                    Properties.Settings.Default.previewFlag = false;
+                }
                 CUIExec(new CUIOutput(quiet), files);
-                Properties.Settings.Default.showOutputWindowFlag = Preview;
+                Properties.Settings.Default.showOutputWindowFlag = (bool) preview;
             } else {
+                // Azuki.dllの存在チェック
+                string[] chkfiles = new string[] { "Azuki.dll" };
+                foreach(var f in chkfiles) {
+                    if(!System.IO.File.Exists(Path.Combine(System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location), f))) {
+                        if(Converter.which(f) == "") {
+                            MessageBox.Show(f + " が見つからないため，起動することができませんでした．", "TeX2img");
+                            Environment.ExitCode = -1;
+                            return;
+                        }
+                    }
+                }
                 Application.Run(new MainForm(files));
             }
             Properties.Settings.Default.Save();
@@ -169,18 +189,35 @@ namespace TeX2img {
             try { return Int32.Parse(str); }
             catch(FormatException) {
                 Console.WriteLine(optioname + " に数値以外が指定されています．");
-                Environment.Exit(-2);
+                throw new NDesk.Options.OptionException();
             }
             catch(OverflowException) {
                 Console.WriteLine(optioname + " に指定された数値が大きすぎ / 小さすぎます．");
-                Environment.Exit(-2);
+                throw new NDesk.Options.OptionException();
             }
-            return 0;
         }
+        static string GetStringsFromArray(string optionname,string val,string[] possibleargs){
+			foreach(var s in possibleargs){
+				if(val.ToLower() == s)return s;
+			}
+            throw new NDesk.Options.OptionException("引数が不正です．", optionname);
+		}
+        static bool GetTrueorFalse(string optionname, string val) {
+            switch(val.ToLower()) {
+            case "true": return true;
+            case "false": return false;
+            default: throw new NDesk.Options.OptionException("引数が不正です．", optionname);
+            }
+        }
+
 
         // CUIモード
         static void CUIExec(IOutputController Output, List<string> files) {
             Converter conv = new Converter(Output);
+            if(files.Count == 0) {
+                Console.WriteLine("入力ファイルが存在しません．");
+                return;
+            }
             for(int i = 0 ; i < files.Count / 2 ; ++i) {
                 string file = files[2 * i];
                 // 一時フォルダにコピー

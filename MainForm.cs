@@ -338,7 +338,11 @@ namespace TeX2img {
             // 外部ファイルから入力する場合はテンポラリディレクトリにコピー
             if(InputFromFileRadioButton.Checked) {
                 string inputTeXFilePath = inputFileNameTextBox.Text;
-                File.Copy(inputTeXFilePath, Path.Combine(tmpDir, tmpTeXFileName), true);
+                string tmpfile = Path.Combine(tmpDir, tmpTeXFileName);
+                File.Copy(inputTeXFilePath,tmpfile , true);
+                // 読み取り専用の場合解除しておく（後でFile.Deleteに失敗するため）．
+                (new FileInfo(tmpfile)).Attributes = FileAttributes.Normal;
+
             }
 
             // 直接入力の場合 tex ソースを出力

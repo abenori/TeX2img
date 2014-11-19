@@ -110,7 +110,9 @@ namespace TeX2img {
                         } else break;
                     }
                 }
-                catch(UnauthorizedAccessException) { }
+                catch(UnauthorizedAccessException) {
+                    controller_.appendOutput("一部の一時ファイルの削除に失敗しました．\r\n");
+                }
             }
         }
 
@@ -669,7 +671,7 @@ namespace TeX2img {
             while(true) {
                 errmsg += proc.StandardError.ReadToEnd();
                 // 10秒待つ
-                proc.WaitForExit(1000);
+                proc.WaitForExit(10000);
                 if(proc.HasExited) {
                     break;
                 } else {
@@ -694,7 +696,6 @@ namespace TeX2img {
             }
             while(!proc.StandardError.EndOfStream) {
                 errmsg += proc.StandardError.ReadToEnd();
-                controller_.scrollOutputTextBoxToEnd();
             }
             controller_.appendOutput(errmsg);
             controller_.scrollOutputTextBoxToEnd();
