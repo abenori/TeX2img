@@ -344,10 +344,10 @@
             this.InputFromTextboxRadioButton.Location = new System.Drawing.Point(10, 27);
             this.InputFromTextboxRadioButton.Margin = new System.Windows.Forms.Padding(5, 4, 5, 4);
             this.InputFromTextboxRadioButton.Name = "InputFromTextboxRadioButton";
-            this.InputFromTextboxRadioButton.Size = new System.Drawing.Size(571, 22);
+            this.InputFromTextboxRadioButton.Size = new System.Drawing.Size(553, 22);
             this.InputFromTextboxRadioButton.TabIndex = 1;
             this.InputFromTextboxRadioButton.TabStop = true;
-            this.InputFromTextboxRadioButton.Text = "TeX コードを直接入力（ \\\\begin{document} ～ \\\\end{document} の内部 ）";
+            this.InputFromTextboxRadioButton.Text = "TeX コードを直接入力（ \\begin{document} ～ \\end{document} の内部 ）";
             this.InputFromTextboxRadioButton.UseVisualStyleBackColor = true;
             this.InputFromTextboxRadioButton.CheckedChanged += new System.EventHandler(this.setEnabled);
             // 

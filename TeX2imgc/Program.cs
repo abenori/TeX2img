@@ -15,6 +15,7 @@ namespace TeX2imgc {
             }
             using(Process proc = new Process()) {
                 proc.StartInfo.FileName = tex2img;
+                // TeX2imgの仕様から，/noguiは第一引数でなければならない．
                 proc.StartInfo.Arguments = "/nogui ";
                 // Environmet.CommandLine からTeX2imgc.exe... の部分を除去する．
                 // Environment.GetCommandLineArgsを使うと"が完全に再現できないと思うので．

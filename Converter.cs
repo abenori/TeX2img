@@ -94,6 +94,7 @@ namespace TeX2img {
                     File.Delete(tmpFileBaseName + ".png");
                     File.Delete(tmpFileBaseName + ".jpg");
                     File.Delete(tmpFileBaseName + ".tmp");
+                    File.Delete(tmpFileBaseName + ".out");
                     for(int i = 1 ;  ; ++i) {
                         if(
                             File.Exists(tmpFileBaseName + "-" + i + ".jpg") ||

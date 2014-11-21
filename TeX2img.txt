@@ -16,7 +16,7 @@ TeX2img
 
 # 動作条件
 * .NET Framework 3.5 以降．
-* 適切な TeX ディストリビューション（W32TeX か TeX Live を推奨）がインストールされており，platex 及び dvipdfmx が使えること．
+* 適切な TeX ディストリビューション（W32TeX か TeX Live を推奨）がインストールされており，platex 及び dvipdfmx （等）が使えること．
 * Ghostscript がインストールされ，使えること．（TeX Live 内のものでも大丈夫です．）
 * ImageMagick がインストールされていると，それを用いて画像を出力することができます．（必須ではありません．）
 
@@ -41,15 +41,16 @@ TeX2img.exe input output
 /platex <VAL>         platex のパス
 /dvipdfmx <VAL>       dvpdfmx のパス
 /gs <VAL>             Ghostscript のパス
+/gsdevice <VAL>       Ghostscript の device の値（epswrite/eps2write）
 /exit                 設定の保存のみを行い終了する．
-/savesettings <VAL>   設定の保存を行う（true/false）．
+/savesettings <VAL>   設定の保存を行うかを指定する（true/false）．
 /resolution <VAL>     解像度レベル
 /left-margin <VAL>    左余白
 /right-margin <VAL>   右余白
 /top-margin <VAL>     上余白
 /bottom-margin <VAL>  下余白
-/unit <VAL>           余白の単位（bp/px）を設定
-/kanji <VAL>          文字コードの指定（utf8/sjis/jis/euc/_)
+/unit <VAL>           余白の単位（bp/px）
+/kanji <VAL>          文字コードの指定（utf8/sjis/jis/euc/no)
 /ignore-errors <VAL>  少々のエラーは無視する（true/false）
 /low-resolution <VAL> 低解像度で処理する（true/false）
 /quiet                Quiet モード
@@ -58,6 +59,7 @@ TeX2img.exe input output
 /guess-compile <VAL>  LaTeX ソースコンパイル回数を推定（true/false）
 /imagemagick <VAL>    ImageMagick を使う（true/false）
 /transparent <VAL>    透過 PNG を作る（true/false）
+/preview              生成されたファイルを開く
 /help                 このメッセージを表示する
 /version              バージョン情報を表示する
 
