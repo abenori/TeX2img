@@ -12,7 +12,7 @@ TeX2img
 
 出力した EPS / JPEG / PNG / PDF ファイルは Word / Excel / PowerPoint や，Illustrator / InDesign 等に貼り付けて利用することができます．
 
-もともとの作者は寺田侑祐氏です．Version 1.2 以降開発を引き継ぎました．
+もともとの作者は寺田侑祐さんです．Version 1.2 以降開発を引き継ぎました．
 
 # 動作条件
 * .NET Framework 3.5 以降．
@@ -43,7 +43,7 @@ TeX2img.exe input output
 /gs <VAL>             Ghostscript のパス
 /gsdevice <VAL>       Ghostscript の device の値（epswrite/eps2write）
 /exit                 設定の保存のみを行い終了する．
-/savesettings <VAL>   設定の保存を行うかを指定する（true/false）．
+/savesettings         設定の保存を行う
 /resolution <VAL>     解像度レベル
 /left-margin <VAL>    左余白
 /right-margin <VAL>   右余白
@@ -64,12 +64,12 @@ TeX2img.exe input output
 /version              バージョン情報を表示する
 
 # 参考
-* 元々の作者である寺田氏による，TeX2img 配布ページ
+* 元々の作者である寺田さんによるTeX2img 配布ページ
 http://island.geocities.jp/loveinequality/
 には，TeX2img を活用するための情報があります．参考にしてみてください．
 
 # 謝辞
-* もともとの TeX2img は寺田侑祐氏によるものです．
+* もともとの TeX2img は寺田侑祐さんによるものです．
 * Azuki テキストエディタエンジンを利用しています．
 http://sgry.b.sourceforge.jp/
 * コマンドライン解析には NDesk.Options を利用しています．
@@ -123,11 +123,10 @@ http://www.ndesk.org/Options
 * 1.2.6（2014/10/22）
 ** Ghostscript のバージョンを自動推定する際に，設定されている Ghostscript のパスが間違っていると起動しないバグを修正．
 
-* 1.3.0
+* 1.3.0（2014/11/21）
 ** オプションの解析を NDesk.Options にまかせることにした．
 ** CUI モードを担当する TeX2imgc.exe の追加．
 ** 設定情報の格納などに関する内部処理を変更．
 ** 必須環境を .NET Framework 3.5 以上とした．
 ** LaTeX ソースの複数回コンパイルが行えるようになった．（回数指定または推定．推定時の回数指定は最大回数を意味する．）
 ** 読み取り専用のファイルを読み込んで使用していた場合，一時ファイルの削除に失敗するバグを修正．
-

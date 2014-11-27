@@ -92,12 +92,13 @@ namespace TeX2img {
         }
         
         void ReadAUXFile(string ext, out byte[] buf) {
-            if(File.Exists(FileNameWithoutExt + ext)) {
+            try {
                 using(var fs = new FileStream(FileNameWithoutExt + ext, FileMode.Open, FileAccess.Read)) {
                     buf = new byte[fs.Length];
                     fs.Read(buf, 0, (int) fs.Length);
                 }
-            } else buf = null;
+            }
+            catch { buf = null; }
         }
     }
 }

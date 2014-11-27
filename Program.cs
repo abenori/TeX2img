@@ -116,6 +116,7 @@ namespace TeX2img {
                 nogui = true;
                 cmds.RemoveAt(0);
             }
+            setPath();
             if(nogui && cmds.Count == 0) {
                 Console.WriteLine("引数がありません．\n");
                 ShowHelp();
@@ -213,6 +214,75 @@ namespace TeX2img {
             case "false": return false;
             default: throw new NDesk.Options.OptionException("引数が不正です．", optionname);
             }
+        }
+
+        static void setPath(){
+            if(Properties.Settings.Default.platexPath == String.Empty || Properties.Settings.Default.dvipdfmxPath == String.Empty || Properties.Settings.Default.gsPath == String.Empty) {
+                if(Properties.Settings.Default.platexPath == String.Empty) Properties.Settings.Default.platexPath = Converter.which("platex");
+                if(Properties.Settings.Default.dvipdfmxPath == String.Empty) Properties.Settings.Default.dvipdfmxPath = Converter.which("dvipdfmx");
+                if(Properties.Settings.Default.gsPath == String.Empty) {
+                    Properties.Settings.Default.gsPath = Converter.which("gswin32c.exe");
+                    if(Properties.Settings.Default.gsPath == "") {
+                        Properties.Settings.Default.gsPath = Converter.which("gswin64c.exe");
+                        if(Properties.Settings.Default.gsPath == "") {
+                            Properties.Settings.Default.gsPath = Converter.which("rungs.exe");
+                            if(Properties.Settings.Default.gsPath == "") {
+                                if(Properties.Settings.Default.platexPath != "") {
+                                    Properties.Settings.Default.gsPath = System.IO.Path.GetDirectoryName(Properties.Settings.Default.platexPath) + "\\rungs.exe";
+                                    if(!System.IO.File.Exists(Properties.Settings.Default.gsPath)) Properties.Settings.Default.gsPath = "";
+                                }
+                            }
+                        }
+                    }
+                }
+
+
+                if(Properties.Settings.Default.platexPath == String.Empty || Properties.Settings.Default.dvipdfmxPath == String.Empty || Properties.Settings.Default.gsPath == String.Empty) {
+                    var msg = "platex / dvipdfmx / gs のパス設定に失敗しました。\n環境設定画面で手動で設定してください。";
+                    if(nogui) Console.WriteLine(msg);
+                    else MessageBox.Show(msg);
+                    (new SettingForm()).ShowDialog();
+                } else {
+                    var msg = String.Format("TeX 関連プログラムのパスを\n {0}\n {1}\n {2}\nに設定しました。\n違っている場合は環境設定画面で手動で変更してください。", Properties.Settings.Default.platexPath, Properties.Settings.Default.dvipdfmxPath, Properties.Settings.Default.gsPath);
+                    if(nogui) Console.WriteLine(msg);
+                    else MessageBox.Show(msg);
+                }
+            }
+
+            if(Properties.Settings.Default.gsDevice == "" && Properties.Settings.Default.gsPath != "") {
+                // Ghostscriptのバージョンを取得する．
+                using(var proc = new System.Diagnostics.Process()) {
+                    proc.StartInfo.RedirectStandardOutput = true;
+                    proc.StartInfo.UseShellExecute = false;
+                    proc.StartInfo.CreateNoWindow = true;
+                    proc.StartInfo.FileName = Properties.Settings.Default.gsPath;
+                    proc.StartInfo.Arguments = "-v";
+                    //string errmsg = "";
+                    //proc.ErrorDataReceived += ((s, e) => { errmsg += e.Data; });
+                    try {
+                        proc.Start();
+                        //proc.BeginErrorReadLine();
+                        string msg = proc.StandardOutput.ReadToEnd();
+                        proc.WaitForExit(2000);
+                        //proc.CancelErrorRead();
+                        if(!proc.HasExited) proc.Kill();
+                        var reg = new System.Text.RegularExpressions.Regex("Ghostscript ([0-9]+)\\.([0-9]+)", System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+                        var m = reg.Match(msg);
+                        if(m.Success) {
+                            int major = int.Parse(m.Groups[1].Value);
+                            int minor = int.Parse(m.Groups[2].Value);
+                            //System.Diagnostics.Debug.WriteLine("major = " + major.ToString() + ", minor = " + minor.ToString());
+                            // 9.15以上ならばeps2write，そうでないならepwsrite
+                            if(major > 9 || (major == 9 && minor >= 15)) Properties.Settings.Default.gsDevice = "eps2write";
+                            else Properties.Settings.Default.gsDevice = "epswrite";
+                        }
+                    }
+                    catch(FormatException) { }
+                    catch(System.ComponentModel.Win32Exception) { }
+                }
+            }
+            if(Properties.Settings.Default.gsDevice == "") Properties.Settings.Default.gsDevice = "epswrite";
+            Properties.Settings.Default.Save();
         }
 
 

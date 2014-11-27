@@ -29,10 +29,11 @@ namespace TeX2imgc {
                 proc.OutputDataReceived += ((s, e) => Console.WriteLine(e.Data));
                 if(!proc.Start()) { 
                     Console.WriteLine("TeX2img.exe の実行に失敗しました．");
+	                Environment.ExitCode = -1;
+                    return;
                 }
                 proc.BeginOutputReadLine();
                 proc.WaitForExit();
-                proc.CancelOutputRead();
                 Environment.ExitCode = proc.ExitCode;
             }
             //Console.ReadKey();
