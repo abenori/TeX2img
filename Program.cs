@@ -146,37 +146,11 @@ namespace TeX2img {
                 nogui = true;
                 cmds.RemoveAt(0);
             }
-            // noguiの時は三つ目がpipeのハンドル
-            System.IO.Pipes.AnonymousPipeClientStream p = null;
-            System.IO.StreamWriter pipe = null;
-            if(nogui) {
-                if(cmds.Count != 0) {
-                    if(cmds[0] != "/nopipe" && cmds[0] != "-nopipe" && cmds[0] != "--nopipe") {
-                        try {
-                            p = new System.IO.Pipes.AnonymousPipeClientStream(System.IO.Pipes.PipeDirection.Out, cmds[0]);
-                            pipe = new System.IO.StreamWriter(p);
-                            pipe.AutoFlush = true;
-                            // 何故かConsole.GetLineにゴミが混ざっているのでクリアしておく．何かミスっているのだと思うけど．
-                            pipe.WriteLine("enter");
-                            Console.ReadLine();
-                            cmds.RemoveAt(0);
-                        }
-                        catch(FormatException) { p = null; }
-                        catch(IOException) { p = null; }
-                    } else cmds.RemoveAt(0);
-                    // デバッグ用
-                    //SetPipeForDebug();
-                }
-            }
             // メインルーチン
-            Environment.ExitCode = MainRoutine(pipe, cmds);
-            // 破棄
-            pipe.WriteLine("exit");
-            if(pipe != null) pipe.Dispose();
-            if(p != null) p.Dispose();
+            Environment.ExitCode = MainRoutine(cmds);
         }
 
-        static int MainRoutine(StreamWriter pipe, List<string> cmds) {
+        static int MainRoutine(List<string> cmds) {
             // 各種バイナリのパスが設定されていなかったら推測する．
             // "/exit"が指定されている場合はメッセージ表示をしない．
             setPath(cmds.Contains("/exit") || cmds.Contains("-exit") || cmds.Contains("--exit"));
@@ -245,7 +219,7 @@ namespace TeX2img {
                     preview = Properties.Settings.Default.previewFlag;
                     Properties.Settings.Default.previewFlag = false;
                 }
-                int r = CUIExec(pipe, quiet, files);
+                int r = CUIExec(quiet, files);
                 Properties.Settings.Default.previewFlag = (bool) preview;
                 Properties.Settings.Default.Save();
                 return r;
@@ -298,8 +272,8 @@ namespace TeX2img {
         }
 
         // CUIモード
-        static int CUIExec(System.IO.StreamWriter pipetotex2imgc, bool q, List<string> files) {
-            IOutputController Output = new CUIOutput(pipetotex2imgc, q);
+        static int CUIExec(bool q, List<string> files) {
+            IOutputController Output = new CUIOutput(q);
             //Console.WriteLine(Output.askYesorNo("テストのyes or no"));
             Converter conv = new Converter(Output);
             if(files.Count == 0) {

@@ -21,61 +21,38 @@ namespace TeX2imgc {
             }
 
             Process proc = new Process();
-            // （匿名）パイプを作成する．
-            // TeX2imgがConsole.ReadLineをする前にtex2imgcへと今から読むことを伝えておくため．
-            // そうせずにtex2imgcがConsole.ReadLine()をして待っていると，
-            // 最後にtex2imgcのConsole.ReadLine()待ちになってしまうので
-            // プログラム終了後にユーザがEnterを入力しなければならなくなる．
-            // もう一つの手がConsole.KeyAvailable + Console.ReadKeyだが，これは全角文字が正しく得られない．
-            using(var pipe = new System.IO.Pipes.AnonymousPipeServerStream(System.IO.Pipes.PipeDirection.In, HandleInheritability.Inheritable)) {
-                proc.StartInfo.FileName = tex2img;
-                // "/nogui"を第一引数に，パイプのハンドルを第二引数にする．
-                proc.StartInfo.Arguments = "/nogui " + pipe.GetClientHandleAsString() + " ";
-                // Environmet.CommandLine からTeX2imgc.exe... の部分を除去する．
-                // Environment.GetCommandLineArgsを使うと"が完全に再現できないと思うので．
-                var reg = new System.Text.RegularExpressions.Regex("^[^\" ]*(\"[^\"]*\")*[^\" ]* *");
-                var m = reg.Match(Environment.CommandLine);
-                if(m.Success) proc.StartInfo.Arguments += Environment.CommandLine.Substring(m.Length);
-                else proc.StartInfo.Arguments += Environment.CommandLine;
-                proc.StartInfo.RedirectStandardOutput = true;
-                proc.StartInfo.RedirectStandardInput = true;
-                proc.StartInfo.CreateNoWindow = true;
-                proc.StartInfo.UseShellExecute = false;
-                proc.OutputDataReceived += ((s, e) => Console.WriteLine(e.Data));
-                if(!proc.Start()) {
-                    Console.WriteLine("TeX2img.exe の実行に失敗しました．");
-                    Environment.ExitCode = -1;
-                    return;
-                }
-                int id = proc.Id;
-                Console.CancelKeyPress += ((s, e) => KillChildProcesses(id));
-                var StandardInputStream = proc.StandardInput;
-                var WriteStandardInputThread = new System.Threading.Thread(() => {
-                    using(var sr = new StreamReader(pipe)) {
-                        while(true) {
-                            string msg = sr.ReadLine();
-                            switch(msg) {
-                            case "readline":
-                                StandardInputStream.WriteLine(Console.ReadLine());
-                                break;
-                            case "exit":
-                                return;
-                            case "enter":
-                                StandardInputStream.WriteLine();
-                                break;
-                            default:
-                                break;
-                            }
-                        }
-                    }
-                });
-                WriteStandardInputThread.IsBackground = true;
-                WriteStandardInputThread.Start();
-                proc.BeginOutputReadLine();
-                proc.WaitForExit();
-                Environment.ExitCode = proc.ExitCode;
-                WriteStandardInputThread.Abort();
+            proc.StartInfo.FileName = tex2img;
+            // "/nogui"を第一引数にする．
+            proc.StartInfo.Arguments = "/nogui ";
+            // Environmet.CommandLine からTeX2imgc.exe... の部分を除去する．
+            // Environment.GetCommandLineArgsを使うと"が完全に再現できないと思うので．
+            var reg = new System.Text.RegularExpressions.Regex("^[^\" ]*(\"[^\"]*\")*[^\" ]* *");
+            var m = reg.Match(Environment.CommandLine);
+            if(m.Success) proc.StartInfo.Arguments += Environment.CommandLine.Substring(m.Length);
+            else proc.StartInfo.Arguments += Environment.CommandLine;
+            proc.StartInfo.RedirectStandardOutput = true;
+            proc.StartInfo.RedirectStandardInput = true;
+            proc.StartInfo.CreateNoWindow = true;
+            proc.StartInfo.UseShellExecute = false;
+            proc.OutputDataReceived += ((s, e) => Console.WriteLine(e.Data));
+            if(!proc.Start()) {
+                Console.WriteLine("TeX2img.exe の実行に失敗しました．");
+                Environment.ExitCode = -1;
+                return;
             }
+            int id = proc.Id;
+            Console.CancelKeyPress += ((s, e) => KillChildProcesses(id));
+            var StandardInputStream = proc.StandardInput;
+            var WriteStandardInputThread = new System.Threading.Thread(() => {
+                while(true) StandardInputStream.WriteLine(Console.ReadLine());
+            });
+            // これを加えるとConsole.ReadLineの入力待ちでおわらないということはないことに気がついた……
+            WriteStandardInputThread.IsBackground = true;
+            WriteStandardInputThread.Start();
+            proc.BeginOutputReadLine();
+            proc.WaitForExit();
+            Environment.ExitCode = proc.ExitCode;
+            WriteStandardInputThread.Abort();
         }
 
         static void KillChildProcesses(int id) {

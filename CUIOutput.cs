@@ -5,8 +5,7 @@ using System.Text;
 namespace TeX2img {
     class CUIOutput : IOutputController {
         bool quiet = false;
-        System.IO.StreamWriter pipe = null;
-        public CUIOutput(System.IO.StreamWriter sw, bool q) { pipe = sw; quiet = q; }
+        public CUIOutput(bool q) { quiet = q; }
         public CUIOutput() { }
 
         public void showPathError(string exeName, string necessary) {
@@ -43,7 +42,6 @@ namespace TeX2img {
         public bool askYesorNo(string msg) {
             Console.WriteLine(msg + "（y/n）");
             while(true) {
-                if(pipe != null) pipe.WriteLine("readline");
                 var s = Console.ReadLine().ToLower();
                 switch(s) {
                 case "y": return true;
