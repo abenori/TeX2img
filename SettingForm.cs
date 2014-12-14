@@ -206,5 +206,15 @@ namespace TeX2img {
             }
         }
 
+        private void GuessPathButton_Click(object sender, EventArgs e) {
+            string platex = Properties.Settings.Default.GuessPlatexPath();
+            platexTextBox.Text = platex;
+            dvipdfmxTextBox.Text = Properties.Settings.Default.GuessDvipdfmxPath();
+            string gs = Properties.Settings.Default.GuessGsPath(platex);
+            gsTextBox.Text = gs;
+            string gsdevice = Properties.Settings.Default.GuessGsdevice(gs);
+            if(gsdevice != "") GSUseepswriteCheckButton.Checked = (gsdevice == "epswrite");
+        }
+
     }
 }

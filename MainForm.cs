@@ -174,7 +174,7 @@ namespace TeX2img {
             if(myOutputForm.InvokeRequired) {
                 this.Invoke(new appendOutputDelegate(appendOutput), new Object[] { log });
             } else {
-                myOutputForm.getOutputTextBox().Text += log;
+                myOutputForm.getOutputTextBox().AppendText(log);
             }
         }
 
@@ -204,6 +204,10 @@ namespace TeX2img {
         public void showIOError(string filePath) {
             MessageBox.Show(filePath + "\nが他のアプリケーション開かれているため生成できませんでした。\nこのファイルを開いているアプリケーションを閉じて再試行してください。", "画像生成失敗", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
+
+        public bool askYesorNo(string msg) {
+            return (MessageBox.Show(msg, "TeX2img", MessageBoxButtons.YesNo) == System.Windows.Forms.DialogResult.Yes);
+        }
         #endregion
 
         public void showOutputWindow(bool show) {
@@ -225,6 +229,8 @@ namespace TeX2img {
             if(Properties.Settings.Default.showOutputWindowFlag) showOutputWindow(true);
             this.Enabled = false;
 
+            myOutputForm.Activate();
+            this.Activate();
             convertWorker.RunWorkerAsync(100);
         }
 

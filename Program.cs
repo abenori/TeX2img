@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Windows.Forms;
 using System.IO;
 using System.Runtime.InteropServices;
+using System.Linq;
+using System.ComponentModel;
 
 namespace TeX2img {
     static class Program {
@@ -14,87 +16,105 @@ namespace TeX2img {
         static bool quiet = false;
         static bool? preview = null;
         static bool nogui = false;
+        static bool version = false;
+        static bool help = false;
 
-        static OptionWithHelpCollection options = new OptionWithHelpCollection(){
-			{"platex=", val => {Properties.Settings.Default.platexPath=val;},"platex のパス"},
-			{"dvipdfmx=",val =>{Properties.Settings.Default.dvipdfmxPath=val;},"dvpdfmx のパス"},
-			{"gs=",val => {Properties.Settings.Default.gsPath = val;},"Ghostscript のパス"},
+        public class OptionSet : NDesk.Options.OptionSet {
+            // 次でエラーを出すようにする
+            // "option"の指定の時に--option=abc
+            // "option="の指定の時に--option-
+            protected override bool Parse(string argument, NDesk.Options.OptionContext c) {
+                if(c.Option == null) {
+                    string f, n, s, v;
+                    if(!GetOptionParts(argument, out f, out n, out s, out v)) return false;
+                    if(Contains(n)) {
+                        var p = this[n];
+                        if(v != null && p.OptionValueType == NDesk.Options.OptionValueType.None) {
+                            // メッセージはさぼり
+                            throw new NDesk.Options.OptionException(c.OptionSet.MessageLocalizer(""), f + n);
+                        }
+                    } else {
+                        string rn;
+                        if(n.Length >= 1 && (n[n.Length - 1] == '-' || n[n.Length - 1] == '+') && Contains((rn = n.Substring(0, n.Length - 1)))) {
+                            var p = this[rn];
+                            if(p.OptionValueType == NDesk.Options.OptionValueType.Required) {
+                                throw new NDesk.Options.OptionException(c.OptionSet.MessageLocalizer("An argument is required for the option '" + f + rn + "'"), f + rn);
+                            }
+                        }
+                    }
+                }
+                return base.Parse(argument, c);
+            }
+
+            // OptionSet.WriteOptionDescriptionsがちょっと気にくわないので独自に
+            // GetNames().Count == 1と仮定してある．
+            public new void WriteOptionDescriptions(TextWriter output) {
+                int maxlength = 0;
+                foreach(var oh in this) {
+                    if(oh.Description != null) {
+                        int length = oh.GetNames()[0].Length;
+                        if(oh.Description.EndsWith("[-]")) length += 3;
+                        else if(oh.OptionValueType != NDesk.Options.OptionValueType.None) length += 5;
+                        maxlength = Math.Max(maxlength, length);
+                    }
+                }
+                maxlength += 3;
+                foreach(var oh in this) {
+                    if(oh.Description != null) {
+                        string opstr = "/" + oh.GetNames()[0];
+                        string desc = oh.Description.Replace("\n", "\n" + new string(' ', maxlength + 1));
+                        if(oh.OptionValueType != NDesk.Options.OptionValueType.None) opstr = opstr + "=<VAL>";
+                        else if(desc.EndsWith("[-]")) {
+                            opstr += "[-]";
+                            desc = desc.Substring(0, desc.Length - 3);
+                        }
+                        output.WriteLine("  " + opstr + new string(' ', maxlength - opstr.Length) + desc);
+                    }
+                }
+            }
+        }
+
+        static OptionSet options = new OptionSet(){
+			{"platex=","platex のパス", val => {Properties.Settings.Default.platexPath=val;}},
+			{"dvipdfmx=","dvpdfmx のパス",val =>{Properties.Settings.Default.dvipdfmxPath=val;}},
+			{"gs=","Ghostscript のパス",val => {Properties.Settings.Default.gsPath = val;}},
 			{"gsdevice=",
-				val => {Properties.Settings.Default.gsDevice = GetStringsFromArray("gsdevice",val,new string[]{"epswrite","eps2write"});},
-				"Ghostscript の device の値（epswrite/eps2write）"
+				"Ghostscript の device の値（epswrite/eps2write）",
+				val => {Properties.Settings.Default.gsDevice = GetStringsFromArray("gsdevice",val,new string[]{"epswrite","eps2write"});}
 			},
-			{"exit", val => {exit = true;},"設定の保存のみを行い終了する．"},
-			{"savesettings",val => {Properties.Settings.Default.SaveSettings = true;},"設定の保存を行う"},
-			{"resolution=",val => {Properties.Settings.Default.resolutionScale = GetNumberWithErrorHandling(val,"resolution");},"解像度レベル"},
-			{"left-margin=",val => {Properties.Settings.Default.leftMargin = GetNumberWithErrorHandling(val,"left-margin");},"左余白"},
-			{"right-margin=",val => {Properties.Settings.Default.rightMargin = GetNumberWithErrorHandling(val,"right-margin");},"右余白"},
-			{"top-margin=",val => {Properties.Settings.Default.topMargin = GetNumberWithErrorHandling(val,"top-margin");},"上余白"},
-			{"bottom-margin=",val => {Properties.Settings.Default.bottomMargin = GetNumberWithErrorHandling(val,"bottom-margin");},"下余白"},
-			{"unit=",val => {
-			    switch(val){
-			    case "bp": Properties.Settings.Default.yohakuUnitBP = true; return;
-			    case "px": Properties.Settings.Default.yohakuUnitBP = false; return;
-			    default: throw new NDesk.Options.OptionException("bp か bx のいずれかを指定してください．", "unit");
-			}
-			},"余白の単位（bp/px）"},
-			{"kanji=",val => {
+			{"kanji=","文字コードの指定（utf8/sjis/jis/euc/no)",val => {
 				string v = GetStringsFromArray("kanji", val, new string[] { "utf8", "sjis", "jis", "euc", "no" });
 				if(v == "no"){
 					if(Properties.Settings.Default.encode != "_sjis") Properties.Settings.Default.encode = "_utf8";
 				}else Properties.Settings.Default.encode = val;
-			},"文字コードの指定（utf8/sjis/jis/euc/no)"},
-			{"ignore-errors=",val => {Properties.Settings.Default.ignoreErrorFlag = GetTrueorFalse("ignore-errors",val);},"少々のエラーは無視する（true/false）"},
-			{"low-resolution=",val => {Properties.Settings.Default.useLowResolution = GetTrueorFalse("low-resolution",val);},"低解像度で処理する（true/false）"},
-			{"quiet",val => {quiet = true;},"Quiet モード"},
-			{"no-delete=",val => {Properties.Settings.Default.deleteTmpFileFlag = !GetTrueorFalse("no-delete",val);},"一時ファイルを削除しない（true/false）"},
-			{"num=",val => {Properties.Settings.Default.LaTeXCompileMaxNumber = GetNumberWithErrorHandling(val,"num");},"LaTeX ソースコンパイルの（最大）回数"},
-			{"guess-compile=",val => {Properties.Settings.Default.guessLaTeXCompile = GetTrueorFalse("guess-cimpile",val);},"LaTeX ソースコンパイル回数を推定（true/false）"},
-			{"imagemagick=",val => {Properties.Settings.Default.useMagickFlag = GetTrueorFalse("imagemagick",val);},"ImageMagick を使う（true/false）"},
-			{"transparent=",val => {Properties.Settings.Default.transparentPngFlag = GetTrueorFalse("transparent",val);},"透過 PNG を作る（true/false）"},
-			{"preview",val => {preview = true;},"生成されたファイルを開く"},
-			{"help",val => {ShowHelp();Environment.Exit(0);},"このメッセージを表示する"},
-			{"version",val => {ShowVersion();Environment.Exit(0);},"バージョン情報を表示する"}
-		};
-
-        // オプション引数，動作，ヘルプをまとめて扱うためのクラス
-        struct OptionWithHelp {
-            public string option, help;
-            public Action<string> action;
-            public bool withvalue;
-            public OptionWithHelp(string o, Action<string> a, string h) {
-                System.Diagnostics.Debug.Assert(o != "");
-                option = o; action = a; help = h;
-                withvalue = (option.Substring(option.Length - 1, 1) == "=");
-            }
-        }
-        class OptionWithHelpCollection : List<OptionWithHelp> {
-            public void Add(string o, Action<string> a, string h) {
-                Add(new OptionWithHelp(o, a, h));
-            }
-            public NDesk.Options.OptionSet GenerateOption() {
-                NDesk.Options.OptionSet opt = new NDesk.Options.OptionSet();
-                foreach(var oh in this) opt.Add(oh.option, oh.action);
-                return opt;
-            }
-            public string GenerateHelp() {
-                string rv = "";
-                int maxlength = 0;
-                foreach(var oh in this) if(oh.help != null) maxlength = Math.Max(maxlength, oh.option.Length + (oh.withvalue ? 5 : 0));
-                maxlength += 2;
-                foreach(var oh in this) {
-                    if(oh.help != null) {
-                        string opstr = "/" + oh.option;
-                        if(oh.withvalue) opstr = opstr.Remove(opstr.Length - 1) + " <VAL>";
-                        rv += "  " + opstr;
-                        rv += new string(' ', maxlength - opstr.Length);
-                        rv += oh.help.Replace("\n", "\n" + new string(' ', maxlength + 1)) + "\n";
-                    }
-                }
-                if(rv.EndsWith("\n")) rv = rv.Remove(rv.Length - 1, 1);
-                return rv;
-            }
-        }
-
+			}},
+			{"guess-compile","LaTeX ソースコンパイル回数を推定[-]",val => {Properties.Settings.Default.guessLaTeXCompile = (val != null);}},
+			{"num=","LaTeX ソースコンパイルの（最大）回数",(int val) => {Properties.Settings.Default.LaTeXCompileMaxNumber = val;}},
+			{"resolution=","解像度レベル",(int val) => {Properties.Settings.Default.resolutionScale = val;}},
+            {"left-margin=","左余白",(int val) => {Properties.Settings.Default.leftMargin = val;}},
+			{"right-margin=","右余白",(int val) => {Properties.Settings.Default.rightMargin = val;}},
+			{"top-margin=","上余白",(int val) => {Properties.Settings.Default.topMargin = val;}},
+			{"bottom-margin=","下余白",(int val) => {Properties.Settings.Default.bottomMargin = val;}},
+			{"unit=","余白の単位（bp/px）",val => {
+			    switch(val){
+			    case "bp": Properties.Settings.Default.yohakuUnitBP = true; return;
+			    case "px": Properties.Settings.Default.yohakuUnitBP = false; return;
+			    default: throw new NDesk.Options.OptionException("bp か px のいずれかを指定してください．", "unit");
+			}
+			}},
+			{"transparent","透過 PNG を作る[-]",val => {Properties.Settings.Default.transparentPngFlag = (val != null);}},
+			{"imagemagick","ImageMagick を使う[-]",val => {Properties.Settings.Default.useMagickFlag = (val != null);}},
+			{"low-resolution","低解像度で処理する[-]",val => {Properties.Settings.Default.useLowResolution = (val!= null);}},
+			{"ignore-errors","少々のエラーは無視する[-]",val => {Properties.Settings.Default.ignoreErrorFlag = (val != null);}},
+            {"no-delete","一時ファイルを削除しない[-]",val => {Properties.Settings.Default.deleteTmpFileFlag = !(val != null);}},
+			{"preview","生成されたファイルを開く",val => {preview = (val != null);}},
+			{"savesettings","設定の保存を行う",val => {Properties.Settings.Default.SaveSettings = (val != null);}},
+			{"quiet","Quiet モード",val => {quiet = true;}},
+            {"batch","Batch モード",val => {Properties.Settings.Default.BatchMode = true;}},
+			{"exit","設定の保存のみを行い終了する", val => {exit = true;}},
+			{"help","このメッセージを表示する",val => {help = true;}},
+			{"version","バージョン情報を表示する",val => {version = true;}}
+        };
 
         [STAThread]
         static void Main() {
@@ -109,41 +129,95 @@ namespace TeX2img {
 
             // コマンドライン解析
             var cmds = new List<string>(Environment.GetCommandLineArgs());
-            // 一つ目はTeX2img本体なので削除
-            if(cmds.Count > 0) cmds.RemoveAt(0);
+            //cmds = new List<string> { "TeX2img.exe", "/nogui", "/nopipe", "/help" };
+            // 一つ目がTeX2img本体ならば削除
+            // abtlinstからCreateProcessで呼び出すとTeX2img本体にならなかったので，一応確認をする．
+            if(cmds.Count > 0) {
+                string filecmds0 = Path.GetFullPath(cmds[0]).ToLower();
+                string me = Path.GetFullPath(System.Reflection.Assembly.GetExecutingAssembly().Location).ToLower();
+#if DEBUG
+                string vshost = Path.Combine(Path.GetDirectoryName(me), Path.GetFileNameWithoutExtension(me) + ".vshost.exe").ToLower();
+                if(vshost == filecmds0 || vshost == filecmds0 + ".exe") filecmds0 = me;
+#endif
+                if(filecmds0 == me || filecmds0 + ".exe" == me) cmds.RemoveAt(0);
+            }
             // 二つ目でCUIモードか判定する．
             if(cmds.Count > 0 && (cmds[0] == "/nogui" || cmds[0] == "-nogui" || cmds[0] == "--nogui")) {
                 nogui = true;
                 cmds.RemoveAt(0);
             }
-            setPath();
+            // noguiの時は三つ目がpipeのハンドル
+            System.IO.Pipes.AnonymousPipeClientStream p = null;
+            System.IO.StreamWriter pipe = null;
+            if(nogui) {
+                if(cmds.Count != 0) {
+                    if(cmds[0] != "/nopipe" && cmds[0] != "-nopipe" && cmds[0] != "--nopipe") {
+                        try {
+                            p = new System.IO.Pipes.AnonymousPipeClientStream(System.IO.Pipes.PipeDirection.Out, cmds[0]);
+                            pipe = new System.IO.StreamWriter(p);
+                            pipe.AutoFlush = true;
+                            // 何故かConsole.GetLineにゴミが混ざっているのでクリアしておく．何かミスっているのだと思うけど．
+                            pipe.WriteLine("enter");
+                            Console.ReadLine();
+                            cmds.RemoveAt(0);
+                        }
+                        catch(FormatException) { p = null; }
+                        catch(IOException) { p = null; }
+                    } else cmds.RemoveAt(0);
+                    // デバッグ用
+                    //SetPipeForDebug();
+                }
+            }
+            // メインルーチン
+            Environment.ExitCode = MainRoutine(pipe, cmds);
+            // 破棄
+            pipe.WriteLine("exit");
+            if(pipe != null) pipe.Dispose();
+            if(p != null) p.Dispose();
+        }
+
+        static int MainRoutine(StreamWriter pipe, List<string> cmds) {
+            // 各種バイナリのパスが設定されていなかったら推測する．
+            // "/exit"が指定されている場合はメッセージ表示をしない．
+            setPath(cmds.Contains("/exit") || cmds.Contains("-exit") || cmds.Contains("--exit"));
+            // CUIモードの引数なしはエラー
             if(nogui && cmds.Count == 0) {
                 Console.WriteLine("引数がありません．\n");
                 ShowHelp();
-                Environment.ExitCode = 1;
-                return;
+                return -1;
             }
             Properties.Settings.Default.SaveSettings = !nogui;
 
             // オプション解析
             List<string> files;
-            try { files = options.GenerateOption().Parse(cmds); }
-            //try { files = opt.Parse(new string[] { "TeX2img","/nogui","/savesettings=true", "a.tex", "a.pdf" }); }
+            try { files = options.Parse(cmds); }
             catch(NDesk.Options.OptionException e) {
                 if(e.OptionName != null) {
-                    var msg = "オプション " + e.OptionName + " への入力が不正です．";
+                    var msg = "オプション " + e.OptionName + " への入力が不正です";
+                    if(e.Message != "") msg += "：" + e.Message;
+                    else msg += "．";
+                    msg += "\nTeX2imgc.exe /help によるヘルプを参照してください．";
                     if(nogui) Console.WriteLine(msg);
-                    else MessageBox.Show(msg);
+                    else MessageBox.Show(msg, "TeX2img");
                 }
-                Environment.ExitCode = 1;
-                return;
+                return -1;
             }
+            if(help) {
+                ShowHelp();
+                return 0;
+            }
+            if(version) {
+                ShowVersion();
+                return 0;
+            }
+
             if(preview != null) Properties.Settings.Default.previewFlag = (bool) preview;
+            //Console.WriteLine(preview == null ? "null" : preview.ToString());
 
             // すぐに終了
             if(exit) {
                 Properties.Settings.Default.Save();
-                return;
+                return 0;
             }
             // filesのチェック
             string err = "";
@@ -151,7 +225,7 @@ namespace TeX2img {
                 if(!File.Exists(files[2 * i])) {
                     err += "ファイル " + files[2 * i] + " は見つかりませんでした．\n";
                 }
-                if(!Converter.CheckFormat(files[2 * i + 1], null)) {
+                if(!(new Converter(null)).CheckFormat(files[2 * i + 1])) {
                     err += "ファイル " + files[2 * i + 1] + " の拡張子は eps/png/jpg/pdf のいずれでもありません．\n";
                 }
             }
@@ -162,8 +236,7 @@ namespace TeX2img {
                 err = err.Remove(err.Length - 1);// 最後の改行を削除
                 if(nogui) Console.WriteLine(err);
                 else MessageBox.Show(err, "TeX2img");
-                Environment.ExitCode = 2;
-                return;
+                return -2;
             }
 
             if(nogui) {
@@ -172,127 +245,68 @@ namespace TeX2img {
                     preview = Properties.Settings.Default.previewFlag;
                     Properties.Settings.Default.previewFlag = false;
                 }
-                CUIExec(new CUIOutput(quiet), files);
+                int r = CUIExec(pipe, quiet, files);
                 Properties.Settings.Default.previewFlag = (bool) preview;
+                Properties.Settings.Default.Save();
+                return r;
             } else {
-                // Azuki.dllの存在チェック
-                string[] chkfiles = new string[] { "Azuki.dll" };
-                foreach(var f in chkfiles) {
-                    if(!System.IO.File.Exists(Path.Combine(System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location), f))) {
-                        if(Converter.which(f) == "") {
-                            MessageBox.Show(f + " が見つからないため，起動することができませんでした．", "TeX2img");
-                            Environment.ExitCode = -1;
-                            return;
-                        }
-                    }
+                // dllの存在チェック
+                string mydir = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
+                var chkfiles = new string[] { "Azuki.dll" }.Where(f => !File.Exists(Path.Combine(mydir, f)));
+                if(chkfiles.Count() != 0) {
+                    MessageBox.Show("以下のファイルが見つからないため，起動することができませんでした．\n" + String.Join("\n", chkfiles.ToArray()), "TeX2img");
+                    return -3;
                 }
                 Application.Run(new MainForm(files));
+                Properties.Settings.Default.Save();
+                return 0;
             }
-            Properties.Settings.Default.Save();
         }
 
-        static int GetNumberWithErrorHandling(string str, string optioname) {
-            try { return Int32.Parse(str); }
-            catch(FormatException) {
-                Console.WriteLine(optioname + " に数値以外が指定されています．");
-                throw new NDesk.Options.OptionException();
-            }
-            catch(OverflowException) {
-                Console.WriteLine(optioname + " に指定された数値が大きすぎ / 小さすぎます．");
-                throw new NDesk.Options.OptionException();
-            }
-        }
         static string GetStringsFromArray(string optionname, string val, string[] possibleargs) {
-            foreach(var s in possibleargs) {
-                if(val == s) return s;
-            }
+            if(possibleargs.Contains(val)) return val;
             throw new NDesk.Options.OptionException("引数が不正です．", optionname);
         }
-        static bool GetTrueorFalse(string optionname, string val) {
-            switch(val.ToLower()) {
-            case "true": return true;
-            case "false": return false;
-            default: throw new NDesk.Options.OptionException("引数が不正です．", optionname);
-            }
-        }
 
-        static void setPath(){
-            if(Properties.Settings.Default.platexPath == String.Empty || Properties.Settings.Default.dvipdfmxPath == String.Empty || Properties.Settings.Default.gsPath == String.Empty) {
-                if(Properties.Settings.Default.platexPath == String.Empty) Properties.Settings.Default.platexPath = Converter.which("platex");
-                if(Properties.Settings.Default.dvipdfmxPath == String.Empty) Properties.Settings.Default.dvipdfmxPath = Converter.which("dvipdfmx");
-                if(Properties.Settings.Default.gsPath == String.Empty) {
-                    Properties.Settings.Default.gsPath = Converter.which("gswin32c.exe");
-                    if(Properties.Settings.Default.gsPath == "") {
-                        Properties.Settings.Default.gsPath = Converter.which("gswin64c.exe");
-                        if(Properties.Settings.Default.gsPath == "") {
-                            Properties.Settings.Default.gsPath = Converter.which("rungs.exe");
-                            if(Properties.Settings.Default.gsPath == "") {
-                                if(Properties.Settings.Default.platexPath != "") {
-                                    Properties.Settings.Default.gsPath = System.IO.Path.GetDirectoryName(Properties.Settings.Default.platexPath) + "\\rungs.exe";
-                                    if(!System.IO.File.Exists(Properties.Settings.Default.gsPath)) Properties.Settings.Default.gsPath = "";
-                                }
-                            }
-                        }
+        static void setPath(bool nomsg) {
+            if(Properties.Settings.Default.platexPath == "" || Properties.Settings.Default.dvipdfmxPath == "" || Properties.Settings.Default.gsPath == "") {
+                if(Properties.Settings.Default.platexPath == "") Properties.Settings.Default.platexPath = Properties.Settings.Default.GuessPlatexPath();
+                if(Properties.Settings.Default.dvipdfmxPath == "") Properties.Settings.Default.dvipdfmxPath = Properties.Settings.Default.GuessDvipdfmxPath();
+                if(Properties.Settings.Default.gsPath == "") Properties.Settings.Default.gsPath = Properties.Settings.Default.GuessGsPath();
+                if(Properties.Settings.Default.platexPath == "" || Properties.Settings.Default.dvipdfmxPath == "" || Properties.Settings.Default.gsPath == "") {
+                    if(!nomsg) {
+                        var msg = "platex / dvipdfmx / gs のパス設定に失敗しました。\n環境設定画面で手動で設定してください。";
+                        if(nogui) Console.WriteLine(msg + "\n");
+                        else MessageBox.Show(msg, "TeX2img");
+                        (new SettingForm()).ShowDialog();
+                    }
+                } else {
+                    if(!nomsg) {
+                        var msg = String.Format("TeX 関連プログラムのパスを\n {0}\n {1}\n {2}\nに設定しました。\n違っている場合は環境設定画面で手動で変更してください。", Properties.Settings.Default.platexPath, Properties.Settings.Default.dvipdfmxPath, Properties.Settings.Default.gsPath);
+                        if(nogui) Console.WriteLine(msg + "\n");
+                        else MessageBox.Show(msg, "TeX2img");
                     }
                 }
-
-
-                if(Properties.Settings.Default.platexPath == String.Empty || Properties.Settings.Default.dvipdfmxPath == String.Empty || Properties.Settings.Default.gsPath == String.Empty) {
-                    var msg = "platex / dvipdfmx / gs のパス設定に失敗しました。\n環境設定画面で手動で設定してください。";
-                    if(nogui) Console.WriteLine(msg);
-                    else MessageBox.Show(msg);
-                    (new SettingForm()).ShowDialog();
-                } else {
-                    var msg = String.Format("TeX 関連プログラムのパスを\n {0}\n {1}\n {2}\nに設定しました。\n違っている場合は環境設定画面で手動で変更してください。", Properties.Settings.Default.platexPath, Properties.Settings.Default.dvipdfmxPath, Properties.Settings.Default.gsPath);
-                    if(nogui) Console.WriteLine(msg);
-                    else MessageBox.Show(msg);
-                }
+                Properties.Settings.Default.Save();
             }
 
             if(Properties.Settings.Default.gsDevice == "" && Properties.Settings.Default.gsPath != "") {
-                // Ghostscriptのバージョンを取得する．
-                using(var proc = new System.Diagnostics.Process()) {
-                    proc.StartInfo.RedirectStandardOutput = true;
-                    proc.StartInfo.UseShellExecute = false;
-                    proc.StartInfo.CreateNoWindow = true;
-                    proc.StartInfo.FileName = Properties.Settings.Default.gsPath;
-                    proc.StartInfo.Arguments = "-v";
-                    //string errmsg = "";
-                    //proc.ErrorDataReceived += ((s, e) => { errmsg += e.Data; });
-                    try {
-                        proc.Start();
-                        //proc.BeginErrorReadLine();
-                        string msg = proc.StandardOutput.ReadToEnd();
-                        proc.WaitForExit(2000);
-                        //proc.CancelErrorRead();
-                        if(!proc.HasExited) proc.Kill();
-                        var reg = new System.Text.RegularExpressions.Regex("Ghostscript ([0-9]+)\\.([0-9]+)", System.Text.RegularExpressions.RegexOptions.IgnoreCase);
-                        var m = reg.Match(msg);
-                        if(m.Success) {
-                            int major = int.Parse(m.Groups[1].Value);
-                            int minor = int.Parse(m.Groups[2].Value);
-                            //System.Diagnostics.Debug.WriteLine("major = " + major.ToString() + ", minor = " + minor.ToString());
-                            // 9.15以上ならばeps2write，そうでないならepwsrite
-                            if(major > 9 || (major == 9 && minor >= 15)) Properties.Settings.Default.gsDevice = "eps2write";
-                            else Properties.Settings.Default.gsDevice = "epswrite";
-                        }
-                    }
-                    catch(FormatException) { }
-                    catch(System.ComponentModel.Win32Exception) { }
-                }
+                Properties.Settings.Default.gsDevice = Properties.Settings.Default.GuessGsdevice();
+                if(Properties.Settings.Default.gsDevice == "") Properties.Settings.Default.gsDevice = "epswrite";
+                Properties.Settings.Default.Save();
             }
-            if(Properties.Settings.Default.gsDevice == "") Properties.Settings.Default.gsDevice = "epswrite";
-            Properties.Settings.Default.Save();
         }
 
-
         // CUIモード
-        static void CUIExec(IOutputController Output, List<string> files) {
+        static int CUIExec(System.IO.StreamWriter pipetotex2imgc, bool q, List<string> files) {
+            IOutputController Output = new CUIOutput(pipetotex2imgc, q);
+            //Console.WriteLine(Output.askYesorNo("テストのyes or no"));
             Converter conv = new Converter(Output);
             if(files.Count == 0) {
                 Console.WriteLine("入力ファイルが存在しません．");
-                return;
+                return -5;
             }
+            int failnum = 0;
             for(int i = 0 ; i < files.Count / 2 ; ++i) {
                 string file = files[2 * i];
                 // 一時フォルダにコピー
@@ -302,8 +316,10 @@ namespace TeX2img {
                 File.Copy(file, tmpTeXFileName, true);
 
                 // 変換！
-                conv.Convert(tmpTeXFileName, files[2 * i + 1]);
+                try { if(!conv.Convert(tmpTeXFileName, files[2 * i + 1])) ++failnum; }
+                catch(Exception e) { Console.WriteLine(e.Message); }
             }
+            return failnum;
         }
 
         static void ShowVersion() {
@@ -313,9 +329,49 @@ namespace TeX2img {
         }
 
         static void ShowHelp() {
-            var msg = "使い方：TeX2imgc.exe [Options] Input Output\n\n" + options.GenerateHelp();
+            StringWriter sw = new StringWriter();
+            options.WriteOptionDescriptions(sw);
+            var msg = "使い方：TeX2imgc.exe [Options] Input Output\n\n" + sw.ToString();
+            //if(msg.EndsWith("\n")) msg = msg.Remove(msg.Length - 1);
             if(nogui) Console.WriteLine(msg);
             else MessageBox.Show(msg, "TeX2img");
         }
+
+        /*
+        static void SetPipeForDebug() {
+            if(pipe != null) return;
+            // Console.Inを設定
+            var pscon = new System.IO.Pipes.AnonymousPipeServerStream(System.IO.Pipes.PipeDirection.In, HandleInheritability.Inheritable);
+            var pccon = new System.IO.Pipes.AnonymousPipeClientStream(System.IO.Pipes.PipeDirection.Out, pscon.GetClientHandleAsString());
+            Console.SetIn(new StreamReader(pscon));
+            // sw に書き込むとConsole.ReadLineで読めるハズ．
+            var sw = new StreamWriter(pccon);
+            sw.AutoFlush = true;
+
+            var pipeserver = new System.IO.Pipes.AnonymousPipeServerStream(System.IO.Pipes.PipeDirection.In, HandleInheritability.Inheritable);
+            var pipeclient = new System.IO.Pipes.AnonymousPipeClientStream(System.IO.Pipes.PipeDirection.Out, pipeserver.GetClientHandleAsString());
+            StreamReader sr = new StreamReader(pipeserver);
+            var thread = new System.Threading.Thread(() => {
+                while(true) {
+                    string msg = sr.ReadLine();
+                    switch(msg) {
+                    case "readline":
+                        // テスト用文字列をつける．
+                        sw.WriteLine("n\n");
+                        break;
+                    case "exit":
+                        return;
+                    case "enter":
+                        sw.WriteLine();
+                        break;
+                    default:
+                        break;
+                    }
+                }
+            });
+            thread.Start();
+            pipe = new StreamWriter(pipeclient);
+            pipe.AutoFlush = true;
+        }*/
     }
 }

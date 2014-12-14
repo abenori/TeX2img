@@ -99,6 +99,7 @@
             this.platexOpenFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.dvipdfmxOpenFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.gsOpenFileDialog = new System.Windows.Forms.OpenFileDialog();
+            this.GuessPathButton = new System.Windows.Forms.Button();
             this.SettingTab.SuspendLayout();
             this.BasicSettingTab.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.LaTeXCompileNumbernumUpDown)).BeginInit();
@@ -135,6 +136,7 @@
             // 
             // BasicSettingTab
             // 
+            this.BasicSettingTab.Controls.Add(this.GuessPathButton);
             this.BasicSettingTab.Controls.Add(this.label16);
             this.BasicSettingTab.Controls.Add(this.LaTeXCompileNumbernumUpDown);
             this.BasicSettingTab.Controls.Add(this.GuessLaTeXCompileCheckBox);
@@ -164,7 +166,7 @@
             // label16
             // 
             this.label16.AutoSize = true;
-            this.label16.Location = new System.Drawing.Point(17, 139);
+            this.label16.Location = new System.Drawing.Point(17, 175);
             this.label16.Name = "label16";
             this.label16.Size = new System.Drawing.Size(236, 18);
             this.label16.TabIndex = 25;
@@ -172,38 +174,38 @@
             // 
             // LaTeXCompileNumbernumUpDown
             // 
-            this.LaTeXCompileNumbernumUpDown.Location = new System.Drawing.Point(288, 134);
+            this.LaTeXCompileNumbernumUpDown.Location = new System.Drawing.Point(288, 170);
             this.LaTeXCompileNumbernumUpDown.Name = "LaTeXCompileNumbernumUpDown";
             this.LaTeXCompileNumbernumUpDown.Size = new System.Drawing.Size(81, 25);
-            this.LaTeXCompileNumbernumUpDown.TabIndex = 6;
+            this.LaTeXCompileNumbernumUpDown.TabIndex = 7;
             // 
             // GuessLaTeXCompileCheckBox
             // 
             this.GuessLaTeXCompileCheckBox.AutoSize = true;
-            this.GuessLaTeXCompileCheckBox.Location = new System.Drawing.Point(404, 137);
+            this.GuessLaTeXCompileCheckBox.Location = new System.Drawing.Point(404, 173);
             this.GuessLaTeXCompileCheckBox.Name = "GuessLaTeXCompileCheckBox";
             this.GuessLaTeXCompileCheckBox.Size = new System.Drawing.Size(149, 22);
-            this.GuessLaTeXCompileCheckBox.TabIndex = 7;
+            this.GuessLaTeXCompileCheckBox.TabIndex = 8;
             this.GuessLaTeXCompileCheckBox.Text = "回数を推定する";
             this.GuessLaTeXCompileCheckBox.UseVisualStyleBackColor = true;
             // 
             // UseLowResolutionCheckBox
             // 
             this.UseLowResolutionCheckBox.AutoSize = true;
-            this.UseLowResolutionCheckBox.Location = new System.Drawing.Point(19, 233);
+            this.UseLowResolutionCheckBox.Location = new System.Drawing.Point(19, 269);
             this.UseLowResolutionCheckBox.Name = "UseLowResolutionCheckBox";
             this.UseLowResolutionCheckBox.Size = new System.Drawing.Size(215, 22);
-            this.UseLowResolutionCheckBox.TabIndex = 10;
+            this.UseLowResolutionCheckBox.TabIndex = 11;
             this.UseLowResolutionCheckBox.Text = "低解像度での処理を行う";
             this.UseLowResolutionCheckBox.UseVisualStyleBackColor = true;
             // 
             // GSUseepswriteCheckButton
             // 
             this.GSUseepswriteCheckButton.AutoSize = true;
-            this.GSUseepswriteCheckButton.Location = new System.Drawing.Point(19, 205);
+            this.GSUseepswriteCheckButton.Location = new System.Drawing.Point(19, 241);
             this.GSUseepswriteCheckButton.Name = "GSUseepswriteCheckButton";
             this.GSUseepswriteCheckButton.Size = new System.Drawing.Size(390, 22);
-            this.GSUseepswriteCheckButton.TabIndex = 9;
+            this.GSUseepswriteCheckButton.TabIndex = 10;
             this.GSUseepswriteCheckButton.Text = "Ghostscript の DEVICE には epswrite を指定する";
             this.GSUseepswriteCheckButton.UseVisualStyleBackColor = true;
             // 
@@ -211,15 +213,15 @@
             // 
             this.encodeComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.encodeComboBox.FormattingEnabled = true;
-            this.encodeComboBox.Location = new System.Drawing.Point(122, 271);
+            this.encodeComboBox.Location = new System.Drawing.Point(122, 307);
             this.encodeComboBox.Name = "encodeComboBox";
             this.encodeComboBox.Size = new System.Drawing.Size(419, 26);
-            this.encodeComboBox.TabIndex = 11;
+            this.encodeComboBox.TabIndex = 12;
             // 
             // label10
             // 
             this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(16, 276);
+            this.label10.Location = new System.Drawing.Point(16, 312);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(84, 18);
             this.label10.TabIndex = 19;
@@ -228,11 +230,11 @@
             // ignoreErrorCheckBox
             // 
             this.ignoreErrorCheckBox.AutoSize = true;
-            this.ignoreErrorCheckBox.Location = new System.Drawing.Point(19, 176);
+            this.ignoreErrorCheckBox.Location = new System.Drawing.Point(19, 212);
             this.ignoreErrorCheckBox.Margin = new System.Windows.Forms.Padding(5, 4, 5, 4);
             this.ignoreErrorCheckBox.Name = "ignoreErrorCheckBox";
             this.ignoreErrorCheckBox.Size = new System.Drawing.Size(405, 22);
-            this.ignoreErrorCheckBox.TabIndex = 8;
+            this.ignoreErrorCheckBox.TabIndex = 9;
             this.ignoreErrorCheckBox.Text = "少々のコンパイルエラーは無視して画像化を強行する";
             this.ignoreErrorCheckBox.UseVisualStyleBackColor = true;
             // 
@@ -815,6 +817,16 @@
             this.gsOpenFileDialog.FileName = "gswin32c.exe";
             this.gsOpenFileDialog.Filter = "exe ファイル (*.exe)|*.exe|bat ファイル (*.bat)|*.bat|すべてのファイル (*.*)|*.*";
             // 
+            // GuessPathButton
+            // 
+            this.GuessPathButton.Location = new System.Drawing.Point(461, 131);
+            this.GuessPathButton.Name = "GuessPathButton";
+            this.GuessPathButton.Size = new System.Drawing.Size(190, 32);
+            this.GuessPathButton.TabIndex = 6;
+            this.GuessPathButton.Text = "各種パスの推定";
+            this.GuessPathButton.UseVisualStyleBackColor = true;
+            this.GuessPathButton.Click += new System.EventHandler(this.GuessPathButton_Click);
+            // 
             // SettingForm
             // 
             this.AcceptButton = this.OKButton;
@@ -923,5 +935,6 @@
         private System.Windows.Forms.CheckBox GuessLaTeXCompileCheckBox;
         private System.Windows.Forms.Label label16;
         private System.Windows.Forms.NumericUpDown LaTeXCompileNumbernumUpDown;
+        private System.Windows.Forms.Button GuessPathButton;
     }
 }

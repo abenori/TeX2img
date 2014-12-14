@@ -16,7 +16,7 @@ TeX2img
 
 # 動作条件
 * .NET Framework 3.5 以降．
-* 適切な TeX ディストリビューション（W32TeX か TeX Live を推奨）がインストールされており，platex 及び dvipdfmx （等）が使えること．
+* 適切な TeX ディストリビューション（W32TeX か TeX Live を推奨）がインストールされており，platex 及び dvipdfmx（等）が使えること．
 * Ghostscript がインストールされ，使えること．（TeX Live 内のものでも大丈夫です．）
 * ImageMagick がインストールされていると，それを用いて画像を出力することができます．（必須ではありません．）
 
@@ -38,33 +38,38 @@ TeX2imgc.exe は CUI モードで動かすためのラッパです．TeX2img.exe
 TeX2img.exe または TeX2imgc.exe が受けつけるオプションです．なお，
 TeX2img.exe input output
 とすると起動直後に変換が行われます．
-/platex <VAL>         platex のパス
-/dvipdfmx <VAL>       dvpdfmx のパス
-/gs <VAL>             Ghostscript のパス
-/gsdevice <VAL>       Ghostscript の device の値（epswrite/eps2write）
-/exit                 設定の保存のみを行い終了する．
-/savesettings         設定の保存を行う
-/resolution <VAL>     解像度レベル
-/left-margin <VAL>    左余白
-/right-margin <VAL>   右余白
-/top-margin <VAL>     上余白
-/bottom-margin <VAL>  下余白
-/unit <VAL>           余白の単位（bp/px）
-/kanji <VAL>          文字コードの指定（utf8/sjis/jis/euc/no)
-/ignore-errors <VAL>  少々のエラーは無視する（true/false）
-/low-resolution <VAL> 低解像度で処理する（true/false）
-/quiet                Quiet モード
-/no-delete <VAL>      一時ファイルを削除しない（true/false）
-/num <VAL>            LaTeX ソースコンパイルの（最大）回数
-/guess-compile <VAL>  LaTeX ソースコンパイル回数を推定（true/false）
-/imagemagick <VAL>    ImageMagick を使う（true/false）
-/transparent <VAL>    透過 PNG を作る（true/false）
-/preview              生成されたファイルを開く
-/help                 このメッセージを表示する
-/version              バージョン情報を表示する
+
+/platex=<VAL>        platex のパス
+/dvipdfmx=<VAL>      dvpdfmx のパス
+/gs=<VAL>            Ghostscript のパス
+/gsdevice=<VAL>      Ghostscript の device の値（epswrite/eps2write）
+/kanji=<VAL>         文字コードの指定（utf8/sjis/jis/euc/no)
+/guess-compile[-]    LaTeX ソースコンパイル回数を推定
+/num=<VAL>           LaTeX ソースコンパイルの（最大）回数
+/resolution=<VAL>    解像度レベル
+/left-margin=<VAL>   左余白
+/right-margin=<VAL>  右余白
+/top-margin=<VAL>    上余白
+/bottom-margin=<VAL> 下余白
+/unit=<VAL>          余白の単位（bp/px）
+/transparent[-]      透過 PNG を作る
+/imagemagick[-]      ImageMagick を使う
+/low-resolution[-]   低解像度で処理する
+/ignore-errors[-]    少々のエラーは無視する
+/no-delete[-]        一時ファイルを削除しない
+/preview             生成されたファイルを開く
+/savesettings        設定の保存を行う
+/quiet               Quiet モード
+/batch               Batch モード
+/exit                設定の保存のみを行い終了する
+/help                このメッセージを表示する
+/version             バージョン情報を表示する
+
+[-] はオプションの否定を意味します．たとえば /guess-compile- と指定すると，コンパイル回数の推定を行わなくなります．
+
 
 # 参考
-* 元々の作者である寺田さんによるTeX2img 配布ページ
+* 元々の作者である寺田さんによる TeX2img 配布ページ
 http://island.geocities.jp/loveinequality/
 には，TeX2img を活用するための情報があります．参考にしてみてください．
 
@@ -89,7 +94,7 @@ http://www.ndesk.org/Options
 ** ソースコードの色付け機能を搭載．（Azuki エディタコンポーネントを利用．）
 ** ファイル名に空白が入っている場合に動かないバグ修正．
 ** 複数ページにわたる TeX ソースを変換する場合，ページごとにファイルを出力するようにした．
-** JPEG / PNG 時には，余白設定を従来のpxに加え，「bp」でも指定できるようにした．（EPS / PDF の出力と同様の空白が得られるはず．）
+** JPEG / PNG 時には，余白設定を従来の px に加え，「bp」でも指定できるようにした．（EPS / PDF の出力と同様の空白が得られるはず．）
 ** ライセンスを修正 BSD ライセンスへと変更
 
 * 1.2.1 (2014/9/18)
@@ -121,7 +126,7 @@ http://www.ndesk.org/Options
 ** その他細かい修正．
 
 * 1.2.6（2014/10/22）
-** Ghostscript のバージョンを自動推定する際に，設定されている Ghostscript のパスが間違っていると起動しないバグを修正．
+** Ghostscript のバージョンを自動推定する際に，設定されている Ghostscript のパスが間違っていると TeX2img 自体が起動しないバグを修正．
 
 * 1.3.0（2014/11/21）
 ** オプションの解析を NDesk.Options にまかせることにした．
@@ -130,3 +135,12 @@ http://www.ndesk.org/Options
 ** 必須環境を .NET Framework 3.5 以上とした．
 ** LaTeX ソースの複数回コンパイルが行えるようになった．（回数指定または推定．推定時の回数指定は最大回数を意味する．）
 ** 読み取り専用のファイルを読み込んで使用していた場合，一時ファイルの削除に失敗するバグを修正．
+
+* 1.3.1
+** CUI モードでも各種パスの推測を行うようにした．
+** 設定画面に各種パスの推定を追加．
+** オプションの仕様を /no-delete (true|false) から /no-delete[-] に変更，
+** /platex-とすると引数を受けつけなくても起動してしまい，その後落ちてしまっていたのを修正．
+** CUIモードでもコンパイル時間が長い時にメッセージボックスが表示されていたのを，コンソールへの出力に変更．
+** 細かいバグ/ミスの修正．
+

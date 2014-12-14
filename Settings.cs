@@ -60,10 +60,78 @@
             if(SaveSettings) base.Save();
         }
 
+        public string GuessPlatexPath() {
+            return Converter.which("platex");
+        }
+        public string GuessDvipdfmxPath() {
+            return Converter.which("dvipdfmx");
+        }
+        public string GuessGsPath() {
+            return GuessGsPath(platexPath);
+        }
+        public string GuessGsPath(string platex) {
+            string gs = "";
+            if(gs == "") {
+                gs = Converter.which("gswin32c.exe");
+                if(gs == "") {
+                    gs = Converter.which("gswin64c.exe");
+                    if(gs == "") {
+                        gs = Converter.which("rungs.exe");
+                        if(gs == "") {
+                            if(platex != "") {
+                                gsPath = System.IO.Path.GetDirectoryName(platex) + "\\rungs.exe";
+                                if(!System.IO.File.Exists(gs)) gs = "";
+                            }
+                        }
+                    }
+                }
+            }
+            return gs;
+        }
+
+        public string GuessGsdevice() {
+            return GuessGsdevice(gsPath);
+        }
+
+        public string GuessGsdevice(string gs) {
+            string gsdevice = "";
+            // Ghostscriptのバージョンを取得する．
+            using(var proc = new System.Diagnostics.Process()) {
+                proc.StartInfo.RedirectStandardOutput = true;
+                proc.StartInfo.UseShellExecute = false;
+                proc.StartInfo.CreateNoWindow = true;
+                proc.StartInfo.FileName = gs;
+                proc.StartInfo.Arguments = "-v";
+                //string errmsg = "";
+                //proc.ErrorDataReceived += ((s, e) => { errmsg += e.Data; });
+                try {
+                    proc.Start();
+                    //proc.BeginErrorReadLine();
+                    string msg = proc.StandardOutput.ReadToEnd();
+                    proc.WaitForExit(2000);
+                    //proc.CancelErrorRead();
+                    if(!proc.HasExited) proc.Kill();
+                    var reg = new System.Text.RegularExpressions.Regex("Ghostscript ([0-9]+)\\.([0-9]+)", System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+                    var m = reg.Match(msg);
+                    if(m.Success) {
+                        int major = int.Parse(m.Groups[1].Value);
+                        int minor = int.Parse(m.Groups[2].Value);
+                        //System.Diagnostics.Debug.WriteLine("major = " + major.ToString() + ", minor = " + minor.ToString());
+                        // 9.15以上ならばeps2write，そうでないならepwsrite
+                        if(major > 9 || (major == 9 && minor >= 15)) gsdevice = "eps2write";
+                        else gsdevice = "epswrite";
+                    }
+                }
+                catch(System.FormatException) { }
+                catch(System.ComponentModel.Win32Exception) { }
+            }
+            return gsdevice;
+        }
+
+
         public class FontColor {
             public System.Drawing.Color Font { get; set; }
             public System.Drawing.Color Back { get; set; }
-            public FontColor() { }
             public FontColor(System.Drawing.Color f, System.Drawing.Color b) { Font = f; Back = b; }
         }
 
@@ -81,5 +149,6 @@
         }
         public FontColorCollection editorFontColor = new FontColorCollection();
         public bool SaveSettings = true;
+        public bool BatchMode = false;
     }
 }

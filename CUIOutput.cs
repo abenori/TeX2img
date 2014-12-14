@@ -5,7 +5,8 @@ using System.Text;
 namespace TeX2img {
     class CUIOutput : IOutputController {
         bool quiet = false;
-        public CUIOutput(bool q) { quiet = q; }
+        System.IO.StreamWriter pipe = null;
+        public CUIOutput(System.IO.StreamWriter sw, bool q) { pipe = sw; quiet = q; }
         public CUIOutput() { }
 
         public void showPathError(string exeName, string necessary) {
@@ -17,7 +18,7 @@ namespace TeX2img {
         }
 
         public void appendOutput(string log) {
-            if(!quiet)Console.Write(log);
+            if(!quiet) Console.Write(log);
         }
 
         public void showGenerateError() {
@@ -39,5 +40,19 @@ namespace TeX2img {
             Console.WriteLine(filePath + "\nが他のアプリケーション開かれているため生成できませんでした。\nこのファイルを開いているアプリケーションを閉じて再試行してください。");
         }
 
+        public bool askYesorNo(string msg) {
+            Console.WriteLine(msg + "（y/n）");
+            while(true) {
+                if(pipe != null) pipe.WriteLine("readline");
+                var s = Console.ReadLine().ToLower();
+                switch(s) {
+                case "y": return true;
+                case "n": return false;
+                default:
+                    Console.WriteLine("y または n を入力してください．");
+                    break;
+                }
+            }
+        }
     }
 }
