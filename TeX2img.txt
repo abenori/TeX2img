@@ -79,10 +79,16 @@ http://island.geocities.jp/loveinequality/
 http://sgry.b.sourceforge.jp/
 * コマンドライン解析には NDesk.Options を利用しています．
 http://www.ndesk.org/Options
+* 日本語文字コードの推測には，Gauche に含まれている推測ルーチン（を C# に移植したもの）を用いています．
+http://practical-scheme.net/gauche/index-j.html
+
 
 # ライセンス
 修正 BSD ライセンスです．詳しくは license.txt を参照してください．
-なお，Azuki エディタコンポーネント Azuki.dll には zlib ライセンスが，NDesk.Options にはMITライセンスが適用されています．
+なお，用いているライブラリなどのライセンスは以下の通りです．
+* Azuki エディタコンポーネント Azuki.dll は zlib ライセンス．
+* NDesk.Options は MIT ライセンス．
+* Gauche は修正 BSD ライセンス．
 詳細は各々のページをご覧ください．
 
 
@@ -143,4 +149,7 @@ http://www.ndesk.org/Options
 ** /platex- とすると引数を受けつけなくても起動してしまい，その後落ちてしまっていたのを修正．
 ** CUI モードでもコンパイル時間が長い時にメッセージボックスが表示されていたのを，コンソールへの出力に変更．
 ** 細かいバグ/ミスの修正．
+
+* 1.3.1
+** インポート / エクスポート機能を搭載．
 

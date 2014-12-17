@@ -299,12 +299,7 @@ namespace TeX2img {
                 }
                 using(StreamWriter sw = new StreamWriter(Path.Combine(tmpDir, tmpTeXFileName), false, encoding)) {
                     try {
-                        sw.Write(myPreambleForm.PreambleTextBox.Text);
-                        if(!myPreambleForm.PreambleTextBox.Text.EndsWith("\n")) sw.WriteLine("");
-                        sw.WriteLine("\\begin{document}");
-                        sw.Write(sourceTextBox.Text);
-                        if(!sourceTextBox.Text.EndsWith("\n")) sw.WriteLine("");
-                        sw.WriteLine("\\end{document}");
+                        WriteTeXSourceFile(sw, myPreambleForm.PreambleTextBox.Text, sourceTextBox.Text);
                     }
                     finally {
                         if(sw != null) {
@@ -390,24 +385,43 @@ namespace TeX2img {
             if(MessageBox.Show("現在のプリアンブル及び編集中のソースは破棄されます．\nよろしいですか？", "TeX2img", MessageBoxButtons.YesNo) == System.Windows.Forms.DialogResult.No) return;
             if(openFileDialog1.ShowDialog() == DialogResult.OK) {
                 try {
-                    Encoding encoding;
-                    switch(Properties.Settings.Default.encode) {
-                    case "euc": encoding = Encoding.GetEncoding("euc-jp"); break;
-                    case "jis": encoding = Encoding.GetEncoding("iso-2022-jp"); break;
-                    case "utf8": encoding = Encoding.UTF8; break;
-                    case "sjis":
-                    default: encoding = Encoding.GetEncoding("shift_jis"); break;
-                    }
-                
-                    using(var file = new StreamReader(openFileDialog1.FileName, encoding)) {
-                        string body,preamble;
-                        if(ParseTeXSourceFile(file, out preamble, out body)) {
-                            myPreambleForm.PreambleTextBox.Text = preamble;
-                            sourceTextBox.Text = body;
-                        } else {
-                            MessageBox.Show("TeX ソースファイルの解析に失敗しました．");
+                    using(var fs = new FileStream(openFileDialog1.FileName, FileMode.Open, FileAccess.Read)) {
+                        byte[] buf = new byte[fs.Length];
+                        fs.Read(buf, 0, (int) fs.Length);
+
+                        var GuessEncoding = KanjiEncoding.CheckBOM(buf);
+                        if(GuessEncoding != null)buf = KanjiEncoding.DeleteBOM(buf,GuessEncoding);
+                        else GuessEncoding = KanjiEncoding.GuessJPEncoding(buf);
+                        Encoding encoding;
+                        switch(Properties.Settings.Default.encode) {
+                        case "euc": encoding = Encoding.GetEncoding("euc-jp"); break;
+                        case "jis": encoding = Encoding.GetEncoding("iso-2022-jp"); break;
+                        case "utf8": encoding = Encoding.UTF8; break;
+                        case "sjis": encoding = Encoding.GetEncoding("shift_jis"); break;
+                        case "_utf8":
+                            if(GuessEncoding != null) encoding = GuessEncoding;
+                            else encoding = Encoding.UTF8;
+                            break;
+                        case "_sjis":
+                        default:
+                            if(GuessEncoding != null) encoding = GuessEncoding;
+                            else encoding = Encoding.GetEncoding("shift_jis");
+                            break;
                         }
-                        
+                        if(encoding.EncodingName != GuessEncoding.EncodingName) {
+                            if(MessageBox.Show("設定されている文字コードは\n" + encoding.EncodingName + "\nですが，読み込まれるファイルは\n" + GuessEncoding.EncodingName + "\nと推定されました．設定の\n" + encoding.EncodingName + "\nを用いてもよろしいですか？","TeX2img", MessageBoxButtons.YesNo) == System.Windows.Forms.DialogResult.No) {
+                                encoding = GuessEncoding;
+                            }
+                        }
+                        using(var sr = new StringReader(encoding.GetString(buf))) {
+                            string body, preamble;
+                            if(ParseTeXSourceFile(sr, out preamble, out body)) {
+                                myPreambleForm.PreambleTextBox.Text = preamble;
+                                sourceTextBox.Text = body;
+                            } else {
+                                MessageBox.Show("TeX ソースファイルの解析に失敗しました．");
+                            }
+                        }
                     }
                 }
                 catch(FileNotFoundException) {
@@ -424,18 +438,14 @@ namespace TeX2img {
                 switch(Properties.Settings.Default.encode) {
                 case "euc": encoding = Encoding.GetEncoding("euc-jp"); break;
                 case "jis": encoding = Encoding.GetEncoding("iso-2022-jp"); break;
-                case "utf8": encoding = new System.Text.UTF8Encoding(false); break;
+                case "utf8":
+                case "_utf8": encoding = new System.Text.UTF8Encoding(false); break;
                 case "sjis":
                 default: encoding = Encoding.GetEncoding("shift_jis"); break;
                 }
                 try {
                     using(var file = new StreamWriter(sfd.FileName, false, encoding)) {
-                        file.Write(myPreambleForm.PreambleTextBox.Text);
-                        if(!myPreambleForm.PreambleTextBox.Text.EndsWith("\n")) file.WriteLine("");
-                        file.WriteLine("\\begin{document}");
-                        file.Write(sourceTextBox.Text);
-                        if(!sourceTextBox.Text.EndsWith("\n"))file.WriteLine("");
-                        file.WriteLine("\\end{document}");
+                        WriteTeXSourceFile(file, myPreambleForm.PreambleTextBox.Text, sourceTextBox.Text);
                     }
                 }
                 catch(UnauthorizedAccessException){
@@ -443,15 +453,34 @@ namespace TeX2img {
                 }
             }
         }
-        static bool ParseTeXSourceFile(StreamReader file, out string preamble, out string body) {
+        static bool ParseTeXSourceFile(TextReader file, out string preamble, out string body) {
             preamble = ""; body = "";
             var reg = new Regex(@"(?<preamble>^(.*\n)*?[^%]*?(\\\\)*)\\begin\{document\}\n?(?<body>(.*\n)*[^%]*)\\end\{document\}");
-            var m = reg.Match(file.ReadToEnd().Replace("\r\n","\n").Replace("\r","\n"));
-            if(m.Success){
+            var text = file.ReadToEnd().Replace("\r\n", "\n").Replace("\r", "\n");
+            var m = reg.Match(text);
+            if(m.Success) {
                 preamble = m.Groups["preamble"].Value;
                 body = m.Groups["body"].Value;
                 return true;
-            } else return false;
+            } else {
+                var begreg = new Regex(@"^[^%]*(\\\\)*\\begin\{document\}");
+                var endreg = new Regex(@"^[^%]*(\\\\)*\\end\{document\}");
+                if(begreg.Match(text).Success || endreg.Match(text).Success) return false;
+                else {
+                    preamble = "";
+                    body = text;
+                    return true;
+                }
+            }
+        }
+
+        static void WriteTeXSourceFile(TextWriter sw, string preamble, string body) {
+            sw.Write(preamble);
+            if(!preamble.EndsWith("\n")) sw.WriteLine("");
+            sw.WriteLine("\\begin{document}");
+            sw.Write(body);
+            if(!body.EndsWith("\n")) sw.WriteLine("");
+            sw.WriteLine("\\end{document}");
         }
     }
 }

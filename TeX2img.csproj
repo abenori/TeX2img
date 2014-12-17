@@ -79,6 +79,7 @@
     <Compile Include="AnalyzeLaTeXCompile.cs" />
     <Compile Include="Converter.cs" />
     <Compile Include="CUIOutput.cs" />
+    <Compile Include="KanjiEncoding.cs" />
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
     </Compile>

@@ -118,6 +118,18 @@ namespace TeX2img {
 
         [STAThread]
         static void Main() {
+            /*
+            string f = Environment.GetCommandLineArgs()[2];
+            using(var fs = new FileStream(f, FileMode.Open, FileAccess.Read)) {
+                byte[] buf = new byte[fs.Length];
+                fs.Read(buf, 0, (int) fs.Length);
+                var enc = KanjiEncoding.GuessJPEncoding(buf);
+                if(buf == null) Console.WriteLine("null");
+                else Console.WriteLine(enc.HeaderName);
+                Console.WriteLine(enc == new System.Text.UTF8Encoding(false));
+            }
+            return;
+            */
             // アップデートしていたら前バージョンの設定を読み込む
             if(!Properties.Settings.Default.IsUpgraded) {
                 Properties.Settings.Default.Upgrade();
