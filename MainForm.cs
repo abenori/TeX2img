@@ -387,7 +387,7 @@ namespace TeX2img {
         #endregion
 
         private void ImportToolStripMenuItem_Click(object sender, EventArgs e) {
-            if(MessageBox.Show("現在のプレアンブル及び編集中のソースは破棄されます．\nよろしいですか？", "TeX2img", MessageBoxButtons.YesNo) == System.Windows.Forms.DialogResult.No) return;
+            if(MessageBox.Show("現在のプリアンブル及び編集中のソースは破棄されます．\nよろしいですか？", "TeX2img", MessageBoxButtons.YesNo) == System.Windows.Forms.DialogResult.No) return;
             if(openFileDialog1.ShowDialog() == DialogResult.OK) {
                 try {
                     Encoding encoding;
@@ -400,28 +400,14 @@ namespace TeX2img {
                     }
                 
                     using(var file = new StreamReader(openFileDialog1.FileName, encoding)) {
-                        string preamble = "",text = "";
-                        bool begindocfound = false;
-                        var begindoc = new Regex(@"(^[^%]*(\\\\)*)\\begin\{document\}");
-                        var enddoc = new Regex(@"(^[^%]*(\\\\)*)\\end{document}");
-                        while(!file.EndOfStream) {
-                            var line = file.ReadLine();
-                            if(begindocfound) {
-                                var m = enddoc.Match(line);
-                                if(m.Success) text += m.Groups[1].Value;
-                                else text += line + "\n";
-                            } else {
-                                var m = begindoc.Match(line);
-                                if(m.Success) {
-                                    System.Diagnostics.Debug.WriteLine("\\begin{document} found");
-                                    preamble += m.Groups[1].Value;
-                                    text = line.Substring(m.Length) + "\n";
-                                    begindocfound = true;
-                                } else preamble += line + "\n";
-                            }
+                        string body,preamble;
+                        if(ParseTeXSourceFile(file, out preamble, out body)) {
+                            myPreambleForm.PreambleTextBox.Text = preamble;
+                            sourceTextBox.Text = body;
+                        } else {
+                            MessageBox.Show("TeX ソースファイルの解析に失敗しました．");
                         }
-                        myPreambleForm.PreambleTextBox.Text = preamble;
-                        sourceTextBox.Text = text;
+                        
                     }
                 }
                 catch(FileNotFoundException) {
@@ -456,6 +442,16 @@ namespace TeX2img {
                     MessageBox.Show("ファイルの書き込みに失敗しました．\n他のアプリケーションで開いていないかを確認してください．");
                 }
             }
+        }
+        static bool ParseTeXSourceFile(StreamReader file, out string preamble, out string body) {
+            preamble = ""; body = "";
+            var reg = new Regex(@"(?<preamble>^(.*\n)*?[^%]*?(\\\\)*)\\begin\{document\}\n?(?<body>(.*\n)*[^%]*)\\end\{document\}");
+            var m = reg.Match(file.ReadToEnd().Replace("\r\n","\n").Replace("\r","\n"));
+            if(m.Success){
+                preamble = m.Groups["preamble"].Value;
+                body = m.Groups["body"].Value;
+                return true;
+            } else return false;
         }
     }
 }
