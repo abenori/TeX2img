@@ -65,6 +65,8 @@
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.convertWorker = new System.ComponentModel.BackgroundWorker();
+            this.ImportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.ExportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.sourceTextBoxMenu.SuspendLayout();
@@ -81,7 +83,7 @@
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Padding = new System.Windows.Forms.Padding(10, 3, 0, 3);
-            this.menuStrip1.Size = new System.Drawing.Size(1115, 33);
+            this.menuStrip1.Size = new System.Drawing.Size(1115, 34);
             this.menuStrip1.TabIndex = 0;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -89,9 +91,11 @@
             // 
             this.FileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.GenerateEPSToolStripMenuItem,
+            this.ImportToolStripMenuItem,
+            this.ExportToolStripMenuItem,
             this.ExitToolStripMenuItem});
             this.FileToolStripMenuItem.Name = "FileToolStripMenuItem";
-            this.FileToolStripMenuItem.Size = new System.Drawing.Size(99, 27);
+            this.FileToolStripMenuItem.Size = new System.Drawing.Size(99, 28);
             this.FileToolStripMenuItem.Text = "ファイル(&F)";
             // 
             // GenerateEPSToolStripMenuItem
@@ -116,7 +120,7 @@
             this.showPreambleWindowToolStripMenuItem,
             this.showOutputWindowToolStripMenuItem});
             this.表示VToolStripMenuItem.Name = "表示VToolStripMenuItem";
-            this.表示VToolStripMenuItem.Size = new System.Drawing.Size(86, 27);
+            this.表示VToolStripMenuItem.Size = new System.Drawing.Size(86, 28);
             this.表示VToolStripMenuItem.Text = "表示(&V)";
             // 
             // showPreambleWindowToolStripMenuItem
@@ -142,7 +146,7 @@
             this.SettingToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.オプションOToolStripMenuItem});
             this.SettingToolStripMenuItem.Name = "SettingToolStripMenuItem";
-            this.SettingToolStripMenuItem.Size = new System.Drawing.Size(92, 27);
+            this.SettingToolStripMenuItem.Size = new System.Drawing.Size(92, 28);
             this.SettingToolStripMenuItem.Text = "ツール(&T)";
             // 
             // オプションOToolStripMenuItem
@@ -158,7 +162,7 @@
             this.ヘルプHToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.AboutToolStripMenuItem});
             this.ヘルプHToolStripMenuItem.Name = "ヘルプHToolStripMenuItem";
-            this.ヘルプHToolStripMenuItem.Size = new System.Drawing.Size(95, 27);
+            this.ヘルプHToolStripMenuItem.Size = new System.Drawing.Size(95, 28);
             this.ヘルプHToolStripMenuItem.Text = "ヘルプ(&H)";
             // 
             // AboutToolStripMenuItem
@@ -420,6 +424,20 @@
             this.convertWorker.DoWork += new System.ComponentModel.DoWorkEventHandler(this.convertWorker_DoWork);
             this.convertWorker.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.convertWorker_RunWorkerCompleted);
             // 
+            // ImportToolStripMenuItem
+            // 
+            this.ImportToolStripMenuItem.Name = "ImportToolStripMenuItem";
+            this.ImportToolStripMenuItem.Size = new System.Drawing.Size(296, 28);
+            this.ImportToolStripMenuItem.Text = "インポート";
+            this.ImportToolStripMenuItem.Click += new System.EventHandler(this.ImportToolStripMenuItem_Click);
+            // 
+            // ExportToolStripMenuItem
+            // 
+            this.ExportToolStripMenuItem.Name = "ExportToolStripMenuItem";
+            this.ExportToolStripMenuItem.Size = new System.Drawing.Size(296, 28);
+            this.ExportToolStripMenuItem.Text = "エクスポート";
+            this.ExportToolStripMenuItem.Click += new System.EventHandler(this.ExportToolStripMenuItem_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(10F, 18F);
@@ -483,6 +501,8 @@
         private System.Windows.Forms.ToolStripMenuItem Copy;
         private System.Windows.Forms.ToolStripMenuItem Paste;
         private System.Windows.Forms.ToolStripMenuItem Redo;
+        private System.Windows.Forms.ToolStripMenuItem ImportToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem ExportToolStripMenuItem;
     }
 }
 

@@ -300,10 +300,10 @@ namespace TeX2img {
                 using(StreamWriter sw = new StreamWriter(Path.Combine(tmpDir, tmpTeXFileName), false, encoding)) {
                     try {
                         sw.Write(myPreambleForm.PreambleTextBox.Text);
-                        sw.WriteLine("");
+                        if(!myPreambleForm.PreambleTextBox.Text.EndsWith("\n")) sw.WriteLine("");
                         sw.WriteLine("\\begin{document}");
                         sw.Write(sourceTextBox.Text);
-                        sw.WriteLine("");
+                        if(!sourceTextBox.Text.EndsWith("\n")) sw.WriteLine("");
                         sw.WriteLine("\\end{document}");
                     }
                     finally {
@@ -385,5 +385,77 @@ namespace TeX2img {
             sourceTextBox.Redo();
         }
         #endregion
+
+        private void ImportToolStripMenuItem_Click(object sender, EventArgs e) {
+            if(MessageBox.Show("現在のプレアンブル及び編集中のソースは破棄されます．\nよろしいですか？", "TeX2img", MessageBoxButtons.YesNo) == System.Windows.Forms.DialogResult.No) return;
+            if(openFileDialog1.ShowDialog() == DialogResult.OK) {
+                try {
+                    Encoding encoding;
+                    switch(Properties.Settings.Default.encode) {
+                    case "euc": encoding = Encoding.GetEncoding("euc-jp"); break;
+                    case "jis": encoding = Encoding.GetEncoding("iso-2022-jp"); break;
+                    case "utf8": encoding = Encoding.UTF8; break;
+                    case "sjis":
+                    default: encoding = Encoding.GetEncoding("shift_jis"); break;
+                    }
+                
+                    using(var file = new StreamReader(openFileDialog1.FileName, encoding)) {
+                        string preamble = "",text = "";
+                        bool begindocfound = false;
+                        var begindoc = new Regex(@"(^[^%]*(\\\\)*)\\begin\{document\}");
+                        var enddoc = new Regex(@"(^[^%]*(\\\\)*)\\end{document}");
+                        while(!file.EndOfStream) {
+                            var line = file.ReadLine();
+                            if(begindocfound) {
+                                var m = enddoc.Match(line);
+                                if(m.Success) text += m.Groups[1].Value;
+                                else text += line + "\n";
+                            } else {
+                                var m = begindoc.Match(line);
+                                if(m.Success) {
+                                    System.Diagnostics.Debug.WriteLine("\\begin{document} found");
+                                    preamble += m.Groups[1].Value;
+                                    text = line.Substring(m.Length) + "\n";
+                                    begindocfound = true;
+                                } else preamble += line + "\n";
+                            }
+                        }
+                        myPreambleForm.PreambleTextBox.Text = preamble;
+                        sourceTextBox.Text = text;
+                    }
+                }
+                catch(FileNotFoundException) {
+                    MessageBox.Show(openFileDialog1.FileName + " は存在しません．");
+                }
+            }
+        }
+
+        private void ExportToolStripMenuItem_Click(object sender, EventArgs e) {
+            var sfd = new SaveFileDialog();
+            sfd.Filter = "TeX ソースファイル (*.tex)|*.tex|全てのファイル (*.*)|*.*";
+            if(sfd.ShowDialog() == System.Windows.Forms.DialogResult.OK) {
+                Encoding encoding;
+                switch(Properties.Settings.Default.encode) {
+                case "euc": encoding = Encoding.GetEncoding("euc-jp"); break;
+                case "jis": encoding = Encoding.GetEncoding("iso-2022-jp"); break;
+                case "utf8": encoding = new System.Text.UTF8Encoding(false); break;
+                case "sjis":
+                default: encoding = Encoding.GetEncoding("shift_jis"); break;
+                }
+                try {
+                    using(var file = new StreamWriter(sfd.FileName, false, encoding)) {
+                        file.Write(myPreambleForm.PreambleTextBox.Text);
+                        if(!myPreambleForm.PreambleTextBox.Text.EndsWith("\n")) file.WriteLine("");
+                        file.WriteLine("\\begin{document}");
+                        file.Write(sourceTextBox.Text);
+                        if(!sourceTextBox.Text.EndsWith("\n"))file.WriteLine("");
+                        file.WriteLine("\\end{document}");
+                    }
+                }
+                catch(UnauthorizedAccessException){
+                    MessageBox.Show("ファイルの書き込みに失敗しました．\n他のアプリケーションで開いていないかを確認してください．");
+                }
+            }
+        }
     }
 }
