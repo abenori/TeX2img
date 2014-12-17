@@ -146,11 +146,11 @@ namespace TeX2img {
                 nogui = true;
                 cmds.RemoveAt(0);
             }
-            // メインルーチン
-            Environment.ExitCode = MainRoutine(cmds);
+            // メイン
+            Environment.ExitCode = TeX2imgMain(cmds);
         }
 
-        static int MainRoutine(List<string> cmds) {
+        static int TeX2imgMain(List<string> cmds) {
             // 各種バイナリのパスが設定されていなかったら推測する．
             // "/exit"が指定されている場合はメッセージ表示をしない．
             setPath(cmds.Contains("/exit") || cmds.Contains("-exit") || cmds.Contains("--exit"));
@@ -199,7 +199,7 @@ namespace TeX2img {
                 if(!File.Exists(files[2 * i])) {
                     err += "ファイル " + files[2 * i] + " は見つかりませんでした．\n";
                 }
-                if(!(new Converter(null)).CheckFormat(files[2 * i + 1])) {
+                if(!(new Converter(null,null,files[2 * i + 1])).CheckFormat()) {
                     err += "ファイル " + files[2 * i + 1] + " の拡張子は eps/png/jpg/pdf のいずれでもありません．\n";
                 }
             }
@@ -275,7 +275,6 @@ namespace TeX2img {
         static int CUIExec(bool q, List<string> files) {
             IOutputController Output = new CUIOutput(q);
             //Console.WriteLine(Output.askYesorNo("テストのyes or no"));
-            Converter conv = new Converter(Output);
             if(files.Count == 0) {
                 Console.WriteLine("入力ファイルが存在しません．");
                 return -5;
@@ -290,7 +289,7 @@ namespace TeX2img {
                 File.Copy(file, tmpTeXFileName, true);
 
                 // 変換！
-                try { if(!conv.Convert(tmpTeXFileName, files[2 * i + 1])) ++failnum; }
+                try { if(!((new Converter(Output,tmpTeXFileName, files[2 * i + 1])).Convert())) ++failnum; }
                 catch(Exception e) { Console.WriteLine(e.Message); }
             }
             return failnum;
@@ -310,42 +309,5 @@ namespace TeX2img {
             if(nogui) Console.WriteLine(msg);
             else MessageBox.Show(msg, "TeX2img");
         }
-
-        /*
-        static void SetPipeForDebug() {
-            if(pipe != null) return;
-            // Console.Inを設定
-            var pscon = new System.IO.Pipes.AnonymousPipeServerStream(System.IO.Pipes.PipeDirection.In, HandleInheritability.Inheritable);
-            var pccon = new System.IO.Pipes.AnonymousPipeClientStream(System.IO.Pipes.PipeDirection.Out, pscon.GetClientHandleAsString());
-            Console.SetIn(new StreamReader(pscon));
-            // sw に書き込むとConsole.ReadLineで読めるハズ．
-            var sw = new StreamWriter(pccon);
-            sw.AutoFlush = true;
-
-            var pipeserver = new System.IO.Pipes.AnonymousPipeServerStream(System.IO.Pipes.PipeDirection.In, HandleInheritability.Inheritable);
-            var pipeclient = new System.IO.Pipes.AnonymousPipeClientStream(System.IO.Pipes.PipeDirection.Out, pipeserver.GetClientHandleAsString());
-            StreamReader sr = new StreamReader(pipeserver);
-            var thread = new System.Threading.Thread(() => {
-                while(true) {
-                    string msg = sr.ReadLine();
-                    switch(msg) {
-                    case "readline":
-                        // テスト用文字列をつける．
-                        sw.WriteLine("n\n");
-                        break;
-                    case "exit":
-                        return;
-                    case "enter":
-                        sw.WriteLine();
-                        break;
-                    default:
-                        break;
-                    }
-                }
-            });
-            thread.Start();
-            pipe = new StreamWriter(pipeclient);
-            pipe.AutoFlush = true;
-        }*/
     }
 }

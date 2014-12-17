@@ -33,8 +33,12 @@ namespace TeX2img {
         IOutputController controller_;
         int epsResolution_ = 20016;
         string workingDir;
-        public Converter(IOutputController controller) {
+        string InputFile, OutputFile;
+        public Converter(IOutputController controller, string inputTeXFilePath, string outputFilePath) {
+            InputFile = inputTeXFilePath;
+            OutputFile = outputFilePath;
             controller_ = controller;
+            workingDir = Path.GetDirectoryName(inputTeXFilePath);
         }
         Dictionary<string, string> Environments = new Dictionary<string, string>();
 
@@ -57,23 +61,22 @@ namespace TeX2img {
             return proc;
         }
 
-        public bool CheckFormat(string outputFilePath) {
-            string extension = Path.GetExtension(outputFilePath).ToLower();
+        public bool CheckFormat() {
+            string extension = Path.GetExtension(OutputFile).ToLower();
             if(extension != ".eps" && extension != ".png" && extension != ".jpg" && extension != ".pdf") {
-                if(controller_ != null) controller_.showExtensionError(outputFilePath);
+                if(controller_ != null) controller_.showExtensionError(OutputFile);
                 return false;
             }
             return true;
         }
 
-        public bool Convert(string inputTeXFilePath, string outputFilePath) {
-            workingDir = Path.GetDirectoryName(inputTeXFilePath);
+        public bool Convert() {
             SetImageMagickEnvironment();
-            bool rv = generate(inputTeXFilePath, outputFilePath);
+            bool rv = generate(InputFile, OutputFile);
 
             if(Properties.Settings.Default.deleteTmpFileFlag) {
                 try {
-                    string tmpFileBaseName = Path.Combine(workingDir, Path.GetFileNameWithoutExtension(inputTeXFilePath));
+                    string tmpFileBaseName = Path.Combine(workingDir, Path.GetFileNameWithoutExtension(InputFile));
                     File.Delete(tmpFileBaseName + ".tex");
                     File.Delete(tmpFileBaseName + ".dvi");
                     File.Delete(tmpFileBaseName + ".log");

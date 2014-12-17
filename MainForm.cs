@@ -236,25 +236,19 @@ namespace TeX2img {
 
         private void convertWorker_DoWork(object sender, DoWorkEventArgs e) {
             if(FirstFiles.Count != 0) {
-                Converter conv = new Converter(this);
                 for(int i = 0 ; i < FirstFiles.Count / 2 ; ++i) {
                     string file = FirstFiles[2 * i];
                     string tmppath = Path.GetTempFileName();
                     string tmptexfn = Path.Combine(Path.GetDirectoryName(tmppath), Path.GetFileNameWithoutExtension(tmppath) + ".tex");
                     File.Delete(tmptexfn);
                     File.Copy(file, tmptexfn, true);
-                    conv.Convert(tmptexfn, FirstFiles[2 * i + 1]);
+                    (new Converter(this, tmptexfn, FirstFiles[2 * i + 1])).Convert();
                 }
                 FirstFiles.Clear();
                 return;
             }
 
-            Converter converter = new Converter(this);
-
             string outputFilePath = outputFileNameTextBox.Text;
-            if(!converter.CheckFormat(outputFilePath)) {
-                return;
-            }
 
             if(InputFromFileRadioButton.Checked) {
                 string inputTeXFilePath = inputFileNameTextBox.Text;
@@ -270,8 +264,13 @@ namespace TeX2img {
             string tmpFileName = Path.GetFileName(tmpFilePath);
             string tmpFileBaseName = Path.GetFileNameWithoutExtension(tmpFileName);
 
+
             string tmpTeXFileName = tmpFileBaseName + ".tex";
             string tmpDir = Path.GetDirectoryName(tmpFilePath);
+
+            var converter = new Converter(this, Path.Combine(tmpDir, tmpTeXFileName), outputFileNameTextBox.Text);
+            if(!converter.CheckFormat()) return;
+
             File.Delete(Path.Combine(tmpDir, tmpTeXFileName));
             File.Move(Path.Combine(tmpDir, tmpFileName), Path.Combine(tmpDir, tmpTeXFileName));
 
@@ -283,7 +282,6 @@ namespace TeX2img {
                 File.Copy(inputTeXFilePath,tmpfile , true);
                 // 読み取り専用の場合解除しておく（後でFile.Deleteに失敗するため）．
                 (new FileInfo(tmpfile)).Attributes = FileAttributes.Normal;
-
             }
 
             // 直接入力の場合 tex ソースを出力
@@ -317,7 +315,7 @@ namespace TeX2img {
             }
             #endregion
 
-            converter.Convert(Path.Combine(tmpDir, tmpTeXFileName), outputFileNameTextBox.Text);
+            converter.Convert();
         }
 
         private void convertWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e) {
