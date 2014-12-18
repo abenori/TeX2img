@@ -34,6 +34,8 @@
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.FileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.GenerateEPSToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.ImportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.ExportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.ExitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.表示VToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.showPreambleWindowToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -65,8 +67,6 @@
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.convertWorker = new System.ComponentModel.BackgroundWorker();
-            this.ImportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.ExportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.sourceTextBoxMenu.SuspendLayout();
@@ -105,6 +105,22 @@
             this.GenerateEPSToolStripMenuItem.Size = new System.Drawing.Size(296, 28);
             this.GenerateEPSToolStripMenuItem.Text = "画像ファイル生成(&T)";
             this.GenerateEPSToolStripMenuItem.Click += new System.EventHandler(this.GenerateButton_Click);
+            // 
+            // ImportToolStripMenuItem
+            // 
+            this.ImportToolStripMenuItem.Name = "ImportToolStripMenuItem";
+            this.ImportToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.O)));
+            this.ImportToolStripMenuItem.Size = new System.Drawing.Size(296, 28);
+            this.ImportToolStripMenuItem.Text = "インポート(&O)";
+            this.ImportToolStripMenuItem.Click += new System.EventHandler(this.ImportToolStripMenuItem_Click);
+            // 
+            // ExportToolStripMenuItem
+            // 
+            this.ExportToolStripMenuItem.Name = "ExportToolStripMenuItem";
+            this.ExportToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S)));
+            this.ExportToolStripMenuItem.Size = new System.Drawing.Size(296, 28);
+            this.ExportToolStripMenuItem.Text = "エクスポート(&S)";
+            this.ExportToolStripMenuItem.Click += new System.EventHandler(this.ExportToolStripMenuItem_Click);
             // 
             // ExitToolStripMenuItem
             // 
@@ -194,6 +210,7 @@
             // sourceTextBox
             // 
             this.sourceTextBox.AcceptsTab = false;
+            this.sourceTextBox.AllowDrop = true;
             this.sourceTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
@@ -226,6 +243,8 @@
             this.sourceTextBox.TabWidth = 4;
             this.sourceTextBox.ViewType = Sgry.Azuki.ViewType.WrappedProportional;
             this.sourceTextBox.ViewWidth = 4097;
+            this.sourceTextBox.DragDrop += new System.Windows.Forms.DragEventHandler(this.sourceTextBox_DragDrop);
+            this.sourceTextBox.DragEnter += new System.Windows.Forms.DragEventHandler(this.TextBox_DragEnter);
             // 
             // sourceTextBoxMenu
             // 
@@ -317,6 +336,7 @@
             // 
             // inputFileNameTextBox
             // 
+            this.inputFileNameTextBox.AllowDrop = true;
             this.inputFileNameTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.inputFileNameTextBox.Enabled = false;
@@ -325,6 +345,8 @@
             this.inputFileNameTextBox.Name = "inputFileNameTextBox";
             this.inputFileNameTextBox.Size = new System.Drawing.Size(919, 25);
             this.inputFileNameTextBox.TabIndex = 5;
+            this.inputFileNameTextBox.DragDrop += new System.Windows.Forms.DragEventHandler(this.inputFileNameTextBox_DragDrop);
+            this.inputFileNameTextBox.DragEnter += new System.Windows.Forms.DragEventHandler(this.TextBox_DragEnter);
             // 
             // InputFromFileRadioButton
             // 
@@ -423,20 +445,6 @@
             // 
             this.convertWorker.DoWork += new System.ComponentModel.DoWorkEventHandler(this.convertWorker_DoWork);
             this.convertWorker.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.convertWorker_RunWorkerCompleted);
-            // 
-            // ImportToolStripMenuItem
-            // 
-            this.ImportToolStripMenuItem.Name = "ImportToolStripMenuItem";
-            this.ImportToolStripMenuItem.Size = new System.Drawing.Size(296, 28);
-            this.ImportToolStripMenuItem.Text = "インポート";
-            this.ImportToolStripMenuItem.Click += new System.EventHandler(this.ImportToolStripMenuItem_Click);
-            // 
-            // ExportToolStripMenuItem
-            // 
-            this.ExportToolStripMenuItem.Name = "ExportToolStripMenuItem";
-            this.ExportToolStripMenuItem.Size = new System.Drawing.Size(296, 28);
-            this.ExportToolStripMenuItem.Text = "エクスポート";
-            this.ExportToolStripMenuItem.Click += new System.EventHandler(this.ExportToolStripMenuItem_Click);
             // 
             // MainForm
             // 

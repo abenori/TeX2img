@@ -686,17 +686,17 @@ namespace TeX2img {
                 if(proc.HasExited) {
                     break;
                 } else {
-                    bool kill = Properties.Settings.Default.BatchMode;
-                    if(!kill) {
+                    bool kill;
+                    if(Properties.Settings.Default.batchMode == Properties.Settings.BatchMode.Default) {
                         // プロセスからの読み取りを一時中断するためのlock．
                         // でないと特にCUI時にメッセージが混ざってわけがわからなくなる．
-                        lock(syncObj){
+                        lock(syncObj) {
                             kill = !controller_.askYesorNo(
                                 freezemsg + "に時間がかかっているようです．\n" +
-                                "フリーズしている可能性もありますが，このまま実行を続けますか？\n" + 
+                                "フリーズしている可能性もありますが，このまま実行を続けますか？\n" +
                                 "続けない場合は，現在実行中のプログラムを強制終了します．");
                         }
-                    }
+                    } else kill = (Properties.Settings.Default.batchMode == Properties.Settings.BatchMode.FreezeStop);
                     if(kill) {
                         //proc.Kill();
                         KillChildProcesses(proc.Id);

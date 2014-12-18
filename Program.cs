@@ -54,7 +54,8 @@ namespace TeX2img {
                     if(oh.Description != null) {
                         int length = oh.GetNames()[0].Length;
                         if(oh.Description.EndsWith("[-]")) length += 3;
-                        else if(oh.OptionValueType != NDesk.Options.OptionValueType.None) length += 5;
+                        else if(oh.OptionValueType == NDesk.Options.OptionValueType.Optional) length += 7;
+                        else if(oh.OptionValueType == NDesk.Options.OptionValueType.Required) length += 5;
                         maxlength = Math.Max(maxlength, length);
                     }
                 }
@@ -63,7 +64,8 @@ namespace TeX2img {
                     if(oh.Description != null) {
                         string opstr = "/" + oh.GetNames()[0];
                         string desc = oh.Description.Replace("\n", "\n" + new string(' ', maxlength + 1));
-                        if(oh.OptionValueType != NDesk.Options.OptionValueType.None) opstr = opstr + "=<VAL>";
+                        if(oh.OptionValueType == NDesk.Options.OptionValueType.Optional) opstr += "[=<VAL>]";
+                        else if(oh.OptionValueType == NDesk.Options.OptionValueType.Required) opstr += "=<VAL>";
                         else if(desc.EndsWith("[-]")) {
                             opstr += "[-]";
                             desc = desc.Substring(0, desc.Length - 3);
@@ -110,7 +112,14 @@ namespace TeX2img {
 			{"preview","生成されたファイルを開く",val => {preview = (val != null);}},
 			{"savesettings","設定の保存を行う",val => {Properties.Settings.Default.SaveSettings = (val != null);}},
 			{"quiet","Quiet モード",val => {quiet = true;}},
-            {"batch","Batch モード",val => {Properties.Settings.Default.BatchMode = true;}},
+            {"batch:","Batch モード（freezestop[default]/nonstop）", val => {
+                if(val == null)val = "freezestop";
+                switch(val) {
+                case "nonstop": Properties.Settings.Default.batchMode = Properties.Settings.BatchMode.NonStop; break;
+                case "freezestop": Properties.Settings.Default.batchMode = Properties.Settings.BatchMode.FreezeStop; break;
+                default: throw new NDesk.Options.OptionException("nonstop か freezestop のいずれかを指定してください．", "batch");
+                }
+            }},
 			{"exit","設定の保存のみを行い終了する", val => {exit = true;}},
 			{"help","このメッセージを表示する",val => {help = true;}},
 			{"version","バージョン情報を表示する",val => {version = true;}}
@@ -118,18 +127,6 @@ namespace TeX2img {
 
         [STAThread]
         static void Main() {
-            /*
-            string f = Environment.GetCommandLineArgs()[2];
-            using(var fs = new FileStream(f, FileMode.Open, FileAccess.Read)) {
-                byte[] buf = new byte[fs.Length];
-                fs.Read(buf, 0, (int) fs.Length);
-                var enc = KanjiEncoding.GuessJPEncoding(buf);
-                if(buf == null) Console.WriteLine("null");
-                else Console.WriteLine(enc.HeaderName);
-                Console.WriteLine(enc == new System.Text.UTF8Encoding(false));
-            }
-            return;
-            */
             // アップデートしていたら前バージョンの設定を読み込む
             if(!Properties.Settings.Default.IsUpgraded) {
                 Properties.Settings.Default.Upgrade();
@@ -182,7 +179,7 @@ namespace TeX2img {
                     var msg = "オプション " + e.OptionName + " への入力が不正です";
                     if(e.Message != "") msg += "：" + e.Message;
                     else msg += "．";
-                    msg += "\nTeX2imgc.exe /help によるヘルプを参照してください．";
+                    msg += "\nTeX2img" + (nogui ? "c" : "") + ".exe /help によるヘルプを参照してください．";
                     if(nogui) Console.WriteLine(msg);
                     else MessageBox.Show(msg, "TeX2img");
                 }
@@ -316,7 +313,7 @@ namespace TeX2img {
         static void ShowHelp() {
             StringWriter sw = new StringWriter();
             options.WriteOptionDescriptions(sw);
-            var msg = "使い方：TeX2imgc.exe [Options] Input Output\n\n" + sw.ToString();
+            var msg = "使い方：TeX2img" + (nogui ? "c" : "") + ".exe [Options] Input Output\n\n" + sw.ToString();
             //if(msg.EndsWith("\n")) msg = msg.Remove(msg.Length - 1);
             if(nogui) Console.WriteLine(msg);
             else MessageBox.Show(msg, "TeX2img");

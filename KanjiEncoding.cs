@@ -5,13 +5,12 @@ using System.Text;
 
 namespace TeX2img {
     class KanjiEncoding {
-        /* 日本語文字コードを推測する．Gaucheのもののほぼコピペ */
         public static Encoding CheckBOM(byte[] buf) {
             if(buf.Length >= 3 && buf[0] == 0xEF && buf[1] == 0xBB && buf[2] == 0xBF) return Encoding.UTF8;
             return null;
         }
         public static byte[] DeleteBOM(byte[] buf, Encoding encoding) {
-            if(encoding == Encoding.UTF8) {
+            if(encoding.EncodingName == Encoding.UTF8.EncodingName) {
                 var tmpbuf = new byte[buf.Length - 3];
                 Array.Copy(buf, 3, tmpbuf, 0, buf.Length - 3);
                 return tmpbuf;
@@ -19,40 +18,40 @@ namespace TeX2img {
             return buf;
         }
 
-        public static Encoding GuessJPEncoding(byte[] buf) {
-            Guess_DFA_rec eucj = new Guess_DFA_rec(guess_eucj_st, guess_eucj_ar,Encoding.GetEncoding("euc-jp"));
-            Guess_DFA_rec sjis = new Guess_DFA_rec(guess_sjis_st, guess_sjis_ar,Encoding.GetEncoding("shift_jis"));
-            Guess_DFA_rec utf8 = new Guess_DFA_rec(guess_utf8_st, guess_utf8_ar,new System.Text.UTF8Encoding(false));
+        // 日本語文字コードを推測する．Gaucheのもののほぼコピペ
+        public static Encoding GuessKajiEncoding(byte[] buf) {
+            var DFA_recs = new List<Guess_DFA_rec>{
+                new Guess_DFA_rec(guess_sjis_st, guess_sjis_ar, Encoding.GetEncoding("shift_jis")),
+                new Guess_DFA_rec(guess_eucj_st, guess_eucj_ar, Encoding.GetEncoding("euc-jp")),
+                new Guess_DFA_rec(guess_utf8_st, guess_utf8_ar, new System.Text.UTF8Encoding(false))
+            };
             for(int i = 0 ; i < buf.Length ; ++i) {
+				// ESC $またはESC (と来たらJISで確定させる．
                 if(buf[i] == 0x1B) {
                     if(i < buf.Length - 1) {
                         ++i;
                         if(buf[i] == '$' || buf[i] == '(') return Encoding.GetEncoding("iso-2022-jp");
                     }
                 }
-                if(eucj.Alive) {
-                    if(!sjis.Alive && !utf8.Alive) return eucj.encoding;
-                    eucj.Update(buf[i]);
-                }
-                if(sjis.Alive) {
-                    if(!eucj.Alive && !utf8.Alive) return sjis.encoding;
-                    sjis.Update(buf[i]);
-                }
-                if(utf8.Alive) {
-                    if(!eucj.Alive && !sjis.Alive) return utf8.encoding;
-                    utf8.Update(buf[i]);
-                }
 
-                if(!eucj.Alive && !sjis.Alive && !utf8.Alive) return null;
+                Guess_DFA_rec aliveDFA = null;
+                int aliveDFAnum = 0;
+                foreach(var rec in DFA_recs) {
+                    if(rec.Alive) {
+                        rec.Update(buf[i]);
+                        ++aliveDFAnum;
+                        aliveDFA = rec;
+                    }
+                }
+                if(aliveDFAnum == 0) return null;
+                else if(aliveDFAnum == 1) return aliveDFA.encoding;
             }
 
-            var dfas = new List<Guess_DFA_rec> { eucj, sjis, utf8 };
-            double maxscore = dfas.Max((d) => (d.Alive ? d.score : -1));
-            return dfas[dfas.FindIndex((d) => (d.score == maxscore))].encoding;
+            double maxscore = DFA_recs.Max((d) => (d.Alive ? d.score : -1));
+            return DFA_recs[DFA_recs.FindIndex((d) => (d.score == maxscore))].encoding;
         }
         
 
-        // 使うテーブル
         class Guess_Arc_rec {
             public int next;
             public double score;
@@ -83,6 +82,7 @@ namespace TeX2img {
            }
         }
 
+        // 使うテーブル
         static int[,] guess_eucj_st = new int[,] {
              { /* state init */
               0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,

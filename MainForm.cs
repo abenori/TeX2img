@@ -382,47 +382,10 @@ namespace TeX2img {
         #endregion
 
         private void ImportToolStripMenuItem_Click(object sender, EventArgs e) {
-            if(MessageBox.Show("現在のプリアンブル及び編集中のソースは破棄されます．\nよろしいですか？", "TeX2img", MessageBoxButtons.YesNo) == System.Windows.Forms.DialogResult.No) return;
+            if(MessageBox.Show("TeX ソースファイルをインポートします．\n現在のプリアンブル及び編集中のソースは破棄されます．\nよろしいですか？", "TeX2img", MessageBoxButtons.YesNo) == System.Windows.Forms.DialogResult.No) return;
             if(openFileDialog1.ShowDialog() == DialogResult.OK) {
                 try {
-                    using(var fs = new FileStream(openFileDialog1.FileName, FileMode.Open, FileAccess.Read)) {
-                        byte[] buf = new byte[fs.Length];
-                        fs.Read(buf, 0, (int) fs.Length);
-
-                        var GuessEncoding = KanjiEncoding.CheckBOM(buf);
-                        if(GuessEncoding != null)buf = KanjiEncoding.DeleteBOM(buf,GuessEncoding);
-                        else GuessEncoding = KanjiEncoding.GuessJPEncoding(buf);
-                        Encoding encoding;
-                        switch(Properties.Settings.Default.encode) {
-                        case "euc": encoding = Encoding.GetEncoding("euc-jp"); break;
-                        case "jis": encoding = Encoding.GetEncoding("iso-2022-jp"); break;
-                        case "utf8": encoding = Encoding.UTF8; break;
-                        case "sjis": encoding = Encoding.GetEncoding("shift_jis"); break;
-                        case "_utf8":
-                            if(GuessEncoding != null) encoding = GuessEncoding;
-                            else encoding = Encoding.UTF8;
-                            break;
-                        case "_sjis":
-                        default:
-                            if(GuessEncoding != null) encoding = GuessEncoding;
-                            else encoding = Encoding.GetEncoding("shift_jis");
-                            break;
-                        }
-                        if(encoding.EncodingName != GuessEncoding.EncodingName) {
-                            if(MessageBox.Show("設定されている文字コードは\n" + encoding.EncodingName + "\nですが，読み込まれるファイルは\n" + GuessEncoding.EncodingName + "\nと推定されました．設定の\n" + encoding.EncodingName + "\nを用いてもよろしいですか？","TeX2img", MessageBoxButtons.YesNo) == System.Windows.Forms.DialogResult.No) {
-                                encoding = GuessEncoding;
-                            }
-                        }
-                        using(var sr = new StringReader(encoding.GetString(buf))) {
-                            string body, preamble;
-                            if(ParseTeXSourceFile(sr, out preamble, out body)) {
-                                myPreambleForm.PreambleTextBox.Text = preamble;
-                                sourceTextBox.Text = body;
-                            } else {
-                                MessageBox.Show("TeX ソースファイルの解析に失敗しました．");
-                            }
-                        }
-                    }
+                    ImportFile(openFileDialog1.FileName);
                 }
                 catch(FileNotFoundException) {
                     MessageBox.Show(openFileDialog1.FileName + " は存在しません．");
@@ -453,8 +416,54 @@ namespace TeX2img {
                 }
             }
         }
+
+        void ImportFile(string path) {
+            byte[] buf;
+            using(var fs = new FileStream(path, FileMode.Open, FileAccess.Read)) {
+                buf = new byte[fs.Length];
+                fs.Read(buf, 0, (int) fs.Length);
+            }
+
+            var GuessedEncoding = KanjiEncoding.CheckBOM(buf);
+            bool bom = false;
+            if(GuessedEncoding != null) {
+                bom = true;
+                buf = KanjiEncoding.DeleteBOM(buf, GuessedEncoding);
+            } else GuessedEncoding = KanjiEncoding.GuessKajiEncoding(buf);
+            Encoding encoding;
+            switch(Properties.Settings.Default.encode) {
+            case "euc": encoding = Encoding.GetEncoding("euc-jp"); break;
+            case "jis": encoding = Encoding.GetEncoding("iso-2022-jp"); break;
+            case "utf8": encoding = Encoding.UTF8; break;
+            case "sjis": encoding = Encoding.GetEncoding("shift_jis"); break;
+            case "_utf8":
+                if(GuessedEncoding != null) encoding = GuessedEncoding;
+                else encoding = Encoding.UTF8;
+                break;
+            case "_sjis":
+            default:
+                if(GuessedEncoding != null) encoding = GuessedEncoding;
+                else encoding = Encoding.GetEncoding("shift_jis");
+                break;
+            }
+            if(encoding.EncodingName != GuessedEncoding.EncodingName) {
+                if(bom || MessageBox.Show("設定されている文字コードは\n" + encoding.EncodingName + "\nですが，読み込まれるファイルは\n" + GuessedEncoding.EncodingName + "\nと推定されました．推定の\n" + GuessedEncoding.EncodingName + "\nを用いてもよろしいですか？", "TeX2img", MessageBoxButtons.YesNo) == System.Windows.Forms.DialogResult.Yes) {
+                    encoding = GuessedEncoding;
+                }
+            }
+            using(var sr = new StringReader(encoding.GetString(buf))) {
+                string body, preamble;
+                if(ParseTeXSourceFile(sr, out preamble, out body)) {
+                    if(preamble != null) myPreambleForm.PreambleTextBox.Text = preamble;
+                    if(body != null) sourceTextBox.Text = body;
+                } else {
+                    MessageBox.Show("TeX ソースファイルの解析に失敗しました．\n\\begin{document} や \\end{document} 等が正しく入力されているか確認してください．","TeX2img");
+                }
+            }
+        }
+
         static bool ParseTeXSourceFile(TextReader file, out string preamble, out string body) {
-            preamble = ""; body = "";
+            preamble = null; body = null;
             var reg = new Regex(@"(?<preamble>^(.*\n)*?[^%]*?(\\\\)*)\\begin\{document\}\n?(?<body>(.*\n)*[^%]*)\\end\{document\}");
             var text = file.ReadToEnd().Replace("\r\n", "\n").Replace("\r", "\n");
             var m = reg.Match(text);
@@ -463,14 +472,8 @@ namespace TeX2img {
                 body = m.Groups["body"].Value;
                 return true;
             } else {
-                var begreg = new Regex(@"^[^%]*(\\\\)*\\begin\{document\}");
-                var endreg = new Regex(@"^[^%]*(\\\\)*\\end\{document\}");
-                if(begreg.Match(text).Success || endreg.Match(text).Success) return false;
-                else {
-                    preamble = "";
-                    body = text;
-                    return true;
-                }
+                body = text;
+                return true;
             }
         }
 
@@ -481,6 +484,29 @@ namespace TeX2img {
             sw.Write(body);
             if(!body.EndsWith("\n")) sw.WriteLine("");
             sw.WriteLine("\\end{document}");
+        }
+
+        private void sourceTextBox_DragDrop(object sender, DragEventArgs e) {
+            if(e.Data.GetDataPresent(DataFormats.FileDrop)) {
+                string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
+                if(files.Length == 0)return;
+                if(MessageBox.Show("ファイルをインポートします．\n現在のプリアンブル及び編集中のソースは破棄されます．\nよろしいですか？", "TeX2img", MessageBoxButtons.YesNo) == System.Windows.Forms.DialogResult.No) return;
+                ImportFile(files[0]);
+            }
+        }
+
+        private void TextBox_DragEnter(object sender, DragEventArgs e) {
+            if(e.Data.GetDataPresent(DataFormats.FileDrop)) {
+                e.Effect = DragDropEffects.Copy;
+            }
+        }
+
+        private void inputFileNameTextBox_DragDrop(object sender, DragEventArgs e) {
+            if(e.Data.GetDataPresent(DataFormats.FileDrop)) {
+                string[] files = (string[]) e.Data.GetData(DataFormats.FileDrop);
+                if(files.Length == 0) return;
+                inputFileNameTextBox.Text = files[0];
+            }
         }
     }
 }

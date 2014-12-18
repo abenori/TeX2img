@@ -60,8 +60,8 @@
             if(SaveSettings) base.Save();
         }
 
-        public string GuessPlatexPath() {
-            return Converter.which("platex");
+        public string GuessPlatexPath(bool uplatex = false) {
+            return Converter.which(uplatex ? "uplatex" : "platex");
         }
         public string GuessDvipdfmxPath() {
             return Converter.which("dvipdfmx");
@@ -149,6 +149,7 @@
         }
         public FontColorCollection editorFontColor = new FontColorCollection();
         public bool SaveSettings = true;
-        public bool BatchMode = false;
+        public enum BatchMode { Default, NonStop, FreezeStop };
+        public BatchMode batchMode = BatchMode.Default;
     }
 }
