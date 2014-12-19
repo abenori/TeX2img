@@ -429,7 +429,11 @@ namespace TeX2img {
             if(GuessedEncoding != null) {
                 bom = true;
                 buf = KanjiEncoding.DeleteBOM(buf, GuessedEncoding);
-            } else GuessedEncoding = KanjiEncoding.GuessKajiEncoding(buf);
+            } else {
+                var guessed = KanjiEncoding.GuessKajiEncoding(buf);
+                if(guessed.Length == 0) GuessedEncoding = null;
+                else GuessedEncoding = guessed[0];
+            }
             Encoding encoding;
             switch(Properties.Settings.Default.encode) {
             case "euc": encoding = Encoding.GetEncoding("euc-jp"); break;
@@ -446,7 +450,7 @@ namespace TeX2img {
                 else encoding = Encoding.GetEncoding("shift_jis");
                 break;
             }
-            if(encoding.EncodingName != GuessedEncoding.EncodingName) {
+            if(encoding.CodePage != GuessedEncoding.CodePage) {
                 if(bom || MessageBox.Show("設定されている文字コードは\n" + encoding.EncodingName + "\nですが，読み込まれるファイルは\n" + GuessedEncoding.EncodingName + "\nと推定されました．推定の\n" + GuessedEncoding.EncodingName + "\nを用いてもよろしいですか？", "TeX2img", MessageBoxButtons.YesNo) == System.Windows.Forms.DialogResult.Yes) {
                     encoding = GuessedEncoding;
                 }

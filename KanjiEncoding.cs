@@ -10,7 +10,7 @@ namespace TeX2img {
             return null;
         }
         public static byte[] DeleteBOM(byte[] buf, Encoding encoding) {
-            if(encoding.EncodingName == Encoding.UTF8.EncodingName) {
+            if(encoding.CodePage == Encoding.UTF8.CodePage) {
                 var tmpbuf = new byte[buf.Length - 3];
                 Array.Copy(buf, 3, tmpbuf, 0, buf.Length - 3);
                 return tmpbuf;
@@ -19,18 +19,18 @@ namespace TeX2img {
         }
 
         // 日本語文字コードを推測する．Gaucheのもののほぼコピペ
-        public static Encoding GuessKajiEncoding(byte[] buf) {
+        public static Encoding[] GuessKajiEncoding(byte[] buf) {
             var DFA_recs = new List<Guess_DFA_rec>{
                 new Guess_DFA_rec(guess_sjis_st, guess_sjis_ar, Encoding.GetEncoding("shift_jis")),
+                new Guess_DFA_rec(guess_utf8_st, guess_utf8_ar, new System.Text.UTF8Encoding(false)),
                 new Guess_DFA_rec(guess_eucj_st, guess_eucj_ar, Encoding.GetEncoding("euc-jp")),
-                new Guess_DFA_rec(guess_utf8_st, guess_utf8_ar, new System.Text.UTF8Encoding(false))
             };
             for(int i = 0 ; i < buf.Length ; ++i) {
 				// ESC $またはESC (と来たらJISで確定させる．
                 if(buf[i] == 0x1B) {
                     if(i < buf.Length - 1) {
                         ++i;
-                        if(buf[i] == '$' || buf[i] == '(') return Encoding.GetEncoding("iso-2022-jp");
+                        if(buf[i] == '$' || buf[i] == '(') return new Encoding[] { Encoding.GetEncoding("iso-2022-jp") };
                     }
                 }
 
@@ -43,12 +43,26 @@ namespace TeX2img {
                         aliveDFA = rec;
                     }
                 }
-                if(aliveDFAnum == 0) return null;
-                else if(aliveDFAnum == 1) return aliveDFA.encoding;
+                if(aliveDFAnum == 0) return new Encoding[] { };
+                else if(aliveDFAnum == 1) return new Encoding[] { aliveDFA.encoding };
             }
 
+            //foreach(var d in DFA_recs) { System.Diagnostics.Debug.WriteLine(d.encoding.EncodingName + ": score = " + d.score.ToString()); }
             double maxscore = DFA_recs.Max((d) => (d.Alive ? d.score : -1));
-            return DFA_recs[DFA_recs.FindIndex((d) => (d.score == maxscore))].encoding;
+            var maxscoreencodings = DFA_recs.Where(d => (d.score == maxscore)).Select(d => d.encoding).ToArray();
+            if(maxscoreencodings.Length <= 1) return maxscoreencodings;
+            // 実際の変換を試みて失敗したものは排除する．
+            var rv = maxscoreencodings.Where(enc => {
+                var encClone = (Encoding) enc.Clone();
+                encClone.DecoderFallback = new DecoderExceptionFallback();
+                try { encClone.GetString(buf); }
+                catch(DecoderFallbackException) { return false; }
+                return true;
+            }).ToArray();
+            foreach(var x in rv) System.Diagnostics.Debug.WriteLine(x.EncodingName);
+            if(rv.Length >= 1) return rv;
+            // 全滅したら全部返しておく．
+            else return maxscoreencodings;
         }
         
 
@@ -66,7 +80,10 @@ namespace TeX2img {
             public int[,] states { get; set; }
             Guess_Arc_rec_Collection arcs { get; set; }
             public Encoding encoding { get; set; }
-            public Guess_DFA_rec(int[,] s, Guess_Arc_rec_Collection a, Encoding e) { states = s; arcs = a; encoding = e; }
+            public Guess_DFA_rec(int[,] s, Guess_Arc_rec_Collection a, Encoding e) {
+                states = s; arcs = a; encoding = e;
+                state = 0; score = 1;
+            }
             public bool Alive {
                 get { return (state >= 0); }
             }

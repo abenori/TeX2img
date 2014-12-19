@@ -102,8 +102,8 @@ namespace TeX2img {
 			    case "bp": Properties.Settings.Default.yohakuUnitBP = true; return;
 			    case "px": Properties.Settings.Default.yohakuUnitBP = false; return;
 			    default: throw new NDesk.Options.OptionException("bp か px のいずれかを指定してください．", "unit");
-			}
-			}},
+			    }
+            }},
 			{"transparent","透過 PNG を作る[-]",val => {Properties.Settings.Default.transparentPngFlag = (val != null);}},
 			{"imagemagick","ImageMagick を使う[-]",val => {Properties.Settings.Default.useMagickFlag = (val != null);}},
 			{"low-resolution","低解像度で処理する[-]",val => {Properties.Settings.Default.useLowResolution = (val!= null);}},
@@ -112,8 +112,7 @@ namespace TeX2img {
 			{"preview","生成されたファイルを開く",val => {preview = (val != null);}},
 			{"savesettings","設定の保存を行う",val => {Properties.Settings.Default.SaveSettings = (val != null);}},
 			{"quiet","Quiet モード",val => {quiet = true;}},
-            {"batch:","Batch モード（freezestop[default]/nonstop）", val => {
-                if(val == null)val = "freezestop";
+            {"batch=","Batch モード（freezestop/nonstop）", val => {
                 switch(val) {
                 case "nonstop": Properties.Settings.Default.batchMode = Properties.Settings.BatchMode.NonStop; break;
                 case "freezestop": Properties.Settings.Default.batchMode = Properties.Settings.BatchMode.FreezeStop; break;
