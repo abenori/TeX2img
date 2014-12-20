@@ -55,11 +55,11 @@ namespace TeX2img {
 			{"preview","生成されたファイルを開く",val => {preview = (val != null);}},
 			{"savesettings","設定の保存を行う",val => {Properties.Settings.Default.SaveSettings = (val != null);}},
 			{"quiet","Quiet モード",val => {quiet = true;}},
-            {"batch=","Batch モード（abort/nonstop）", val => {
+            {"batch=","Batch モード（stop/nonstop）", val => {
                 switch(val) {
                 case "nonstop": Properties.Settings.Default.batchMode = Properties.Settings.BatchMode.NonStop; break;
-                case "abort": Properties.Settings.Default.batchMode = Properties.Settings.BatchMode.Abort; break;
-                default: throw new NDesk.Options.OptionException("nonstop, abort のいずれかを指定してください．", "batch");
+                case "stop": Properties.Settings.Default.batchMode = Properties.Settings.BatchMode.Stop; break;
+                default: throw new NDesk.Options.OptionException("stop, nonstop のいずれかを指定してください．", "batch");
                 }
             }},
 			{"exit","設定の保存のみを行い終了する", val => {exit = true;}},
@@ -147,7 +147,7 @@ namespace TeX2img {
                 return r;
             } else {
                 // dllの存在チェック
-                var chkfiles = new string[] { "Azuki.dll" };
+                string[] chkfiles = { "Azuki.dll" };
                 
                 string mydir = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
                 chkfiles = chkfiles.Where(f => !File.Exists(Path.Combine(mydir, f))).ToArray();

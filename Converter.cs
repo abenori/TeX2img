@@ -246,7 +246,7 @@ namespace TeX2img {
                     proc.BeginErrorReadLine();
                     Regex reg = new Regex("^Pages:[ \t]*([0-9]+)", System.Text.RegularExpressions.RegexOptions.IgnoreCase);
                     int page = -1;
-                    while(proc.StandardOutput.Peek() != -1) {
+                    while(!proc.StandardOutput.EndOfStream){
                         string line = proc.StandardOutput.ReadLine();
                         var m = reg.Match(line);
                         if(m.Success) {
@@ -510,6 +510,7 @@ namespace TeX2img {
                     proc.StartInfo.Arguments = arg + String.Format("-q -sDEVICE={0} -sOutputFile={1} -dNOPAUSE -dBATCH -dPDFFitPage -r{2} -g{3}x{4} {5}", device, outputFileName, 72 * Properties.Settings.Default.resolutionScale, (int) ((righttop_x - leftbottom_x) * Properties.Settings.Default.resolutionScale), (int) ((righttop_y - leftbottom_y) * Properties.Settings.Default.resolutionScale), trimEpsFileName);
                     try {
                         ReadOutputs(proc, "Ghostscript の実行");
+                        ; ;
                     }
                     catch(Win32Exception) {
                         controller_.showPathError(proc.StartInfo.FileName, "Ghostscript ");
@@ -618,25 +619,24 @@ namespace TeX2img {
         }
 
         private void SetImageMagickEnvironment() {
-            if(Environments.ContainsKey("MAGICK_GHOSTSCRIPT_PATH")) return;
-            // ImageMagickのための準備
-            if(Properties.Settings.Default.gsPath != "") {
-                try {
+            try {
+                if(Environments.ContainsKey("MAGICK_GHOSTSCRIPT_PATH")) return;
+                if(Environment.GetEnvironmentVariable("MAGICK_GHOSTSCRIPT_PATH") != null) return;
+                // ImageMagickのための準備
+                if(Properties.Settings.Default.gsPath != "") {
                     string path = Converter.setProcStartInfo(Properties.Settings.Default.gsPath);
                     if(Path.GetFileName(path).ToLower() == "rungs.exe") {
-                        if(Environment.GetEnvironmentVariable("MAGICK_GHOSTSCRIPT_PATH") == null) {
-                            string gswincPath = Path.GetDirectoryName(path);//...\win32
-                            gswincPath = Path.GetDirectoryName(gswincPath);//...bin
-                            gswincPath = Path.GetDirectoryName(gswincPath);
-                            gswincPath += "\\tlpkg\\tlgs\\bin";
-                            if(Directory.Exists(gswincPath)) {
-                                Environments.Add("MAGICK_GHOSTSCRIPT_PATH", gswincPath);
-                            }
+                        string gswincPath = Path.GetDirectoryName(path);//...\win32
+                        gswincPath = Path.GetDirectoryName(gswincPath);//...bin
+                        gswincPath = Path.GetDirectoryName(gswincPath);
+                        gswincPath += "\\tlpkg\\tlgs\\bin";
+                        if(Directory.Exists(gswincPath)) {
+                            Environments.Add("MAGICK_GHOSTSCRIPT_PATH", gswincPath);
                         }
                     }
                 }
-                catch { }
             }
+            catch { }
         }
 
         private string getImageMagickPath() {
@@ -696,7 +696,7 @@ namespace TeX2img {
                                 "フリーズしている可能性もありますが，このまま実行を続けますか？\n" +
                                 "続けない場合は，現在実行中のプログラムを強制終了します．");
                         }
-                    } else kill = (Properties.Settings.Default.batchMode == Properties.Settings.BatchMode.Abort);
+                    } else kill = (Properties.Settings.Default.batchMode == Properties.Settings.BatchMode.Stop);
                     if(kill) {
                         //proc.Kill();
                         KillChildProcesses(proc.Id);
