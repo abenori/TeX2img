@@ -149,7 +149,7 @@
         }
         public FontColorCollection editorFontColor = new FontColorCollection();
         public bool SaveSettings = true;
-        public enum BatchMode { Default, NonStop, FreezeStop };
+        public enum BatchMode { Default, NonStop, Abort };
         public BatchMode batchMode = BatchMode.Default;
     }
 }

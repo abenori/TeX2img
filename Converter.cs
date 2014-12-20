@@ -696,7 +696,7 @@ namespace TeX2img {
                                 "フリーズしている可能性もありますが，このまま実行を続けますか？\n" +
                                 "続けない場合は，現在実行中のプログラムを強制終了します．");
                         }
-                    } else kill = (Properties.Settings.Default.batchMode == Properties.Settings.BatchMode.FreezeStop);
+                    } else kill = (Properties.Settings.Default.batchMode == Properties.Settings.BatchMode.Abort);
                     if(kill) {
                         //proc.Kill();
                         KillChildProcesses(proc.Id);

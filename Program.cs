@@ -19,66 +19,9 @@ namespace TeX2img {
         static bool version = false;
         static bool help = false;
 
-        public class OptionSet : NDesk.Options.OptionSet {
-            // 次でエラーを出すようにする
-            // "option"の指定の時に--option=abc
-            // "option="の指定の時に--option-
-            protected override bool Parse(string argument, NDesk.Options.OptionContext c) {
-                if(c.Option == null) {
-                    string f, n, s, v;
-                    if(!GetOptionParts(argument, out f, out n, out s, out v)) return false;
-                    if(Contains(n)) {
-                        var p = this[n];
-                        if(v != null && p.OptionValueType == NDesk.Options.OptionValueType.None) {
-                            // メッセージはさぼり
-                            throw new NDesk.Options.OptionException(c.OptionSet.MessageLocalizer(""), f + n);
-                        }
-                    } else {
-                        string rn;
-                        if(n.Length >= 1 && (n[n.Length - 1] == '-' || n[n.Length - 1] == '+') && Contains((rn = n.Substring(0, n.Length - 1)))) {
-                            var p = this[rn];
-                            if(p.OptionValueType == NDesk.Options.OptionValueType.Required) {
-                                throw new NDesk.Options.OptionException(c.OptionSet.MessageLocalizer("An argument is required for the option '" + f + rn + "'"), f + rn);
-                            }
-                        }
-                    }
-                }
-                return base.Parse(argument, c);
-            }
-
-            // OptionSet.WriteOptionDescriptionsがちょっと気にくわないので独自に
-            // GetNames().Count == 1と仮定してある．
-            public new void WriteOptionDescriptions(TextWriter output) {
-                int maxlength = 0;
-                foreach(var oh in this) {
-                    if(oh.Description != null) {
-                        int length = oh.GetNames()[0].Length;
-                        if(oh.Description.EndsWith("[-]")) length += 3;
-                        else if(oh.OptionValueType == NDesk.Options.OptionValueType.Optional) length += 7;
-                        else if(oh.OptionValueType == NDesk.Options.OptionValueType.Required) length += 5;
-                        maxlength = Math.Max(maxlength, length);
-                    }
-                }
-                maxlength += 3;
-                foreach(var oh in this) {
-                    if(oh.Description != null) {
-                        string opstr = "/" + oh.GetNames()[0];
-                        string desc = oh.Description.Replace("\n", "\n" + new string(' ', maxlength + 1));
-                        if(oh.OptionValueType == NDesk.Options.OptionValueType.Optional) opstr += "[=<VAL>]";
-                        else if(oh.OptionValueType == NDesk.Options.OptionValueType.Required) opstr += "=<VAL>";
-                        else if(desc.EndsWith("[-]")) {
-                            opstr += "[-]";
-                            desc = desc.Substring(0, desc.Length - 3);
-                        }
-                        output.WriteLine("  " + opstr + new string(' ', maxlength - opstr.Length) + desc);
-                    }
-                }
-            }
-        }
-
         static OptionSet options = new OptionSet(){
 			{"platex=","platex のパス", val => {Properties.Settings.Default.platexPath=val;}},
-			{"dvipdfmx=","dvpdfmx のパス",val =>{Properties.Settings.Default.dvipdfmxPath=val;}},
+			{"dvipdfmx=","dvipdfmx のパス",val =>{Properties.Settings.Default.dvipdfmxPath=val;}},
 			{"gs=","Ghostscript のパス",val => {Properties.Settings.Default.gsPath = val;}},
 			{"gsdevice=",
 				"Ghostscript の device の値（epswrite/eps2write）",
@@ -101,7 +44,7 @@ namespace TeX2img {
 			    switch(val){
 			    case "bp": Properties.Settings.Default.yohakuUnitBP = true; return;
 			    case "px": Properties.Settings.Default.yohakuUnitBP = false; return;
-			    default: throw new NDesk.Options.OptionException("bp か px のいずれかを指定してください．", "unit");
+			    default: throw new NDesk.Options.OptionException("bp, px のいずれかを指定してください．", "unit");
 			    }
             }},
 			{"transparent","透過 PNG を作る[-]",val => {Properties.Settings.Default.transparentPngFlag = (val != null);}},
@@ -112,11 +55,11 @@ namespace TeX2img {
 			{"preview","生成されたファイルを開く",val => {preview = (val != null);}},
 			{"savesettings","設定の保存を行う",val => {Properties.Settings.Default.SaveSettings = (val != null);}},
 			{"quiet","Quiet モード",val => {quiet = true;}},
-            {"batch=","Batch モード（freezestop/nonstop）", val => {
+            {"batch=","Batch モード（abort/nonstop）", val => {
                 switch(val) {
                 case "nonstop": Properties.Settings.Default.batchMode = Properties.Settings.BatchMode.NonStop; break;
-                case "freezestop": Properties.Settings.Default.batchMode = Properties.Settings.BatchMode.FreezeStop; break;
-                default: throw new NDesk.Options.OptionException("nonstop か freezestop のいずれかを指定してください．", "batch");
+                case "abort": Properties.Settings.Default.batchMode = Properties.Settings.BatchMode.Abort; break;
+                default: throw new NDesk.Options.OptionException("nonstop, abort のいずれかを指定してください．", "batch");
                 }
             }},
 			{"exit","設定の保存のみを行い終了する", val => {exit = true;}},
@@ -124,38 +67,9 @@ namespace TeX2img {
 			{"version","バージョン情報を表示する",val => {version = true;}}
         };
 
-        [STAThread]
-        static void Main() {
-            // アップデートしていたら前バージョンの設定を読み込む
-            if(!Properties.Settings.Default.IsUpgraded) {
-                Properties.Settings.Default.Upgrade();
-                Properties.Settings.Default.IsUpgraded = true;
-                Properties.Settings.Default.Save();
-            }
-            Application.EnableVisualStyles();
-            Application.SetCompatibleTextRenderingDefault(false);
-
-            // コマンドライン解析
-            var cmds = new List<string>(Environment.GetCommandLineArgs());
-            //cmds = new List<string> { "TeX2img.exe", "/nogui", "/nopipe", "/help" };
-            // 一つ目がTeX2img本体ならば削除
-            // abtlinstからCreateProcessで呼び出すとTeX2img本体にならなかったので，一応確認をする．
-            if(cmds.Count > 0) {
-                string filecmds0 = Path.GetFullPath(cmds[0]).ToLower();
-                string me = Path.GetFullPath(System.Reflection.Assembly.GetExecutingAssembly().Location).ToLower();
-#if DEBUG
-                string vshost = Path.Combine(Path.GetDirectoryName(me), Path.GetFileNameWithoutExtension(me) + ".vshost.exe").ToLower();
-                if(vshost == filecmds0 || vshost == filecmds0 + ".exe") filecmds0 = me;
-#endif
-                if(filecmds0 == me || filecmds0 + ".exe" == me) cmds.RemoveAt(0);
-            }
-            // 二つ目でCUIモードか判定する．
-            if(cmds.Count > 0 && (cmds[0] == "/nogui" || cmds[0] == "-nogui" || cmds[0] == "--nogui")) {
-                nogui = true;
-                cmds.RemoveAt(0);
-            }
-            // メイン
-            Environment.ExitCode = TeX2imgMain(cmds);
+        static string GetStringsFromArray(string optionname, string val, string[] possibleargs) {
+            if(possibleargs.Contains(val)) return val;
+            throw new NDesk.Options.OptionException(String.Join(", ",possibleargs) + " のいずれかを指定してください．", optionname);
         }
 
         static int TeX2imgMain(List<string> cmds) {
@@ -233,10 +147,12 @@ namespace TeX2img {
                 return r;
             } else {
                 // dllの存在チェック
+                var chkfiles = new string[] { "Azuki.dll" };
+                
                 string mydir = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
-                var chkfiles = new string[] { "Azuki.dll" }.Where(f => !File.Exists(Path.Combine(mydir, f)));
-                if(chkfiles.Count() != 0) {
-                    MessageBox.Show("以下のファイルが見つからないため，起動することができませんでした．\n" + String.Join("\n", chkfiles.ToArray()), "TeX2img");
+                chkfiles = chkfiles.Where(f => !File.Exists(Path.Combine(mydir, f))).ToArray();
+                if(chkfiles.Length != 0) {
+                    MessageBox.Show("以下のファイルが見つからないため，起動することができませんでした．\n" + String.Join("\n", chkfiles), "TeX2img");
                     return -3;
                 }
                 Application.Run(new MainForm(files));
@@ -245,9 +161,44 @@ namespace TeX2img {
             }
         }
 
-        static string GetStringsFromArray(string optionname, string val, string[] possibleargs) {
-            if(possibleargs.Contains(val)) return val;
-            throw new NDesk.Options.OptionException("引数が不正です．", optionname);
+        [STAThread]
+        static void Main() {
+            /*
+            byte[] buf = System.Text.Encoding.GetEncoding("utf-8").GetBytes("完璧");
+            var encs = KanjiEncoding.GuessKajiEncoding(buf);
+            foreach(var enc in encs) { System.Diagnostics.Debug.WriteLine(enc.EncodingName + "： " + enc.GetString(buf)); }
+            return;
+            */
+            // アップデートしていたら前バージョンの設定を読み込む
+            if(!Properties.Settings.Default.IsUpgraded) {
+                Properties.Settings.Default.Upgrade();
+                Properties.Settings.Default.IsUpgraded = true;
+                Properties.Settings.Default.Save();
+            }
+            Application.EnableVisualStyles();
+            Application.SetCompatibleTextRenderingDefault(false);
+
+            // コマンドライン解析
+            var cmds = new List<string>(Environment.GetCommandLineArgs());
+            //cmds = new List<string> { "TeX2img.exe", "/nogui", "/nopipe", "/help" };
+            // 一つ目がTeX2img本体ならば削除
+            // abtlinstからCreateProcessで呼び出すとTeX2img本体にならなかったので，一応確認をする．
+            if(cmds.Count > 0) {
+                string filecmds0 = Path.GetFullPath(cmds[0]).ToLower();
+                string me = Path.GetFullPath(System.Reflection.Assembly.GetExecutingAssembly().Location).ToLower();
+#if DEBUG
+                string vshost = Path.Combine(Path.GetDirectoryName(me), Path.GetFileNameWithoutExtension(me) + ".vshost.exe").ToLower();
+                if(vshost == filecmds0 || vshost == filecmds0 + ".exe") filecmds0 = me;
+#endif
+                if(filecmds0 == me || filecmds0 + ".exe" == me) cmds.RemoveAt(0);
+            }
+            // 二つ目でCUIモードか判定する．
+            if(cmds.Count > 0 && (cmds[0] == "/nogui" || cmds[0] == "-nogui" || cmds[0] == "--nogui")) {
+                nogui = true;
+                cmds.RemoveAt(0);
+            }
+            // メイン
+            Environment.ExitCode = TeX2imgMain(cmds);
         }
 
         static void setPath(bool nomsg) {
@@ -317,5 +268,63 @@ namespace TeX2img {
             if(nogui) Console.WriteLine(msg);
             else MessageBox.Show(msg, "TeX2img");
         }
+        
+        public class OptionSet : NDesk.Options.OptionSet {
+            // 次でエラーを出すようにする
+            // "option"の指定の時に--option=abc
+            // "option="の指定の時に--option-
+            protected override bool Parse(string argument, NDesk.Options.OptionContext c) {
+                if(c.Option == null) {
+                    string f, n, s, v;
+                    if(!GetOptionParts(argument, out f, out n, out s, out v)) return false;
+                    if(Contains(n)) {
+                        var p = this[n];
+                        if(v != null && p.OptionValueType == NDesk.Options.OptionValueType.None) {
+                            // メッセージはさぼり
+                            throw new NDesk.Options.OptionException(c.OptionSet.MessageLocalizer(""), f + n);
+                        }
+                    } else {
+                        string rn;
+                        if(n.Length >= 1 && (n[n.Length - 1] == '-' || n[n.Length - 1] == '+') && Contains((rn = n.Substring(0, n.Length - 1)))) {
+                            var p = this[rn];
+                            if(p.OptionValueType == NDesk.Options.OptionValueType.Required) {
+                                throw new NDesk.Options.OptionException(c.OptionSet.MessageLocalizer("An argument is required for the option '" + f + rn + "'"), f + rn);
+                            }
+                        }
+                    }
+                }
+                return base.Parse(argument, c);
+            }
+
+            // OptionSet.WriteOptionDescriptionsがちょっと気にくわないので独自に
+            // GetNames().Count == 1と仮定してある．
+            public new void WriteOptionDescriptions(TextWriter output) {
+                int maxlength = 0;
+                foreach(var oh in this) {
+                    if(oh.Description != null) {
+                        int length = oh.GetNames()[0].Length;
+                        if(oh.Description.EndsWith("[-]")) length += 3;
+                        else if(oh.OptionValueType == NDesk.Options.OptionValueType.Optional) length += 7;
+                        else if(oh.OptionValueType == NDesk.Options.OptionValueType.Required) length += 5;
+                        maxlength = Math.Max(maxlength, length);
+                    }
+                }
+                maxlength += 3;
+                foreach(var oh in this) {
+                    if(oh.Description != null) {
+                        string opstr = "/" + oh.GetNames()[0];
+                        string desc = oh.Description.Replace("\n", "\n" + new string(' ', maxlength + 1));
+                        if(oh.OptionValueType == NDesk.Options.OptionValueType.Optional) opstr += "[=<VAL>]";
+                        else if(oh.OptionValueType == NDesk.Options.OptionValueType.Required) opstr += "=<VAL>";
+                        else if(desc.EndsWith("[-]")) {
+                            opstr += "[-]";
+                            desc = desc.Substring(0, desc.Length - 3);
+                        }
+                        output.WriteLine("  " + opstr + new string(' ', maxlength - opstr.Length) + desc);
+                    }
+                }
+            }
+        }
+
     }
 }

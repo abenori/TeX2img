@@ -59,7 +59,7 @@ namespace TeX2img {
                 catch(DecoderFallbackException) { return false; }
                 return true;
             }).ToArray();
-            foreach(var x in rv) System.Diagnostics.Debug.WriteLine(x.EncodingName);
+            //foreach(var x in rv) System.Diagnostics.Debug.WriteLine(x.EncodingName);
             if(rv.Length >= 1) return rv;
             // 全滅したら全部返しておく．
             else return maxscoreencodings;
