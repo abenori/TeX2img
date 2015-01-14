@@ -301,11 +301,7 @@ namespace TeX2img {
                     try {
                         WriteTeXSourceFile(sw, myPreambleForm.PreambleTextBox.Text, sourceTextBox.Text);
                     }
-                    finally {
-                        if(sw != null) {
-                            sw.Dispose();
-                        }
-                    }
+                    catch{}
                 }
             }
             #endregion

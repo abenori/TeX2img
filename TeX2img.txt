@@ -1,8 +1,8 @@
-TeX2img
+# TeX2img
 
 (C)Abe Noriyuki http://www.math.sci.hokudai.ac.jp/~abenori/
 
-# これは何？
+## これは何？
 入力した TeX ソースコードを TeX でコンパイルして，次のような形式の画像で出力するアプリケーションです．
 * アウトラインをとった EPS ファイル
 * JPEG ファイル
@@ -14,19 +14,19 @@ TeX2img
 
 もともとの作者は寺田侑祐さんです．Version 1.2 以降開発を引き継ぎました．
 
-# 動作条件
+## 動作条件
 * .NET Framework 3.5 以降．
 * 適切な TeX ディストリビューション（W32TeX か TeX Live を推奨）がインストールされており，platex 及び dvipdfmx（等）が使えること．
 * Ghostscript がインストールされ，使えること．（TeX Live 内のものでも大丈夫です．）
 * ImageMagick がインストールされていると，それを用いて画像を出力することができます．（必須ではありません．）
 
-# インストール
+## インストール
 解凍後出てくる TeX2img.exe をダブルクリックすれば起動します．初回に platex.exe などの場所を推定しますが，推定に失敗した場合は，メニューの「ツール(T)」→「オプション... (O) Ctrl+E」から設定をしてください．
 TeX2imgc.exe は CUI モードで動かすためのラッパです．TeX2img.exe と同じフォルダに置いてください．使い方は
 > TeX2imgc.exe [Options] Input Output (Input Output...)
 です．
 
-# Tips
+## Tips
 * Ghostscript の Version 9.14 あたりで，device が epswrite から eps2write に変更になったようです．画像生成時にエラーが出る場合は，「ツール」→「オプション」→「パスの設定」の「Ghostscript の device には epswrite を設定する」のチェックをつけて/外してみてください．
 
 * platex / dvipdfmx / Ghostscript のパスにオプションを混ぜて設定することで，画像変換時にオプションをつけたまま起動を行うことができます．ただし，オプションをつける際はファイル名を""で囲う必要があります．
@@ -34,7 +34,7 @@ TeX2imgc.exe は CUI モードで動かすためのラッパです．TeX2img.exe
 
 * 内部文字コードは Unicode です．従って，platex の設定として uplatex を用いることで，Shift_JIS にない文字なども直接出力をすることができます．ただし，設定→パスの設定の文字コードにおいて，UTF-8 または 指定しない（入力 UTF-8 ）を選ぶ必要があります．（入力 UTF-8 とは，直接入力された TeX コードを UTF-8 として扱うことを意味します．）なお，文字コードを指定しない場合は，TeX ディストリビューションの設定で文字コードの推定を自動的に行うようにしておくとよいでしょう．
 
-# 起動オプション
+## 起動オプション
 TeX2img.exe または TeX2imgc.exe が受けつけるオプションです．なお，
 TeX2img.exe input output
 とすると起動直後に変換が行われます．
@@ -68,12 +68,12 @@ TeX2img.exe input output
 [-] はオプションの否定を意味します．たとえば /guess-compile- と指定すると，コンパイル回数の推定を行わなくなります．
 
 
-# 参考
+## 参考
 * 元々の作者である寺田さんによる TeX2img 配布ページ
 http://island.geocities.jp/loveinequality/
 には，TeX2img を活用するための情報があります．参考にしてみてください．
 
-# 謝辞
+## 謝辞
 * もともとの TeX2img は寺田侑祐さんによるものです．
 * Azuki テキストエディタエンジンを利用しています．
 http://sgry.b.sourceforge.jp/
@@ -83,7 +83,7 @@ http://www.ndesk.org/Options
 http://practical-scheme.net/gauche/index-j.html
 
 
-# ライセンス
+## ライセンス
 修正 BSD ライセンスです．詳しくは license.txt を参照してください．
 なお，用いているライブラリなどのライセンスは以下の通りです．
 * Azuki エディタコンポーネント Azuki.dll は zlib ライセンス．
@@ -92,7 +92,7 @@ http://practical-scheme.net/gauche/index-j.html
 詳細は各々のページをご覧ください．
 
 
-# 履歴（1.2以降）
+## 履歴（1.2以降）
 * Version 1.2 (2014/9/15)
 ** 開発を引き継いだ．
 ** emf のサポートをやめた．

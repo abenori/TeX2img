@@ -5,17 +5,30 @@ using System.Text;
 
 namespace TeX2img {
     class KanjiEncoding {
+		// 前からn個が一致するか．
+        public static bool SequenceEqual<T>(T[] b1, T[] b2, int n) where T: IComparable<T>{
+            for(int i = 0 ; i < n ; ++i) {
+                if(b1[i].CompareTo(b2[i]) != 0) return false;
+            }
+            return true;
+        }
+        
         public static Encoding CheckBOM(byte[] buf) {
-            if(buf.Length >= 3 && buf[0] == 0xEF && buf[1] == 0xBB && buf[2] == 0xBF) return Encoding.UTF8;
+            var encs = new Encoding[] { Encoding.UTF8 };
+            foreach(var enc in encs) {
+                var bom = enc.GetPreamble();
+                if(buf.Length >= bom.Length && SequenceEqual(buf, bom, bom.Length)) return enc;
+            }
             return null;
         }
+
         public static byte[] DeleteBOM(byte[] buf, Encoding encoding) {
-            if(encoding.CodePage == Encoding.UTF8.CodePage) {
-                var tmpbuf = new byte[buf.Length - 3];
-                Array.Copy(buf, 3, tmpbuf, 0, buf.Length - 3);
-                return tmpbuf;
-            }
-            return buf;
+            int n = encoding.GetPreamble().Length;
+            if(n == 0) return buf;
+            if(n > buf.Length) throw new ArgumentOutOfRangeException();
+            var tmpbuf = new byte[buf.Length - n];
+            Array.Copy(buf, n, tmpbuf, 0, buf.Length - n);
+            return tmpbuf;
         }
 
         // 日本語文字コードを推測する．Gaucheのもののほぼコピペ

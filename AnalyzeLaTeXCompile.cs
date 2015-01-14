@@ -48,20 +48,25 @@ namespace TeX2img {
         }
 
         bool BibTeXCheck(){
+            if(!aux.ContainsKey(".aux") || aux[".aux"] == null) return false;
             var bibcite = new System.Text.RegularExpressions.Regex("\\\\bibcite\\{(.*?)\\}");
             var citation = new System.Text.RegularExpressions.Regex("\\\\citation\\{(.*?)\\}");
             var bibs = new List<string>();
             var cits = new List<string>();
             bool existbibdata = false;
-            using(var fs = new StreamReader(FileNameWithoutExt + ".aux",Encoding.ASCII)){
-                while(!fs.EndOfStream){
+            Encoding[] encs = KanjiEncoding.GuessKajiEncoding(aux[".aux"]);
+            Encoding enc;
+            if(encs.Length == 0) enc = Encoding.GetEncoding("shift_jis");
+            else enc = encs[0];
+            using(var fs = new StringReader(enc.GetString(aux[".aux"]))) {
+                while(true) {
                     string line = fs.ReadLine();
-                    if(line == null)break;
-                    if(!existbibdata && line.IndexOf("\\bibdata{") != -1)existbibdata = true;
+                    if(line == null) break;
+                    if(!existbibdata && line.IndexOf("\\bibdata{") != -1) existbibdata = true;
                     var m = bibcite.Match(line);
-                    if(m.Success)bibs.Add(m.Groups[1].Value);
+                    if(m.Success) bibs.Add(m.Groups[1].Value);
                     m = citation.Match(line);
-                    if(m.Success)cits.Add(m.Groups[1].Value);
+                    if(m.Success) cits.Add(m.Groups[1].Value);
                 }
             }
             if(!existbibdata)return false;

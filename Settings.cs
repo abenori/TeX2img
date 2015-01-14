@@ -103,13 +103,13 @@
                 proc.StartInfo.FileName = gs;
                 proc.StartInfo.Arguments = "-v";
                 //string errmsg = "";
-                //proc.ErrorDataReceived += ((s, e) => { errmsg += e.Data; });
+                proc.ErrorDataReceived += ((s, e) => {});
                 try {
                     proc.Start();
-                    //proc.BeginErrorReadLine();
+                    proc.BeginErrorReadLine();
                     string msg = proc.StandardOutput.ReadToEnd();
                     proc.WaitForExit(2000);
-                    //proc.CancelErrorRead();
+                    proc.CancelErrorRead();
                     if(!proc.HasExited) proc.Kill();
                     var reg = new System.Text.RegularExpressions.Regex("Ghostscript ([0-9]+)\\.([0-9]+)", System.Text.RegularExpressions.RegexOptions.IgnoreCase);
                     var m = reg.Match(msg);

@@ -250,6 +250,7 @@ namespace TeX2img {
                         string line = proc.StandardOutput.ReadLine();
                         var m = reg.Match(line);
                         if(m.Success) {
+                            // このParseは成功することが確定している．
                             page = Int32.Parse(m.Groups[1].Value);
                             proc.StandardOutput.ReadToEnd();
                             break;
@@ -299,62 +300,61 @@ namespace TeX2img {
 
         private void enlargeBB(string inputEpsFileName) {
             Regex regexBB = new Regex(@"^\%\%(HiRes|)BoundingBox\: ([\d\.]+) ([\d\.]+) ([\d\.]+) ([\d\.]+)$");
-
-            FileStream fs = new FileStream(Path.Combine(workingDir, inputEpsFileName), FileMode.Open, FileAccess.Read);
-            if(fs.CanRead) {
-                byte[] inbuf = new byte[fs.Length];
-                byte[] outbuf = new byte[fs.Length + 200];
-                byte[] tmpbuf;
+            byte[] inbuf;
+            using(var fs = new FileStream(Path.Combine(workingDir, inputEpsFileName), FileMode.Open, FileAccess.Read)) {
+                if(!fs.CanRead) return;
+                inbuf = new byte[fs.Length];
                 fs.Read(inbuf, 0, (int) fs.Length);
+            }
+            byte[] outbuf = new byte[inbuf.Length + 200];
+            byte[] tmpbuf;
 
-                // 現在読んでいるinufの「行」の先頭
-                int inp = 0;
-                // inbufの現在読んでいる場所
-                int q = 0;
-                // outbufに書き込んだ量
-                int outp = 0;
-                bool bbfound = false, hiresbbfound = false;
-                while(q < inbuf.Length) {
-                    if(q == inbuf.Length - 1 || inbuf[q] == '\r' || inbuf[q] == '\n') {
-                        string line = System.Text.Encoding.ASCII.GetString(inbuf, inp, q - inp);
-                        Match match = regexBB.Match(line);
-                        if(match.Success) {
-                            decimal leftbottom_x = System.Convert.ToDecimal(match.Groups[2].Value);
-                            decimal leftbottom_y = System.Convert.ToDecimal(match.Groups[3].Value);
-                            decimal righttop_x = System.Convert.ToDecimal(match.Groups[4].Value);
-                            decimal righttop_y = System.Convert.ToDecimal(match.Groups[5].Value);
-                            string HiRes = match.Groups[1].Value;
-                            if(HiRes == "") {
-                                bbfound = true;
-                                line = String.Format("%%BoundingBox: {0} {1} {2} {3}", (int) (leftbottom_x - Properties.Settings.Default.leftMargin), (int) (leftbottom_y - Properties.Settings.Default.bottomMargin), (int) (righttop_x + Properties.Settings.Default.rightMargin), (int) (righttop_y + Properties.Settings.Default.topMargin));
-                            } else {
-                                hiresbbfound = true;
-                                line = String.Format("%%HiResBoundingBox: {0} {1} {2} {3}", leftbottom_x - Properties.Settings.Default.leftMargin, leftbottom_y - Properties.Settings.Default.bottomMargin, righttop_x + Properties.Settings.Default.rightMargin, righttop_y + Properties.Settings.Default.topMargin);
-                            }
-                            tmpbuf = System.Text.Encoding.ASCII.GetBytes(line);
-                            System.Array.Copy(tmpbuf, 0, outbuf, outp, tmpbuf.Length);
-                            outp += tmpbuf.Length;
-                            if(bbfound && hiresbbfound) {
-                                System.Array.Copy(inbuf, q, outbuf, outp, inbuf.Length - q);
-                                outp += inbuf.Length - q;
-                                break;
-                            }
+            // 現在読んでいるinufの「行」の先頭
+            int inp = 0;
+            // inbufの現在読んでいる場所
+            int q = 0;
+            // outbufに書き込んだ量
+            int outp = 0;
+            bool bbfound = false, hiresbbfound = false;
+            while(q < inbuf.Length) {
+                if(q == inbuf.Length - 1 || inbuf[q] == '\r' || inbuf[q] == '\n') {
+                    string line = System.Text.Encoding.ASCII.GetString(inbuf, inp, q - inp);
+                    Match match = regexBB.Match(line);
+                    if(match.Success) {
+                        decimal leftbottom_x = System.Convert.ToDecimal(match.Groups[2].Value);
+                        decimal leftbottom_y = System.Convert.ToDecimal(match.Groups[3].Value);
+                        decimal righttop_x = System.Convert.ToDecimal(match.Groups[4].Value);
+                        decimal righttop_y = System.Convert.ToDecimal(match.Groups[5].Value);
+                        string HiRes = match.Groups[1].Value;
+                        if(HiRes == "") {
+                            bbfound = true;
+                            line = String.Format("%%BoundingBox: {0} {1} {2} {3}", (int) (leftbottom_x - Properties.Settings.Default.leftMargin), (int) (leftbottom_y - Properties.Settings.Default.bottomMargin), (int) (righttop_x + Properties.Settings.Default.rightMargin), (int) (righttop_y + Properties.Settings.Default.topMargin));
                         } else {
-                            System.Array.Copy(inbuf, inp, outbuf, outp, q - inp);
-                            outp += q - inp;
+                            hiresbbfound = true;
+                            line = String.Format("%%HiResBoundingBox: {0} {1} {2} {3}", leftbottom_x - Properties.Settings.Default.leftMargin, leftbottom_y - Properties.Settings.Default.bottomMargin, righttop_x + Properties.Settings.Default.rightMargin, righttop_y + Properties.Settings.Default.topMargin);
                         }
-                        inp = q;
-                        while(q < inbuf.Length - 1 && (inbuf[q] == '\r' || inbuf[q] == '\n')) ++q;
+                        tmpbuf = System.Text.Encoding.ASCII.GetBytes(line);
+                        System.Array.Copy(tmpbuf, 0, outbuf, outp, tmpbuf.Length);
+                        outp += tmpbuf.Length;
+                        if(bbfound && hiresbbfound) {
+                            System.Array.Copy(inbuf, q, outbuf, outp, inbuf.Length - q);
+                            outp += inbuf.Length - q;
+                            break;
+                        }
+                    } else {
                         System.Array.Copy(inbuf, inp, outbuf, outp, q - inp);
                         outp += q - inp;
-                        inp = q;
-                        if(q == inbuf.Length - 1) break;
-                    } else ++q;
-                }
-                fs.Dispose();
-                using(FileStream wfs = new System.IO.FileStream(Path.Combine(workingDir, inputEpsFileName), FileMode.Open, FileAccess.Write)) {
-                    wfs.Write(outbuf, 0, outp);
-                }
+                    }
+                    inp = q;
+                    while(q < inbuf.Length - 1 && (inbuf[q] == '\r' || inbuf[q] == '\n')) ++q;
+                    System.Array.Copy(inbuf, inp, outbuf, outp, q - inp);
+                    outp += q - inp;
+                    inp = q;
+                    if(q == inbuf.Length - 1) break;
+                } else ++q;
+            }
+            using(FileStream wfs = new System.IO.FileStream(Path.Combine(workingDir, inputEpsFileName), FileMode.Open, FileAccess.Write)) {
+                wfs.Write(outbuf, 0, outp);
             }
         }
 
@@ -367,22 +367,15 @@ namespace TeX2img {
             righttop_y = 0;
 
             using(StreamReader sr = new StreamReader(Path.Combine(workingDir, inputEpsFileName), Encoding.GetEncoding("shift_jis"))) {
-                try {
-                    string line;
-                    while((line = sr.ReadLine()) != null) {
-                        Match match = regex.Match(line);
-                        if(match.Success) {
-                            leftbottom_x = System.Convert.ToDecimal(match.Groups[1].Value);
-                            leftbottom_y = System.Convert.ToDecimal(match.Groups[2].Value);
-                            righttop_x = System.Convert.ToDecimal(match.Groups[3].Value);
-                            righttop_y = System.Convert.ToDecimal(match.Groups[4].Value);
-                            break;
-                        }
-                    }
-                }
-                finally {
-                    if(sr != null) {
-                        sr.Close();
+                string line;
+                while((line = sr.ReadLine()) != null) {
+                    Match match = regex.Match(line);
+                    if(match.Success) {
+                        leftbottom_x = System.Convert.ToDecimal(match.Groups[1].Value);
+                        leftbottom_y = System.Convert.ToDecimal(match.Groups[2].Value);
+                        righttop_x = System.Convert.ToDecimal(match.Groups[3].Value);
+                        righttop_y = System.Convert.ToDecimal(match.Groups[4].Value);
+                        break;
                     }
                 }
             }
@@ -664,10 +657,12 @@ namespace TeX2img {
                 try {
                     StreamReader sr = (StreamReader) o;
                     while(!sr.EndOfStream) {
-                        lock(syncObj) { if(abort)return; }
-                        var str = sr.ReadToEnd();
-                        lock(syncObj) {
-                            controller_.appendOutput(str);
+                        if(abort) return;
+                        var str = sr.ReadLine();
+                        if(str != null) {
+                            lock(syncObj) {
+                                controller_.appendOutput(str);
+                            }
                         }
                     }
                 }
@@ -699,10 +694,10 @@ namespace TeX2img {
                     } else kill = (Properties.Settings.Default.batchMode == Properties.Settings.BatchMode.Stop);
                     if(kill) {
                         //proc.Kill();
-                        KillChildProcesses(proc.Id);
+                        KillChildProcesses(proc);
                         if(ReadStdOutThread.IsAlive || ReadStdErrThread.IsAlive) {
                             System.Threading.Thread.Sleep(500);
-                            lock(syncObj) { abort = true; }
+                            abort = true; 
                         }
                         controller_.appendOutput("処理を中断しました．\r\n");
                         throw new System.TimeoutException();
@@ -716,19 +711,22 @@ namespace TeX2img {
             controller_.appendOutput("\r\n");
         }
 
-        public static void KillChildProcesses(int id) {
+        public static void KillChildProcesses(Process proc) {
             // taskkillを起動するのが早そう．
-            using(var proc = new Process()) {
+            using(var p = new Process()) {
                 try {
-                    proc.StartInfo.FileName = "taskkill.exe";
-                    proc.StartInfo.Arguments = "/PID " + id.ToString() + " /T /F";
-                    proc.StartInfo.CreateNoWindow = true;
-                    proc.StartInfo.UseShellExecute = false;
-                    proc.Start();
-                    proc.WaitForExit(3000);
-                    if(!proc.HasExited) proc.Kill();
+                    p.StartInfo.FileName = "taskkill.exe";
+                    p.StartInfo.Arguments = "/PID " + proc.Id.ToString() + " /T /F";
+                    p.StartInfo.CreateNoWindow = true;
+                    p.StartInfo.UseShellExecute = false;
+                    p.Start();
+                    p.WaitForExit(3000);
+                    if(!p.HasExited) {
+                        p.Kill();
+                        proc.Kill();
+                    }
                 }
-                catch(Win32Exception) { }
+                catch(Win32Exception) { proc.Kill(); }
             }
         }
     }

@@ -44,7 +44,10 @@ namespace TeX2imgc {
                 Console.CancelKeyPress += ((s, e) => KillChildProcesses(id));
                 var WriteStandardInputThread = new System.Threading.Thread((o) => {
                     StreamWriter sw = (StreamWriter) o;
-                    while(true) sw.WriteLine(Console.ReadLine());
+                    while(true){
+                        try { sw.WriteLine(Console.ReadLine()); }
+                        catch { return; }
+                    }
                 });
                 // これを加えるとConsole.ReadLineの入力待ちでおわらないということはないことに気がついた……
                 WriteStandardInputThread.IsBackground = true;
