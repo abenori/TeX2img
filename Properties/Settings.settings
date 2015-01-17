@@ -29,7 +29,6 @@
     <Setting Name="preamble" Type="System.String" Scope="User">
       <Value Profile="(Default)">\documentclass[fleqn]{jsarticle}
 \usepackage{amsmath,amssymb}
-\usepackage{enumerate}
 \pagestyle{empty}
 </Value>
     </Setting>

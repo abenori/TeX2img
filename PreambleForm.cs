@@ -39,7 +39,7 @@ namespace TeX2img {
             if(DialogResult.Yes == MessageBox.Show("現在のプリアンブル設定を破棄して，初期設定に戻してよろしいですか？", "確認", MessageBoxButtons.YesNo, MessageBoxIcon.Question)) {
                 string option = "fleqn";
                 option += System.IO.Path.GetFileName(Converter.setProcStartInfo(Properties.Settings.Default.platexPath)) == "uplatex.exe" ? ",uplatex" : "";
-                preambleTextBox.Text = "\\documentclass[" + option + "]{jsarticle}\r\n\\usepackage{amsmath,amssymb}\r\n\\usepackage{enumerate}\r\n\\pagestyle{empty}\r\n";
+                preambleTextBox.Text = "\\documentclass[" + option + "]{jsarticle}\r\n\\usepackage{amsmath,amssymb}\r\n\\pagestyle{empty}\r\n";
             }
         }
 
