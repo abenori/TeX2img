@@ -148,6 +148,34 @@ namespace TeX2img {
                 controller_.showPathError("platex.exe", "TeX ディストリビューション（platex）");
                 return false;
             }
+            string platexBase = Path.GetFileName(startinfo.FileName);
+            if(
+                (platexBase.Contains("uptex") || platexBase.Contains("uplatex")) &&
+                (!arg.Contains("-kanji"))
+            ) startinfo.StandardOutputEncoding = Encoding.UTF8;
+            else if(
+                (platexBase.Contains("ptex") || platexBase.Contains("platex")) &&
+                (!arg.Contains("-kanji") || arg.Contains("-sjis-terminal"))
+            ) startinfo.StandardOutputEncoding = Encoding.GetEncoding("shift_jis");
+            else {
+                switch(Properties.Settings.Default.encode) {
+                case "utf8":
+                case "_utf8":
+                    startinfo.StandardOutputEncoding = Encoding.UTF8;
+                    break;
+                case "euc":
+                    startinfo.StandardOutputEncoding = Encoding.GetEncoding("euc-jp");
+                    break;
+                case "jis":
+                    startinfo.StandardOutputEncoding = Encoding.GetEncoding("iso-2022-jp");
+                    break;
+                case "sjis":
+                case "_sjis":
+                default:
+                    startinfo.StandardOutputEncoding = Encoding.GetEncoding("shift_jis");
+                    break;
+                }
+            }
 
             startinfo.Arguments = arg;
             if(Properties.Settings.Default.encode.Substring(0, 1) != "_") startinfo.Arguments += "-no-guess-input-enc -kanji=" + Properties.Settings.Default.encode + " ";

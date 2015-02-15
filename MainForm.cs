@@ -14,10 +14,10 @@ namespace TeX2img {
         private PreambleForm myPreambleForm;
 
         #region コンストラクタおよび初期化処理関連のメソッド
-        List<string> FirstFiles;
+        List<string> FirstFiles = null;
 
         public MainForm(List<string> files) {
-            FirstFiles = files;
+            if(files.Count != 0) FirstFiles = files;
 
             InitializeComponent();
             
@@ -36,7 +36,7 @@ namespace TeX2img {
 
 
         protected override void OnShown(EventArgs e) {
-            if(FirstFiles.Count != 0) {
+            if(FirstFiles != null) {
                 clearOutputTextBox();
                 if(Properties.Settings.Default.showOutputWindowFlag) showOutputWindow(true);
                 this.Enabled = false;
@@ -235,7 +235,7 @@ namespace TeX2img {
         }
 
         private void convertWorker_DoWork(object sender, DoWorkEventArgs e) {
-            if(FirstFiles.Count != 0) {
+            if(FirstFiles != null) {
                 for(int i = 0 ; i < FirstFiles.Count / 2 ; ++i) {
                     string file = FirstFiles[2 * i];
                     string tmppath = Path.GetTempFileName();
@@ -244,7 +244,7 @@ namespace TeX2img {
                     File.Copy(file, tmptexfn, true);
                     (new Converter(this, tmptexfn, FirstFiles[2 * i + 1])).Convert();
                 }
-                FirstFiles.Clear();
+                FirstFiles = null;
                 return;
             }
 

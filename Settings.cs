@@ -98,6 +98,7 @@
             // Ghostscriptのバージョンを取得する．
             using(var proc = new System.Diagnostics.Process()) {
                 proc.StartInfo.RedirectStandardOutput = true;
+                proc.StartInfo.RedirectStandardError = true;
                 proc.StartInfo.UseShellExecute = false;
                 proc.StartInfo.CreateNoWindow = true;
                 proc.StartInfo.FileName = gs;
