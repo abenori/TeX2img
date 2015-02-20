@@ -32,7 +32,6 @@ namespace TeX2img {
 
             if(InputFromTextboxRadioButton.Checked) ActiveControl = sourceTextBox;
             else ActiveControl = inputFileNameTextBox;
-
         }
 
 
@@ -50,14 +49,15 @@ namespace TeX2img {
 
         #region 設定値の読み書き
         private void loadSettings() {
-            if(Properties.Settings.Default.Height > 10) this.Height = Properties.Settings.Default.Height;
-            if(Properties.Settings.Default.Width > 10) this.Width = Properties.Settings.Default.Width;
-            this.Left = Properties.Settings.Default.Left;
-            this.Top = Properties.Settings.Default.Top;
-            if(Properties.Settings.Default.preambleWindowHeight > 10) myPreambleForm.Height = Properties.Settings.Default.preambleWindowHeight;
-            if(Properties.Settings.Default.preambleWindowWidth > 10) myPreambleForm.Width = Properties.Settings.Default.preambleWindowWidth;
-            if(Properties.Settings.Default.outputWindowHeight > 10) myOutputForm.Height = Properties.Settings.Default.outputWindowHeight;
-            if(Properties.Settings.Default.outputWindowWidth > 10) myOutputForm.Width = Properties.Settings.Default.outputWindowWidth;
+            const int minLength = 50;
+            if(Properties.Settings.Default.Height > minLength) this.Height = Properties.Settings.Default.Height;
+            if(Properties.Settings.Default.Width > minLength) this.Width = Properties.Settings.Default.Width;
+            if(Properties.Settings.Default.Left > 0) this.Left = Properties.Settings.Default.Left;
+            if(Properties.Settings.Default.Top > 0) this.Top = Properties.Settings.Default.Top;
+            if(Properties.Settings.Default.preambleWindowHeight > minLength) myPreambleForm.Height = Properties.Settings.Default.preambleWindowHeight;
+            if(Properties.Settings.Default.preambleWindowWidth > minLength) myPreambleForm.Width = Properties.Settings.Default.preambleWindowWidth;
+            if(Properties.Settings.Default.outputWindowHeight > minLength) myOutputForm.Height = Properties.Settings.Default.outputWindowHeight;
+            if(Properties.Settings.Default.outputWindowWidth > minLength) myOutputForm.Width = Properties.Settings.Default.outputWindowWidth;
 
             if(Properties.Settings.Default.outputFile != "") {
                 outputFileNameTextBox.Text = Properties.Settings.Default.outputFile;
@@ -80,14 +80,20 @@ namespace TeX2img {
         }
 
         private void saveSettings() {
-            Properties.Settings.Default.Height = this.Height;
-            Properties.Settings.Default.Width = this.Width;
-            Properties.Settings.Default.Left = this.Left;
-            Properties.Settings.Default.Top = this.Top;
-            Properties.Settings.Default.preambleWindowHeight = myPreambleForm.Height;
-            Properties.Settings.Default.preambleWindowWidth = myPreambleForm.Width;
-            Properties.Settings.Default.outputWindowHeight = myOutputForm.Height;
-            Properties.Settings.Default.outputWindowWidth = myOutputForm.Width;
+            if(this.WindowState != FormWindowState.Minimized) {
+                Properties.Settings.Default.Height = this.Height;
+                Properties.Settings.Default.Width = this.Width;
+                Properties.Settings.Default.Left = this.Left;
+                Properties.Settings.Default.Top = this.Top;
+            }
+            if(myPreambleForm.WindowState != FormWindowState.Minimized) {
+                Properties.Settings.Default.preambleWindowHeight = myPreambleForm.Height;
+                Properties.Settings.Default.preambleWindowWidth = myPreambleForm.Width;
+            }
+            if(myOutputForm.WindowState != FormWindowState.Minimized) {
+                Properties.Settings.Default.outputWindowHeight = myOutputForm.Height;
+                Properties.Settings.Default.outputWindowWidth = myOutputForm.Width;
+            }
 
 
             Properties.Settings.Default.outputFile = outputFileNameTextBox.Text;

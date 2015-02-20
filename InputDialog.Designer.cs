@@ -50,6 +50,7 @@
             // Cancel_Button
             // 
             this.Cancel_Button.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
+            this.Cancel_Button.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             this.Cancel_Button.Location = new System.Drawing.Point(269, 125);
             this.Cancel_Button.Name = "Cancel_Button";
             this.Cancel_Button.Size = new System.Drawing.Size(117, 35);
@@ -77,7 +78,10 @@
             this.Controls.Add(this.Cancel_Button);
             this.Controls.Add(this.OKButton);
             this.Controls.Add(this.InputTextBox);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
             this.Name = "InputDialog";
+            this.ShowIcon = false;
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.ResumeLayout(false);
             this.PerformLayout();
 
