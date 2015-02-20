@@ -70,6 +70,50 @@ namespace TeX2img {
             return true;
         }
 
+        // pTeX or upTeX
+        static bool IspTeX(string latex) {
+            var l = Path.GetFileNameWithoutExtension(latex);
+            return (l == "platex" || l == "uplatex" || l == "ptex" || l == "uptex");
+        }
+        static bool IsupTeX(string latex) {
+            var l = Path.GetFileNameWithoutExtension(latex);
+            return (l == "uplatex" || l == "uptex");
+        }
+
+        public static Encoding GetInputEncoding() {
+            switch(Properties.Settings.Default.encode) {
+            case "_sjis":
+            case "sjis": return Encoding.GetEncoding("shift_jis");
+            case "euc": return Encoding.GetEncoding("euc-jp");
+            case "jis": return Encoding.GetEncoding("iso-2022-jp");
+            default: // "utf8" "_utf8"
+                return Encoding.UTF8;
+            }
+        }
+        public static Encoding GetOutputEncoding() {
+            string arg;
+            string latex = setProcStartInfo(Properties.Settings.Default.platexPath, out arg);
+            return GetOutputEncoding(latex, arg);
+        }
+        public static Encoding GetOutputEncoding(string latex,string arg) {
+            if(IspTeX(latex)) {
+                if(arg.Contains("-sjis-terminal")) return Encoding.GetEncoding("shift_jis");
+                switch(Properties.Settings.Default.encode) {
+                case "sjis": return Encoding.GetEncoding("shift_jis");
+                case "utf8": return Encoding.UTF8;
+                case "jis": return Encoding.GetEncoding("iso-2022-jp");
+                case "euc": return Encoding.GetEncoding("euc-jp");
+                case "_utf8":
+                    if(!IsupTeX(latex) && !arg.Contains("-kanji")) return Encoding.GetEncoding("shift_jis");
+                    else return Encoding.UTF8;
+                case "_sjis":
+                default:
+                    if(IsupTeX(latex) && arg.Contains("-kanji")) return Encoding.GetEncoding("shift_jis");
+                    else return Encoding.UTF8;
+                }
+            } else return Encoding.UTF8;
+        }
+        
         public bool Convert() {
             SetImageMagickEnvironment();
             bool rv = generate(InputFile, OutputFile);
@@ -148,38 +192,12 @@ namespace TeX2img {
                 controller_.showPathError("platex.exe", "TeX ディストリビューション（platex）");
                 return false;
             }
-            string platexBase = Path.GetFileName(startinfo.FileName);
-            if(
-                (platexBase.Contains("uptex") || platexBase.Contains("uplatex")) &&
-                (!arg.Contains("-kanji"))
-            ) startinfo.StandardOutputEncoding = Encoding.UTF8;
-            else if(
-                (platexBase.Contains("ptex") || platexBase.Contains("platex")) &&
-                (!arg.Contains("-kanji") || arg.Contains("-sjis-terminal"))
-            ) startinfo.StandardOutputEncoding = Encoding.GetEncoding("shift_jis");
-            else {
-                switch(Properties.Settings.Default.encode) {
-                case "utf8":
-                case "_utf8":
-                    startinfo.StandardOutputEncoding = Encoding.UTF8;
-                    break;
-                case "euc":
-                    startinfo.StandardOutputEncoding = Encoding.GetEncoding("euc-jp");
-                    break;
-                case "jis":
-                    startinfo.StandardOutputEncoding = Encoding.GetEncoding("iso-2022-jp");
-                    break;
-                case "sjis":
-                case "_sjis":
-                default:
-                    startinfo.StandardOutputEncoding = Encoding.GetEncoding("shift_jis");
-                    break;
-                }
-            }
-
             startinfo.Arguments = arg;
-            if(Properties.Settings.Default.encode.Substring(0, 1) != "_") startinfo.Arguments += "-no-guess-input-enc -kanji=" + Properties.Settings.Default.encode + " ";
+            //if(IspTeX(startinfo.FileName)) {
+                if(Properties.Settings.Default.encode.Substring(0, 1) != "_") startinfo.Arguments += "-no-guess-input-enc -kanji=" + Properties.Settings.Default.encode + " ";
+            //}
             startinfo.Arguments += "-interaction=nonstopmode " + baseName + ".tex";
+            startinfo.StandardOutputEncoding = GetOutputEncoding();
 
             try {
                 if(Properties.Settings.Default.guessLaTeXCompile) {
@@ -216,11 +234,6 @@ namespace TeX2img {
                 return false;
             }
             catch(TimeoutException) {
-                return false;
-            }
-
-            if(!File.Exists(Path.Combine(workingDir, baseName + ".dvi"))) {
-                controller_.showGenerateError();
                 return false;
             }
 
@@ -575,13 +588,25 @@ namespace TeX2img {
 
         public bool generate(string inputTeXFilePath, string outputFilePath) {
             string extension = Path.GetExtension(outputFilePath).ToLower();
-
             string tmpFileBaseName = Path.GetFileNameWithoutExtension(inputTeXFilePath);
 
             // とりあえずPDFを作る
-            if(!tex2dvi(tmpFileBaseName + ".tex") || !dvi2pdf(tmpFileBaseName + ".dvi")) return false;
-
-
+            if(!tex2dvi(tmpFileBaseName + ".tex"))return false;
+            string outdvi = Path.Combine(workingDir, tmpFileBaseName + ".dvi");
+            string outpdf = Path.Combine(workingDir, tmpFileBaseName + ".pdf");
+            if(!File.Exists(outpdf)) {
+                if(!File.Exists(outdvi)) {
+                    controller_.showGenerateError();
+                    return false;
+                } else {
+                    if(!dvi2pdf(tmpFileBaseName + ".dvi")) return false;
+                }
+            } else {
+                if(File.Exists(outdvi) && System.IO.File.GetLastWriteTime(outdvi) > System.IO.File.GetLastWriteTime(outpdf)){
+                    if(!dvi2pdf(tmpFileBaseName + ".dvi")) return false;
+                }
+            }
+            
             // ページ数を取得
             int page = pdfpages(tmpFileBaseName + ".pdf");
             if(page == -1) {
@@ -689,7 +714,7 @@ namespace TeX2img {
                         var str = sr.ReadLine();
                         if(str != null) {
                             lock(syncObj) {
-                                controller_.appendOutput(str);
+                                controller_.appendOutput(str + "\n");
                             }
                         }
                     }

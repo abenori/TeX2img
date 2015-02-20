@@ -31,7 +31,6 @@
             this.components = new System.ComponentModel.Container();
             Sgry.Azuki.FontInfo fontInfo1 = new Sgry.Azuki.FontInfo();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(PreambleForm));
-            this.backToDefaultButton = new System.Windows.Forms.Button();
             this.preambleTextBox = new Sgry.Azuki.WinForms.AzukiControl();
             this.preambleTextBoxMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.Undo = new System.Windows.Forms.ToolStripMenuItem();
@@ -43,20 +42,9 @@
             this.Delete = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.SelectAll = new System.Windows.Forms.ToolStripMenuItem();
+            this.TemplateButon = new System.Windows.Forms.Button();
             this.preambleTextBoxMenu.SuspendLayout();
             this.SuspendLayout();
-            // 
-            // backToDefaultButton
-            // 
-            this.backToDefaultButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.backToDefaultButton.Location = new System.Drawing.Point(387, 470);
-            this.backToDefaultButton.Margin = new System.Windows.Forms.Padding(5, 4, 5, 4);
-            this.backToDefaultButton.Name = "backToDefaultButton";
-            this.backToDefaultButton.Size = new System.Drawing.Size(213, 40);
-            this.backToDefaultButton.TabIndex = 1;
-            this.backToDefaultButton.Text = "デフォルトに戻す";
-            this.backToDefaultButton.UseVisualStyleBackColor = true;
-            this.backToDefaultButton.Click += new System.EventHandler(this.backToDefaultButton_Click);
             // 
             // preambleTextBox
             // 
@@ -87,7 +75,7 @@
             this.preambleTextBox.ShowsDirtBar = false;
             this.preambleTextBox.ShowsHScrollBar = false;
             this.preambleTextBox.ShowsLineNumber = false;
-            this.preambleTextBox.Size = new System.Drawing.Size(580, 442);
+            this.preambleTextBox.Size = new System.Drawing.Size(580, 451);
             this.preambleTextBox.TabIndex = 4;
             this.preambleTextBox.TabWidth = 4;
             this.preambleTextBox.ViewType = Sgry.Azuki.ViewType.WrappedProportional;
@@ -167,13 +155,24 @@
             this.SelectAll.Text = "全て選択(&A)";
             this.SelectAll.Click += new System.EventHandler(this.SelectAll_Click);
             // 
+            // TemplateButon
+            // 
+            this.TemplateButon.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.TemplateButon.Location = new System.Drawing.Point(420, 476);
+            this.TemplateButon.Name = "TemplateButon";
+            this.TemplateButon.Size = new System.Drawing.Size(180, 40);
+            this.TemplateButon.TabIndex = 5;
+            this.TemplateButon.Text = "テンプレート";
+            this.TemplateButon.UseVisualStyleBackColor = true;
+            this.TemplateButon.Click += new System.EventHandler(this.TemplateButon_Click);
+            // 
             // PreambleForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(10F, 18F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(620, 519);
+            this.ClientSize = new System.Drawing.Size(620, 528);
+            this.Controls.Add(this.TemplateButon);
             this.Controls.Add(this.preambleTextBox);
-            this.Controls.Add(this.backToDefaultButton);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Margin = new System.Windows.Forms.Padding(5, 4, 5, 4);
             this.Name = "PreambleForm";
@@ -187,8 +186,7 @@
 
         #endregion
 
-		private System.Windows.Forms.Button backToDefaultButton;
-		private Sgry.Azuki.WinForms.AzukiControl preambleTextBox;
+        private Sgry.Azuki.WinForms.AzukiControl preambleTextBox;
         private System.Windows.Forms.ContextMenuStrip preambleTextBoxMenu;
         private System.Windows.Forms.ToolStripMenuItem Undo;
         private System.Windows.Forms.ToolStripMenuItem Redo;
@@ -199,5 +197,6 @@
         private System.Windows.Forms.ToolStripMenuItem Delete;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
         private System.Windows.Forms.ToolStripMenuItem SelectAll;
+        private System.Windows.Forms.Button TemplateButon;
     }
 }

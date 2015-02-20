@@ -27,6 +27,7 @@ namespace TeX2img {
 
             sourceTextBox.Highlighter = Sgry.Azuki.Highlighter.Highlighters.Latex;
             sourceTextBox.Resize += delegate { sourceTextBox.ViewWidth = sourceTextBox.ClientSize.Width; };
+            sourceTextBox.ShowsHScrollBar = false;
             loadSettings();
 
             if(InputFromTextboxRadioButton.Checked) ActiveControl = sourceTextBox;
@@ -49,14 +50,14 @@ namespace TeX2img {
 
         #region 設定値の読み書き
         private void loadSettings() {
-            this.Height = Properties.Settings.Default.Height;
-            this.Width = Properties.Settings.Default.Width;
+            if(Properties.Settings.Default.Height > 10) this.Height = Properties.Settings.Default.Height;
+            if(Properties.Settings.Default.Width > 10) this.Width = Properties.Settings.Default.Width;
             this.Left = Properties.Settings.Default.Left;
             this.Top = Properties.Settings.Default.Top;
-            myPreambleForm.Height = Properties.Settings.Default.preambleWindowHeight;
-            myPreambleForm.Width = Properties.Settings.Default.preambleWindowWidth;
-            myOutputForm.Height = Properties.Settings.Default.outputWindowHeight;
-            myOutputForm.Width = Properties.Settings.Default.outputWindowWidth;
+            if(Properties.Settings.Default.preambleWindowHeight > 10) myPreambleForm.Height = Properties.Settings.Default.preambleWindowHeight;
+            if(Properties.Settings.Default.preambleWindowWidth > 10) myPreambleForm.Width = Properties.Settings.Default.preambleWindowWidth;
+            if(Properties.Settings.Default.outputWindowHeight > 10) myOutputForm.Height = Properties.Settings.Default.outputWindowHeight;
+            if(Properties.Settings.Default.outputWindowWidth > 10) myOutputForm.Width = Properties.Settings.Default.outputWindowWidth;
 
             if(Properties.Settings.Default.outputFile != "") {
                 outputFileNameTextBox.Text = Properties.Settings.Default.outputFile;
@@ -286,18 +287,7 @@ namespace TeX2img {
 
             // 直接入力の場合 tex ソースを出力
             if(InputFromTextboxRadioButton.Checked) {
-                if(Properties.Settings.Default.encode == "") Properties.Settings.Default.encode = "_sjis";// あり得ないはずだけど
-                string enc = Properties.Settings.Default.encode;
-                if(enc.Substring(0, 1) == "_") enc = enc.Remove(0, 1);
-                Encoding encoding;
-                switch(enc) {
-                case "sjis": encoding = Encoding.GetEncoding("shift_jis"); break;
-                case "euc": encoding = Encoding.GetEncoding("euc-jp"); break;
-                case "jis": encoding = Encoding.GetEncoding("iso-2022-jp"); break;
-                // BOM付きUTF-8にすることで，文字コードの推定を確実にさせる．
-                default: encoding = Encoding.UTF8; break;
-                }
-                using(StreamWriter sw = new StreamWriter(Path.Combine(tmpDir, tmpTeXFileName), false, encoding)) {
+                using(StreamWriter sw = new StreamWriter(Path.Combine(tmpDir, tmpTeXFileName), false, Converter.GetInputEncoding())) {
                     try {
                         WriteTeXSourceFile(sw, myPreambleForm.PreambleTextBox.Text, sourceTextBox.Text);
                     }
@@ -393,15 +383,8 @@ namespace TeX2img {
             var sfd = new SaveFileDialog();
             sfd.Filter = "TeX ソースファイル (*.tex)|*.tex|全てのファイル (*.*)|*.*";
             if(sfd.ShowDialog() == System.Windows.Forms.DialogResult.OK) {
-                Encoding encoding;
-                switch(Properties.Settings.Default.encode) {
-                case "euc": encoding = Encoding.GetEncoding("euc-jp"); break;
-                case "jis": encoding = Encoding.GetEncoding("iso-2022-jp"); break;
-                case "utf8":
-                case "_utf8": encoding = new System.Text.UTF8Encoding(false); break;
-                case "sjis":
-                default: encoding = Encoding.GetEncoding("shift_jis"); break;
-                }
+                Encoding encoding = Converter.GetInputEncoding();
+                if(encoding.CodePage == Encoding.UTF8.CodePage) encoding = new System.Text.UTF8Encoding(false);
                 try {
                     using(var file = new StreamWriter(sfd.FileName, false, encoding)) {
                         WriteTeXSourceFile(file, myPreambleForm.PreambleTextBox.Text, sourceTextBox.Text);
@@ -413,7 +396,7 @@ namespace TeX2img {
             }
         }
 
-        void ImportFile(string path) {
+        public void ImportFile(string path,bool preambleFlag = true,bool bodyFlag = true) {
             byte[] buf;
             using(var fs = new FileStream(path, FileMode.Open, FileAccess.Read)) {
                 buf = new byte[fs.Length];
@@ -454,8 +437,8 @@ namespace TeX2img {
             using(var sr = new StringReader(encoding.GetString(buf))) {
                 string body, preamble;
                 if(ParseTeXSourceFile(sr, out preamble, out body)) {
-                    if(preamble != null) myPreambleForm.PreambleTextBox.Text = preamble;
-                    if(body != null) sourceTextBox.Text = body;
+                    if(preambleFlag && preamble != null) myPreambleForm.PreambleTextBox.Text = preamble;
+                    if(bodyFlag && body != null) sourceTextBox.Text = body;
                 } else {
                     MessageBox.Show("TeX ソースファイルの解析に失敗しました．\n\\begin{document} や \\end{document} 等が正しく入力されているか確認してください．","TeX2img");
                 }

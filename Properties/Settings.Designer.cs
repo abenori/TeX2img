@@ -623,5 +623,28 @@ namespace TeX2img.Properties {
                 this["LaTeXCompileMaxNumber"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        public global::System.Collections.Specialized.StringCollection preambleTemplateCollection {
+            get {
+                return ((global::System.Collections.Specialized.StringCollection)(this["preambleTemplateCollection"]));
+            }
+            set {
+                this["preambleTemplateCollection"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string TeX2imgVersion {
+            get {
+                return ((string)(this["TeX2imgVersion"]));
+            }
+            set {
+                this["TeX2imgVersion"] = value;
+            }
+        }
     }
 }

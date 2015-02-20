@@ -207,8 +207,7 @@ namespace TeX2img {
         }
 
         private void GuessPathButton_Click(object sender, EventArgs e) {
-            bool uplatex = (Path.GetFileNameWithoutExtension(Converter.setProcStartInfo(platexTextBox.Text)).ToLower() == "uplatex");
-            string platex = Properties.Settings.Default.GuessPlatexPath(uplatex);
+            string platex = Properties.Settings.Default.GuessPlatexPath();
             platexTextBox.Text = platex;
             dvipdfmxTextBox.Text = Properties.Settings.Default.GuessDvipdfmxPath();
             string gs = Properties.Settings.Default.GuessGsPath(platex);

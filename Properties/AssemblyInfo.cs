@@ -10,7 +10,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("TeX2img")]
-[assembly: AssemblyCopyright("Copyright (C)  2014 Noriyuki Abe and Yusuke Terada")]
+[assembly: AssemblyCopyright("Copyright (C)  2014-2015 Noriyuki Abe and Yusuke Terada")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -29,4 +29,4 @@ using System.Runtime.InteropServices;
 //      Build Number
 //      Revision
 //
-[assembly: AssemblyVersion("01.03.2")]
+[assembly: AssemblyVersion("01.03.3")]

@@ -100,8 +100,6 @@
             this.platexOpenFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.dvipdfmxOpenFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.gsOpenFileDialog = new System.Windows.Forms.OpenFileDialog();
-            this.label17 = new System.Windows.Forms.Label();
-            this.comboBox1 = new System.Windows.Forms.ComboBox();
             this.SettingTab.SuspendLayout();
             this.BasicSettingTab.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.LaTeXCompileNumbernumUpDown)).BeginInit();
@@ -138,8 +136,6 @@
             // 
             // BasicSettingTab
             // 
-            this.BasicSettingTab.Controls.Add(this.comboBox1);
-            this.BasicSettingTab.Controls.Add(this.label17);
             this.BasicSettingTab.Controls.Add(this.GuessPathButton);
             this.BasicSettingTab.Controls.Add(this.label16);
             this.BasicSettingTab.Controls.Add(this.LaTeXCompileNumbernumUpDown);
@@ -206,7 +202,7 @@
             // UseLowResolutionCheckBox
             // 
             this.UseLowResolutionCheckBox.AutoSize = true;
-            this.UseLowResolutionCheckBox.Location = new System.Drawing.Point(19, 295);
+            this.UseLowResolutionCheckBox.Location = new System.Drawing.Point(11, 264);
             this.UseLowResolutionCheckBox.Name = "UseLowResolutionCheckBox";
             this.UseLowResolutionCheckBox.Size = new System.Drawing.Size(215, 22);
             this.UseLowResolutionCheckBox.TabIndex = 11;
@@ -216,7 +212,7 @@
             // GSUseepswriteCheckButton
             // 
             this.GSUseepswriteCheckButton.AutoSize = true;
-            this.GSUseepswriteCheckButton.Location = new System.Drawing.Point(19, 267);
+            this.GSUseepswriteCheckButton.Location = new System.Drawing.Point(11, 236);
             this.GSUseepswriteCheckButton.Name = "GSUseepswriteCheckButton";
             this.GSUseepswriteCheckButton.Size = new System.Drawing.Size(390, 22);
             this.GSUseepswriteCheckButton.TabIndex = 10;
@@ -227,7 +223,7 @@
             // 
             this.encodeComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.encodeComboBox.FormattingEnabled = true;
-            this.encodeComboBox.Location = new System.Drawing.Point(122, 333);
+            this.encodeComboBox.Location = new System.Drawing.Point(114, 302);
             this.encodeComboBox.Name = "encodeComboBox";
             this.encodeComboBox.Size = new System.Drawing.Size(419, 26);
             this.encodeComboBox.TabIndex = 12;
@@ -235,7 +231,7 @@
             // label10
             // 
             this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(16, 338);
+            this.label10.Location = new System.Drawing.Point(8, 307);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(84, 18);
             this.label10.TabIndex = 19;
@@ -244,7 +240,7 @@
             // ignoreErrorCheckBox
             // 
             this.ignoreErrorCheckBox.AutoSize = true;
-            this.ignoreErrorCheckBox.Location = new System.Drawing.Point(19, 238);
+            this.ignoreErrorCheckBox.Location = new System.Drawing.Point(11, 207);
             this.ignoreErrorCheckBox.Margin = new System.Windows.Forms.Padding(5, 4, 5, 4);
             this.ignoreErrorCheckBox.Name = "ignoreErrorCheckBox";
             this.ignoreErrorCheckBox.Size = new System.Drawing.Size(405, 22);
@@ -831,27 +827,6 @@
             this.gsOpenFileDialog.FileName = "gswin32c.exe";
             this.gsOpenFileDialog.Filter = "exe ファイル (*.exe)|*.exe|bat ファイル (*.bat)|*.bat|すべてのファイル (*.*)|*.*";
             // 
-            // label17
-            // 
-            this.label17.AutoSize = true;
-            this.label17.Location = new System.Drawing.Point(17, 204);
-            this.label17.Name = "label17";
-            this.label17.Size = new System.Drawing.Size(106, 18);
-            this.label17.TabIndex = 26;
-            this.label17.Text = "PDF の生成：";
-            // 
-            // comboBox1
-            // 
-            this.comboBox1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.comboBox1.FormattingEnabled = true;
-            this.comboBox1.Items.AddRange(new object[] {
-            "TeX が直接生成",
-            "DVI を経由して生成する"});
-            this.comboBox1.Location = new System.Drawing.Point(156, 202);
-            this.comboBox1.Name = "comboBox1";
-            this.comboBox1.Size = new System.Drawing.Size(495, 26);
-            this.comboBox1.TabIndex = 27;
-            // 
             // SettingForm
             // 
             this.AcceptButton = this.OKButton;
@@ -961,7 +936,5 @@
         private System.Windows.Forms.Label label16;
         private System.Windows.Forms.NumericUpDown LaTeXCompileNumbernumUpDown;
         private System.Windows.Forms.Button GuessPathButton;
-        private System.Windows.Forms.Label label17;
-        private System.Windows.Forms.ComboBox comboBox1;
     }
 }

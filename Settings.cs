@@ -34,6 +34,15 @@
             editorFontColor["コメント"] = new FontColor(editorCommentColorFont, editorCommentColorBack);
             editorFontColor["改行，EOF"] = new FontColor(editorEOFColorFont, editorNormalColorBack);
             editorFontColor["対応する括弧"] = new FontColor(editorMatchedBracketColorFont, editorMatchedBracketColorBack);
+            if(preambleTemplateCollection == null) {
+                preambleTemplates = new System.Collections.Generic.Dictionary<string, string>();
+                preambleTemplates["pLaTeX"] = "\\documentclass[fleqn,papersize]{jsarticle}\n\\usepackage{amsmath,amssymb}\n\\pagestyle{empty}\n";
+                preambleTemplates["upLaTeX"] = "\\documentclass[fleqn,papersize,uplatex]{jsarticle}\n\\usepackage{amsmath,amssymb}\n\\pagestyle{empty}\n";
+                preambleTemplates["LaTeX"] = "\\documentclass[fleqn]{article}\n\\usepackage{amsmath,amssymb}\n\\pagestyle{empty}\n";
+                preambleTemplates["XeLaTeX"] = "\\documentclass[fleqn]{bxjsarticle}\n\\usepackage{zxjatype}\n\\usepackage{amsmath,amssymb}\n\\pagestyle{empty}\n";
+                preambleTemplates["LuaLaTeX"] = "\\documentclass[fleqn]{ltjsarticle}\n\\usepackage{amsmath,amssymb}\n\\pagestyle{empty}\n";
+                preambleTemplateCollection = DictionaryToStringCollection(preambleTemplates);
+            } else preambleTemplates = StringCollectionToDictionary(preambleTemplateCollection);
             base.OnSettingsLoaded(sender, e);
         }
 
@@ -53,6 +62,7 @@
             editorEOFColorFont = editorFontColor["改行，EOF"].Font;
             editorMatchedBracketColorFont = editorFontColor["対応する括弧"].Font;
             editorMatchedBracketColorBack = editorFontColor["対応する括弧"].Back;
+            preambleTemplateCollection = DictionaryToStringCollection(preambleTemplates);
             base.OnSettingsSaving(sender, e);
         }
 
@@ -60,8 +70,8 @@
             if(SaveSettings) base.Save();
         }
 
-        public string GuessPlatexPath(bool uplatex = false) {
-            return Converter.which(uplatex ? "uplatex" : "platex");
+        public string GuessPlatexPath() {
+            return Converter.which("platex");
         }
         public string GuessDvipdfmxPath() {
             return Converter.which("dvipdfmx");
@@ -129,7 +139,6 @@
             return gsdevice;
         }
 
-
         public class FontColor {
             public System.Drawing.Color Font { get; set; }
             public System.Drawing.Color Back { get; set; }
@@ -148,9 +157,27 @@
                 }
             }
         }
+
         public FontColorCollection editorFontColor = new FontColorCollection();
         public bool SaveSettings = true;
         public enum BatchMode { Default, NonStop, Stop };
         public BatchMode batchMode = BatchMode.Default;
+
+        public System.Collections.Generic.Dictionary<string, string> preambleTemplates;
+        static System.Collections.Generic.Dictionary<string, string> StringCollectionToDictionary(System.Collections.Specialized.StringCollection sc) {
+            var rv = new System.Collections.Generic.Dictionary<string, string>();
+            if(sc.Count % 2 != 0) throw new System.IO.InvalidDataException("Broken dictionary");
+            for(var i = 0 ; i < sc.Count ; i += 2) rv.Add(sc[i], sc[i + 1]);
+            return rv;
+        }
+        static System.Collections.Specialized.StringCollection DictionaryToStringCollection(System.Collections.Generic.Dictionary<string, string> dic) {
+            var rv = new System.Collections.Specialized.StringCollection();
+            foreach(var d in dic) {
+                rv.Add(d.Key);
+                rv.Add(d.Value);
+            }
+            return rv;
+        }
+
     }
 }
