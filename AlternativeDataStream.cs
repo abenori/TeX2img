@@ -33,12 +33,17 @@ namespace TeX2img {
         const uint FILE_ATTRIBUTE_SYSTEM = 0x00000004;
         const uint FILE_ATTRIBUTE_TEMPORARY = 0x00000100;
 
-        [DllImport("kernel32.dll", CharSet = CharSet.Unicode,SetLastError=true)]
+        [DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
         private static extern SafeFileHandle CreateFile(string lpFileName, uint dwDesiredAccess, uint dwShareMode, IntPtr lpSecurityAttributes, uint dwCreationDisposition, uint dwFlagsAndAttributes, IntPtr hTemplateFile);
 
         static bool IsDriveNTFS(string path) {
             try {
-                var drive = path.Substring(0, 1);
+                string drive;
+                if(path[1] == ':') {
+                    drive = path.Substring(0, 1);
+                } else {
+                    drive = System.IO.Directory.GetCurrentDirectory().Substring(0,1);
+                }
                 var info = new System.IO.DriveInfo(drive);
                 return (info.DriveFormat == "NTFS");
             }
@@ -47,14 +52,14 @@ namespace TeX2img {
             }
         }
 
-        public static FileStream WriteAlternativeFileStream(string file, string streamname){
+        public static FileStream WriteAlternativeDataStream(string file, string streamname){
             if(!IsDriveNTFS(file)) throw new NotImplementedException();
             var fileHandle = CreateFile(file + ":" + streamname, GENERIC_WRITE, FILE_SHARE_READ, IntPtr.Zero, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, IntPtr.Zero);
             if(fileHandle.IsInvalid)Marshal.ThrowExceptionForHR(Marshal.GetHRForLastWin32Error());
             return new FileStream(fileHandle, FileAccess.Write);
         }
 
-        public static FileStream ReadAlternativeFileStream(string file, string streamname) {
+        public static FileStream ReadAlternativeDataStream(string file, string streamname) {
             if(!IsDriveNTFS(file)) throw new NotImplementedException();
             var fileHandle = CreateFile(file + ":" + streamname, GENERIC_READ, FILE_SHARE_READ, IntPtr.Zero, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, IntPtr.Zero);
             if(fileHandle.IsInvalid) Marshal.ThrowExceptionForHR(Marshal.GetHRForLastWin32Error());

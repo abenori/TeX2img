@@ -53,7 +53,7 @@ namespace TeX2img {
 			{"ignore-errors","少々のエラーは無視する[-]",val => {Properties.Settings.Default.ignoreErrorFlag = (val != null);}},
             {"no-delete","一時ファイルを削除しない[-]",val => {Properties.Settings.Default.deleteTmpFileFlag = !(val != null);}},
 			{"preview","生成されたファイルを開く",val => {preview = (val != null);}},
-            {"no-embed-source=","ソース情報を生成ファイルに保存しない[-]",val => {Properties.Settings.Default.embedTeXSource =(val != null);}},
+            {"no-embed-source","ソース情報を生成ファイルに保存しない[-]",val => {Properties.Settings.Default.embedTeXSource = !(val != null);}},
 			{"savesettings","設定の保存を行う",val => {Properties.Settings.Default.SaveSettings = (val != null);}},
 			{"quiet","Quiet モード",val => {quiet = true;}},
             {"batch=","Batch モード（stop/nonstop）", val => {
@@ -182,7 +182,7 @@ namespace TeX2img {
 
             // コマンドライン解析
             var cmds = new List<string>(Environment.GetCommandLineArgs());
-            //cmds = new List<string> { "TeX2img.exe", "/nogui", "/nopipe", "/help" };
+            //var cmds = new List<string> { "TeX2img.exe", "/nogui", "/help" };
             // 一つ目がTeX2img本体ならば削除
             // abtlinstからCreateProcessで呼び出すとTeX2img本体にならなかったので，一応確認をする．
             if(cmds.Count > 0) {

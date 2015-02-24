@@ -679,7 +679,7 @@ namespace TeX2img {
                         if(enc == null) enc = GetInputEncoding();
                         var srctext = enc.GetString(buf);
                         foreach(var d in outputFileNames) {
-                            using(var fs = AlternativeDataStream.WriteAlternativeFileStream(d, ADSName))
+                            using(var fs = AlternativeDataStream.WriteAlternativeDataStream(d, ADSName))
                             using(var ws = new StreamWriter(fs, new UTF8Encoding(false))) {
                                 ws.Write(srctext);
                             }
@@ -687,6 +687,7 @@ namespace TeX2img {
                     }
                 }
                 catch(IOException) { }
+                catch(NotImplementedException) { }
             }
             return true;
         }

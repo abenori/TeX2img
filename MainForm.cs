@@ -419,7 +419,7 @@ namespace TeX2img {
         public static void ImportImageFile(string path, out string preamble, out string body) {
             preamble = null; body = null;
             try {
-                using(var fs = AlternativeDataStream.ReadAlternativeFileStream(path, Converter.ADSName))
+                using(var fs = AlternativeDataStream.ReadAlternativeDataStream(path, Converter.ADSName))
                 using(var sr = new StreamReader(fs,Encoding.UTF8)){
                     if(!ParseTeXSourceFile(sr, out preamble, out body)) {
                         MessageBox.Show("TeX ソースファイルの解析に失敗しました．\n\\begin{document} や \\end{document} 等が正しく入力されているか確認してください．", "TeX2img");
