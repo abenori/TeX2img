@@ -75,6 +75,7 @@ namespace TeX2img {
             previewCheckBox.Checked = Properties.Settings.Default.previewFlag;
             deleteTmpFilesCheckBox.Checked = Properties.Settings.Default.deleteTmpFileFlag;
             ignoreErrorCheckBox.Checked = Properties.Settings.Default.ignoreErrorFlag;
+            embedTeXSourCecheckBox.Checked = Properties.Settings.Default.embedTeXSource;
 
             SettingTab.SelectedIndex = Properties.Settings.Default.settingTabIndex;
 
@@ -130,6 +131,7 @@ namespace TeX2img {
             Properties.Settings.Default.previewFlag = previewCheckBox.Checked;
             Properties.Settings.Default.deleteTmpFileFlag = deleteTmpFilesCheckBox.Checked;
             Properties.Settings.Default.ignoreErrorFlag = ignoreErrorCheckBox.Checked;
+            Properties.Settings.Default.embedTeXSource = embedTeXSourCecheckBox.Checked;
 
             Properties.Settings.Default.settingTabIndex = SettingTab.SelectedIndex;
 

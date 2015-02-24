@@ -9,6 +9,9 @@ using System.Text.RegularExpressions;
 
 namespace TeX2img {
     class Converter {
+        // ADS名
+        public const string ADSName = "TeX2img.source";
+
         public static string which(string basename) {
             string separator, fullPath;
             string[] extensions = { "", ".exe", ".bat", ".cmd", ".vbs", ".js", ".wsf" };
@@ -641,14 +644,17 @@ namespace TeX2img {
             }
 
             // 出力ファイルをターゲットディレクトリにコピー
+            var outputFileNames = new List<string>();
             try {
                 if(page == 1) {
                     File.Copy(Path.Combine(workingDir, tmpFileBaseName + "-1" + extension), outputFilePath, true);
+                    outputFileNames.Add(outputFilePath);
                     if(Properties.Settings.Default.previewFlag) Process.Start(outputFilePath);
                 } else {
                     string outputFilePathBaseName = Path.Combine(Path.GetDirectoryName(outputFilePath), Path.GetFileNameWithoutExtension(outputFilePath));
                     for(int i = 1 ; i <= page ; ++i) {
                         File.Copy(Path.Combine(workingDir, tmpFileBaseName + "-" + i + extension), outputFilePathBaseName + "-" + i + extension, true);
+                        outputFileNames.Add(outputFilePathBaseName + "-" + i + extension);
                     }
                     outputFilePath = outputFilePathBaseName + "-1" + extension;
                     if(Properties.Settings.Default.previewFlag) Process.Start(outputFilePath);
@@ -660,6 +666,27 @@ namespace TeX2img {
             }
             catch(IOException) {
                 controller_.showIOError(outputFilePath);
+            }
+
+            if(Properties.Settings.Default.embedTeXSource) {
+                // Alternative Data Streamにソースを書き込む
+                try {
+                    using(var source = new FileStream(inputTeXFilePath, FileMode.Open, FileAccess.Read)) {
+                        var buf = new byte[source.Length];
+                        source.Read(buf, 0, (int) source.Length);
+                        // エンコードの決定
+                        var enc = KanjiEncoding.CheckBOM(buf);
+                        if(enc == null) enc = GetInputEncoding();
+                        var srctext = enc.GetString(buf);
+                        foreach(var d in outputFileNames) {
+                            using(var fs = AlternativeDataStream.WriteAlternativeFileStream(d, ADSName))
+                            using(var ws = new StreamWriter(fs, new UTF8Encoding(false))) {
+                                ws.Write(srctext);
+                            }
+                        }
+                    }
+                }
+                catch(IOException) { }
             }
             return true;
         }

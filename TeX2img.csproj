@@ -76,6 +76,7 @@
     <Compile Include="AboutDialog.Designer.cs">
       <DependentUpon>AboutDialog.cs</DependentUpon>
     </Compile>
+    <Compile Include="AlternativeDataStream.cs" />
     <Compile Include="AnalyzeLaTeXCompile.cs" />
     <Compile Include="Converter.cs" />
     <Compile Include="CUIOutput.cs" />

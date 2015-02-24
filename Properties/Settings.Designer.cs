@@ -646,5 +646,17 @@ namespace TeX2img.Properties {
                 this["TeX2imgVersion"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool embedTeXSource {
+            get {
+                return ((bool)(this["embedTeXSource"]));
+            }
+            set {
+                this["embedTeXSource"] = value;
+            }
+        }
     }
 }

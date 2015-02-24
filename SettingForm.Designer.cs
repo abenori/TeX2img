@@ -100,6 +100,7 @@
             this.platexOpenFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.dvipdfmxOpenFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.gsOpenFileDialog = new System.Windows.Forms.OpenFileDialog();
+            this.embedTeXSourCecheckBox = new System.Windows.Forms.CheckBox();
             this.SettingTab.SuspendLayout();
             this.BasicSettingTab.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.LaTeXCompileNumbernumUpDown)).BeginInit();
@@ -592,6 +593,7 @@
             // 
             // AfterCompilingTab
             // 
+            this.AfterCompilingTab.Controls.Add(this.embedTeXSourCecheckBox);
             this.AfterCompilingTab.Controls.Add(this.showOutputWindowCheckBox);
             this.AfterCompilingTab.Controls.Add(this.previewCheckBox);
             this.AfterCompilingTab.Controls.Add(this.openTmpFolderButton);
@@ -633,7 +635,7 @@
             // 
             // openTmpFolderButton
             // 
-            this.openTmpFolderButton.Location = new System.Drawing.Point(25, 128);
+            this.openTmpFolderButton.Location = new System.Drawing.Point(25, 162);
             this.openTmpFolderButton.Margin = new System.Windows.Forms.Padding(5, 4, 5, 4);
             this.openTmpFolderButton.Name = "openTmpFolderButton";
             this.openTmpFolderButton.Size = new System.Drawing.Size(260, 30);
@@ -827,6 +829,16 @@
             this.gsOpenFileDialog.FileName = "gswin32c.exe";
             this.gsOpenFileDialog.Filter = "exe ファイル (*.exe)|*.exe|bat ファイル (*.bat)|*.bat|すべてのファイル (*.*)|*.*";
             // 
+            // embedTeXSourCecheckBox
+            // 
+            this.embedTeXSourCecheckBox.AutoSize = true;
+            this.embedTeXSourCecheckBox.Location = new System.Drawing.Point(25, 128);
+            this.embedTeXSourCecheckBox.Name = "embedTeXSourCecheckBox";
+            this.embedTeXSourCecheckBox.Size = new System.Drawing.Size(379, 22);
+            this.embedTeXSourCecheckBox.TabIndex = 4;
+            this.embedTeXSourCecheckBox.Text = "生成したファイルからソースを復元できるようにする";
+            this.embedTeXSourCecheckBox.UseVisualStyleBackColor = true;
+            // 
             // SettingForm
             // 
             this.AcceptButton = this.OKButton;
@@ -936,5 +948,6 @@
         private System.Windows.Forms.Label label16;
         private System.Windows.Forms.NumericUpDown LaTeXCompileNumbernumUpDown;
         private System.Windows.Forms.Button GuessPathButton;
+        private System.Windows.Forms.CheckBox embedTeXSourCecheckBox;
     }
 }

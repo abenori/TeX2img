@@ -375,10 +375,11 @@ namespace TeX2img {
         #endregion
 
         private void ImportToolStripMenuItem_Click(object sender, EventArgs e) {
-            if(MessageBox.Show("TeX ソースファイルをインポートします．\n現在のプリアンブル及び編集中のソースは破棄されます．\nよろしいですか？", "TeX2img", MessageBoxButtons.YesNo) == System.Windows.Forms.DialogResult.No) return;
             if(openFileDialog1.ShowDialog() == DialogResult.OK) {
                 try {
-                    ImportFile(openFileDialog1.FileName);
+                    if(MessageBox.Show("TeX ソースファイルをインポートします．\n現在のプリアンブル及び編集中のソースは破棄されます．\nよろしいですか？", "TeX2img", MessageBoxButtons.YesNo) == System.Windows.Forms.DialogResult.Yes) {
+                        ImportFile(openFileDialog1.FileName);
+                    }
                 }
                 catch(FileNotFoundException) {
                     MessageBox.Show(openFileDialog1.FileName + " は存在しません．");
@@ -410,8 +411,32 @@ namespace TeX2img {
             if(body != null) sourceTextBox.Text = body;
         }
 
-        public static void ImportFile(string path,out string preamble,out string body){
+        public static void ImportFile(string path, out string preamble, out string body) {
+            if(Properties.Settings.Default.embedTeXSource && Path.GetExtension(path).ToLower() != ".tex") ImportImageFile(path, out preamble, out body);
+            else ImportTeXFile(path, out preamble, out body);
+        }
+
+        public static void ImportImageFile(string path, out string preamble, out string body) {
             preamble = null; body = null;
+            try {
+                using(var fs = AlternativeDataStream.ReadAlternativeFileStream(path, Converter.ADSName))
+                using(var sr = new StreamReader(fs,Encoding.UTF8)){
+                    if(!ParseTeXSourceFile(sr, out preamble, out body)) {
+                        MessageBox.Show("TeX ソースファイルの解析に失敗しました．\n\\begin{document} や \\end{document} 等が正しく入力されているか確認してください．", "TeX2img");
+                    }
+                }
+            }
+            catch(IOException) {
+                MessageBox.Show(path + "\nは開けませんでした．", "TeX2img");
+            }
+            catch(NotImplementedException) {
+                MessageBox.Show("NTFS ファイルシステム以外ではソースファイルの埋め込みはサポートされていません．");
+            }
+        }
+
+        public static void ImportTeXFile(string path,out string preamble,out string body){
+            preamble = null; body = null;
+            var extension = Path.GetExtension(path).ToLower();
             byte[] buf;
             using(var fs = new FileStream(path, FileMode.Open, FileAccess.Read)) {
                 buf = new byte[fs.Length];
