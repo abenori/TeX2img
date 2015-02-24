@@ -67,7 +67,7 @@
             this.preambleTextBox.FontInfo = fontInfo1;
             this.preambleTextBox.ForeColor = System.Drawing.Color.Black;
             this.preambleTextBox.HighlightsCurrentLine = false;
-            this.preambleTextBox.Location = new System.Drawing.Point(20, 18);
+            this.preambleTextBox.Location = new System.Drawing.Point(14, 13);
             this.preambleTextBox.Margin = new System.Windows.Forms.Padding(5, 4, 5, 4);
             this.preambleTextBox.Name = "preambleTextBox";
             this.preambleTextBox.ScrollPos = new System.Drawing.Point(0, 0);
@@ -75,7 +75,7 @@
             this.preambleTextBox.ShowsDirtBar = false;
             this.preambleTextBox.ShowsHScrollBar = false;
             this.preambleTextBox.ShowsLineNumber = false;
-            this.preambleTextBox.Size = new System.Drawing.Size(580, 451);
+            this.preambleTextBox.Size = new System.Drawing.Size(592, 456);
             this.preambleTextBox.TabIndex = 4;
             this.preambleTextBox.TabWidth = 4;
             this.preambleTextBox.ViewType = Sgry.Azuki.ViewType.WrappedProportional;
@@ -158,11 +158,11 @@
             // TemplateButon
             // 
             this.TemplateButon.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.TemplateButon.Location = new System.Drawing.Point(420, 476);
+            this.TemplateButon.Location = new System.Drawing.Point(428, 476);
             this.TemplateButon.Name = "TemplateButon";
             this.TemplateButon.Size = new System.Drawing.Size(180, 40);
             this.TemplateButon.TabIndex = 5;
-            this.TemplateButon.Text = "テンプレート";
+            this.TemplateButon.Text = "テンプレート ▼";
             this.TemplateButon.UseVisualStyleBackColor = true;
             this.TemplateButon.Click += new System.EventHandler(this.TemplateButon_Click);
             // 

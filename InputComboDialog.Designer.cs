@@ -1,5 +1,5 @@
 ﻿namespace TeX2img {
-    partial class InputDialog {
+    partial class InputComboDialog {
         /// <summary>
         /// Required designer variable.
         /// </summary>
@@ -23,18 +23,11 @@
         /// the contents of this method with the code editor.
         /// </summary>
         private void InitializeComponent() {
-            this.InputTextBox = new System.Windows.Forms.TextBox();
             this.OKButton = new System.Windows.Forms.Button();
             this.Cancel_Button = new System.Windows.Forms.Button();
             this.InputDialogLabel = new System.Windows.Forms.Label();
+            this.InputComboBox = new System.Windows.Forms.ComboBox();
             this.SuspendLayout();
-            // 
-            // InputTextBox
-            // 
-            this.InputTextBox.Location = new System.Drawing.Point(12, 83);
-            this.InputTextBox.Name = "InputTextBox";
-            this.InputTextBox.Size = new System.Drawing.Size(484, 25);
-            this.InputTextBox.TabIndex = 0;
             // 
             // OKButton
             // 
@@ -67,19 +60,27 @@
             this.InputDialogLabel.Size = new System.Drawing.Size(0, 18);
             this.InputDialogLabel.TabIndex = 3;
             // 
-            // InputDialog
+            // InputComboBox
+            // 
+            this.InputComboBox.FormattingEnabled = true;
+            this.InputComboBox.Location = new System.Drawing.Point(15, 81);
+            this.InputComboBox.Name = "InputComboBox";
+            this.InputComboBox.Size = new System.Drawing.Size(481, 26);
+            this.InputComboBox.TabIndex = 4;
+            // 
+            // InputComboDialog
             // 
             this.AcceptButton = this.OKButton;
             this.AutoScaleDimensions = new System.Drawing.SizeF(10F, 18F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.Cancel_Button;
             this.ClientSize = new System.Drawing.Size(508, 172);
+            this.Controls.Add(this.InputComboBox);
             this.Controls.Add(this.InputDialogLabel);
             this.Controls.Add(this.Cancel_Button);
             this.Controls.Add(this.OKButton);
-            this.Controls.Add(this.InputTextBox);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
-            this.Name = "InputDialog";
+            this.Name = "InputComboDialog";
             this.ShowIcon = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.ResumeLayout(false);
@@ -89,10 +90,10 @@
 
         #endregion
 
-        private System.Windows.Forms.TextBox InputTextBox;
         private System.Windows.Forms.Button OKButton;
         private System.Windows.Forms.Button Cancel_Button;
         private System.Windows.Forms.Label InputDialogLabel;
+        private System.Windows.Forms.ComboBox InputComboBox;
 
     }
 }

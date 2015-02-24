@@ -28,6 +28,7 @@ namespace TeX2img {
             sourceTextBox.Highlighter = Sgry.Azuki.Highlighter.Highlighters.Latex;
             sourceTextBox.Resize += delegate { sourceTextBox.ViewWidth = sourceTextBox.ClientSize.Width; };
             sourceTextBox.ShowsHScrollBar = false;
+            sourceTextBox.Document.WordProc.EnableWordWrap = false;
             loadSettings();
 
             if(InputFromTextboxRadioButton.Checked) ActiveControl = sourceTextBox;
@@ -402,7 +403,15 @@ namespace TeX2img {
             }
         }
 
-        public void ImportFile(string path,bool preambleFlag = true,bool bodyFlag = true) {
+        public void ImportFile(string path) {
+            string preamble, body;
+            ImportFile(path, out preamble, out body);
+            if(preamble != null) myPreambleForm.PreambleTextBox.Text = preamble;
+            if(body != null) sourceTextBox.Text = body;
+        }
+
+        public static void ImportFile(string path,out string preamble,out string body){
+            preamble = null; body = null;
             byte[] buf;
             using(var fs = new FileStream(path, FileMode.Open, FileAccess.Read)) {
                 buf = new byte[fs.Length];
@@ -441,12 +450,8 @@ namespace TeX2img {
                 }
             }
             using(var sr = new StringReader(encoding.GetString(buf))) {
-                string body, preamble;
-                if(ParseTeXSourceFile(sr, out preamble, out body)) {
-                    if(preambleFlag && preamble != null) myPreambleForm.PreambleTextBox.Text = preamble;
-                    if(bodyFlag && body != null) sourceTextBox.Text = body;
-                } else {
-                    MessageBox.Show("TeX ソースファイルの解析に失敗しました．\n\\begin{document} や \\end{document} 等が正しく入力されているか確認してください．","TeX2img");
+                if(!ParseTeXSourceFile(sr, out preamble,out body)) {
+                   MessageBox.Show("TeX ソースファイルの解析に失敗しました．\n\\begin{document} や \\end{document} 等が正しく入力されているか確認してください．","TeX2img");
                 }
             }
         }

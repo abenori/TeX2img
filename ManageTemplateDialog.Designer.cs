@@ -25,13 +25,13 @@
         private void InitializeComponent() {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ManageTemplateDialog));
             this.TemplateListBox = new System.Windows.Forms.ListBox();
-            this.label1 = new System.Windows.Forms.Label();
-            this.NewButton = new System.Windows.Forms.Button();
-            this.SaveButton = new System.Windows.Forms.Button();
             this.DeleteButton = new System.Windows.Forms.Button();
             this.ShowButton = new System.Windows.Forms.Button();
             this.OKButton = new System.Windows.Forms.Button();
             this.Cancel_Button = new System.Windows.Forms.Button();
+            this.BackToDefaultButton = new System.Windows.Forms.Button();
+            this.AddNewButton = new System.Windows.Forms.Button();
+            this.SaveButton = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // TemplateListBox
@@ -45,56 +45,25 @@
             this.TemplateListBox.Size = new System.Drawing.Size(218, 256);
             this.TemplateListBox.TabIndex = 0;
             // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(254, 12);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(154, 18);
-            this.label1.TabIndex = 1;
-            this.label1.Text = "現在のプリアンブルを";
-            // 
-            // NewButton
-            // 
-            this.NewButton.Anchor = System.Windows.Forms.AnchorStyles.Right;
-            this.NewButton.Location = new System.Drawing.Point(290, 33);
-            this.NewButton.Name = "NewButton";
-            this.NewButton.Size = new System.Drawing.Size(179, 34);
-            this.NewButton.TabIndex = 2;
-            this.NewButton.Text = "新規保存";
-            this.NewButton.UseVisualStyleBackColor = true;
-            this.NewButton.Click += new System.EventHandler(this.NewButton_Click);
-            // 
-            // SaveButton
-            // 
-            this.SaveButton.Anchor = System.Windows.Forms.AnchorStyles.Right;
-            this.SaveButton.Location = new System.Drawing.Point(290, 72);
-            this.SaveButton.Name = "SaveButton";
-            this.SaveButton.Size = new System.Drawing.Size(179, 35);
-            this.SaveButton.TabIndex = 3;
-            this.SaveButton.Text = "上書き保存";
-            this.SaveButton.UseVisualStyleBackColor = true;
-            this.SaveButton.Click += new System.EventHandler(this.SaveButton_Click);
-            // 
             // DeleteButton
             // 
             this.DeleteButton.Anchor = System.Windows.Forms.AnchorStyles.Right;
-            this.DeleteButton.Location = new System.Drawing.Point(257, 135);
+            this.DeleteButton.Location = new System.Drawing.Point(257, 89);
             this.DeleteButton.Name = "DeleteButton";
             this.DeleteButton.Size = new System.Drawing.Size(212, 34);
             this.DeleteButton.TabIndex = 4;
-            this.DeleteButton.Text = "テンプレートを削除";
+            this.DeleteButton.Text = "削除";
             this.DeleteButton.UseVisualStyleBackColor = true;
             this.DeleteButton.Click += new System.EventHandler(this.DeleteButton_Click);
             // 
             // ShowButton
             // 
             this.ShowButton.Anchor = System.Windows.Forms.AnchorStyles.Right;
-            this.ShowButton.Location = new System.Drawing.Point(257, 178);
+            this.ShowButton.Location = new System.Drawing.Point(257, 129);
             this.ShowButton.Name = "ShowButton";
             this.ShowButton.Size = new System.Drawing.Size(212, 33);
             this.ShowButton.TabIndex = 5;
-            this.ShowButton.Text = "テンプレートを表示";
+            this.ShowButton.Text = "中身を表示";
             this.ShowButton.UseVisualStyleBackColor = true;
             this.ShowButton.Click += new System.EventHandler(this.ShowButton_Click);
             // 
@@ -103,7 +72,7 @@
             this.OKButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.OKButton.Location = new System.Drawing.Point(257, 233);
             this.OKButton.Name = "OKButton";
-            this.OKButton.Size = new System.Drawing.Size(106, 36);
+            this.OKButton.Size = new System.Drawing.Size(102, 36);
             this.OKButton.TabIndex = 6;
             this.OKButton.Text = "OK";
             this.OKButton.UseVisualStyleBackColor = true;
@@ -113,13 +82,43 @@
             // 
             this.Cancel_Button.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.Cancel_Button.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.Cancel_Button.Location = new System.Drawing.Point(369, 233);
+            this.Cancel_Button.Location = new System.Drawing.Point(365, 233);
             this.Cancel_Button.Name = "Cancel_Button";
-            this.Cancel_Button.Size = new System.Drawing.Size(100, 36);
+            this.Cancel_Button.Size = new System.Drawing.Size(104, 36);
             this.Cancel_Button.TabIndex = 7;
             this.Cancel_Button.Text = "キャンセル";
             this.Cancel_Button.UseVisualStyleBackColor = true;
             this.Cancel_Button.Click += new System.EventHandler(this.Cancel_Button_Click);
+            // 
+            // BackToDefaultButton
+            // 
+            this.BackToDefaultButton.Location = new System.Drawing.Point(257, 168);
+            this.BackToDefaultButton.Name = "BackToDefaultButton";
+            this.BackToDefaultButton.Size = new System.Drawing.Size(212, 36);
+            this.BackToDefaultButton.TabIndex = 8;
+            this.BackToDefaultButton.Text = "デフォルトに戻す  ▶";
+            this.BackToDefaultButton.UseVisualStyleBackColor = true;
+            this.BackToDefaultButton.Click += new System.EventHandler(this.BackToDefaultButton_Click);
+            // 
+            // AddNewButton
+            // 
+            this.AddNewButton.Location = new System.Drawing.Point(257, 12);
+            this.AddNewButton.Name = "AddNewButton";
+            this.AddNewButton.Size = new System.Drawing.Size(212, 31);
+            this.AddNewButton.TabIndex = 9;
+            this.AddNewButton.Text = "テンプレートの追加  ▶";
+            this.AddNewButton.UseVisualStyleBackColor = true;
+            this.AddNewButton.Click += new System.EventHandler(this.AddNewButton_Click);
+            // 
+            // SaveButton
+            // 
+            this.SaveButton.Location = new System.Drawing.Point(257, 49);
+            this.SaveButton.Name = "SaveButton";
+            this.SaveButton.Size = new System.Drawing.Size(212, 34);
+            this.SaveButton.TabIndex = 10;
+            this.SaveButton.Text = "テンプレートの上書き  ▶";
+            this.SaveButton.UseVisualStyleBackColor = true;
+            this.SaveButton.Click += new System.EventHandler(this.SaveButton_Click);
             // 
             // ManageTemplateDialog
             // 
@@ -128,13 +127,13 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.Cancel_Button;
             this.ClientSize = new System.Drawing.Size(481, 281);
+            this.Controls.Add(this.SaveButton);
+            this.Controls.Add(this.AddNewButton);
+            this.Controls.Add(this.BackToDefaultButton);
             this.Controls.Add(this.Cancel_Button);
             this.Controls.Add(this.OKButton);
             this.Controls.Add(this.ShowButton);
             this.Controls.Add(this.DeleteButton);
-            this.Controls.Add(this.SaveButton);
-            this.Controls.Add(this.NewButton);
-            this.Controls.Add(this.label1);
             this.Controls.Add(this.TemplateListBox);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
@@ -143,20 +142,19 @@
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "テンプレートの管理";
             this.ResumeLayout(false);
-            this.PerformLayout();
 
         }
 
         #endregion
 
         private System.Windows.Forms.ListBox TemplateListBox;
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.Button NewButton;
-        private System.Windows.Forms.Button SaveButton;
         private System.Windows.Forms.Button DeleteButton;
         private System.Windows.Forms.Button ShowButton;
         private System.Windows.Forms.Button OKButton;
         private System.Windows.Forms.Button Cancel_Button;
+        private System.Windows.Forms.Button BackToDefaultButton;
+        private System.Windows.Forms.Button AddNewButton;
+        private System.Windows.Forms.Button SaveButton;
 
     }
 }
