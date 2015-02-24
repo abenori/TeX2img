@@ -53,6 +53,7 @@ namespace TeX2img {
 			{"ignore-errors","少々のエラーは無視する[-]",val => {Properties.Settings.Default.ignoreErrorFlag = (val != null);}},
             {"no-delete","一時ファイルを削除しない[-]",val => {Properties.Settings.Default.deleteTmpFileFlag = !(val != null);}},
 			{"preview","生成されたファイルを開く",val => {preview = (val != null);}},
+            {"no-embed-source=","ソース情報を生成ファイルに保存しない[-]",val => {Properties.Settings.Default.embedTeXSource =(val != null);}},
 			{"savesettings","設定の保存を行う",val => {Properties.Settings.Default.SaveSettings = (val != null);}},
 			{"quiet","Quiet モード",val => {quiet = true;}},
             {"batch=","Batch モード（stop/nonstop）", val => {
