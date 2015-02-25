@@ -375,14 +375,16 @@ namespace TeX2img {
         #endregion
 
         private void ImportToolStripMenuItem_Click(object sender, EventArgs e) {
-            if(openFileDialog1.ShowDialog() == DialogResult.OK) {
+            var ofd = new OpenFileDialog();
+            ofd.Filter = "TeX ソースファイル (*.tex)|*.tex|画像ファイル (*.eps, *.jpg, *.png, *.pdf)|*.pdf;*.eps;*.png;*.jpg|全てのファイル (*.*)|*.*";
+            if(ofd.ShowDialog() == DialogResult.OK) {
                 try {
-                    if(MessageBox.Show("TeX ソースファイルをインポートします．\n現在のプリアンブル及び編集中のソースは破棄されます．\nよろしいですか？", "TeX2img", MessageBoxButtons.YesNo) == System.Windows.Forms.DialogResult.Yes) {
-                        ImportFile(openFileDialog1.FileName);
+                    if(MessageBox.Show("ファイルをインポートします．\n現在のプリアンブル及び編集中のソースは破棄されます．\nよろしいですか？", "TeX2img", MessageBoxButtons.YesNo) == System.Windows.Forms.DialogResult.Yes) {
+                        ImportFile(ofd.FileName);
                     }
                 }
                 catch(FileNotFoundException) {
-                    MessageBox.Show(openFileDialog1.FileName + " は存在しません．");
+                    MessageBox.Show(ofd.FileName + " は存在しません．");
                 }
             }
         }
@@ -412,7 +414,9 @@ namespace TeX2img {
         }
 
         public static void ImportFile(string path, out string preamble, out string body) {
-            if(Properties.Settings.Default.embedTeXSource && Path.GetExtension(path).ToLower() != ".tex") ImportImageFile(path, out preamble, out body);
+            var ext = Path.GetExtension(path).ToLower();
+            bool image = (ext == ".pdf" || ext == ".eps" || ext == ".png" || ext == ".jpg");
+            if(Properties.Settings.Default.embedTeXSource && image) ImportImageFile(path, out preamble, out body);
             else ImportTeXFile(path, out preamble, out body);
         }
 
@@ -427,7 +431,11 @@ namespace TeX2img {
                 }
             }
             catch(IOException) {
-                MessageBox.Show(path + "\nは開けませんでした．", "TeX2img");
+                if(File.Exists(path)) {
+                    MessageBox.Show(path + "\nにはソース情報がないようです．", "TeX2img");
+                } else {
+                    MessageBox.Show(path + "\nは開けませんでした．", "TeX2img");
+                }
             }
             catch(NotImplementedException) {
                 MessageBox.Show("NTFS ファイルシステム以外ではソースファイルの埋め込みはサポートされていません．");

@@ -103,7 +103,12 @@ namespace TeX2img {
                     }
                 } else {
                     try {
-                        preambleTextBox.Text = Properties.Settings.Default.preambleTemplates[tag];
+                        var text = Properties.Settings.Default.preambleTemplates[tag];
+                        if(text != null) {
+                            if(MessageBox.Show("現在のプリアンブルを以下の内容に変更します．よろしいですか？\n" + text, "TeX2img", MessageBoxButtons.YesNo) == System.Windows.Forms.DialogResult.Yes) {
+                                preambleTextBox.Text = text;
+                            }
+                        }
                     }
                     catch(KeyNotFoundException) { }
                     catch(ArgumentNullException) { }

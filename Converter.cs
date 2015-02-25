@@ -686,6 +686,7 @@ namespace TeX2img {
                         }
                     }
                 }
+                // 例外は無視
                 catch(IOException) { }
                 catch(NotImplementedException) { }
             }
@@ -710,7 +711,7 @@ namespace TeX2img {
                     }
                 }
             }
-            catch { }
+            catch { }// 例外は無視
         }
 
         private string getImageMagickPath() {
