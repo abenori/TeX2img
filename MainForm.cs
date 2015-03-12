@@ -50,6 +50,8 @@ namespace TeX2img {
 
         #region 設定値の読み書き
         private void loadSettings() {
+            sourceTextBox.Text = "あいうえお";
+
             const int minLength = 50;
             if(Properties.Settings.Default.Height > minLength) this.Height = Properties.Settings.Default.Height;
             if(Properties.Settings.Default.Width > minLength) this.Width = Properties.Settings.Default.Width;
@@ -215,6 +217,10 @@ namespace TeX2img {
 
         public bool askYesorNo(string msg) {
             return (MessageBox.Show(msg, "TeX2img", MessageBoxButtons.YesNo) == System.Windows.Forms.DialogResult.Yes);
+        }
+
+        public void showPstoeditError() {
+            MessageBox.Show(@".\pstoedit\pstoedit.exe を起動することができませんでした。" + "\n付属の pstoedit フォルダを消さないでください。", "失敗", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
         }
         #endregion
 
@@ -393,7 +399,7 @@ namespace TeX2img {
             var sfd = new SaveFileDialog();
             sfd.Filter = "TeX ソースファイル (*.tex)|*.tex|全てのファイル (*.*)|*.*";
             if(sfd.ShowDialog() == System.Windows.Forms.DialogResult.OK) {
-                Encoding encoding = Converter.GetInputEncoding();
+                var encoding = Converter.GetInputEncoding();
                 if(encoding.CodePage == Encoding.UTF8.CodePage) encoding = new System.Text.UTF8Encoding(false);
                 try {
                     using(var file = new StreamWriter(sfd.FileName, false, encoding)) {

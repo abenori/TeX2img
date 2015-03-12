@@ -84,7 +84,10 @@ namespace TeX2img {
                     if(buf != null) {
                         if(aux[ext] == null) rv = true;
                         else if(!buf.SequenceEqual(aux[ext])) rv = true;
-                    } else if(aux[ext] != null) rv = true;
+                    } else if(aux[ext] != null) {
+                        if(ext == ".aux") return false;// .auxが生成されていない：おそらくLaTeXではないので推測を打ち切る
+                        else rv = true;
+                    }
                 }
                 aux[ext] = buf;
             }

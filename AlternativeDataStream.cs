@@ -55,7 +55,7 @@ namespace TeX2img {
         public static FileStream WriteAlternativeDataStream(string file, string streamname){
             if(!IsDriveNTFS(file)) throw new NotImplementedException();
             var fileHandle = CreateFile(file + ":" + streamname, GENERIC_WRITE, FILE_SHARE_READ, IntPtr.Zero, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, IntPtr.Zero);
-            if(fileHandle.IsInvalid)Marshal.ThrowExceptionForHR(Marshal.GetHRForLastWin32Error());
+            if(fileHandle.IsInvalid) Marshal.ThrowExceptionForHR(Marshal.GetHRForLastWin32Error());
             return new FileStream(fileHandle, FileAccess.Write);
         }
 

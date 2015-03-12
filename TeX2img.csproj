@@ -43,6 +43,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <Prefer32Bit>false</Prefer32Bit>
+    <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -107,6 +108,7 @@
     <Compile Include="OutputForm.Designer.cs">
       <DependentUpon>OutputForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="pdfium.cs" />
     <Compile Include="PreambleForm.cs">
       <SubType>Form</SubType>
     </Compile>

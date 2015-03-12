@@ -1,6 +1,6 @@
 # TeX2img
 
-(C)Abe Noriyuki http://www.math.sci.hokudai.ac.jp/~abenori/
+(C)Terada Yusuke and Abe Noriyuki http://www.math.sci.hokudai.ac.jp/~abenori/
 
 ## これは何？
 入力した TeX ソースコードを TeX でコンパイルして，次のような形式の画像で出力するアプリケーションです．
@@ -9,16 +9,22 @@
 * PNG ファイル
 * 背景を透過させた PNG ファイル
 * PDF ファイル
+* EMF ファイル
+* SVG ファイル
 
-出力した EPS / JPEG / PNG / PDF ファイルは Word / Excel / PowerPoint や，Illustrator / InDesign 等に貼り付けて利用することができます．
+出力した EPS / JPEG / PNG / PDF / EMF / SVG ファイルは Word / Excel / PowerPoint や，Illustrator / InDesign 等に貼り付けて利用することができます．
 
 もともとの作者は寺田侑祐さんです．Version 1.2 以降開発を引き継ぎました．
 
 ## 動作条件
 * .NET Framework 3.5 以降．
-* 適切な TeX ディストリビューション（W32TeX か TeX Live を推奨）がインストールされており，platex 及び dvipdfmx（等）が使えること．
+* 適切な TeX ディストリビューション（W32TeX か TeX Live を推奨）がインストールされており，platex 及び dvipdfmx，更に以下が使えること．
+** pdfinfo
+** dvisvgm
 * Ghostscript がインストールされ，使えること．（TeX Live 内のものでも大丈夫です．）
 * ImageMagick がインストールされていると，それを用いて画像を出力することができます．（必須ではありません．）
+
+
 
 ## インストール
 解凍後出てくる TeX2img.exe をダブルクリックすれば起動します．初回に platex.exe などの場所を推定しますが，推定に失敗した場合は，メニューの「ツール(T)」→「オプション... (O) Ctrl+E」から設定をしてください．
@@ -37,6 +43,8 @@ TeX2imgc.exe は CUI モードで動かすためのラッパです．TeX2img.exe
 * 内部文字コードは Unicode です．従って，platex の設定として uplatex を用いることで，Shift_JIS にない文字なども直接出力をすることができます．ただし，設定→パスの設定の文字コードにおいて，「UTF-8」または「指定しない（入力 UTF-8 ）」を選ぶ必要があります．
 
 * 「platex」で指定されたプログラムが pdf を生成したと判断した場合，TeX2img は dvipdfmx の実行をスキップします．これを利用して，pdflatex や lualatex などを指定することができます．なお，この場合は文字コードの設定を「指定しない（入力 UTF-8）」としておくとよいでしょう．
+
+* 生成された画像を TeX2img にドラッグアンドドロップ（またはメニューから「ファイル(F)」→「インポート(O)」）とすると生成した際のソースが復元されます．（オプションで無効化可能．）
 
 ## 起動オプション
 TeX2img.exe または TeX2imgc.exe が受けつけるオプションです．なお，
@@ -86,6 +94,8 @@ http://sgry.b.sourceforge.jp/
 http://www.ndesk.org/Options
 * 日本語文字コードの推測には，Gauche に含まれている推測ルーチン（を C# に移植したもの）を用いています．
 http://practical-scheme.net/gauche/index-j.html
+* EMF ファイルの作成のためにpstoeditを用いています．
+http://www.pstoedit.net/
 
 
 ## ライセンス
@@ -94,6 +104,7 @@ http://practical-scheme.net/gauche/index-j.html
 * Azuki エディタコンポーネント Azuki.dll は zlib ライセンス．
 * NDesk.Options は MIT ライセンス．
 * Gauche は修正 BSD ライセンス．
+* pstoedit は GPL ライセンス．
 詳細は各々のページをご覧ください．
 
 
@@ -170,3 +181,6 @@ http://practical-scheme.net/gauche/index-j.html
 ** プリアンブルのテンプレート機能を実装．
 ** 生成されたファイルの代替データストリームに TeX ソースを保存し，またインポートにより復元できるようにした．
 
+* 1.4.1
+** SVG ファイルを出力できるようにした．
+** EMF ファイルの出力を復活させた．

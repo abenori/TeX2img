@@ -74,6 +74,17 @@ namespace TeX2img {
         }
 
         static int TeX2imgMain(List<string> cmds) {
+            if(cmds.Count > 0) {
+                using(var meta = new System.Drawing.Imaging.Metafile(cmds[0]))
+                using(var ws = new StreamWriter(cmds[0] + ".txt")) {
+                    var header = meta.GetMetafileHeader();
+                    ws.WriteLine("Size = " + header.MetafileSize.ToString());
+                    ws.WriteLine("dpiX = " + header.DpiX.ToString() + ", dpiY = " + header.DpiY.ToString());
+                    ws.WriteLine("logicaldpiY = " + header.LogicalDpiX.ToString() + ", logicaldpiY = " + header.LogicalDpiY.ToString());
+                }
+                return 0;
+            }
+
             // 各種バイナリのパスが設定されていなかったら推測する．
             // "/exit"が指定されている場合はメッセージ表示をしない．
             setPath(cmds.Contains("/exit") || cmds.Contains("-exit") || cmds.Contains("--exit"));

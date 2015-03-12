@@ -66,7 +66,8 @@ namespace TeX2img {
 
         public bool CheckFormat() {
             string extension = Path.GetExtension(OutputFile).ToLower();
-            if(extension != ".eps" && extension != ".png" && extension != ".jpg" && extension != ".pdf") {
+            var allowedextension = new List<string> { ".eps", ".png", ".jpg", ".pdf", ".svg", ".emf" };
+            if(!allowedextension.Contains(extension)) { 
                 if(controller_ != null) controller_.showExtensionError(OutputFile);
                 return false;
             }
@@ -131,6 +132,7 @@ namespace TeX2img {
                     File.Delete(tmpFileBaseName + ".pdf");
                     File.Delete(tmpFileBaseName + ".eps");
                     File.Delete(tmpFileBaseName + ".emf");
+                    File.Delete(tmpFileBaseName + ".svg");
                     File.Delete(tmpFileBaseName + ".png");
                     File.Delete(tmpFileBaseName + ".jpg");
                     File.Delete(tmpFileBaseName + ".tmp");
@@ -139,12 +141,16 @@ namespace TeX2img {
                         if(
                             File.Exists(tmpFileBaseName + "-" + i + ".jpg") ||
                             File.Exists(tmpFileBaseName + "-" + i + ".png") ||
+                            File.Exists(tmpFileBaseName + "-" + i + ".svg") ||
+                            File.Exists(tmpFileBaseName + "-" + i + ".emf") ||
                             File.Exists(tmpFileBaseName + "-" + i + ".eps") ||
                             File.Exists(tmpFileBaseName + "-" + i + "-trim.eps") ||
                             File.Exists(tmpFileBaseName + "-" + i + ".pdf")
                         ) {
                             File.Delete(tmpFileBaseName + "-" + i + ".jpg");
                             File.Delete(tmpFileBaseName + "-" + i + ".png");
+                            File.Delete(tmpFileBaseName + "-" + i + ".svg");
+                            File.Delete(tmpFileBaseName + "-" + i + ".emf"); 
                             File.Delete(tmpFileBaseName + "-" + i + ".eps");
                             File.Delete(tmpFileBaseName + "-" + i + "-trim.eps");
                             File.Delete(tmpFileBaseName + "-" + i + ".pdf");
@@ -273,6 +279,7 @@ namespace TeX2img {
             return true;
         }
 
+        /*
         int pdfpages(string pdfFile) {
             using(var proc = GetProcess()) {
                 proc.ErrorDataReceived += ((s, e) => {
@@ -297,7 +304,7 @@ namespace TeX2img {
                             // このParseは成功することが確定している．
                             page = Int32.Parse(m.Groups[1].Value);
                             proc.StandardOutput.ReadToEnd();
-                            break;
+                            //break;
                         }
                     }
                     proc.WaitForExit();
@@ -309,7 +316,7 @@ namespace TeX2img {
                     return -1;
                 }
             }
-        }
+        }*/
 
         private bool pdf2eps(string inputFileName, string outputFileName, int resolution, int page) {
             string arg;
@@ -321,6 +328,7 @@ namespace TeX2img {
                 }
                 proc.StartInfo.Arguments = arg + "-q -sDEVICE=" + Properties.Settings.Default.gsDevice + " -dFirstPage=" + page + " -dLastPage=" + page;
                 if(Properties.Settings.Default.gsDevice == "eps2write") proc.StartInfo.Arguments += " -dNoOutputFonts";
+                else proc.StartInfo.Arguments += " -dNOCACHE";
                 proc.StartInfo.Arguments += " -sOutputFile=\"" + outputFileName + "\" -dNOPAUSE -dBATCH -r" + resolution + " \"" + inputFileName + "\"";
 
                 try {
@@ -547,7 +555,6 @@ namespace TeX2img {
                     proc.StartInfo.Arguments = arg + String.Format("-q -sDEVICE={0} -sOutputFile={1} -dNOPAUSE -dBATCH -dPDFFitPage -r{2} -g{3}x{4} {5}", device, outputFileName, 72 * Properties.Settings.Default.resolutionScale, (int) ((righttop_x - leftbottom_x) * Properties.Settings.Default.resolutionScale), (int) ((righttop_y - leftbottom_y) * Properties.Settings.Default.resolutionScale), trimEpsFileName);
                     try {
                         ReadOutputs(proc, "Ghostscript の実行");
-                        ; ;
                     }
                     catch(Win32Exception) {
                         controller_.showPathError(proc.StartInfo.FileName, "Ghostscript ");
@@ -562,8 +569,35 @@ namespace TeX2img {
             }
             return true;
         }
+        bool pdf2img(string inputFilename, string outputFileName) {
+            var extension = Path.GetExtension(outputFileName).ToLower();
+            controller_.appendOutput("TeX2img: Convert PDF to " + extension.Substring(1).ToUpper() + "\n");
+            using(var doc = new pdfium.PDFDocument(Path.Combine(workingDir, inputFilename)))
+            using(var page = doc.GetPage(0)) {
+                int width = (int)(page.Width*Properties.Settings.Default.resolutionScale);
+                int height = (int)(page.Height*Properties.Settings.Default.resolutionScale);
+                using(var bitmap = new System.Drawing.Bitmap(width, height))
+                using(var g = System.Drawing.Graphics.FromImage(bitmap)){
+                    System.Drawing.Brush brush;
+                    if(extension == ".png" && Properties.Settings.Default.transparentPngFlag) brush = System.Drawing.Brushes.Transparent;
+                    else brush = System.Drawing.Brushes.White;
+                    g.FillRectangle(brush, new System.Drawing.Rectangle(0, 0, width, height));
+                    var hdc = g.GetHdc();
+                    try{
+                        page.Draw(hdc,width,height);
+                    }
+                    finally{
+                        g.ReleaseHdc(hdc);
+                    }
+                    bitmap.Save(Path.Combine(workingDir,outputFileName), 
+                        (extension == ".png" ? System.Drawing.Imaging.ImageFormat.Png : System.Drawing.Imaging.ImageFormat.Jpeg));
+                    
+                }
+            }
+            return true;
+        }
 
-        public bool eps2pdf(string inputFileName, string outputFileName) {
+        bool eps2pdf(string inputFileName, string outputFileName) {
             string arg;
             using(var proc = GetProcess()) {
                 proc.StartInfo.FileName = setProcStartInfo(Properties.Settings.Default.gsPath, out arg);
@@ -574,7 +608,6 @@ namespace TeX2img {
                 proc.StartInfo.Arguments = arg + "-q -sDEVICE=pdfwrite -dNOPAUSE -dBATCH -dEPSCrop -sOutputFile=\"" + outputFileName + "\" \"" + inputFileName + "\"";
                 try {
                     ReadOutputs(proc, "Ghostscript の実行");
-
                 }
                 catch(Win32Exception) {
                     controller_.showPathError(proc.StartInfo.FileName, "Ghostscript ");
@@ -587,9 +620,69 @@ namespace TeX2img {
             }
         }
 
+        bool eps2svg(string inputFileName, string outputFileName) {
+            var dvisvgm = which("dvisvgm");
+            if(dvisvgm == "") {
+                controller_.showPathError("dvisvgm.exe", "dvisvgm.exe");
+                return false;
+            }
+            using(var proc = GetProcess()) {
+                proc.StartInfo.FileName = dvisvgm;
+                proc.StartInfo.Arguments = "-E --output=\"" + outputFileName + "\" \"" + inputFileName + "\"";
+                try {
+                    ReadOutputs(proc, "dvisvgm の実行");
+                }
+                catch(Win32Exception) {
+                    controller_.showPathError("dvidvgm.exe", "TeX ディストリビューション（dvidvgm）");
+                    return false;
+                }
+                if(!File.Exists(Path.Combine(workingDir, outputFileName))) {
+                    controller_.showPathError("dvidvgm.exe", "TeX ディストリビューション（dvidvgm）");
+                    return false;
+                } else return true;
+            }
+        }
 
+        bool pdf2emf(string inputFileName, string outputFileName, int resolution) {
+            controller_.appendOutput("TeX2img: Convert PDF to EMF\n");
+            using(var pdfdoc = new pdfium.PDFDocument(Path.Combine(workingDir, inputFileName)))
+            using(var pdfpage = pdfdoc.GetPage(0))
+            using(var dummy = new System.Drawing.Bitmap(1, 1)) {
+                //dummy.SetResolution(72,72);
+                using(var dummyg = System.Drawing.Graphics.FromImage(dummy)) {
+                    var dummyhdc = dummyg.GetHdc();
+                    //System.Diagnostics.Debug.WriteLine((pdfpage.Width / pdfpage.Height).ToString());
+                    double scale = dummy.HorizontalResolution / 72;
+                    int width = (int) (pdfpage.Width * scale);
+                    int height = (int) (pdfpage.Height * scale);
+                    try {
+                        using(var meta = new System.Drawing.Imaging.Metafile(Path.Combine(workingDir, outputFileName), dummyhdc, new System.Drawing.Rectangle(0, 0, width, height), System.Drawing.Imaging.MetafileFrameUnit.Pixel))
+                        using(var g = System.Drawing.Graphics.FromImage(meta)) {
+                            var head = meta.GetMetafileHeader();
+                            var hdc = g.GetHdc();
+                            try {
+                                PInvoke.SIZE size = new PInvoke.SIZE();
+                                var dpiX = PInvoke.GetDeviceCaps(hdc, PInvoke.DeviceCap.HORZSIZE);
+                                var dpiY = PInvoke.GetDeviceCaps(hdc, PInvoke.DeviceCap.VERTSIZE);
+                                PInvoke.SetMapMode(hdc, PInvoke.MM_ANISOTROPIC);
+                                PInvoke.SetWindowExtEx(hdc, 1000, 1000, ref size);
+                                // 指定した縦横の1.5倍になるっぽい
+                                pdfpage.Draw(hdc, (int) (pdfpage.Width * scale * 1500), (int) (pdfpage.Height * 1500));
+                            }
+                            finally {
+                                g.ReleaseHdc(hdc);
+                            }
+                        }
+                    }
+                    finally {
+                        dummyg.ReleaseHdc(dummyhdc);
+                    }
+                }
+            }
+            return true;
+        }
 
-        public bool generate(string inputTeXFilePath, string outputFilePath) {
+        bool generate(string inputTeXFilePath, string outputFilePath) {
             string extension = Path.GetExtension(outputFilePath).ToLower();
             string tmpFileBaseName = Path.GetFileNameWithoutExtension(inputTeXFilePath);
 
@@ -611,16 +704,15 @@ namespace TeX2img {
             }
             
             // ページ数を取得
-            int page = pdfpages(tmpFileBaseName + ".pdf");
-            if(page == -1) {
-                controller_.showGenerateError();
-                return false;
+            int page;
+            using(var doc = new pdfium.PDFDocument(Path.Combine(workingDir, tmpFileBaseName + ".pdf"))) {
+                page = doc.GetPageCount();
             }
             // epsに変換する
             int resolution;
             if(Properties.Settings.Default.useLowResolution) epsResolution_ = 72 * Properties.Settings.Default.resolutionScale;
             else epsResolution_ = 20016;
-            if(Properties.Settings.Default.useMagickFlag || extension == ".eps" || extension == ".pdf") resolution = epsResolution_;
+            if(Properties.Settings.Default.useMagickFlag || extension == ".eps" || extension == ".pdf" || extension == ".svg" || extension == ".emf") resolution = epsResolution_;
             else resolution = 72 * Properties.Settings.Default.resolutionScale;
             for(int i = 1 ; i <= page ; ++i) {
                 if(!pdf2eps(tmpFileBaseName + ".pdf", tmpFileBaseName + "-" + i + ".eps", resolution, i)) return false;
@@ -628,16 +720,33 @@ namespace TeX2img {
             // そして最終的な変換
             bool addMargin = ((Properties.Settings.Default.leftMargin + Properties.Settings.Default.rightMargin + Properties.Settings.Default.topMargin + Properties.Settings.Default.bottomMargin) > 0);
             for(int i = 1 ; i <= page ; ++i) {
-                if(extension == ".pdf") {
+                switch(extension) {
+                case ".png":
+                case ".jpg":
+                    if(addMargin) enlargeBB(tmpFileBaseName + "-" + i + ".eps");
+                    if(!eps2pdf(tmpFileBaseName + "-" + i + ".eps", tmpFileBaseName + "-" + i + ".pdf")) return false;
+                    if(!pdf2img(tmpFileBaseName + "-" + i + ".pdf", tmpFileBaseName + "-" + i + extension)) return false;
+                    //if(!eps2img(tmpFileBaseName + "-" + i + ".eps", tmpFileBaseName + "-" + i + extension)) return false;
+                    break;
+                case ".pdf":
                     if(addMargin) enlargeBB(tmpFileBaseName + "-" + i + ".eps");
                     if(!eps2pdf(tmpFileBaseName + "-" + i + ".eps", tmpFileBaseName + "-" + i + extension)) return false;
-                } else if(extension == ".png" || extension == ".jpg") {
-                    if(!eps2img(tmpFileBaseName + "-" + i + ".eps", tmpFileBaseName + "-" + i + extension)) return false;
-                } else {
+                    break;
+                case ".eps":
                     if(addMargin) enlargeBB(tmpFileBaseName + "-" + i + ".eps");
+                    break;
+                case ".svg":
+                    if(addMargin) enlargeBB(tmpFileBaseName + "-" + i + ".eps");
+                    if(!eps2svg(tmpFileBaseName + "-" + i + ".eps", tmpFileBaseName + "-" + i + extension)) return false;
+                    break;
+                case ".emf":
+                    if(addMargin) enlargeBB(tmpFileBaseName + "-" + i + ".eps");
+                    if(!eps2pdf(tmpFileBaseName + "-" + i + ".eps", tmpFileBaseName + "-" + i + ".pdf")) return false;
+                    if(!pdf2emf(tmpFileBaseName + "-" + i + ".pdf", tmpFileBaseName + "-" + i + ".emf", resolution)) return false;
+                    break;
                 }
             }
-
+            
             string outputDirectory = Path.GetDirectoryName(outputFilePath);
             if(outputDirectory != "" && !Directory.Exists(outputDirectory)) {
                 Directory.CreateDirectory(outputDirectory);
@@ -659,7 +768,6 @@ namespace TeX2img {
                     outputFilePath = outputFilePathBaseName + "-1" + extension;
                     if(Properties.Settings.Default.previewFlag) Process.Start(outputFilePath);
                 }
-
             }
             catch(UnauthorizedAccessException) {
                 controller_.showUnauthorizedError(outputFilePath);
@@ -678,17 +786,21 @@ namespace TeX2img {
                         var enc = KanjiEncoding.CheckBOM(buf);
                         if(enc == null) enc = GetInputEncoding();
                         var srctext = enc.GetString(buf);
-                        foreach(var d in outputFileNames) {
-                            using(var fs = AlternativeDataStream.WriteAlternativeDataStream(d, ADSName))
-                            using(var ws = new StreamWriter(fs, new UTF8Encoding(false))) {
-                                ws.Write(srctext);
+                        foreach(var f in outputFileNames) {
+                            try {
+                                using(var fs = AlternativeDataStream.WriteAlternativeDataStream(f, ADSName))
+                                using(var ws = new StreamWriter(fs, new UTF8Encoding(false))) {
+                                    ws.Write(srctext);
+                                }
                             }
+                            // 例外は無視
+                            catch(IOException) { }
+                            catch(NotImplementedException) { }
                         }
                     }
                 }
                 // 例外は無視
                 catch(IOException) { }
-                catch(NotImplementedException) { }
             }
             return true;
         }
@@ -809,6 +921,74 @@ namespace TeX2img {
                     }
                 }
                 catch(Win32Exception) { proc.Kill(); }
+            }
+        }
+
+        static class PInvoke {
+            [System.Runtime.InteropServices.StructLayout(System.Runtime.InteropServices.LayoutKind.Sequential)]
+            public struct SIZE {
+                public int cx;
+                public int cy;
+            }
+            [System.Runtime.InteropServices.DllImport("gdi32.dll")]
+            public static extern int SetMapMode(IntPtr hdc, int fnMapMode);
+            public static int MM_TEXT = 1;
+            public static int MM_LOMETRIC = 2;
+            public static int MM_HIMETRIC = 3;
+            public static int MM_LOENGLISH = 4;
+            public static int MM_HIENGLISH = 5;
+            public static int MM_TWIPS = 6;
+            public static int MM_ISOTROPIC = 7;
+            public static int MM_ANISOTROPIC = 8;
+            public static int MM_MIN = MM_TEXT;
+            public static int MM_MAX = MM_ANISOTROPIC;
+            public static int MM_MAX_FIXEDSCALE = MM_TWIPS;
+            [System.Runtime.InteropServices.DllImport("gdi32.dll")]
+            public static extern bool SetWindowExtEx(IntPtr hdc, int nXExtent, int nYExtent, ref SIZE lpSize);
+            [System.Runtime.InteropServices.DllImport("gdi32.dll")]
+            public static extern bool SetViewportExtEx(IntPtr hdc, int nXExtent, int nYExtent, ref SIZE lpSize);
+            [System.Runtime.InteropServices.DllImport("gdi32.dll")]
+            public static extern int GetDeviceCaps(IntPtr hdc, DeviceCap nIndex);
+            public enum DeviceCap {
+                DRIVERVERSION = 0,
+                TECHNOLOGY = 2,
+                HORZSIZE = 4,
+                VERTSIZE = 6,
+                HORZRES = 8,
+                VERTRES = 10,
+                BITSPIXEL = 12,
+                PLANES = 14,
+                NUMBRUSHES = 16,
+                NUMPENS = 18,
+                NUMMARKERS = 20,
+                NUMFONTS = 22,
+                NUMCOLORS = 24,
+                PDEVICESIZE = 26,
+                CURVECAPS = 28,
+                LINECAPS = 30,
+                POLYGONALCAPS = 32,
+                TEXTCAPS = 34,
+                CLIPCAPS = 36,
+                RASTERCAPS = 38,
+                ASPECTX = 40,
+                ASPECTY = 42,
+                ASPECTXY = 44,
+                SHADEBLENDCAPS = 45,
+                LOGPIXELSX = 88,
+                LOGPIXELSY = 90,
+                SIZEPALETTE = 104,
+                NUMRESERVED = 106,
+                COLORRES = 108,
+                PHYSICALWIDTH = 110,
+                PHYSICALHEIGHT = 111,
+                PHYSICALOFFSETX = 112,
+                PHYSICALOFFSETY = 113,
+                SCALINGFACTORX = 114,
+                SCALINGFACTORY = 115,
+                VREFRESH = 116,
+                DESKTOPVERTRES = 117,
+                DESKTOPHORZRES = 118,
+                BLTALIGNMENT = 119
             }
         }
     }
