@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Linq;
 using System.IO;
 using System.Diagnostics;
 using System.Windows.Forms;
@@ -11,6 +12,7 @@ namespace TeX2img {
     class Converter {
         // ADS名
         public const string ADSName = "TeX2img.source";
+        public static readonly string[] imageExtensions = new string[] { ".eps", ".jpg", ".png", ".pdf", ".emf", ".bmp", ".svg" ,".gif",".tiff"};
 
         public static string which(string basename) {
             string separator, fullPath;
@@ -66,8 +68,7 @@ namespace TeX2img {
 
         public bool CheckFormat() {
             string extension = Path.GetExtension(OutputFile).ToLower();
-            var allowedextension = new List<string> { ".eps", ".png", ".jpg", ".pdf", ".svg", ".emf" };
-            if(!allowedextension.Contains(extension)) {
+            if(!imageExtensions.Contains(extension)) {
                 if(controller_ != null) controller_.showExtensionError(OutputFile);
                 return false;
             }
@@ -122,7 +123,6 @@ namespace TeX2img {
         List<string> generatedTeXFilesWithoutExtension = new List<string>();
 
         public bool Convert() {
-            SetImageMagickEnvironment();
             bool rv = generate(InputFile, OutputFile);
 
             if(Properties.Settings.Default.deleteTmpFileFlag) {
@@ -432,6 +432,7 @@ namespace TeX2img {
             controller_.appendOutput("TeX2img: Convert " + inputFileName + " to " + outputFileName + "\n");
             try {
                 using(var bitmap = new System.Drawing.Bitmap(Path.Combine(workingDir,inputFileName))) {
+                    //if(Properties.Settings.Default.transparentPngFlag) bitmap.MakeTransparent();
                     bitmap.Save(Path.Combine(workingDir,outputFileName), format);
                 }
                 generatedImageFiles.Add(Path.Combine(workingDir, outputFileName));
@@ -459,36 +460,52 @@ namespace TeX2img {
                 if(!File.Exists(Path.Combine(workingDir, outputFileName))) {
                     controller_.showToolError("mudraw.exe");
                     return false;
-                } else {
-                    generatedImageFiles.Add(Path.Combine(workingDir, outputFileName));
-                    return true;
                 }
+                generatedImageFiles.Add(Path.Combine(workingDir, outputFileName));
+                if(Path.GetExtension(outputFileName).ToLower() == ".svg" && !Properties.Settings.Default.fixedSVGSize) {
+                    RemoveHeightAndWidthFromSVGFile(outputFileName);
+                    RemoveHeightAndWidthFromSVGFile(outputFileName);
+                }
+                return true;
             }
         }
+        void RemoveHeightAndWidthFromSVGFile(string svgFile) {
+            var fullpath = Path.Combine(workingDir, svgFile);
+            var xml = new System.Xml.XmlDocument();
+            xml.XmlResolver = null;
+            xml.Load(fullpath);
+            foreach(System.Xml.XmlNode node in xml.GetElementsByTagName("svg")) {
+                var attr = node.Attributes["width"];
+                if(attr != null) node.Attributes.Remove(attr);
+                attr = node.Attributes["height"];
+                if(attr != null) node.Attributes.Remove(attr);
+            }
+            xml.Save(fullpath);
+        }
+
 
         struct RectangleDecimal {
             public Decimal Left, Right, Bottom, Top;
         }
-        bool pdfcrop(string inputFileName, string outputFileName, int page = 0) {
-            return pdfcrop(inputFileName,outputFileName,new List<int>(){page});
+        bool pdfcrop(string inputFileName, string outputFileName, bool use_bp,int page = 0) {
+            return pdfcrop(inputFileName,outputFileName,use_bp,new List<int>(){page});
         }
 
-        bool pdfcrop(string inputFileName, string outputFileName, List<int> pages) {
+        bool pdfcrop(string inputFileName, string outputFileName, bool use_bp, List<int> pages) {
             var tmpfile = Path.GetTempFileName();
             File.Delete(tmpfile);
             tmpfile = Path.GetFileNameWithoutExtension(tmpfile) + ".tex";
-            //tmpfile = "crop-tmp.tex";
 
             var gspath = setProcStartInfo(Properties.Settings.Default.gsPath);
             var bbBox = new List<RectangleDecimal>();
-            int margindevide = Properties.Settings.Default.yohakuUnitBP ? 1 : Properties.Settings.Default.resolutionScale;
+            int margindevide = use_bp ? 1 : Properties.Settings.Default.resolutionScale;
             foreach(var page in pages) {
                 var rect = new RectangleDecimal();
                 using(var proc = GetProcess()) {
                     proc.StartInfo.FileName = gspath;
                     proc.StartInfo.Arguments = "-dBATCH -dNOPAUSE -q -sDEVICE=bbox -dFirstPage=" + page.ToString() + " -dLastPage=" + page.ToString() + " \"" + inputFileName + "\"";
                     proc.OutputDataReceived += ((s, e) => { System.Diagnostics.Debug.WriteLine("Std: " + e.Data); });
-                    Regex regexBB = new Regex(@"^\%\%HiResBoundingBox\: ([\d\.]+) ([\d\.]+) ([\d\.]+) ([\d\.]+)$");
+                    Regex regexBB = new Regex(@"^\%\%BoundingBox\: ([\d\.]+) ([\d\.]+) ([\d\.]+) ([\d\.]+)$");
                     try {
                         proc.Start();
                         proc.BeginOutputReadLine();
@@ -592,10 +609,17 @@ namespace TeX2img {
             #region 最後に目的の画像形式に変換
             string device = "jpeg";
 
-            if(extension == ".png") {
+            switch(extension) {
+            case ".png":
                 device = Properties.Settings.Default.transparentPngFlag ? "pngalpha" : "png256";
+                break;
+            case ".bmp":
+                device = "bmp256";
+                break;
+            default:
+                device = "jpeg";
+                break;
             }
-
             string arg;
             using(var proc = GetProcess()) {
                 proc.StartInfo.FileName = setProcStartInfo(Properties.Settings.Default.gsPath, out arg);
@@ -625,7 +649,7 @@ namespace TeX2img {
             var type = Path.GetExtension(outputFileName).Substring(1).ToLower();
             using(var proc = GetProcess()) {
                 proc.StartInfo.FileName = Path.Combine(GetToolsPath(), "pdfiumdraw.exe");
-                proc.StartInfo.Arguments =
+                proc.StartInfo.Arguments = 
                     (type == "emf" ? "" : "--scale=" + Properties.Settings.Default.resolutionScale.ToString() + " ") +
                     "--" + type + " " + (Properties.Settings.Default.transparentPngFlag ? "--transparent " : "") +
                     (pages > 0 ? "--pages=" + pages.ToString() + " " : "") + 
@@ -697,22 +721,32 @@ namespace TeX2img {
             // ページ数を取得
             int page = pdfpages(Path.Combine(workingDir, tmpFileBaseName + ".pdf"));
 
-            // .svg または アンチエイリアスな画像の場合は PDF から作る
-            if(extension == ".svg" || ((extension == ".jpg" || extension == ".png") && Properties.Settings.Default.useMagickFlag)) {
+            // .svg，テキスト情報保持な pdf，アンチエイリアスな画像の場合は PDF から作る
+            var bmpimages = new string[] { ".bmp", ".jpg", ".png", ".gif", ".tiff" };
+            if(
+                extension == ".svg" || 
+                (extension == ".pdf" && !Properties.Settings.Default.outlinedText) || 
+                (bmpimages.Contains(extension) && Properties.Settings.Default.useMagickFlag) 
+                ) {
                 for(int i = 1 ; i <= page ; ++i) {
-                    if(!pdfcrop(tmpFileBaseName + ".pdf", tmpFileBaseName + "-" + i + ".pdf", i)) return false;
-                    switch(extension) {
-                    case ".svg":
+                    if(extension == ".svg") {
+                        if(!pdfcrop(tmpFileBaseName + ".pdf", tmpFileBaseName + "-" + i + ".pdf", true, i)) return false;
                         if(!pdf2img_mudraw(tmpFileBaseName + "-" + i + ".pdf", tmpFileBaseName + "-" + i + ".svg")) return false;
-                        break;
-                    case ".png":
-                        if(!pdf2img_pdfium(tmpFileBaseName + "-" + i + ".pdf", tmpFileBaseName + "-" + i + ".png")) return false;
-                        break;
-                    case ".jpg":
-                    default:
-                        if(!pdf2img_pdfium(tmpFileBaseName + "-" + i + ".pdf", tmpFileBaseName + "-" + i + ".bmp")) return false;
-                        if(!bmp2img(tmpFileBaseName + "-" + i + ".bmp", tmpFileBaseName + "-" + i + extension)) return false;
-                        break;
+                    } else {
+                        if(!pdfcrop(tmpFileBaseName + ".pdf", tmpFileBaseName + "-" + i + ".pdf", Properties.Settings.Default.yohakuUnitBP, i)) return false;
+                        switch(extension) {
+                        case ".bmp":
+                        case ".png":
+                            if(!pdf2img_pdfium(tmpFileBaseName + "-" + i + ".pdf", tmpFileBaseName + "-" + i + extension)) return false;
+                            break;
+                        case ".gif":
+                        case ".tiff":
+                            if(!pdf2img_pdfium(tmpFileBaseName + "-" + i + ".pdf", tmpFileBaseName + "-" + i + ".bmp")) return false;
+                            if(!bmp2img(tmpFileBaseName + "-" + i + ".bmp", tmpFileBaseName + "-" + i + extension)) return false;
+                            break;
+                        default:
+                            break;
+                        }
                     }
                 }
             } else {
@@ -727,11 +761,6 @@ namespace TeX2img {
                     if(!pdf2eps(tmpFileBaseName + ".pdf", tmpFileBaseName + "-" + i + ".eps", resolution, i)) return false;
                     bool addMargin = ((Properties.Settings.Default.leftMargin + Properties.Settings.Default.rightMargin + Properties.Settings.Default.topMargin + Properties.Settings.Default.bottomMargin) > 0);
                     switch(extension) {
-                    case ".png":
-                    case ".jpg":
-                        if(addMargin) enlargeBB(tmpFileBaseName + "-" + i + ".eps");
-                        if(!eps2img(tmpFileBaseName + "-" + i + ".eps", tmpFileBaseName + "-" + i + extension)) return false;
-                        break;
                     case ".pdf":
                         if(addMargin) enlargeBB(tmpFileBaseName + "-" + i + ".eps");
                         if(!eps2pdf(tmpFileBaseName + "-" + i + ".eps", tmpFileBaseName + "-" + i + extension)) return false;
@@ -743,6 +772,16 @@ namespace TeX2img {
                         if(addMargin) enlargeBB(tmpFileBaseName + "-" + i + ".eps");
                         if(!eps2pdf(tmpFileBaseName + "-" + i + ".eps", tmpFileBaseName + "-" + i + ".pdf")) return false;
                         if(!pdf2img_pdfium(tmpFileBaseName + "-" + i + ".pdf", tmpFileBaseName + "-" + i + ".emf")) return false;
+                        break;
+                    case ".png":
+                    case ".jpg":
+                    case ".bmp":
+                        if(!eps2img(tmpFileBaseName + "-" + i + ".eps", tmpFileBaseName + "-" + i + extension)) return false;
+                        break;
+                    case ".gif":
+                    case ".tiff":
+                        if(!eps2img(tmpFileBaseName + "-" + i + ".eps", tmpFileBaseName + "-" + i + ".bmp")) return false;
+                        if(!bmp2img(tmpFileBaseName + "-" + i + ".bmp", tmpFileBaseName + "-" + i + extension)) return false;
                         break;
                     }
                 }
@@ -803,36 +842,6 @@ namespace TeX2img {
                 catch(IOException) { }
             }
             return true;
-        }
-
-        private void SetImageMagickEnvironment() {
-            try {
-                if(Environments.ContainsKey("MAGICK_GHOSTSCRIPT_PATH")) return;
-                if(Environment.GetEnvironmentVariable("MAGICK_GHOSTSCRIPT_PATH") != null) return;
-                // ImageMagickのための準備
-                if(Properties.Settings.Default.gsPath != "") {
-                    string path = Converter.setProcStartInfo(Properties.Settings.Default.gsPath);
-                    if(Path.GetFileName(path).ToLower() == "rungs.exe") {
-                        string gswincPath = Path.GetDirectoryName(path);//...\win32
-                        gswincPath = Path.GetDirectoryName(gswincPath);//...bin
-                        gswincPath = Path.GetDirectoryName(gswincPath);
-                        gswincPath += "\\tlpkg\\tlgs\\bin";
-                        if(Directory.Exists(gswincPath)) {
-                            Environments.Add("MAGICK_GHOSTSCRIPT_PATH", gswincPath);
-                        }
-                    }
-                }
-            }
-            catch { }// 例外は無視
-        }
-
-        private string getImageMagickPath() {
-            string convertPath = Converter.which("convert");
-            if(convertPath == "" || convertPath.ToLower() == Path.Combine(Environment.SystemDirectory, "convert.exe").ToLower()) {
-                controller_.showImageMagickError();
-                return "";
-            } else return convertPath;
-
         }
 
         // Error -> 同期，Output -> 非同期

@@ -48,6 +48,8 @@ namespace TeX2img {
 			    }
             }},
 			{"transparent","透過 PNG を作る[-]",val => {Properties.Settings.Default.transparentPngFlag = (val != null);}},
+            {"create-outline","PDF の文字をアウトライン化[-]",val =>{Properties.Settings.Default.outlinedText = (val != null);}},
+            {"specify-svg-size","SVG の表示寸法を等倍に固定[-]",val => {Properties.Settings.Default.fixedSVGSize = (val != null);}},
 			{"imagemagick","ImageMagick を使う[-]",val => {Properties.Settings.Default.useMagickFlag = (val != null);}},
 			{"low-resolution","低解像度で処理する[-]",val => {Properties.Settings.Default.useLowResolution = (val!= null);}},
 			{"ignore-errors","少々のエラーは無視する[-]",val => {Properties.Settings.Default.ignoreErrorFlag = (val != null);}},
@@ -74,18 +76,6 @@ namespace TeX2img {
         }
 
         static int TeX2imgMain(List<string> cmds) {
-            /*
-            if(cmds.Count > 0) {
-                using(var meta = new System.Drawing.Imaging.Metafile(cmds[0]))
-                using(var ws = new StreamWriter(cmds[0] + ".txt")) {
-                    var header = meta.GetMetafileHeader();
-                    ws.WriteLine("Size = " + header.MetafileSize.ToString());
-                    ws.WriteLine("dpiX = " + header.DpiX.ToString() + ", dpiY = " + header.DpiY.ToString());
-                    ws.WriteLine("logicaldpiY = " + header.LogicalDpiX.ToString() + ", logicaldpiY = " + header.LogicalDpiY.ToString());
-                }
-                return 0;
-            }*/
-
             // 各種バイナリのパスが設定されていなかったら推測する．
             // "/exit"が指定されている場合はメッセージ表示をしない．
             setPath(cmds.Contains("/exit") || cmds.Contains("-exit") || cmds.Contains("--exit"));

@@ -19,11 +19,8 @@
 ## 動作条件
 * .NET Framework 3.5 以降．
 * 適切な TeX ディストリビューション（W32TeX か TeX Live を推奨）がインストールされており，platex 及び dvipdfmx，更に以下が使えること．
-** pdfinfo
-** dvisvgm
+** pdftex
 * Ghostscript がインストールされ，使えること．（TeX Live 内のものでも大丈夫です．）
-* ImageMagick がインストールされていると，それを用いて画像を出力することができます．（必須ではありません．）
-
 
 
 ## インストール
@@ -94,8 +91,10 @@ http://sgry.b.sourceforge.jp/
 http://www.ndesk.org/Options
 * 日本語文字コードの推測には，Gauche に含まれている推測ルーチン（を C# に移植したもの）を用いています．
 http://practical-scheme.net/gauche/index-j.html
-* EMF ファイルの作成のためにpstoeditを用いています．
-http://www.pstoedit.net/
+* SVG ファイルの作成のために mudraw を用いています．
+http://www.mupdf.com/
+* 添付 pdfiumdraw には PDFium を用いています．
+https://code.google.com/p/pdfium/
 
 
 ## ライセンス
@@ -104,7 +103,9 @@ http://www.pstoedit.net/
 * Azuki エディタコンポーネント Azuki.dll は zlib ライセンス．
 * NDesk.Options は MIT ライセンス．
 * Gauche は修正 BSD ライセンス．
-* pstoedit は GPL ライセンス．
+* mudraw は GPL ライセンス．
+* PDFium は修正 BSD ライセンス．
+* pdfiumdraw は修正 BSD ライセンスとしています．
 詳細は各々のページをご覧ください．
 
 
@@ -182,5 +183,6 @@ http://www.pstoedit.net/
 ** 生成されたファイルの代替データストリームに TeX ソースを保存し，またインポートにより復元できるようにした．
 
 * 1.4.1
-** SVG ファイルを出力できるようにした．
+** SVG / BMP ファイルを出力できるようにした．
 ** EMF ファイルの出力を復活させた．
+** テキストをそのまま保持した PDF ファイルを出力できるようにした．

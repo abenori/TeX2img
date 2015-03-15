@@ -349,6 +349,9 @@ int WriteEMF(const Data &d){
 			HRGN rgn = CreateRectRgn(0, 0, width, height);
 			::SelectClipRgn(dc, rgn);
 			::DeleteObject(rgn);
+			RECT rc;
+			rc.left = 0; rc.top = 0; rc.right = width; rc.bottom = height;
+			::FillRect(dc, &rc, (HBRUSH)::GetStockObject(WHITE_BRUSH));
 			page.Render(dc, width, height);
 			::DeleteEnhMetaFile(::CloseEnhMetaFile(dc));
 		}
@@ -422,9 +425,9 @@ int main(int argc, char *argv[]) {
 	}
 	/*
 	Data d;
-	d.input = "C:\\Users\\Abe_Noriyuki\\Desktop\\equation.pdf";
+	d.input = "C:\\Users\\Abe_Noriyuki\\Desktop\\TeX2img\\equation.pdf";
 	d.scale = 5;
-	d.target = BMP;
+	d.target = EMF;
 	d.use_gdi = false;
 	d.transparent = true;
 	files.push_back(d);*/

@@ -658,5 +658,29 @@ namespace TeX2img.Properties {
                 this["embedTeXSource"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool outlinedText {
+            get {
+                return ((bool)(this["outlinedText"]));
+            }
+            set {
+                this["outlinedText"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool fixedSVGSize {
+            get {
+                return ((bool)(this["fixedSVGSize"]));
+            }
+            set {
+                this["fixedSVGSize"] = value;
+            }
+        }
     }
 }

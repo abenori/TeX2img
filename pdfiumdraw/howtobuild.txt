@@ -1,7 +1,7 @@
-要pdfium．
+pdfium is needed. image_diff_png.[ch] is brought from the source tree of pdfium. For the license, see the file in the tree.
 
-* インクルードディレクトリにpdfium\fpdfsdk\includeを追加
-* ライブラリディレクトリにpdfium\build\(Debug|Release)\libを追加
+* add "pdfium\fpdfsdk\include" to the include directories
+* add "pdfium\build" to the library directories
 
-pdfiumにはpdfium.patchを当てておきます．これはGetClipBoxの戻り値を常に非常に大きくするものです．EMFファイル作成時は何故かGetClipBoxの大きさが増やせないため，このように対処してあります．（これがないと大きな画像を作成した際に一部しか描画されない．）
-
+pdfium.patch should be applied.
+PDFium ignores the outside of clipbox of the deice context. Howeever, the clipbox attached to EMF file cannot be bigger than (maybe) the size of the display. By this patch, PDFium thinks the clipbox is very big.

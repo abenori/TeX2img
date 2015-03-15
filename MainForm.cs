@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Drawing;
 using System.Text;
+using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using System.ComponentModel;
@@ -176,7 +177,7 @@ namespace TeX2img {
         }
 
         public void showExtensionError(string file) {
-            MessageBox.Show("出力ファイルの拡張子は eps/png/jpg/pdf のいずれかにしてください。", "ファイル形式エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            MessageBox.Show("出力ファイルの拡張子は "+ String.Join("/",Converter.imageExtensions.Select(d=>d.Substring(1)).ToArray()) + " のいずれかにしてください。", "ファイル形式エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
 
         delegate void appendOutputDelegate(string log);
@@ -386,7 +387,10 @@ namespace TeX2img {
 
         private void ImportToolStripMenuItem_Click(object sender, EventArgs e) {
             var ofd = new OpenFileDialog();
-            ofd.Filter = "TeX ソースファイル (*.tex)|*.tex|画像ファイル (*.eps, *.jpg, *.png, *.pdf)|*.pdf;*.eps;*.png;*.jpg|全てのファイル (*.*)|*.*";
+
+            ofd.Filter = "TeX ソースファイル (*.tex)|*.tex|画像ファイル (" +
+                String.Join(", ", Converter.imageExtensions.Select(d => "*" + d).ToArray()) + ")|" +
+                String.Join(";", Converter.imageExtensions.Select(d => "*" + d).ToArray()) + "|全てのファイル (*.*)|*.*";
             if(ofd.ShowDialog() == DialogResult.OK) {
                 try {
                     if(MessageBox.Show("ファイルをインポートします．\n現在のプリアンブル及び編集中のソースは破棄されます．\nよろしいですか？", "TeX2img", MessageBoxButtons.YesNo) == System.Windows.Forms.DialogResult.Yes) {
@@ -425,7 +429,7 @@ namespace TeX2img {
 
         public static void ImportFile(string path, out string preamble, out string body) {
             var ext = Path.GetExtension(path).ToLower();
-            bool image = (ext == ".pdf" || ext == ".eps" || ext == ".png" || ext == ".jpg");
+            bool image = Converter.imageExtensions.Contains(ext);
             if(Properties.Settings.Default.embedTeXSource && image) ImportImageFile(path, out preamble, out body);
             else ImportTeXFile(path, out preamble, out body);
         }

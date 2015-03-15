@@ -390,7 +390,7 @@
             this.groupBox2.Size = new System.Drawing.Size(1075, 69);
             this.groupBox2.TabIndex = 2;
             this.groupBox2.TabStop = false;
-            this.groupBox2.Text = "出力先ファイル（拡張子 .eps / .png / .jpg / .pdf / .svg / .emf ）";
+            this.groupBox2.Text = "出力先ファイル（拡張子 .eps / .png / .jpg / .pdf / .svg / .emf /.bmp ）";
             // 
             // OutputBrowseButton
             // 
