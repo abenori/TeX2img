@@ -536,6 +536,7 @@ namespace TeX2img {
             }
             generatedTeXFilesWithoutExtension.Add(Path.Combine(workingDir,Path.GetFileNameWithoutExtension(tmpfile)));
             using(var fw = new StreamWriter(Path.Combine(workingDir,tmpfile))) {
+                fw.WriteLine(@"\pdfoutput=1");
                 for(int i = 0 ; i < pages.Count ; ++i){
                     var box = bbBox[i];
                     var page = pages[i];

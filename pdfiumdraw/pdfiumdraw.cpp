@@ -115,11 +115,11 @@ public:
 	}
 	int GetPageCount() { return ::FPDF_GetPageCount(doc); }
 	FPDF_DOCUMENT doc;
+	PDFDoc() = delete;
+	PDFDoc(const PDFDoc &) = delete;
+	PDFDoc &operator=(const PDFDoc &) = delete;
 private:
 	friend class PDFPage;
-	PDFDoc();
-	PDFDoc(const PDFDoc &);
-	PDFDoc &operator=(const PDFDoc &);
 };
 
 class PDFPage {
@@ -143,10 +143,9 @@ public:
 		return ::FPDF_GetPageHeight(page);
 	}
 	FPDF_PAGE page;
-private:
-	PDFPage();
-	PDFPage(const PDFPage &);
-	PDFPage &operator=(const PDFPage &);
+	PDFPage() = delete;
+	PDFPage(const PDFPage &) = delete;
+	PDFPage &operator=(const PDFPage &) = delete;
 };
 
 void GetOutputFileName(const string &input, const string &output, string extension, string &outputpre, string &outputpost) {
@@ -307,15 +306,13 @@ int WritePNG(const Data &d) {
 				buf = GetBitmapByPDFBITMAP(page, pdfbitmap.bitmap, infohead,d.transparent);
 				stride = ::FPDFBitmap_GetStride(pdfbitmap.bitmap);
 			}
-			std::vector<BYTE> tmpbuf;
-			tmpbuf.assign((BYTE*) buf, (BYTE*) buf + 4);
 			vector<BYTE> pngbuf;
 			if(!::image_diff_png::EncodeBGRAPNG((BYTE*) buf, width, height, stride, !d.transparent, &pngbuf)) {
 				throw runtime_error("Failed to decode bitmap to png");
 			}
 			FILE *fp;
 			if(auto fopen_rv = ::fopen_s(&fp, outfile.c_str(), "wb") != 0) {
-				throw runtime_error("failed to open (" + to_string(fopen_rv) + ") " + outfile);
+				throw runtime_error("failed to open (error code = " + to_string(fopen_rv) + ") " + outfile);
 			}
 			::fwrite(&pngbuf[0], 1, pngbuf.size(), fp);
 			::fclose(fp);
@@ -423,14 +420,6 @@ int main(int argc, char *argv[]) {
 			}
 		}
 	}
-	/*
-	Data d;
-	d.input = "C:\\Users\\Abe_Noriyuki\\Desktop\\TeX2img\\equation.pdf";
-	d.scale = 5;
-	d.target = EMF;
-	d.use_gdi = false;
-	d.transparent = true;
-	files.push_back(d);*/
 	for(auto d : files) {
 		try {
 			switch(d.target) {
