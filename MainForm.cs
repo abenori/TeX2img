@@ -219,8 +219,9 @@ namespace TeX2img {
             return (MessageBox.Show(msg, "TeX2img", MessageBoxButtons.YesNo) == System.Windows.Forms.DialogResult.Yes);
         }
 
-        public void showPstoeditError() {
-            MessageBox.Show(@".\pstoedit\pstoedit.exe を起動することができませんでした。" + "\n付属の pstoedit フォルダを消さないでください。", "失敗", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+        public void showToolError(string tool) {
+            var path = Path.Combine(Converter.GetShortToolPath(), tool);
+            MessageBox.Show(path + @" を起動することができませんでした。" + "\n付属の " + path + " フォルダを消さないでください。", "失敗", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
         }
         #endregion
 
@@ -275,6 +276,9 @@ namespace TeX2img {
             string extension = Path.GetExtension(outputFilePath).ToLower();
 
             string tmpFilePath = Path.GetTempFileName();
+            //string tmpFilePath = @"C:\Users\Abe_Noriyuki\Desktop\TeX2img\test";
+            //using(var fw = new StreamWriter(tmpFilePath)) { fw.WriteLine(""); }
+
             string tmpFileName = Path.GetFileName(tmpFilePath);
             string tmpFileBaseName = Path.GetFileNameWithoutExtension(tmpFileName);
 

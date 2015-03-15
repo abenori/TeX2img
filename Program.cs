@@ -148,7 +148,19 @@ namespace TeX2img {
                 return -2;
             }
 
+            var chkfiles =new List<string>(){ "pdfiumdraw.exe", "mudraw.exe" };
+            if(!nogui) chkfiles.Add("Azuki.dll");
+            string mydir = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
+            chkfiles = chkfiles.Where(f => !File.Exists(Path.Combine(mydir, f))).ToList();
+            string chkfile_errmsg = null;
+            if(chkfiles.Count != 0) {
+                chkfile_errmsg = "以下のファイルが見つからないため，起動することができませんでした．\n" + String.Join("\n", chkfiles.ToArray());
+            }
             if(nogui) {
+                if(chkfile_errmsg != null){
+                    Console.WriteLine(chkfile_errmsg);
+                    return -3;
+                }
                 // CUIでオプション指定がないときは，設定によらずプレビューをしないようにする．
                 if(preview == null) {
                     preview = Properties.Settings.Default.previewFlag;
@@ -160,12 +172,8 @@ namespace TeX2img {
                 return r;
             } else {
                 // ファイルの存在チェック
-                string[] chkfiles = { "Azuki.dll","pdfium.dll" };
-                
-                string mydir = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
-                chkfiles = chkfiles.Where(f => !File.Exists(Path.Combine(mydir, f))).ToArray();
-                if(chkfiles.Length != 0) {
-                    MessageBox.Show("以下のファイルが見つからないため，起動することができませんでした．\n" + String.Join("\n", chkfiles), "TeX2img");
+                if(chkfile_errmsg != null){
+                    MessageBox.Show(chkfile_errmsg, "TeX2img");
                     return -3;
                 }
                 Application.Run(new MainForm(files));

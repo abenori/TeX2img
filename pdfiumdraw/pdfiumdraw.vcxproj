@@ -94,6 +94,10 @@
     <ClCompile Include="image_diff_png.cc" />
     <ClCompile Include="pdfiumdraw.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <Text Include="license.txt" />
+    <Text Include="Readme.txt" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

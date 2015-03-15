@@ -27,4 +27,8 @@
       <Filter>ソース ファイル</Filter>
     </ClCompile>
   </ItemGroup>
+  <ItemGroup>
+    <Text Include="Readme.txt" />
+    <Text Include="license.txt" />
+  </ItemGroup>
 </Project>

@@ -52,8 +52,9 @@ namespace TeX2img {
                 }
             }
         }
-        public void showPstoeditError() {
-            Console.WriteLine(@".\pstoedit\pstoedit.exe を起動することができませんでした。" + "\n付属の pstoedit フォルダを消さないでください。");
+        public void showToolError(string tool) {
+            var path = System.IO.Path.Combine(Converter.GetShortToolPath(), tool);
+            Console.WriteLine(path + @" を起動することができませんでした。" + "\n付属の " + path + " フォルダを消さないでください。");
         }
     }
 }

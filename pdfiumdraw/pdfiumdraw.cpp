@@ -8,6 +8,9 @@
 #include <exception>
 #include <cstdlib>
 #include <fpdfview.h>
+#include <algorithm>
+#include <sstream>
+#include <fpdfedit.h>
 #include "image_diff_png.h"
 
 const int EMF = 0;
@@ -19,12 +22,16 @@ const int RENDER_FLAG = FPDF_PRINTING;
 using namespace std;
 
 struct Data {
+	Data() : viewport({0, 0, 0, 0}){
+	}
 	bool use_gdi = false;
 	string input;
 	string output;
 	int target = EMF;
 	int scale = 1;
+	vector<int> pages;
 	bool transparent = false;
+	RECT viewport;
 };
 
 void ShowUsage() {
@@ -34,9 +41,12 @@ void ShowUsage() {
 	cout << "  --emf: output emf file (default)" << endl;
 	cout << "  --bmp: output bmp file" << endl;
 	cout << "  --png: output png file" << endl;
+	cout << "  --pdf: output pdf file" << endl;
 	cout << "  --scale: specify resolution level" << endl;
 	cout << "  --transparent: output transparent png file" << endl;
 	cout << "  --output=<file>: specify output file name" << endl;
+	cout << "  --pages=<page>: specify output page" << endl;
+//	cout << "  --viewport=<left>,<top>,<right>,<bottom>: specify viewport" << endl;
 	cout << "  --help: show this message" << endl;
 }
 
@@ -97,13 +107,16 @@ public:
 		doc = ::FPDF_LoadDocument(path.c_str(), NULL);
 		if(doc == NULL)throw runtime_error("filed to open " + path);
 	}
+	PDFDoc(FPDF_DOCUMENT d) {
+		doc = d;
+	}
 	~PDFDoc() {
 		if(doc != NULL)::FPDF_CloseDocument(doc);
 	}
 	int GetPageCount() { return ::FPDF_GetPageCount(doc); }
+	FPDF_DOCUMENT doc;
 private:
 	friend class PDFPage;
-	FPDF_DOCUMENT doc;
 	PDFDoc();
 	PDFDoc(const PDFDoc &);
 	PDFDoc &operator=(const PDFDoc &);
@@ -129,8 +142,8 @@ public:
 	double GetHeight() {
 		return ::FPDF_GetPageHeight(page);
 	}
-private:
 	FPDF_PAGE page;
+private:
 	PDFPage();
 	PDFPage(const PDFPage &);
 	PDFPage &operator=(const PDFPage &);
@@ -199,10 +212,10 @@ void *GetBitmapByGDI(PDFPage &page, HBITMAP &bitmap, const BITMAPINFOHEADER &inf
 	return buf;
 }
 
-void *GetBitmapByPDFBITMAP(PDFPage &page, FPDF_BITMAP &bitmap, const BITMAPINFOHEADER &infohead){
+void *GetBitmapByPDFBITMAP(PDFPage &page, FPDF_BITMAP &bitmap, const BITMAPINFOHEADER &infohead,bool transparent){
 	int width = abs(infohead.biWidth);
 	int height = abs(infohead.biHeight);
-	bitmap = ::FPDFBitmap_Create(width, height, 0);
+	bitmap = ::FPDFBitmap_Create(width, height, transparent ? TRUE : FALSE);
 	::FPDFBitmap_FillRect(bitmap, 0, 0, width, height, 0xFFFFFF);
 	page.Render(bitmap, width, height);
 	return ::FPDFBitmap_GetBuffer(bitmap);
@@ -215,6 +228,7 @@ int WriteBMP(const Data &d){
 	auto pages = doc.GetPageCount();
 	int errpages = 0;
 	for(int i = 0; i < pages; ++i) {
+		if(!d.pages.empty() && find(d.pages.begin(), d.pages.end(), i) == d.pages.end())continue;
 		try {
 			PDFPage page(doc, i);
 			string outfile;
@@ -236,7 +250,7 @@ int WriteBMP(const Data &d){
 			if(d.use_gdi) {
 				buf = GetBitmapByGDI(page, bitmap.bitmap, infohead);
 			} else {
-				buf = GetBitmapByPDFBITMAP(page, pdfbitmap.bitmap, infohead);
+				buf = GetBitmapByPDFBITMAP(page, pdfbitmap.bitmap, infohead, false);
 			}
 			BITMAPFILEHEADER header = {0};
 			header.bfType = 0x4d42;
@@ -267,6 +281,7 @@ int WritePNG(const Data &d) {
 	auto pages = doc.GetPageCount();
 	int errpages = 0;
 	for(int i = 0; i < pages; ++i) {
+		if(!d.pages.empty() && find(d.pages.begin(), d.pages.end(), i) == d.pages.end())continue;
 		try {
 			PDFPage page(doc, i);
 			string outfile;
@@ -289,9 +304,11 @@ int WritePNG(const Data &d) {
 			if(d.use_gdi) {
 				buf = GetBitmapByGDI(page, bitmap.bitmap, infohead);
 			} else {
-				buf = GetBitmapByPDFBITMAP(page, pdfbitmap.bitmap, infohead);
+				buf = GetBitmapByPDFBITMAP(page, pdfbitmap.bitmap, infohead,d.transparent);
 				stride = ::FPDFBitmap_GetStride(pdfbitmap.bitmap);
 			}
+			std::vector<BYTE> tmpbuf;
+			tmpbuf.assign((BYTE*) buf, (BYTE*) buf + 4);
 			vector<BYTE> pngbuf;
 			if(!::image_diff_png::EncodeBGRAPNG((BYTE*) buf, width, height, stride, !d.transparent, &pngbuf)) {
 				throw runtime_error("Failed to decode bitmap to png");
@@ -318,6 +335,7 @@ int WriteEMF(const Data &d){
 	auto pages = doc.GetPageCount();
 	int errpages = 0;
 	for(int i = 0; i < pages; ++i) {
+		if(!d.pages.empty() && find(d.pages.begin(), d.pages.end(), i) == d.pages.end())continue;
 		try {
 			PDFPage page(doc, i);
 			string outfile;
@@ -342,38 +360,63 @@ int WriteEMF(const Data &d){
 	return errpages;
 }
 
+std::vector<std::string> split(const std::string &str, char sep) {
+	std::vector<std::string> v;
+	std::stringstream ss(str);
+	std::string buffer;
+	while(std::getline(ss, buffer, sep)) {
+		v.push_back(buffer);
+	}
+	return v;
+}
 
 int main(int argc, char *argv[]) {
 	::FPDF_InitLibrary();
 	vector<Data> files;
 	{
-		bool current_use_gdi = false;
-		int current_target = EMF;
-		string current_output;
-		bool current_transparent = false;
-		int current_scale = 1;
+		Data current_data;
+		bool output_page = false;
 		for(int i = 1; i < argc; ++i) {
 			std::string arg = argv[i];
-			if(arg == "--use-gdi")current_use_gdi = true;
-			else if(arg == "--bmp")current_target = BMP;
-			else if(arg == "--emf")current_target = EMF;
-			else if(arg == "--png")current_target = PNG;
-			else if(arg == "--transparent")current_transparent = true;
-			else if(arg.find("--scale=") == 0)current_scale = std::atoi(arg.substr(string("--scale=").length()).c_str());
-			else if(arg.find("--output=") == 0) current_output = arg.substr(string("--output=").length());
-			else if(arg == "--help") {
+			if(arg == "--use-gdi")current_data.use_gdi = true;
+			else if(arg == "--use-gdi-")current_data.use_gdi = false;
+			else if(arg == "--transparent")current_data.transparent = true;
+			else if(arg == "--transparent-")current_data.transparent = false;
+			else if(arg == "--bmp")current_data.target = BMP;
+			else if(arg == "--emf")current_data.target = EMF;
+			else if(arg == "--png")current_data.target = PNG;
+			else if(arg == "--output-page")output_page = true;
+			else if(arg.find("--pages=") == 0)current_data.pages.push_back(std::atoi(arg.substr(string("--pages=").length()).c_str()) - 1);
+			else if(arg.find("--scale=") == 0)current_data.scale = std::atoi(arg.substr(string("--scale=").length()).c_str());
+			else if(arg.find("--output=") == 0) current_data.output = arg.substr(string("--output=").length());
+			else if(arg.find("--viewport=") == 0) {
+				auto viewport = split(arg.substr(string("--viewport=").length()),',');
+				if(viewport.size() == 4) {
+					current_data.viewport.left = atoi(viewport[0].c_str());
+					current_data.viewport.top = atoi(viewport[1].c_str());
+					current_data.viewport.right = atoi(viewport[2].c_str());
+					current_data.viewport.bottom = atoi(viewport[3].c_str());
+				}
+			}else if(arg == "--help") {
 				ShowUsage();
 				return 0;
 			} else {
-				Data d;
-				d.input = GetFullName(arg);
-				d.output = GetFullName(current_output);
-				d.target = current_target;
-				d.use_gdi = current_use_gdi;
-				d.scale = current_scale;
-				d.transparent = current_transparent;
-				files.push_back(d);
-				current_output = "";
+				if(output_page) {
+					try {
+						cout << to_string(PDFDoc(GetFullName(arg)).GetPageCount()) << endl;
+					} catch(runtime_error e) {
+						cout << e.what() << endl;
+					}
+					output_page = false;
+				} else {
+					Data d = current_data;
+					d.input = GetFullName(arg);
+					d.output = GetFullName(current_data.output);
+					files.push_back(d);
+					current_data.output = "";
+					current_data.pages.clear();
+					current_data.viewport = RECT{0, 0, 0, 0};
+				}
 			}
 		}
 	}
@@ -381,11 +424,10 @@ int main(int argc, char *argv[]) {
 	Data d;
 	d.input = "C:\\Users\\Abe_Noriyuki\\Desktop\\equation.pdf";
 	d.scale = 5;
-	d.target = PNG;
-	d.use_gdi = true;
+	d.target = BMP;
+	d.use_gdi = false;
 	d.transparent = true;
-	files.push_back(d);
-	*/
+	files.push_back(d);*/
 	for(auto d : files) {
 		try {
 			switch(d.target) {
@@ -413,22 +455,3 @@ int main(int argc, char *argv[]) {
 
 
 
-
-#ifdef __cplusplus
-extern "C"{
-#endif
-BOOL APIENTRY DllMain(HINSTANCE hInstance, DWORD ul_reason_for_call, LPVOID pParam) {
-	return TRUE;
-}
-__declspec(dllexport) int GetPDFPage(char *path) {
-	try {
-		PDFDoc doc(path);
-		return doc.GetPageCount();
-	}
-	catch(runtime_error) {
-		return -1;
-	}
-}
-#ifdef __cplusplus
-}
-#endif

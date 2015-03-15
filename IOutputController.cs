@@ -16,6 +16,6 @@ namespace TeX2img
         void showUnauthorizedError(string filePath);
         void showIOError(string filePath);
 		bool askYesorNo(string msg);
-        void showPstoeditError();
+        void showToolError(string tool);
     }
 }
