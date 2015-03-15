@@ -74,6 +74,7 @@ namespace TeX2img {
         }
 
         static int TeX2imgMain(List<string> cmds) {
+            /*
             if(cmds.Count > 0) {
                 using(var meta = new System.Drawing.Imaging.Metafile(cmds[0]))
                 using(var ws = new StreamWriter(cmds[0] + ".txt")) {
@@ -83,7 +84,7 @@ namespace TeX2img {
                     ws.WriteLine("logicaldpiY = " + header.LogicalDpiX.ToString() + ", logicaldpiY = " + header.LogicalDpiY.ToString());
                 }
                 return 0;
-            }
+            }*/
 
             // 各種バイナリのパスが設定されていなかったら推測する．
             // "/exit"が指定されている場合はメッセージ表示をしない．
@@ -158,8 +159,8 @@ namespace TeX2img {
                 Properties.Settings.Default.Save();
                 return r;
             } else {
-                // dllの存在チェック
-                string[] chkfiles = { "Azuki.dll" };
+                // ファイルの存在チェック
+                string[] chkfiles = { "Azuki.dll","pdfium.dll" };
                 
                 string mydir = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
                 chkfiles = chkfiles.Where(f => !File.Exists(Path.Combine(mydir, f))).ToArray();

@@ -1,0 +1,7 @@
+要pdfium．
+
+* インクルードディレクトリにpdfium\fpdfsdk\includeを追加
+* ライブラリディレクトリにpdfium\build\(Debug|Release)\libを追加
+
+pdfiumにはpdfium.patchを当てておきます．これはGetClipBoxの戻り値を常に非常に大きくするものです．EMFファイル作成時は何故かGetClipBoxの大きさが増やせないため，このように対処してあります．（これがないと大きな画像を作成した際に一部しか描画されない．）
+

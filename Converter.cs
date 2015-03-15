@@ -67,7 +67,7 @@ namespace TeX2img {
         public bool CheckFormat() {
             string extension = Path.GetExtension(OutputFile).ToLower();
             var allowedextension = new List<string> { ".eps", ".png", ".jpg", ".pdf", ".svg", ".emf" };
-            if(!allowedextension.Contains(extension)) { 
+            if(!allowedextension.Contains(extension)) {
                 if(controller_ != null) controller_.showExtensionError(OutputFile);
                 return false;
             }
@@ -99,7 +99,7 @@ namespace TeX2img {
             string latex = setProcStartInfo(Properties.Settings.Default.platexPath, out arg);
             return GetOutputEncoding(latex, arg);
         }
-        public static Encoding GetOutputEncoding(string latex,string arg) {
+        public static Encoding GetOutputEncoding(string latex, string arg) {
             if(IspTeX(latex)) {
                 if(arg.Contains("-sjis-terminal")) return Encoding.GetEncoding("shift_jis");
                 switch(Properties.Settings.Default.encode) {
@@ -117,7 +117,7 @@ namespace TeX2img {
                 }
             } else return Encoding.UTF8;
         }
-        
+
         public bool Convert() {
             SetImageMagickEnvironment();
             bool rv = generate(InputFile, OutputFile);
@@ -150,7 +150,7 @@ namespace TeX2img {
                             File.Delete(tmpFileBaseName + "-" + i + ".jpg");
                             File.Delete(tmpFileBaseName + "-" + i + ".png");
                             File.Delete(tmpFileBaseName + "-" + i + ".svg");
-                            File.Delete(tmpFileBaseName + "-" + i + ".emf"); 
+                            File.Delete(tmpFileBaseName + "-" + i + ".emf");
                             File.Delete(tmpFileBaseName + "-" + i + ".eps");
                             File.Delete(tmpFileBaseName + "-" + i + "-trim.eps");
                             File.Delete(tmpFileBaseName + "-" + i + ".pdf");
@@ -203,7 +203,7 @@ namespace TeX2img {
             }
             startinfo.Arguments = arg;
             //if(IspTeX(startinfo.FileName)) {
-                if(Properties.Settings.Default.encode.Substring(0, 1) != "_") startinfo.Arguments += "-no-guess-input-enc -kanji=" + Properties.Settings.Default.encode + " ";
+            if(Properties.Settings.Default.encode.Substring(0, 1) != "_") startinfo.Arguments += "-no-guess-input-enc -kanji=" + Properties.Settings.Default.encode + " ";
             //}
             startinfo.Arguments += "-interaction=nonstopmode " + baseName + ".tex";
             startinfo.StandardOutputEncoding = GetOutputEncoding();
@@ -322,7 +322,7 @@ namespace TeX2img {
             string arg;
             using(var proc = GetProcess()) {
                 proc.StartInfo.FileName = setProcStartInfo(Properties.Settings.Default.gsPath, out arg);
-                if(proc.StartInfo.FileName == ""){
+                if(proc.StartInfo.FileName == "") {
                     controller_.showPathError("gswin32c.exe", "Ghostscript");
                     return false;
                 }
@@ -569,30 +569,39 @@ namespace TeX2img {
             }
             return true;
         }
+
         bool pdf2img(string inputFilename, string outputFileName) {
             var extension = Path.GetExtension(outputFileName).ToLower();
             controller_.appendOutput("TeX2img: Convert PDF to " + extension.Substring(1).ToUpper() + "\n");
+
             using(var doc = new pdfium.PDFDocument(Path.Combine(workingDir, inputFilename)))
             using(var page = doc.GetPage(0)) {
-                int width = (int)(page.Width*Properties.Settings.Default.resolutionScale);
-                int height = (int)(page.Height*Properties.Settings.Default.resolutionScale);
+                int width = (int) (page.Width * Properties.Settings.Default.resolutionScale);
+                int height = (int) (page.Height * Properties.Settings.Default.resolutionScale);
+                System.Drawing.Color background;
+                if(extension == ".png" && Properties.Settings.Default.transparentPngFlag) background = System.Drawing.Color.Transparent;
+                else background = System.Drawing.Color.White;
+                using(var bitmap = page.GetBitmap(width, height, background)) {
+                    bitmap.bitmap.Save(Path.Combine(workingDir, outputFileName),
+                        (extension == ".png" ? System.Drawing.Imaging.ImageFormat.Png : System.Drawing.Imaging.ImageFormat.Jpeg));
+                }
+                /*
                 using(var bitmap = new System.Drawing.Bitmap(width, height))
-                using(var g = System.Drawing.Graphics.FromImage(bitmap)){
+                using(var g = System.Drawing.Graphics.FromImage(bitmap)) {
                     System.Drawing.Brush brush;
                     if(extension == ".png" && Properties.Settings.Default.transparentPngFlag) brush = System.Drawing.Brushes.Transparent;
                     else brush = System.Drawing.Brushes.White;
                     g.FillRectangle(brush, new System.Drawing.Rectangle(0, 0, width, height));
                     var hdc = g.GetHdc();
-                    try{
-                        page.Draw(hdc,width,height);
+                    try {
+                        page.Draw(hdc, width, height);
                     }
-                    finally{
+                    finally {
                         g.ReleaseHdc(hdc);
                     }
-                    bitmap.Save(Path.Combine(workingDir,outputFileName), 
+                    bitmap.Save(Path.Combine(workingDir, outputFileName),
                         (extension == ".png" ? System.Drawing.Imaging.ImageFormat.Png : System.Drawing.Imaging.ImageFormat.Jpeg));
-                    
-                }
+                }*/
             }
             return true;
         }
@@ -687,7 +696,7 @@ namespace TeX2img {
             string tmpFileBaseName = Path.GetFileNameWithoutExtension(inputTeXFilePath);
 
             // とりあえずPDFを作る
-            if(!tex2dvi(tmpFileBaseName + ".tex"))return false;
+            if(!tex2dvi(tmpFileBaseName + ".tex")) return false;
             string outdvi = Path.Combine(workingDir, tmpFileBaseName + ".dvi");
             string outpdf = Path.Combine(workingDir, tmpFileBaseName + ".pdf");
             if(!File.Exists(outpdf)) {
@@ -698,11 +707,11 @@ namespace TeX2img {
                     if(!dvi2pdf(tmpFileBaseName + ".dvi")) return false;
                 }
             } else {
-                if(File.Exists(outdvi) && System.IO.File.GetLastWriteTime(outdvi) > System.IO.File.GetLastWriteTime(outpdf)){
+                if(File.Exists(outdvi) && System.IO.File.GetLastWriteTime(outdvi) > System.IO.File.GetLastWriteTime(outpdf)) {
                     if(!dvi2pdf(tmpFileBaseName + ".dvi")) return false;
                 }
             }
-            
+
             // ページ数を取得
             int page;
             using(var doc = new pdfium.PDFDocument(Path.Combine(workingDir, tmpFileBaseName + ".pdf"))) {
@@ -746,7 +755,7 @@ namespace TeX2img {
                     break;
                 }
             }
-            
+
             string outputDirectory = Path.GetDirectoryName(outputFilePath);
             if(outputDirectory != "" && !Directory.Exists(outputDirectory)) {
                 Directory.CreateDirectory(outputDirectory);
@@ -891,7 +900,7 @@ namespace TeX2img {
                         KillChildProcesses(proc);
                         if(ReadStdOutThread.IsAlive || ReadStdErrThread.IsAlive) {
                             System.Threading.Thread.Sleep(500);
-                            abort = true; 
+                            abort = true;
                         }
                         controller_.appendOutput("処理を中断しました．\r\n");
                         throw new System.TimeoutException();

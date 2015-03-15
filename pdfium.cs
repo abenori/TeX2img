@@ -52,6 +52,34 @@ namespace TeX2img {
             public void Draw(IntPtr hdc,int width,int height) {
                 PInvoke.FPDF_RenderPage(hdc, pagePtr, 0, 0, width, height, 0, 0x800);
             }
+            public class Bitmap : IDisposable{
+                public System.Drawing.Bitmap bitmap;
+                IntPtr pdfbitmap;
+                public Bitmap(int width,int height,System.Drawing.Imaging.PixelFormat format,IntPtr pdfbmp){
+                    pdfbitmap = pdfbmp;
+                    int stride = PInvoke.FPDFBitmap_GetStride(pdfbitmap);
+                    IntPtr buf = PInvoke.FPDFBitmap_GetBuffer(pdfbitmap);
+                    bitmap = new System.Drawing.Bitmap(width, height, stride, System.Drawing.Imaging.PixelFormat.Format32bppArgb, buf);
+                }
+                public void Dispose() {
+                    bitmap.Dispose();
+                    PInvoke.FPDFBitmap_Destroy(pdfbitmap);
+                }
+            }
+            public Bitmap GetBitmap(int width, int height,System.Drawing.Color background) {
+                var hdc = PInvoke.GetDC(IntPtr.Zero);
+                try {
+                    var pdfbitmap = PInvoke.FPDFBitmap_Create(width, height, 0);
+                    int col = (background.A << 24) | (background.R << 16) | (background.G << 8) | (background.B);
+                    PInvoke.FPDFBitmap_FillRect(pdfbitmap, 0, 0, width, height, (uint) col);
+                    PInvoke.FPDF_RenderPageBitmap(pdfbitmap, pagePtr, 0, 0, width, height, 0, 0x800);
+                    var bitmap = new Bitmap(width, height, System.Drawing.Imaging.PixelFormat.Format32bppArgb, pdfbitmap);
+                    return bitmap;
+                }
+                finally {
+                    PInvoke.ReleaseDC(IntPtr.Zero, hdc);
+                }
+            }
 
             //static int pageunloadednum = 0;
             public void Dispose() {
