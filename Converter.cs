@@ -739,19 +739,9 @@ namespace TeX2img {
                         }
                     } else {
                         if(!pdfcrop(tmpFileBaseName + ".pdf", tmpFileBaseName + "-" + i + ".pdf", Properties.Settings.Default.yohakuUnitBP, i)) return false;
-                        switch(extension) {
-                        case ".bmp":
-                        case ".png":
+                        if(extension != ".pdf") {
                             bool transparent = (extension == ".png" && Properties.Settings.Default.transparentPngFlag);
                             if(!pdf2img_pdfium(tmpFileBaseName + "-" + i + ".pdf", tmpFileBaseName + "-" + i + extension, transparent)) return false;
-                            break;
-                        case ".gif":
-                        case ".tiff":
-                            if(!pdf2img_pdfium(tmpFileBaseName + "-" + i + ".pdf", tmpFileBaseName + "-" + i + ".bmp", Properties.Settings.Default.transparentPngFlag)) return false;
-                            if(!bmp2img(tmpFileBaseName + "-" + i + ".bmp", tmpFileBaseName + "-" + i + extension)) return false;
-                            break;
-                        default:
-                            break;
                         }
                     }
                 }

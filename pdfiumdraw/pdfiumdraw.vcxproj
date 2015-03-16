@@ -88,6 +88,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <Text Include="howtobuild.txt" />
     <Text Include="Readme.txt" />
   </ItemGroup>
   <ItemGroup>

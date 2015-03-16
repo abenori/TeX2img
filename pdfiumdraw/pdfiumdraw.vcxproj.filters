@@ -12,6 +12,7 @@
   </ItemGroup>
   <ItemGroup>
     <Text Include="Readme.txt" />
+    <Text Include="howtobuild.txt" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pdfiumdraw.cpp" />
