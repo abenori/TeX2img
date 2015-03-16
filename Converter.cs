@@ -12,7 +12,11 @@ namespace TeX2img {
     class Converter {
         // ADS名
         public const string ADSName = "TeX2img.source";
-        public static readonly string[] imageExtensions = new string[] { ".eps", ".jpg", ".png", ".pdf", ".emf", ".bmp", ".svg" ,".gif",".tiff"};
+        public static readonly string[] bmpExtensions = new string[] { ".jpg", ".png", ".bmp", ".gif", ".tiff" };
+        public static readonly string[] vectorExtensions = new string[] { ".eps", ".pdf", ".emf", ".svg" };
+        public static string[] imageExtensions {
+            get { return bmpExtensions.Concat(vectorExtensions).ToArray(); }
+        }
 
         public static string which(string basename) {
             string separator, fullPath;
@@ -432,7 +436,10 @@ namespace TeX2img {
             controller_.appendOutput("TeX2img: Convert " + inputFileName + " to " + outputFileName + "\n");
             try {
                 using(var bitmap = new System.Drawing.Bitmap(Path.Combine(workingDir,inputFileName))) {
-                    //if(Properties.Settings.Default.transparentPngFlag) bitmap.MakeTransparent();
+                    /*
+                    if(Properties.Settings.Default.transparentPngFlag) {
+                        //bitmap.MakeTransparent(System.Drawing.Color.FromArgb(0xFF, 0, 0, 0));
+                      }*/  
                     bitmap.Save(Path.Combine(workingDir,outputFileName), format);
                 }
                 generatedImageFiles.Add(Path.Combine(workingDir, outputFileName));
@@ -462,10 +469,6 @@ namespace TeX2img {
                     return false;
                 }
                 generatedImageFiles.Add(Path.Combine(workingDir, outputFileName));
-                if(Path.GetExtension(outputFileName).ToLower() == ".svg" && !Properties.Settings.Default.fixedSVGSize) {
-                    RemoveHeightAndWidthFromSVGFile(outputFileName);
-                    RemoveHeightAndWidthFromSVGFile(outputFileName);
-                }
                 return true;
             }
         }
@@ -482,7 +485,6 @@ namespace TeX2img {
             }
             xml.Save(fullpath);
         }
-
 
         struct RectangleDecimal {
             public Decimal Left, Right, Bottom, Top;
@@ -536,7 +538,7 @@ namespace TeX2img {
             }
             generatedTeXFilesWithoutExtension.Add(Path.Combine(workingDir,Path.GetFileNameWithoutExtension(tmpfile)));
             using(var fw = new StreamWriter(Path.Combine(workingDir,tmpfile))) {
-                fw.WriteLine(@"\pdfoutput=1");
+                fw.WriteLine(@"\pdfoutput=1\relax");
                 for(int i = 0 ; i < pages.Count ; ++i){
                     var box = bbBox[i];
                     var page = pages[i];
@@ -646,13 +648,13 @@ namespace TeX2img {
             return true;
         }
 
-        bool pdf2img_pdfium(string inputFilename, string outputFileName,int pages = 0) {
+        bool pdf2img_pdfium(string inputFilename, string outputFileName,bool transparent,int pages = 0) {
             var type = Path.GetExtension(outputFileName).Substring(1).ToLower();
             using(var proc = GetProcess()) {
                 proc.StartInfo.FileName = Path.Combine(GetToolsPath(), "pdfiumdraw.exe");
                 proc.StartInfo.Arguments = 
                     (type == "emf" ? "" : "--scale=" + Properties.Settings.Default.resolutionScale.ToString() + " ") +
-                    "--" + type + " " + (Properties.Settings.Default.transparentPngFlag ? "--transparent " : "") +
+                    "--" + type + " " + (transparent ? "--transparent " : "") +
                     (pages > 0 ? "--pages=" + pages.ToString() + " " : "") + 
                     "--output=\"" + outputFileName + "\" \"" + inputFilename + "\"";
                 try {
@@ -723,26 +725,29 @@ namespace TeX2img {
             int page = pdfpages(Path.Combine(workingDir, tmpFileBaseName + ".pdf"));
 
             // .svg，テキスト情報保持な pdf，アンチエイリアスな画像の場合は PDF から作る
-            var bmpimages = new string[] { ".bmp", ".jpg", ".png", ".gif", ".tiff" };
             if(
                 extension == ".svg" || 
                 (extension == ".pdf" && !Properties.Settings.Default.outlinedText) || 
-                (bmpimages.Contains(extension) && Properties.Settings.Default.useMagickFlag) 
+                (bmpExtensions.Contains(extension) && Properties.Settings.Default.useMagickFlag) 
                 ) {
                 for(int i = 1 ; i <= page ; ++i) {
                     if(extension == ".svg") {
                         if(!pdfcrop(tmpFileBaseName + ".pdf", tmpFileBaseName + "-" + i + ".pdf", true, i)) return false;
                         if(!pdf2img_mudraw(tmpFileBaseName + "-" + i + ".pdf", tmpFileBaseName + "-" + i + ".svg")) return false;
+                        if(!Properties.Settings.Default.fixedSVGSize) {
+                            RemoveHeightAndWidthFromSVGFile(tmpFileBaseName + "-" + i + extension);
+                        }
                     } else {
                         if(!pdfcrop(tmpFileBaseName + ".pdf", tmpFileBaseName + "-" + i + ".pdf", Properties.Settings.Default.yohakuUnitBP, i)) return false;
                         switch(extension) {
                         case ".bmp":
                         case ".png":
-                            if(!pdf2img_pdfium(tmpFileBaseName + "-" + i + ".pdf", tmpFileBaseName + "-" + i + extension)) return false;
+                            bool transparent = (extension == ".png" && Properties.Settings.Default.transparentPngFlag);
+                            if(!pdf2img_pdfium(tmpFileBaseName + "-" + i + ".pdf", tmpFileBaseName + "-" + i + extension, transparent)) return false;
                             break;
                         case ".gif":
                         case ".tiff":
-                            if(!pdf2img_pdfium(tmpFileBaseName + "-" + i + ".pdf", tmpFileBaseName + "-" + i + ".bmp")) return false;
+                            if(!pdf2img_pdfium(tmpFileBaseName + "-" + i + ".pdf", tmpFileBaseName + "-" + i + ".bmp", Properties.Settings.Default.transparentPngFlag)) return false;
                             if(!bmp2img(tmpFileBaseName + "-" + i + ".bmp", tmpFileBaseName + "-" + i + extension)) return false;
                             break;
                         default:
@@ -756,7 +761,7 @@ namespace TeX2img {
                 int resolution;
                 if(Properties.Settings.Default.useLowResolution) epsResolution_ = 72 * Properties.Settings.Default.resolutionScale;
                 else epsResolution_ = 20016;
-                if(extension == ".eps" || extension == ".pdf" || extension == ".svg" || extension == ".emf") resolution = epsResolution_;
+                if(vectorExtensions.Contains(extension)) resolution = epsResolution_;
                 else resolution = 72 * Properties.Settings.Default.resolutionScale;
                 for(int i = 1 ; i <= page ; ++i) {
                     if(!pdf2eps(tmpFileBaseName + ".pdf", tmpFileBaseName + "-" + i + ".eps", resolution, i)) return false;
@@ -772,7 +777,7 @@ namespace TeX2img {
                     case ".emf":
                         if(addMargin) enlargeBB(tmpFileBaseName + "-" + i + ".eps");
                         if(!eps2pdf(tmpFileBaseName + "-" + i + ".eps", tmpFileBaseName + "-" + i + ".pdf")) return false;
-                        if(!pdf2img_pdfium(tmpFileBaseName + "-" + i + ".pdf", tmpFileBaseName + "-" + i + ".emf")) return false;
+                        if(!pdf2img_pdfium(tmpFileBaseName + "-" + i + ".pdf", tmpFileBaseName + "-" + i + ".emf",false)) return false;
                         break;
                     case ".png":
                     case ".jpg":

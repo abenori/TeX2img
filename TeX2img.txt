@@ -11,8 +11,9 @@
 * PDF ファイル
 * EMF ファイル
 * SVG ファイル
+* BMP ファイル
 
-出力した EPS / JPEG / PNG / PDF / EMF / SVG ファイルは Word / Excel / PowerPoint や，Illustrator / InDesign 等に貼り付けて利用することができます．
+出力した EPS / JPEG / PNG / PDF / EMF / SVG / BMP ファイルは Word / Excel / PowerPoint や，Illustrator / InDesign 等に貼り付けて利用することができます．
 
 もともとの作者は寺田侑祐さんです．Version 1.2 以降開発を引き継ぎました．
 
@@ -42,6 +43,7 @@ TeX2imgc.exe は CUI モードで動かすためのラッパです．TeX2img.exe
 * 「platex」で指定されたプログラムが pdf を生成したと判断した場合，TeX2img は dvipdfmx の実行をスキップします．これを利用して，pdflatex や lualatex などを指定することができます．なお，この場合は文字コードの設定を「指定しない（入力 UTF-8）」としておくとよいでしょう．
 
 * 生成された画像を TeX2img にドラッグアンドドロップ（またはメニューから「ファイル(F)」→「インポート(O)」）とすると生成した際のソースが復元されます．（オプションで無効化可能．）
+
 
 ## 起動オプション
 TeX2img.exe または TeX2imgc.exe が受けつけるオプションです．なお，
@@ -103,7 +105,7 @@ https://code.google.com/p/pdfium/
 * Azuki エディタコンポーネント Azuki.dll は zlib ライセンス．
 * NDesk.Options は MIT ライセンス．
 * Gauche は修正 BSD ライセンス．
-* mudraw は GPL ライセンス．
+* mudraw は GPL v3 ライセンス．
 * PDFium は修正 BSD ライセンス．
 * pdfiumdraw は修正 BSD ライセンスとしています．
 詳細は各々のページをご覧ください．
@@ -182,7 +184,7 @@ https://code.google.com/p/pdfium/
 ** プリアンブルのテンプレート機能を実装．
 ** 生成されたファイルの代替データストリームに TeX ソースを保存し，またインポートにより復元できるようにした．
 
-* 1.4.1
+* 1.5.0
 ** SVG / BMP ファイルを出力できるようにした．
 ** EMF ファイルの出力を復活させた．
 ** テキストをそのまま保持した PDF ファイルを出力できるようにした．

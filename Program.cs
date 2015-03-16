@@ -27,7 +27,7 @@ namespace TeX2img {
 				"Ghostscript の device の値（epswrite/eps2write）",
 				val => {Properties.Settings.Default.gsDevice = GetStringsFromArray("gsdevice",val,new string[]{"epswrite","eps2write"});}
 			},
-			{"kanji=","文字コードの指定（utf8/sjis/jis/euc/no)",val => {
+			{"kanji=","文字コード（utf8/sjis/jis/euc/no)",val => {
 				string v = GetStringsFromArray("kanji", val, new string[] { "utf8", "sjis", "jis", "euc", "no" });
 				if(v == "no"){
 					if(Properties.Settings.Default.encode != "_sjis") Properties.Settings.Default.encode = "_utf8";
@@ -47,12 +47,12 @@ namespace TeX2img {
 			    default: throw new NDesk.Options.OptionException("bp, px のいずれかを指定してください．", "unit");
 			    }
             }},
-			{"transparent","透過 PNG を作る[-]",val => {Properties.Settings.Default.transparentPngFlag = (val != null);}},
-            {"create-outline","PDF の文字をアウトライン化[-]",val =>{Properties.Settings.Default.outlinedText = (val != null);}},
-            {"specify-svg-size","SVG の表示寸法を等倍に固定[-]",val => {Properties.Settings.Default.fixedSVGSize = (val != null);}},
-			{"imagemagick","ImageMagick を使う[-]",val => {Properties.Settings.Default.useMagickFlag = (val != null);}},
-			{"low-resolution","低解像度で処理する[-]",val => {Properties.Settings.Default.useLowResolution = (val!= null);}},
-			{"ignore-errors","少々のエラーは無視する[-]",val => {Properties.Settings.Default.ignoreErrorFlag = (val != null);}},
+			{"transparent","透過 PNG[-]",val => {Properties.Settings.Default.transparentPngFlag = (val != null);}},
+            {"with-text","PDF の文字をアウトライン化[-]",val =>{Properties.Settings.Default.outlinedText = !(val != null);}},
+            {"svg-with-size","SVG の表示寸法を等倍に固定[-]",val => {Properties.Settings.Default.fixedSVGSize = (val != null);}},
+			{"antialias","アンチエイリアス処理[-]",val => {Properties.Settings.Default.useMagickFlag = (val != null);}},
+			{"low-resolution","低解像度で処理[-]",val => {Properties.Settings.Default.useLowResolution = (val!= null);}},
+			{"ignore-errors","少々のエラーは無視[-]",val => {Properties.Settings.Default.ignoreErrorFlag = (val != null);}},
             {"no-delete","一時ファイルを削除しない[-]",val => {Properties.Settings.Default.deleteTmpFileFlag = !(val != null);}},
 			{"preview","生成されたファイルを開く",val => {preview = (val != null);}},
             {"no-embed-source","ソース情報を生成ファイルに保存しない[-]",val => {Properties.Settings.Default.embedTeXSource = !(val != null);}},
@@ -337,6 +337,5 @@ namespace TeX2img {
                 }
             }
         }
-
     }
 }

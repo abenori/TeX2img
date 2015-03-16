@@ -19,7 +19,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v120</PlatformToolset>
+    <PlatformToolset>v120_xp</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
@@ -64,7 +64,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>winmm.lib;Debug\lib\fdrm.lib;Debug\lib\fpdfdoc.lib;Debug\lib\fpdfapi.lib;Debug\lib\fpdftext.lib;Debug\lib\formfiller.lib;Debug\lib\fxcodec.lib;Debug\lib\fxcrt.lib;Debug\lib\fxedit.lib;Debug\lib\fxge.lib;Debug\lib\javascript.lib;Debug\lib\v8_base.lib;Debug\lib\v8_libbase.lib;Debug\lib\v8_libplatform.lib;Debug\lib\icui18n.lib;Debug\lib\icuuc.lib;Debug\lib\v8_snapshot.lib;Debug\lib\jsapi.lib;Debug\lib\pdfwindow.lib;Debug\lib\freetype.lib;Debug\lib\pdfium.lib;Debug\lib\fx_lpng.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>gdiplus.lib;winmm.lib;Debug\lib\fdrm.lib;Debug\lib\fpdfdoc.lib;Debug\lib\fpdfapi.lib;Debug\lib\fpdftext.lib;Debug\lib\formfiller.lib;Debug\lib\fxcodec.lib;Debug\lib\fxcrt.lib;Debug\lib\fxedit.lib;Debug\lib\fxge.lib;Debug\lib\javascript.lib;Debug\lib\v8_base.lib;Debug\lib\v8_libbase.lib;Debug\lib\v8_libplatform.lib;Debug\lib\icui18n.lib;Debug\lib\icuuc.lib;Debug\lib\v8_snapshot.lib;Debug\lib\jsapi.lib;Debug\lib\pdfwindow.lib;Debug\lib\freetype.lib;Debug\lib\pdfium.lib;Debug\lib\fx_lpng.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -88,15 +88,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="image_diff_png.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="image_diff_png.cc" />
-    <ClCompile Include="pdfiumdraw.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <Text Include="license.txt" />
     <Text Include="Readme.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="pdfiumdraw.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

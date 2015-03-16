@@ -11,15 +11,19 @@
 #include <algorithm>
 #include <sstream>
 #include <fpdfedit.h>
-#include "image_diff_png.h"
+#include <GdiPlus.h>
 
 const int EMF = 0;
 const int BMP = 1;
 const int PNG = 2;
+const int JPG = 3;
+const int GIF = 4;
+const int TIFF = 5;
 
 const int RENDER_FLAG = FPDF_PRINTING;
 
 using namespace std;
+using namespace Gdiplus;
 
 struct Data {
 	Data() : viewport({0, 0, 0, 0}){
@@ -41,7 +45,9 @@ void ShowUsage() {
 	cout << "  --emf: output emf file (default)" << endl;
 	cout << "  --bmp: output bmp file" << endl;
 	cout << "  --png: output png file" << endl;
-	cout << "  --pdf: output pdf file" << endl;
+	cout << "  --jpg: output jpeg file" << endl;
+	cout << "  --gif: output gif file" << endl;
+	cout << "  --tiff: output tiff file" << endl;
 	cout << "  --scale: specify resolution level" << endl;
 	cout << "  --transparent: output transparent png file" << endl;
 	cout << "  --output=<file>: specify output file name" << endl;
@@ -153,13 +159,13 @@ void GetOutputFileName(const string &input, const string &output, string extensi
 		outputpre = GetDirectory(input) + "\\" + GetFileNameWithoutExtension(input) + "-";
 		outputpost = extension;
 	} else {
-		auto r = output.find("%d");
+		auto r = output.rfind("%d");
 		if(r == string::npos) {
 			outputpre = GetDirectory(output) + "\\" + GetFileNameWithoutExtension(output);
 			outputpost = GetFileNameWithoutExtension(output);
 		} else {
 			outputpre = output.substr(0, r);
-			outputpost = output.substr(r + 1);
+			outputpost = output.substr(r + 2);
 		}
 	}
 }
@@ -191,6 +197,44 @@ public:
 
 const int SCALE_MULTIPLE = 5;
 
+wstring ToUnicode(const string &str) {
+	static vector<wchar_t> buf;
+	DWORD size = ::MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, str.c_str(), str.length(), NULL, 0);
+	buf.resize(size + 1);
+	size = ::MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, str.c_str(), str.length(), &buf[0], size);
+	buf[size] = L'\0';
+	return wstring(&buf[0]);
+}
+
+// from https://msdn.microsoft.com/en-us/library/ms533843.aspx
+int GetEncoderClsid(const WCHAR* format, CLSID* pClsid) {
+	UINT  num = 0;          // number of image encoders
+	UINT  size = 0;         // size of the image encoder array in bytes
+
+	ImageCodecInfo* pImageCodecInfo = NULL;
+
+	GetImageEncodersSize(&num, &size);
+	if(size == 0)
+		return -1;  // Failure
+
+	pImageCodecInfo = (ImageCodecInfo*) (malloc(size));
+	if(pImageCodecInfo == NULL)
+		return -1;  // Failure
+
+	GetImageEncoders(num, size, pImageCodecInfo);
+
+	for(UINT j = 0; j < num; ++j) {
+		if(wcscmp(pImageCodecInfo[j].MimeType, format) == 0) {
+			*pClsid = pImageCodecInfo[j].Clsid;
+			free(pImageCodecInfo);
+			return j;  // Success
+		}
+	}
+
+	free(pImageCodecInfo);
+	return -1;  // Failure
+}
+
 void *GetBitmapByGDI(PDFPage &page, HBITMAP &bitmap, const BITMAPINFOHEADER &infohead){
 	void *buf;
 	int width = abs(infohead.biWidth);
@@ -215,10 +259,22 @@ void *GetBitmapByPDFBITMAP(PDFPage &page, FPDF_BITMAP &bitmap, const BITMAPINFOH
 	int width = abs(infohead.biWidth);
 	int height = abs(infohead.biHeight);
 	bitmap = ::FPDFBitmap_Create(width, height, transparent ? TRUE : FALSE);
-	::FPDFBitmap_FillRect(bitmap, 0, 0, width, height, 0xFFFFFF);
+	::FPDFBitmap_FillRect(bitmap, 0, 0, width, height, 0x00FFFFFF);
 	page.Render(bitmap, width, height);
 	return ::FPDFBitmap_GetBuffer(bitmap);
 }
+BITMAPINFOHEADER GetInfoHeader(int width, int height) {
+	BITMAPINFOHEADER infohead = {0};
+	infohead.biSize = sizeof(BITMAPINFOHEADER);
+	infohead.biWidth = width;
+	infohead.biHeight = -height;
+	infohead.biPlanes = 1;
+	infohead.biBitCount = 32;
+	infohead.biCompression = BI_RGB;
+	infohead.biSizeImage = width*height * 4;
+	return infohead;
+}
+
 
 int WriteBMP(const Data &d){
 	string outputpre, outputpost;
@@ -235,21 +291,14 @@ int WriteBMP(const Data &d){
 			else outfile = outputpre + to_string(i) + outputpost;
 			int width = (int) (page.GetWidth() *d.scale);
 			int height = (int) (page.GetHeight() * d.scale);
-			BITMAPINFOHEADER infohead = {0};
+			BITMAPINFOHEADER infohead = GetInfoHeader(width, height);
 			void *buf;
 			hBitmap bitmap;
 			PDFiumBitmap pdfbitmap;
-			infohead.biSize = sizeof(BITMAPINFOHEADER);
-			infohead.biWidth = width;
-			infohead.biHeight = -height;
-			infohead.biPlanes = 1;
-			infohead.biBitCount = 32;
-			infohead.biCompression = BI_RGB;
-			infohead.biSizeImage = width*height * 4;
 			if(d.use_gdi) {
 				buf = GetBitmapByGDI(page, bitmap.bitmap, infohead);
 			} else {
-				buf = GetBitmapByPDFBITMAP(page, pdfbitmap.bitmap, infohead, false);
+				buf = GetBitmapByPDFBITMAP(page, pdfbitmap.bitmap, infohead, /*d.transparent*/false);
 			}
 			BITMAPFILEHEADER header = {0};
 			header.bfType = 0x4d42;
@@ -258,7 +307,7 @@ int WriteBMP(const Data &d){
 
 			FILE *fp;
 			if(auto fopen_rv = ::fopen_s(&fp, outfile.c_str(), "wb") != 0) {
-				throw runtime_error("failed to open (" + to_string(fopen_rv) + ") " + outfile);
+				throw runtime_error("failed to open (error code = " + to_string(fopen_rv) + ") " + outfile);
 			}
 			::fwrite(&header, sizeof(BITMAPFILEHEADER), 1, fp);
 			::fwrite(&infohead, sizeof(BITMAPINFOHEADER), 1, fp);
@@ -272,10 +321,16 @@ int WriteBMP(const Data &d){
 	return errpages;
 }
 
+const wchar_t *GetEncodeName(string imgtype) {
+	static wstring rv;
+	if(imgtype == "jpg")rv = L"image/jpeg";
+	else rv = L"image/" + ToUnicode(imgtype);
+	return rv.c_str();
+}
 
-int WritePNG(const Data &d) {
+int WriteIMG(const Data &d,string imgtype) {
 	string outputpre, outputpost;
-	GetOutputFileName(d.input, d.output, ".png", outputpre, outputpost);
+	GetOutputFileName(d.input, d.output, "." + imgtype, outputpre, outputpost);
 	PDFDoc doc(d.input);
 	auto pages = doc.GetPageCount();
 	int errpages = 0;
@@ -284,21 +339,14 @@ int WritePNG(const Data &d) {
 		try {
 			PDFPage page(doc, i);
 			string outfile;
-			if(pages == 1)outfile = (d.output != "" ? d.output : GetDirectory(d.input) + "\\" + GetFileNameWithoutExtension(d.input) + ".png");
+			if(pages == 1)outfile = (d.output != "" ? d.output : GetDirectory(d.input) + "\\" + GetFileNameWithoutExtension(d.input) + "." + imgtype);
 			else outfile = outputpre + to_string(i) + outputpost;
 			int width = (int) (page.GetWidth() *d.scale);
 			int height = (int) (page.GetHeight() * d.scale);
-			BITMAPINFOHEADER infohead = {0};
+			BITMAPINFOHEADER infohead = GetInfoHeader(width, height);
 			void *buf;
 			hBitmap bitmap;
 			PDFiumBitmap pdfbitmap;
-			infohead.biSize = sizeof(BITMAPINFOHEADER);
-			infohead.biWidth = width;
-			infohead.biHeight = -height;
-			infohead.biPlanes = 1;
-			infohead.biBitCount = 32;
-			infohead.biCompression = BI_RGB;
-			infohead.biSizeImage = width*height * 4;
 			int stride = width * 4;
 			if(d.use_gdi) {
 				buf = GetBitmapByGDI(page, bitmap.bitmap, infohead);
@@ -306,16 +354,13 @@ int WritePNG(const Data &d) {
 				buf = GetBitmapByPDFBITMAP(page, pdfbitmap.bitmap, infohead,d.transparent);
 				stride = ::FPDFBitmap_GetStride(pdfbitmap.bitmap);
 			}
-			vector<BYTE> pngbuf;
-			if(!::image_diff_png::EncodeBGRAPNG((BYTE*) buf, width, height, stride, !d.transparent, &pngbuf)) {
-				throw runtime_error("Failed to decode bitmap to png");
-			}
-			FILE *fp;
-			if(auto fopen_rv = ::fopen_s(&fp, outfile.c_str(), "wb") != 0) {
-				throw runtime_error("failed to open (error code = " + to_string(fopen_rv) + ") " + outfile);
-			}
-			::fwrite(&pngbuf[0], 1, pngbuf.size(), fp);
-			::fclose(fp);
+			Gdiplus::Bitmap b(width, height, stride, PixelFormat32bppARGB, (BYTE*) buf);
+			CLSID clsid;
+			if(GetEncoderClsid(GetEncodeName(imgtype), &clsid) >= 0) {
+				if(b.Save(ToUnicode(outfile).c_str(), &clsid, NULL) != Ok) {
+					throw runtime_error("failed to open " + outfile);
+				}
+			} else throw runtime_error("failed to encode bitmap to " + imgtype); 
 		} catch(runtime_error e) {
 			cout << e.what() << endl;
 			++errpages;
@@ -324,6 +369,24 @@ int WritePNG(const Data &d) {
 	return errpages;
 }
 
+int WritePNG(const Data &d) {
+	return WriteIMG(d, "png");
+}
+int WriteJPG( Data &d) {
+	Data dd = d;
+	dd.transparent = false;
+	return WriteIMG(d, "jpg");
+}
+int WriteGIF(const Data &d) {
+	Data dd = d;
+	dd.transparent = false;
+	return WriteIMG(d, "gif");
+}
+int WriteTIFF(const Data &d) {
+	Data dd = d;
+	dd.transparent = false;
+	return WriteIMG(d, "tiff");
+}
 
 int WriteEMF(const Data &d){
 	string outputpre,outputpost;
@@ -385,6 +448,9 @@ int main(int argc, char *argv[]) {
 			else if(arg == "--bmp")current_data.target = BMP;
 			else if(arg == "--emf")current_data.target = EMF;
 			else if(arg == "--png")current_data.target = PNG;
+			else if(arg == "--jpg")current_data.target = JPG;
+			else if(arg == "--gif")current_data.target = GIF;
+			else if(arg == "--tiff")current_data.target = TIFF;
 			else if(arg == "--output-page")output_page = true;
 			else if(arg.find("--pages=") == 0)current_data.pages.push_back(std::atoi(arg.substr(string("--pages=").length()).c_str()) - 1);
 			else if(arg.find("--scale=") == 0)current_data.scale = std::atoi(arg.substr(string("--scale=").length()).c_str());
@@ -420,17 +486,27 @@ int main(int argc, char *argv[]) {
 			}
 		}
 	}
+	int errpages = 0;
 	for(auto d : files) {
 		try {
 			switch(d.target) {
 			case EMF:
-				WriteEMF(d);
+				errpages += WriteEMF(d);
 				break;
 			case BMP:
-				WriteBMP(d);
+				errpages += WriteBMP(d);
 				break;
 			case PNG:
-				WritePNG(d);
+				errpages += WritePNG(d);
+				break;
+			case JPG:
+				errpages += WriteJPG(d);
+				break;
+			case GIF:
+				errpages += WriteGIF(d);
+				break;
+			case TIFF:
+				errpages += WriteTIFF(d);
 				break;
 			default:
 				break;
@@ -442,7 +518,7 @@ int main(int argc, char *argv[]) {
 	}
 
 	::FPDF_DestroyLibrary();
-	return 0;
+	return errpages;
 }
 
 
