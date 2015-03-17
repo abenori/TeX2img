@@ -283,7 +283,6 @@ namespace TeX2img {
             string tmpFileName = Path.GetFileName(tmpFilePath);
             string tmpFileBaseName = Path.GetFileNameWithoutExtension(tmpFileName);
 
-
             string tmpTeXFileName = tmpFileBaseName + ".tex";
             string tmpDir = Path.GetDirectoryName(tmpFilePath);
 
@@ -301,6 +300,7 @@ namespace TeX2img {
                 File.Copy(inputTeXFilePath,tmpfile , true);
                 // 読み取り専用の場合解除しておく（後でFile.Deleteに失敗するため）．
                 (new FileInfo(tmpfile)).Attributes = FileAttributes.Normal;
+                converter.AddInputPath(Path.GetDirectoryName(inputTeXFilePath));
             }
 
             // 直接入力の場合 tex ソースを出力

@@ -72,7 +72,7 @@
       <WarningLevel>Level3</WarningLevel>
       <PrecompiledHeader>
       </PrecompiledHeader>
-      <Optimization>MaxSpeed</Optimization>
+      <Optimization>MinSpace</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -84,7 +84,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>winmm.lib;Release\lib\fdrm.lib;Release\lib\fpdfdoc.lib;Release\lib\fpdfapi.lib;Release\lib\fpdftext.lib;Release\lib\formfiller.lib;Release\lib\fxcodec.lib;Release\lib\fxcrt.lib;Release\lib\fxedit.lib;Release\lib\fxge.lib;Release\lib\javascript.lib;Release\lib\v8_base.lib;Release\lib\v8_libbase.lib;Release\lib\v8_libplatform.lib;Release\lib\icui18n.lib;Release\lib\icuuc.lib;Release\lib\v8_snapshot.lib;Release\lib\jsapi.lib;Release\lib\pdfwindow.lib;Release\lib\freetype.lib;Release\lib\pdfium.lib;Release\lib\fx_lpng.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>gdiplus.lib;winmm.lib;Release\lib\fdrm.lib;Release\lib\fpdfdoc.lib;Release\lib\fpdfapi.lib;Release\lib\fpdftext.lib;Release\lib\formfiller.lib;Release\lib\fxcodec.lib;Release\lib\fxcrt.lib;Release\lib\fxedit.lib;Release\lib\fxge.lib;Release\lib\javascript.lib;Release\lib\v8_base.lib;Release\lib\v8_libbase.lib;Release\lib\v8_libplatform.lib;Release\lib\icui18n.lib;Release\lib\icuuc.lib;Release\lib\v8_snapshot.lib;Release\lib\jsapi.lib;Release\lib\pdfwindow.lib;Release\lib\freetype.lib;Release\lib\pdfium.lib;Release\lib\fx_lpng.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>

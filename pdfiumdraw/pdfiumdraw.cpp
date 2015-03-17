@@ -162,7 +162,7 @@ void GetOutputFileName(const string &input, const string &output, string extensi
 		auto r = output.rfind("%d");
 		if(r == string::npos) {
 			outputpre = GetDirectory(output) + "\\" + GetFileNameWithoutExtension(output);
-			outputpost = GetFileNameWithoutExtension(output);
+			outputpost = GetExtension(output);
 		} else {
 			outputpre = output.substr(0, r);
 			outputpost = output.substr(r + 2);

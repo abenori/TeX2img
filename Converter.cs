@@ -822,20 +822,16 @@ namespace TeX2img {
                         if(enc == null) enc = GetInputEncoding();
                         var srctext = enc.GetString(buf);
                         foreach(var f in outputFileNames) {
-                            try {
-                                using(var fs = AlternativeDataStream.WriteAlternativeDataStream(f, ADSName))
-                                using(var ws = new StreamWriter(fs, new UTF8Encoding(false))) {
-                                    ws.Write(srctext);
-                                }
+                            using(var fs = AlternativeDataStream.WriteAlternativeDataStream(f, ADSName))
+                            using(var ws = new StreamWriter(fs, new UTF8Encoding(false))) {
+                                ws.Write(srctext);
                             }
-                            // 例外は無視
-                            catch(IOException) { }
-                            catch(NotImplementedException) { }
                         }
                     }
                 }
                 // 例外は無視
                 catch(IOException) { }
+                catch(NotImplementedException) { }
             }
             return true;
         }
@@ -926,6 +922,38 @@ namespace TeX2img {
                     }
                 }
                 catch(Win32Exception) { proc.Kill(); }
+            }
+        }
+
+        public void SetEnvironmentVariable(string envname, string val) {
+            Environments[envname] = val;
+        }
+
+        public void AddInputPath(string path) {
+            using(var proc = GetProcess()) {
+                proc.StartInfo.FileName = which("kpsewhich");
+                proc.StartInfo.Arguments = "-expand-var=$TEXINPUTS";
+                proc.ErrorDataReceived += ((s, e) => { });
+                try {
+                    proc.Start();
+                    var output = "";
+                    while(!proc.StandardOutput.EndOfStream) {
+                        output += proc.StandardOutput.ReadToEnd();
+                    }
+                    output = output.Replace("\n", "").Replace("\r", "");
+                    output.Trim();
+                    proc.WaitForExit(1000);
+                    if(!proc.HasExited) {
+                        proc.Kill();
+                        return;
+                    }
+                    if(proc.ExitCode != 0) return;
+                    if(output != "") {
+                        System.Diagnostics.Debug.WriteLine("["+ output + "]");
+                        Environments["TEXINPUTS"] = output + ";" + path;
+                    }
+                }
+                catch { }// 何もしない
             }
         }
 
