@@ -221,7 +221,7 @@ namespace TeX2img {
         }
 
         public void showToolError(string tool) {
-            var path = Path.Combine(Converter.GetShortToolPath(), tool);
+            var path = Path.Combine(Converter.ShortToolPath, tool);
             MessageBox.Show(path + @" を起動することができませんでした。" + "\n付属の " + path + " フォルダを消さないでください。", "失敗", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
         }
         #endregion

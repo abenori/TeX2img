@@ -1,7 +1,7 @@
-pdfium is needed. image_diff_png.[ch] is brought from the source tree of pdfium. For the license, see the file in the tree.
+pdfium is needed.
 
 * add "pdfium\fpdfsdk\include" to the include directories
 * add "pdfium\build" to the library directories
 
-pdfium.patch should be applied.
-PDFium ignores the outside of clipbox of the deice context. Howeever, the clipbox attached to EMF file cannot be bigger than (maybe) the size of the display. By this patch, PDFium thinks the clipbox is very big.
+pdfium.patch should be applied to the PDFium source tree.
+PDFium ignores the outside of clipbox of the device context. However, the clipbox attached to EMF file cannot be bigger than (maybe) the size of the display. This patch force PDFium to think that the clipbox is very big. You should not use this patch for the usual usage of PDFium.

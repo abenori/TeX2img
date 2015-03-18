@@ -127,6 +127,10 @@ namespace TeX2img {
         List<string> generatedTeXFilesWithoutExtension = new List<string>();
 
         public bool Convert() {
+            if(GetInputEncoding().CodePage == Encoding.UTF8.CodePage) {
+                Environments["command_line_encoding"] = "utf8";
+            }
+
             bool rv = generate(InputFile, OutputFile);
 
             if(Properties.Settings.Default.deleteTmpFileFlag) {
@@ -396,7 +400,8 @@ namespace TeX2img {
                     while(!proc.StandardOutput.EndOfStream) {
                         output += proc.StandardOutput.ReadToEnd();
                     }
-                    output.Trim(new char[] { ' ', '\r', '\n' });
+                    output = output.Replace("\r", "").Replace("\n", "");
+                    output.Trim();
                     try {
                         return Int32.Parse(output);
                     }
@@ -412,9 +417,10 @@ namespace TeX2img {
             }
         }
 
-        bool bmp2img(string inputFileName, string outputFileName) {
+        bool png2img(string inputFileName, string outputFileName) {
             System.Drawing.Imaging.ImageFormat format;
-            switch(Path.GetExtension(outputFileName).ToLower()) {
+            var extension = Path.GetExtension(outputFileName).ToLower();
+            switch(extension) {
             case ".png":
                 format = System.Drawing.Imaging.ImageFormat.Png;
                 break;
@@ -425,6 +431,7 @@ namespace TeX2img {
             case ".gif":
                 format = System.Drawing.Imaging.ImageFormat.Gif;
                 break;
+            case ".tif":
             case ".tiff":
                 format = System.Drawing.Imaging.ImageFormat.Tiff;
                 break;
@@ -435,12 +442,11 @@ namespace TeX2img {
             }
             controller_.appendOutput("TeX2img: Convert " + inputFileName + " to " + outputFileName + "\n");
             try {
-                using(var bitmap = new System.Drawing.Bitmap(Path.Combine(workingDir,inputFileName))) {
-                    /*
-                    if(Properties.Settings.Default.transparentPngFlag) {
-                        //bitmap.MakeTransparent(System.Drawing.Color.FromArgb(0xFF, 0, 0, 0));
-                      }*/  
-                    bitmap.Save(Path.Combine(workingDir,outputFileName), format);
+                using(var bitmap = new System.Drawing.Bitmap(Path.Combine(workingDir, inputFileName))) {
+                    if(Properties.Settings.Default.transparentPngFlag && extension != ".gif") {
+                        bitmap.MakeTransparent();
+                    }
+                    bitmap.Save(Path.Combine(workingDir, outputFileName), format);
                 }
                 generatedImageFiles.Add(Path.Combine(workingDir, outputFileName));
                 return true;
@@ -489,7 +495,7 @@ namespace TeX2img {
         struct RectangleDecimal {
             public Decimal Left, Right, Bottom, Top;
         }
-        bool pdfcrop(string inputFileName, string outputFileName, bool use_bp,int page = 0) {
+        bool pdfcrop(string inputFileName, string outputFileName, bool use_bp,int page = 1) {
             return pdfcrop(inputFileName,outputFileName,use_bp,new List<int>(){page});
         }
 
@@ -614,10 +620,11 @@ namespace TeX2img {
 
             switch(extension) {
             case ".png":
-                device = Properties.Settings.Default.transparentPngFlag ? "pngalpha" : "png256";
+                device = Properties.Settings.Default.transparentPngFlag ? "pngalpha" : "png16m";
+                device = "png256";
                 break;
             case ".bmp":
-                device = "bmp256";
+                device = "bmp16m";
                 break;
             default:
                 device = "jpeg";
@@ -630,7 +637,7 @@ namespace TeX2img {
                     controller_.showPathError("gswin32c.exe", "Ghostscript");
                     return false;
                 }
-                proc.StartInfo.Arguments = arg + String.Format("-q -sDEVICE={0} -sOutputFile={1} -dNOPAUSE -dBATCH -dPDFFitPage -r{2} -g{3}x{4} {5}", device, outputFileName, 72 * Properties.Settings.Default.resolutionScale, (int) ((righttop_x - leftbottom_x) * Properties.Settings.Default.resolutionScale), (int) ((righttop_y - leftbottom_y) * Properties.Settings.Default.resolutionScale), trimEpsFileName);
+                proc.StartInfo.Arguments = arg + String.Format("-q -dTextAlphaBits=1 -dGraphicsAlphaBits=1 -sDEVICE={0} -sOutputFile={1} -dNOPAUSE -dBATCH -dPDFFitPage -r{2} -g{3}x{4} {5}", device, outputFileName, 72 * Properties.Settings.Default.resolutionScale, (int) ((righttop_x - leftbottom_x) * Properties.Settings.Default.resolutionScale), (int) ((righttop_y - leftbottom_y) * Properties.Settings.Default.resolutionScale), trimEpsFileName);
                 try {
                     ReadOutputs(proc, "Ghostscript の実行");
                 }
@@ -648,13 +655,13 @@ namespace TeX2img {
             return true;
         }
 
-        bool pdf2img_pdfium(string inputFilename, string outputFileName,bool transparent,int pages = 0) {
+        bool pdf2img_pdfium(string inputFilename, string outputFileName,int pages = 0) {
             var type = Path.GetExtension(outputFileName).Substring(1).ToLower();
             using(var proc = GetProcess()) {
                 proc.StartInfo.FileName = Path.Combine(GetToolsPath(), "pdfiumdraw.exe");
                 proc.StartInfo.Arguments = 
                     (type == "emf" ? "" : "--scale=" + Properties.Settings.Default.resolutionScale.ToString() + " ") +
-                    "--" + type + " " + (transparent ? "--transparent " : "") +
+                    "--" + type + " " + (Properties.Settings.Default.transparentPngFlag ? "--transparent " : "") +
                     (pages > 0 ? "--pages=" + pages.ToString() + " " : "") + 
                     "--output=\"" + outputFileName + "\" \"" + inputFilename + "\"";
                 try {
@@ -740,8 +747,7 @@ namespace TeX2img {
                     } else {
                         if(!pdfcrop(tmpFileBaseName + ".pdf", tmpFileBaseName + "-" + i + ".pdf", Properties.Settings.Default.yohakuUnitBP, i)) return false;
                         if(extension != ".pdf") {
-                            bool transparent = (extension == ".png" && Properties.Settings.Default.transparentPngFlag);
-                            if(!pdf2img_pdfium(tmpFileBaseName + "-" + i + ".pdf", tmpFileBaseName + "-" + i + extension, transparent)) return false;
+                            if(!pdf2img_pdfium(tmpFileBaseName + "-" + i + ".pdf", tmpFileBaseName + "-" + i + extension)) return false;
                         }
                     }
                 }
@@ -767,7 +773,7 @@ namespace TeX2img {
                     case ".emf":
                         if(addMargin) enlargeBB(tmpFileBaseName + "-" + i + ".eps");
                         if(!eps2pdf(tmpFileBaseName + "-" + i + ".eps", tmpFileBaseName + "-" + i + ".pdf")) return false;
-                        if(!pdf2img_pdfium(tmpFileBaseName + "-" + i + ".pdf", tmpFileBaseName + "-" + i + ".emf",false)) return false;
+                        if(!pdf2img_pdfium(tmpFileBaseName + "-" + i + ".pdf", tmpFileBaseName + "-" + i + ".emf")) return false;
                         break;
                     case ".png":
                     case ".jpg":
@@ -776,8 +782,8 @@ namespace TeX2img {
                         break;
                     case ".gif":
                     case ".tiff":
-                        if(!eps2img(tmpFileBaseName + "-" + i + ".eps", tmpFileBaseName + "-" + i + ".bmp")) return false;
-                        if(!bmp2img(tmpFileBaseName + "-" + i + ".bmp", tmpFileBaseName + "-" + i + extension)) return false;
+                        if(!eps2img(tmpFileBaseName + "-" + i + ".eps", tmpFileBaseName + "-" + i + ".png")) return false;
+                        if(!png2img(tmpFileBaseName + "-" + i + ".png", tmpFileBaseName + "-" + i + extension)) return false;
                         break;
                     }
                 }
@@ -925,43 +931,14 @@ namespace TeX2img {
             }
         }
 
-        public void SetEnvironmentVariable(string envname, string val) {
-            Environments[envname] = val;
-        }
-
         public void AddInputPath(string path) {
-            using(var proc = GetProcess()) {
-                proc.StartInfo.FileName = which("kpsewhich");
-                proc.StartInfo.Arguments = "-expand-var=$TEXINPUTS";
-                proc.ErrorDataReceived += ((s, e) => { });
-                try {
-                    proc.Start();
-                    var output = "";
-                    while(!proc.StandardOutput.EndOfStream) {
-                        output += proc.StandardOutput.ReadToEnd();
-                    }
-                    output = output.Replace("\n", "").Replace("\r", "");
-                    output.Trim();
-                    proc.WaitForExit(1000);
-                    if(!proc.HasExited) {
-                        proc.Kill();
-                        return;
-                    }
-                    if(proc.ExitCode != 0) return;
-                    if(output != "") {
-                        System.Diagnostics.Debug.WriteLine("["+ output + "]");
-                        Environments["TEXINPUTS"] = output + ";" + path;
-                    }
-                }
-                catch { }// 何もしない
-            }
+            if(!Environments.ContainsKey("TEXINUTS")) Environments["TEXINPUTS"] = "";
+            Environments["TEXINPUTS"] += path + ";";
         }
 
         public static string GetToolsPath() {
-            return Path.Combine(Path.GetDirectoryName(Path.GetFullPath(System.Reflection.Assembly.GetExecutingAssembly().Location)),GetShortToolPath());
+            return Path.Combine(Path.GetDirectoryName(Path.GetFullPath(System.Reflection.Assembly.GetExecutingAssembly().Location)),ShortToolPath);
         }
-        public static string GetShortToolPath() {
-            return "";
-        }
+        public static readonly string ShortToolPath = "";
     }
 }

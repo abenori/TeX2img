@@ -10,7 +10,7 @@ Then file.png will be generated. See also pdfiumdraw --help.
 
 # license
 (modified BSD license)
-pdfium.exe
+pdfiumdraw.exe
 Copyright (c) 2015-, Noriyuki Abe
 All rights reserved.
 

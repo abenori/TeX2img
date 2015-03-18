@@ -1,17 +1,15 @@
 #include <Windows.h>
 #include <tchar.h>
-#include <stdio.h>
 #include <string>
 #include <vector>
 #include <iostream>
 #include <memory>
 #include <exception>
-#include <cstdlib>
 #include <fpdfview.h>
 #include <algorithm>
 #include <sstream>
-#include <fpdfedit.h>
 #include <GdiPlus.h>
+#include <wincodec.h>
 
 const int EMF = 0;
 const int BMP = 1;
@@ -41,7 +39,7 @@ struct Data {
 void ShowUsage() {
 	cout << "pdfiumdraw [option] input" << endl;
 	cout << "option:" << endl;
-	cout << "  --use-gdi: use gdi for drawing" << endl;
+	cout << "  --use-gdi: use GDI for drawing" << endl;
 	cout << "  --emf: output emf file (default)" << endl;
 	cout << "  --bmp: output bmp file" << endl;
 	cout << "  --png: output png file" << endl;
@@ -49,7 +47,7 @@ void ShowUsage() {
 	cout << "  --gif: output gif file" << endl;
 	cout << "  --tiff: output tiff file" << endl;
 	cout << "  --scale: specify resolution level" << endl;
-	cout << "  --transparent: output transparent png file" << endl;
+	cout << "  --transparent: output transparent png/tiff file" << endl;
 	cout << "  --output=<file>: specify output file name" << endl;
 	cout << "  --pages=<page>: specify output page" << endl;
 //	cout << "  --viewport=<left>,<top>,<right>,<bottom>: specify viewport" << endl;
@@ -195,8 +193,6 @@ public:
 	}
 };
 
-const int SCALE_MULTIPLE = 5;
-
 wstring ToUnicode(const string &str) {
 	static vector<wchar_t> buf;
 	DWORD size = ::MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, str.c_str(), str.length(), NULL, 0);
@@ -204,35 +200,6 @@ wstring ToUnicode(const string &str) {
 	size = ::MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, str.c_str(), str.length(), &buf[0], size);
 	buf[size] = L'\0';
 	return wstring(&buf[0]);
-}
-
-// from https://msdn.microsoft.com/en-us/library/ms533843.aspx
-int GetEncoderClsid(const WCHAR* format, CLSID* pClsid) {
-	UINT  num = 0;          // number of image encoders
-	UINT  size = 0;         // size of the image encoder array in bytes
-
-	ImageCodecInfo* pImageCodecInfo = NULL;
-
-	GetImageEncodersSize(&num, &size);
-	if(size == 0)
-		return -1;  // Failure
-
-	pImageCodecInfo = (ImageCodecInfo*) (malloc(size));
-	if(pImageCodecInfo == NULL)
-		return -1;  // Failure
-
-	GetImageEncoders(num, size, pImageCodecInfo);
-
-	for(UINT j = 0; j < num; ++j) {
-		if(wcscmp(pImageCodecInfo[j].MimeType, format) == 0) {
-			*pClsid = pImageCodecInfo[j].Clsid;
-			free(pImageCodecInfo);
-			return j;  // Success
-		}
-	}
-
-	free(pImageCodecInfo);
-	return -1;  // Failure
 }
 
 void *GetBitmapByGDI(PDFPage &page, HBITMAP &bitmap, const BITMAPINFOHEADER &infohead){
@@ -275,58 +242,37 @@ BITMAPINFOHEADER GetInfoHeader(int width, int height) {
 	return infohead;
 }
 
+IWICImagingFactory *GetWICFactory() {
+	IWICImagingFactory *factory;
+	auto hr = ::CoCreateInstance(CLSID_WICImagingFactory, nullptr, CLSCTX_INPROC_SERVER, IID_PPV_ARGS(&factory));
+	if(SUCCEEDED(hr))return factory;
+	else throw runtime_error("failed to initialize WIC");
+}
+_GUID GetFormat(const string &imgtype) {
+	if(imgtype == "bmp")return GUID_ContainerFormatBmp;
+	else if(imgtype == "png")return GUID_ContainerFormatPng;
+	else if(imgtype == "jpg")return GUID_ContainerFormatJpeg;
+	else if(imgtype == "tiff")return GUID_ContainerFormatTiff;
+	else if(imgtype == "gif")return GUID_ContainerFormatGif;
+	else return GUID_ContainerFormatBmp;
+}
 
-int WriteBMP(const Data &d){
-	string outputpre, outputpost;
-	GetOutputFileName(d.input, d.output, ".bmp", outputpre, outputpost);
-	PDFDoc doc(d.input);
-	auto pages = doc.GetPageCount();
-	int errpages = 0;
-	for(int i = 0; i < pages; ++i) {
-		if(!d.pages.empty() && find(d.pages.begin(), d.pages.end(), i) == d.pages.end())continue;
-		try {
-			PDFPage page(doc, i);
-			string outfile;
-			if(pages == 1)outfile = (d.output != "" ? d.output : GetDirectory(d.input) + "\\" + GetFileNameWithoutExtension(d.input) + ".bmp");
-			else outfile = outputpre + to_string(i) + outputpost;
-			int width = (int) (page.GetWidth() *d.scale);
-			int height = (int) (page.GetHeight() * d.scale);
-			BITMAPINFOHEADER infohead = GetInfoHeader(width, height);
-			void *buf;
-			hBitmap bitmap;
-			PDFiumBitmap pdfbitmap;
-			if(d.use_gdi) {
-				buf = GetBitmapByGDI(page, bitmap.bitmap, infohead);
-			} else {
-				buf = GetBitmapByPDFBITMAP(page, pdfbitmap.bitmap, infohead, /*d.transparent*/false);
-			}
-			BITMAPFILEHEADER header = {0};
-			header.bfType = 0x4d42;
-			header.bfOffBits = sizeof(BITMAPFILEHEADER) + sizeof(BITMAPINFOHEADER);
-			header.bfSize = header.bfOffBits + infohead.biSizeImage;
-
-			FILE *fp;
-			if(auto fopen_rv = ::fopen_s(&fp, outfile.c_str(), "wb") != 0) {
-				throw runtime_error("failed to open (error code = " + to_string(fopen_rv) + ") " + outfile);
-			}
-			::fwrite(&header, sizeof(BITMAPFILEHEADER), 1, fp);
-			::fwrite(&infohead, sizeof(BITMAPINFOHEADER), 1, fp);
-			::fwrite(buf, infohead.biSizeImage, 1, fp);
-			::fclose(fp);
-		} catch(runtime_error e) {
-			cout << e.what() << endl;
-			++errpages;
-		}
+// ComPtrが見付からないので……
+template<class T> class Releaser {
+	T *buf;
+public:
+	~Releaser() {
+		buf->Release();
 	}
-	return errpages;
-}
-
-const wchar_t *GetEncodeName(string imgtype) {
-	static wstring rv;
-	if(imgtype == "jpg")rv = L"image/jpeg";
-	else rv = L"image/" + ToUnicode(imgtype);
-	return rv.c_str();
-}
+	const T*get() { return buf; }
+	operator T*() { return buf; }
+	T *operator->() { return buf; }
+	T **operator&() { return &buf; }
+	Releaser(T*b) { buf = b; }
+	Releaser() {}
+	Releaser(const Releaser &) = delete;
+	Releaser &operator=(const Releaser &) = delete;
+};
 
 int WriteIMG(const Data &d,string imgtype) {
 	string outputpre, outputpost;
@@ -343,6 +289,9 @@ int WriteIMG(const Data &d,string imgtype) {
 			else outfile = outputpre + to_string(i) + outputpost;
 			int width = (int) (page.GetWidth() *d.scale);
 			int height = (int) (page.GetHeight() * d.scale);
+			if(abs(width) >(1 << 15) || abs(height) > (1 << 15)) {
+				throw runtime_error("image size is boo big (" + d.input + ", page " + to_string(i + 1) + ")");
+			}
 			BITMAPINFOHEADER infohead = GetInfoHeader(width, height);
 			void *buf;
 			hBitmap bitmap;
@@ -354,13 +303,22 @@ int WriteIMG(const Data &d,string imgtype) {
 				buf = GetBitmapByPDFBITMAP(page, pdfbitmap.bitmap, infohead,d.transparent);
 				stride = ::FPDFBitmap_GetStride(pdfbitmap.bitmap);
 			}
-			Gdiplus::Bitmap b(width, height, stride, PixelFormat32bppARGB, (BYTE*) buf);
-			CLSID clsid;
-			if(GetEncoderClsid(GetEncodeName(imgtype), &clsid) >= 0) {
-				if(b.Save(ToUnicode(outfile).c_str(), &clsid, NULL) != Ok) {
-					throw runtime_error("failed to open " + outfile);
-				}
-			} else throw runtime_error("failed to encode bitmap to " + imgtype); 
+			Releaser<IWICImagingFactory> factory(GetWICFactory());
+			Releaser<IWICBitmap> b;
+			if(!SUCCEEDED(factory->CreateBitmapFromMemory(width, height, GUID_WICPixelFormat32bppBGRA, stride, stride*height, (BYTE*) buf, &b)))throw runtime_error("failed to create bitmap");
+			auto format = GetFormat(imgtype);
+			Releaser<IWICBitmapEncoder> encoder;
+			if(!SUCCEEDED(factory->CreateEncoder(format, nullptr, &encoder)))throw runtime_error("failed to create encoder");
+			Releaser<IWICStream> stream;
+			if(!SUCCEEDED(factory->CreateStream(&stream)))throw runtime_error("failed to create stream");
+			if(!SUCCEEDED(stream->InitializeFromFilename(ToUnicode(outfile).c_str(), GENERIC_WRITE)))throw runtime_error("failed to create " + outfile);
+			if(!SUCCEEDED(encoder->Initialize(stream, WICBitmapEncoderNoCache)))throw runtime_error("failed to initialize encoder");
+			Releaser<IWICBitmapFrameEncode> frame;
+			if(!SUCCEEDED(encoder->CreateNewFrame(&frame, nullptr)))throw runtime_error("failed to create frame");
+			if(!SUCCEEDED(frame->Initialize(NULL)))throw runtime_error("failed to initialize frame");
+			if(!SUCCEEDED(frame->WriteSource(b, nullptr)))throw runtime_error("failed to write bitmap");
+			if(!SUCCEEDED(frame->Commit()))throw runtime_error("failed to commit frame");
+			if(!SUCCEEDED(encoder->Commit()))throw runtime_error("failed to write " + outfile);
 		} catch(runtime_error e) {
 			cout << e.what() << endl;
 			++errpages;
@@ -369,17 +327,20 @@ int WriteIMG(const Data &d,string imgtype) {
 	return errpages;
 }
 
+int WriteBMP(const Data &d) {
+	Data dd = d;
+	dd.transparent = false;
+	return WriteIMG(dd, "bmp");
+}
 int WritePNG(const Data &d) {
 	return WriteIMG(d, "png");
 }
 int WriteJPG( Data &d) {
 	Data dd = d;
 	dd.transparent = false;
-	return WriteIMG(d, "jpg");
+	return WriteIMG(dd, "jpg");
 }
 int WriteGIF(const Data &d) {
-	Data dd = d;
-	dd.transparent = false;
 	return WriteIMG(d, "gif");
 }
 int WriteTIFF(const Data &d) {
@@ -435,6 +396,7 @@ std::vector<std::string> split(const std::string &str, char sep) {
 
 int main(int argc, char *argv[]) {
 	::FPDF_InitLibrary();
+	::CoInitialize(NULL);
 	vector<Data> files;
 	{
 		Data current_data;
@@ -451,7 +413,7 @@ int main(int argc, char *argv[]) {
 			else if(arg == "--jpg")current_data.target = JPG;
 			else if(arg == "--gif")current_data.target = GIF;
 			else if(arg == "--tiff")current_data.target = TIFF;
-			else if(arg == "--output-page")output_page = true;
+			else if(arg == "--output-page")output_page = true;// ページ数を出力する
 			else if(arg.find("--pages=") == 0)current_data.pages.push_back(std::atoi(arg.substr(string("--pages=").length()).c_str()) - 1);
 			else if(arg.find("--scale=") == 0)current_data.scale = std::atoi(arg.substr(string("--scale=").length()).c_str());
 			else if(arg.find("--output=") == 0) current_data.output = arg.substr(string("--output=").length());
@@ -486,6 +448,15 @@ int main(int argc, char *argv[]) {
 			}
 		}
 	}
+	Data d;
+	d.input = "C:\\Users\\Abe_Noriyuki\\Desktop\\TeX2img\\equation.pdf";
+	d.target = GIF;
+	d.scale = 5;
+	d.transparent = true;
+	files.push_back(d);
+	d.target = JPG;
+	files.push_back(d);
+
 	int errpages = 0;
 	for(auto d : files) {
 		try {
@@ -518,8 +489,6 @@ int main(int argc, char *argv[]) {
 	}
 
 	::FPDF_DestroyLibrary();
+	::CoUninitialize();
 	return errpages;
 }
-
-
-

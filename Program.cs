@@ -48,8 +48,8 @@ namespace TeX2img {
 			    }
             }},
 			{"transparent","透過 PNG[-]",val => {Properties.Settings.Default.transparentPngFlag = (val != null);}},
-            {"with-text","PDF の文字をアウトライン化[-]",val =>{Properties.Settings.Default.outlinedText = !(val != null);}},
-            {"svg-with-size","SVG の表示寸法を等倍に固定[-]",val => {Properties.Settings.Default.fixedSVGSize = (val != null);}},
+            {"with-text","PDF のテキスト情報を保持[-]",val =>{Properties.Settings.Default.outlinedText = !(val != null);}},
+            {"delete-display-size","SVG の表示寸法を削除[-]",val => {Properties.Settings.Default.fixedSVGSize = (val != null);}},
 			{"antialias","アンチエイリアス処理[-]",val => {Properties.Settings.Default.useMagickFlag = (val != null);}},
 			{"low-resolution","低解像度で処理[-]",val => {Properties.Settings.Default.useLowResolution = (val!= null);}},
 			{"ignore-errors","少々のエラーは無視[-]",val => {Properties.Settings.Default.ignoreErrorFlag = (val != null);}},

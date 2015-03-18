@@ -58,6 +58,11 @@
             this.platexTextBox = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.OutputImgSettingTab = new System.Windows.Forms.TabPage();
+            this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.fixSVGSizeCheckBox = new System.Windows.Forms.CheckBox();
+            this.useMagickCheckBox = new System.Windows.Forms.CheckBox();
+            this.notOutllinedTextCheckBox = new System.Windows.Forms.CheckBox();
+            this.transparentPngCheckBox = new System.Windows.Forms.CheckBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.label9 = new System.Windows.Forms.Label();
@@ -96,15 +101,11 @@
             this.platexOpenFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.dvipdfmxOpenFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.gsOpenFileDialog = new System.Windows.Forms.OpenFileDialog();
-            this.useMagickCheckBox = new System.Windows.Forms.CheckBox();
-            this.transparentPngCheckBox = new System.Windows.Forms.CheckBox();
-            this.notOutllinedTextCheckBox = new System.Windows.Forms.CheckBox();
-            this.groupBox2 = new System.Windows.Forms.GroupBox();
-            this.fixSVGSizeCheckBox = new System.Windows.Forms.CheckBox();
             this.SettingTab.SuspendLayout();
             this.BasicSettingTab.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.LaTeXCompileNumbernumUpDown)).BeginInit();
             this.OutputImgSettingTab.SuspendLayout();
+            this.groupBox2.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.groupBox3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.bottomMarginUpDown)).BeginInit();
@@ -115,7 +116,6 @@
             this.AfterCompilingTab.SuspendLayout();
             this.EditorSettingTab.SuspendLayout();
             this.FontColorGroup.SuspendLayout();
-            this.groupBox2.SuspendLayout();
             this.SuspendLayout();
             // 
             // SettingTab
@@ -356,6 +356,63 @@
             this.OutputImgSettingTab.TabIndex = 1;
             this.OutputImgSettingTab.Text = "出力画像設定";
             this.OutputImgSettingTab.UseVisualStyleBackColor = true;
+            // 
+            // groupBox2
+            // 
+            this.groupBox2.Controls.Add(this.fixSVGSizeCheckBox);
+            this.groupBox2.Controls.Add(this.useMagickCheckBox);
+            this.groupBox2.Controls.Add(this.notOutllinedTextCheckBox);
+            this.groupBox2.Controls.Add(this.transparentPngCheckBox);
+            this.groupBox2.Location = new System.Drawing.Point(25, 286);
+            this.groupBox2.Name = "groupBox2";
+            this.groupBox2.Size = new System.Drawing.Size(612, 143);
+            this.groupBox2.TabIndex = 2;
+            this.groupBox2.TabStop = false;
+            this.groupBox2.Text = "画像形式ごとの設定";
+            // 
+            // fixSVGSizeCheckBox
+            // 
+            this.fixSVGSizeCheckBox.AutoSize = true;
+            this.fixSVGSizeCheckBox.Location = new System.Drawing.Point(24, 94);
+            this.fixSVGSizeCheckBox.Name = "fixSVGSizeCheckBox";
+            this.fixSVGSizeCheckBox.Size = new System.Drawing.Size(208, 22);
+            this.fixSVGSizeCheckBox.TabIndex = 2;
+            this.fixSVGSizeCheckBox.Text = "寸法情報を削除（SVG）";
+            this.fixSVGSizeCheckBox.UseVisualStyleBackColor = true;
+            // 
+            // useMagickCheckBox
+            // 
+            this.useMagickCheckBox.AutoSize = true;
+            this.useMagickCheckBox.Location = new System.Drawing.Point(24, 35);
+            this.useMagickCheckBox.Margin = new System.Windows.Forms.Padding(5, 4, 5, 4);
+            this.useMagickCheckBox.Name = "useMagickCheckBox";
+            this.useMagickCheckBox.Size = new System.Drawing.Size(375, 22);
+            this.useMagickCheckBox.TabIndex = 0;
+            this.useMagickCheckBox.Text = "アンチエイリアス処理する（JPEG / PNG / BMP）";
+            this.useMagickCheckBox.UseVisualStyleBackColor = true;
+            // 
+            // notOutllinedTextCheckBox
+            // 
+            this.notOutllinedTextCheckBox.AutoSize = true;
+            this.notOutllinedTextCheckBox.Location = new System.Drawing.Point(325, 64);
+            this.notOutllinedTextCheckBox.Name = "notOutllinedTextCheckBox";
+            this.notOutllinedTextCheckBox.Size = new System.Drawing.Size(220, 22);
+            this.notOutllinedTextCheckBox.TabIndex = 1;
+            this.notOutllinedTextCheckBox.Text = "テキストを保持する（PDF）";
+            this.notOutllinedTextCheckBox.UseVisualStyleBackColor = true;
+            // 
+            // transparentPngCheckBox
+            // 
+            this.transparentPngCheckBox.AutoSize = true;
+            this.transparentPngCheckBox.Checked = true;
+            this.transparentPngCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.transparentPngCheckBox.Location = new System.Drawing.Point(24, 65);
+            this.transparentPngCheckBox.Margin = new System.Windows.Forms.Padding(5, 4, 5, 4);
+            this.transparentPngCheckBox.Name = "transparentPngCheckBox";
+            this.transparentPngCheckBox.Size = new System.Drawing.Size(232, 22);
+            this.transparentPngCheckBox.TabIndex = 0;
+            this.transparentPngCheckBox.Text = "背景色を透過させる（PNG）";
+            this.transparentPngCheckBox.UseVisualStyleBackColor = true;
             // 
             // groupBox1
             // 
@@ -772,63 +829,6 @@
             this.gsOpenFileDialog.FileName = "gswin32c.exe";
             this.gsOpenFileDialog.Filter = "exe ファイル (*.exe)|*.exe|bat ファイル (*.bat)|*.bat|すべてのファイル (*.*)|*.*";
             // 
-            // useMagickCheckBox
-            // 
-            this.useMagickCheckBox.AutoSize = true;
-            this.useMagickCheckBox.Location = new System.Drawing.Point(24, 35);
-            this.useMagickCheckBox.Margin = new System.Windows.Forms.Padding(5, 4, 5, 4);
-            this.useMagickCheckBox.Name = "useMagickCheckBox";
-            this.useMagickCheckBox.Size = new System.Drawing.Size(375, 22);
-            this.useMagickCheckBox.TabIndex = 0;
-            this.useMagickCheckBox.Text = "アンチエイリアス処理する（JPEG / PNG / BMP）";
-            this.useMagickCheckBox.UseVisualStyleBackColor = true;
-            // 
-            // transparentPngCheckBox
-            // 
-            this.transparentPngCheckBox.AutoSize = true;
-            this.transparentPngCheckBox.Checked = true;
-            this.transparentPngCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.transparentPngCheckBox.Location = new System.Drawing.Point(24, 65);
-            this.transparentPngCheckBox.Margin = new System.Windows.Forms.Padding(5, 4, 5, 4);
-            this.transparentPngCheckBox.Name = "transparentPngCheckBox";
-            this.transparentPngCheckBox.Size = new System.Drawing.Size(232, 22);
-            this.transparentPngCheckBox.TabIndex = 0;
-            this.transparentPngCheckBox.Text = "背景色を透過させる（PNG）";
-            this.transparentPngCheckBox.UseVisualStyleBackColor = true;
-            // 
-            // notOutllinedTextCheckBox
-            // 
-            this.notOutllinedTextCheckBox.AutoSize = true;
-            this.notOutllinedTextCheckBox.Location = new System.Drawing.Point(325, 64);
-            this.notOutllinedTextCheckBox.Name = "notOutllinedTextCheckBox";
-            this.notOutllinedTextCheckBox.Size = new System.Drawing.Size(220, 22);
-            this.notOutllinedTextCheckBox.TabIndex = 1;
-            this.notOutllinedTextCheckBox.Text = "テキストを保持する（PDF）";
-            this.notOutllinedTextCheckBox.UseVisualStyleBackColor = true;
-            // 
-            // groupBox2
-            // 
-            this.groupBox2.Controls.Add(this.fixSVGSizeCheckBox);
-            this.groupBox2.Controls.Add(this.useMagickCheckBox);
-            this.groupBox2.Controls.Add(this.notOutllinedTextCheckBox);
-            this.groupBox2.Controls.Add(this.transparentPngCheckBox);
-            this.groupBox2.Location = new System.Drawing.Point(25, 286);
-            this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(612, 143);
-            this.groupBox2.TabIndex = 2;
-            this.groupBox2.TabStop = false;
-            this.groupBox2.Text = "画像形式ごとの設定";
-            // 
-            // fixSVGSizeCheckBox
-            // 
-            this.fixSVGSizeCheckBox.AutoSize = true;
-            this.fixSVGSizeCheckBox.Location = new System.Drawing.Point(24, 94);
-            this.fixSVGSizeCheckBox.Name = "fixSVGSizeCheckBox";
-            this.fixSVGSizeCheckBox.Size = new System.Drawing.Size(258, 22);
-            this.fixSVGSizeCheckBox.TabIndex = 2;
-            this.fixSVGSizeCheckBox.Text = "表示寸法を等倍に固定（SVG）";
-            this.fixSVGSizeCheckBox.UseVisualStyleBackColor = true;
-            // 
             // SettingForm
             // 
             this.AcceptButton = this.OKButton;
@@ -850,6 +850,8 @@
             this.BasicSettingTab.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.LaTeXCompileNumbernumUpDown)).EndInit();
             this.OutputImgSettingTab.ResumeLayout(false);
+            this.groupBox2.ResumeLayout(false);
+            this.groupBox2.PerformLayout();
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             this.groupBox3.ResumeLayout(false);
@@ -865,8 +867,6 @@
             this.EditorSettingTab.PerformLayout();
             this.FontColorGroup.ResumeLayout(false);
             this.FontColorGroup.PerformLayout();
-            this.groupBox2.ResumeLayout(false);
-            this.groupBox2.PerformLayout();
             this.ResumeLayout(false);
 
         }
