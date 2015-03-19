@@ -8,20 +8,20 @@
 #include <fpdfview.h>
 #include <algorithm>
 #include <sstream>
-#include <GdiPlus.h>
+#include <shlwapi.h>
 #include <wincodec.h>
 
-const int EMF = 0;
-const int BMP = 1;
-const int PNG = 2;
-const int JPG = 3;
-const int GIF = 4;
-const int TIFF = 5;
+const int PDF = 0;
+const int EMF = 1;
+const int BMP = 2;
+const int PNG = 3;
+const int JPG = 4;
+const int GIF = 5;
+const int TIFF = 6;
 
 const int RENDER_FLAG = FPDF_PRINTING;
 
 using namespace std;
-using namespace Gdiplus;
 
 struct Data {
 	Data() : viewport({0, 0, 0, 0}){
@@ -30,6 +30,7 @@ struct Data {
 	string input;
 	string output;
 	int target = EMF;
+	int input_format = PDF;
 	int scale = 1;
 	vector<int> pages;
 	bool transparent = false;
@@ -46,7 +47,7 @@ void ShowUsage() {
 	cout << "  --jpg: output jpeg file" << endl;
 	cout << "  --gif: output gif file" << endl;
 	cout << "  --tiff: output tiff file" << endl;
-	cout << "  --scale: specify resolution level" << endl;
+	cout << "  --scale: specify scale" << endl;
 	cout << "  --transparent: output transparent png/tiff file" << endl;
 	cout << "  --output=<file>: specify output file name" << endl;
 	cout << "  --pages=<page>: specify output page" << endl;
@@ -230,6 +231,7 @@ void *GetBitmapByPDFBITMAP(PDFPage &page, FPDF_BITMAP &bitmap, const BITMAPINFOH
 	page.Render(bitmap, width, height);
 	return ::FPDFBitmap_GetBuffer(bitmap);
 }
+
 BITMAPINFOHEADER GetInfoHeader(int width, int height) {
 	BITMAPINFOHEADER infohead = {0};
 	infohead.biSize = sizeof(BITMAPINFOHEADER);
@@ -242,12 +244,6 @@ BITMAPINFOHEADER GetInfoHeader(int width, int height) {
 	return infohead;
 }
 
-IWICImagingFactory *GetWICFactory() {
-	IWICImagingFactory *factory;
-	auto hr = ::CoCreateInstance(CLSID_WICImagingFactory, nullptr, CLSCTX_INPROC_SERVER, IID_PPV_ARGS(&factory));
-	if(SUCCEEDED(hr))return factory;
-	else throw runtime_error("failed to initialize WIC");
-}
 _GUID GetFormat(const string &imgtype) {
 	if(imgtype == "bmp")return GUID_ContainerFormatBmp;
 	else if(imgtype == "png")return GUID_ContainerFormatPng;
@@ -258,21 +254,39 @@ _GUID GetFormat(const string &imgtype) {
 }
 
 // ComPtrが見付からないので……
-template<class T> class Releaser {
-	T *buf;
+template<class T> class ComPtr {
+	T *buf = nullptr;
 public:
-	~Releaser() {
-		buf->Release();
+	~ComPtr() {
+		if(buf != nullptr) {
+			buf->Release();
+		}
+		buf = nullptr;
 	}
 	const T*get() { return buf; }
 	operator T*() { return buf; }
 	T *operator->() { return buf; }
 	T **operator&() { return &buf; }
-	Releaser(T*b) { buf = b; }
-	Releaser() {}
-	Releaser(const Releaser &) = delete;
-	Releaser &operator=(const Releaser &) = delete;
+	ComPtr(T*b) { buf = b; }
+	ComPtr() {}
+	ComPtr(const ComPtr &) = delete;
+	ComPtr &operator=(const ComPtr &) = delete;
 };
+
+void SaveIMG(string outfile, _GUID format, IWICImagingFactory *factory, IWICBitmap *b) {
+	ComPtr<IWICBitmapEncoder> encoder;
+	if(!SUCCEEDED(factory->CreateEncoder(format, nullptr, &encoder)))throw runtime_error("failed to create encoder");
+	ComPtr<IWICStream> stream;
+	if(!SUCCEEDED(factory->CreateStream(&stream)))throw runtime_error("failed to create stream");
+	if(!SUCCEEDED(stream->InitializeFromFilename(ToUnicode(outfile).c_str(), GENERIC_WRITE)))throw runtime_error("failed to create " + outfile);
+	if(!SUCCEEDED(encoder->Initialize(stream, WICBitmapEncoderNoCache)))throw runtime_error("failed to initialize encoder");
+	ComPtr<IWICBitmapFrameEncode> frame;
+	if(!SUCCEEDED(encoder->CreateNewFrame(&frame, nullptr)))throw runtime_error("failed to create frame");
+	if(!SUCCEEDED(frame->Initialize(NULL)))throw runtime_error("failed to initialize frame");
+	if(!SUCCEEDED(frame->WriteSource(b, nullptr)))throw runtime_error("failed to write bitmap");
+	if(!SUCCEEDED(frame->Commit()))throw runtime_error("failed to commit frame");
+	if(!SUCCEEDED(encoder->Commit()))throw runtime_error("failed to write " + outfile);
+}
 
 int WriteIMG(const Data &d,string imgtype) {
 	string outputpre, outputpost;
@@ -290,7 +304,7 @@ int WriteIMG(const Data &d,string imgtype) {
 			int width = (int) (page.GetWidth() *d.scale);
 			int height = (int) (page.GetHeight() * d.scale);
 			if(abs(width) >(1 << 15) || abs(height) > (1 << 15)) {
-				throw runtime_error("image size is boo big (" + d.input + ", page " + to_string(i + 1) + ")");
+				throw runtime_error("image size is boo big (" + d.input + ", page=" + to_string(i + 1) + ")");
 			}
 			BITMAPINFOHEADER infohead = GetInfoHeader(width, height);
 			void *buf;
@@ -303,22 +317,11 @@ int WriteIMG(const Data &d,string imgtype) {
 				buf = GetBitmapByPDFBITMAP(page, pdfbitmap.bitmap, infohead,d.transparent);
 				stride = ::FPDFBitmap_GetStride(pdfbitmap.bitmap);
 			}
-			Releaser<IWICImagingFactory> factory(GetWICFactory());
-			Releaser<IWICBitmap> b;
+			ComPtr<IWICImagingFactory> factory;
+			if(!SUCCEEDED(::CoCreateInstance(CLSID_WICImagingFactory, nullptr, CLSCTX_INPROC_SERVER, IID_PPV_ARGS(&factory))))throw runtime_error("failed to initialize WIC");
+			ComPtr<IWICBitmap> b;
 			if(!SUCCEEDED(factory->CreateBitmapFromMemory(width, height, GUID_WICPixelFormat32bppBGRA, stride, stride*height, (BYTE*) buf, &b)))throw runtime_error("failed to create bitmap");
-			auto format = GetFormat(imgtype);
-			Releaser<IWICBitmapEncoder> encoder;
-			if(!SUCCEEDED(factory->CreateEncoder(format, nullptr, &encoder)))throw runtime_error("failed to create encoder");
-			Releaser<IWICStream> stream;
-			if(!SUCCEEDED(factory->CreateStream(&stream)))throw runtime_error("failed to create stream");
-			if(!SUCCEEDED(stream->InitializeFromFilename(ToUnicode(outfile).c_str(), GENERIC_WRITE)))throw runtime_error("failed to create " + outfile);
-			if(!SUCCEEDED(encoder->Initialize(stream, WICBitmapEncoderNoCache)))throw runtime_error("failed to initialize encoder");
-			Releaser<IWICBitmapFrameEncode> frame;
-			if(!SUCCEEDED(encoder->CreateNewFrame(&frame, nullptr)))throw runtime_error("failed to create frame");
-			if(!SUCCEEDED(frame->Initialize(NULL)))throw runtime_error("failed to initialize frame");
-			if(!SUCCEEDED(frame->WriteSource(b, nullptr)))throw runtime_error("failed to write bitmap");
-			if(!SUCCEEDED(frame->Commit()))throw runtime_error("failed to commit frame");
-			if(!SUCCEEDED(encoder->Commit()))throw runtime_error("failed to write " + outfile);
+			SaveIMG(outfile, GetFormat(imgtype), factory, b);
 		} catch(runtime_error e) {
 			cout << e.what() << endl;
 			++errpages;
@@ -344,8 +347,6 @@ int WriteGIF(const Data &d) {
 	return WriteIMG(d, "gif");
 }
 int WriteTIFF(const Data &d) {
-	Data dd = d;
-	dd.transparent = false;
 	return WriteIMG(d, "tiff");
 }
 
@@ -384,6 +385,43 @@ int WriteEMF(const Data &d){
 	return errpages;
 }
 
+int ConvertIMG(Data &d) {
+	string outputimgtype;
+	switch(d.target) {
+	case PNG: outputimgtype = "png"; break;
+	case GIF:outputimgtype = "gif"; break;
+	case TIFF:outputimgtype = "tiff"; break;
+	case BMP:outputimgtype = "bmp"; break;
+	case JPG:outputimgtype = "jpg"; break;
+	default: return 1;
+	}
+	string outputpre, outputpost;
+	GetOutputFileName(d.input, d.output, "." + outputimgtype, outputpre, outputpost);
+	string outfile = (d.output != "" ? d.output : GetDirectory(d.input) + "\\" + GetFileNameWithoutExtension(d.input) + "." + outputimgtype);
+	HRESULT hr;
+	ComPtr<IWICImagingFactory> factory;
+	if(!SUCCEEDED(hr = ::CoCreateInstance(CLSID_WICImagingFactory, nullptr, CLSCTX_INPROC_SERVER, IID_PPV_ARGS(&factory))))throw runtime_error("failed to initialize WIC (" + to_string(hr) + ")");
+	ComPtr<IStream> instream;
+	if(!SUCCEEDED(hr = SHCreateStreamOnFile(d.input.c_str(), STGM_READ, &instream)))throw runtime_error("failed t create stream (" + to_string(hr) + ")");
+	ComPtr<IWICBitmapDecoder> decoder;
+	if(!SUCCEEDED(hr = factory->CreateDecoderFromStream(instream, NULL, WICDecodeMetadataCacheOnDemand, &decoder)))throw runtime_error("failed to create decoder (" + to_string(hr) + ")");
+	ComPtr<IWICBitmapFrameDecode> inframe;
+	if(!SUCCEEDED(hr = decoder->GetFrame(0, &inframe)))throw runtime_error("failed to get frame (" + to_string(hr) + ")");
+	ComPtr<IWICBitmapEncoder> encoder;
+	if(!SUCCEEDED(hr = factory->CreateEncoder(GetFormat(outputimgtype), nullptr, &encoder)))throw runtime_error("failed to create encoder (" + to_string(hr) + ")");
+	ComPtr<IWICStream> outstream;
+	if(!SUCCEEDED(factory->CreateStream(&outstream)))throw runtime_error("failed to create stream");
+	if(!SUCCEEDED(outstream->InitializeFromFilename(ToUnicode(outfile).c_str(), GENERIC_WRITE)))throw runtime_error("failed to create " + outfile);
+	if(!SUCCEEDED(encoder->Initialize(outstream, WICBitmapEncoderNoCache)))throw runtime_error("failed to initialize encoder");
+	ComPtr<IWICBitmapFrameEncode> outframe;
+	if(!SUCCEEDED(hr = encoder->CreateNewFrame(&outframe, nullptr)))throw runtime_error("failed to create frame for output(" + to_string(hr) + ")");
+	if(!SUCCEEDED(outframe->Initialize(NULL)))throw runtime_error("failed to initialize frame");
+	if(!SUCCEEDED(hr = outframe->WriteSource(inframe, NULL)))throw runtime_error("failed to write bitmap (" + to_string(hr) + ")");
+	if(!SUCCEEDED(hr = outframe->Commit()))throw runtime_error("failed to commit frame (" + to_string(hr) + ")");
+	if(!SUCCEEDED(hr = encoder->Commit()))throw runtime_error("failed to write " + outfile + " (" + to_string(hr) + ")");
+	return 0;
+}
+
 std::vector<std::string> split(const std::string &str, char sep) {
 	std::vector<std::string> v;
 	std::stringstream ss(str);
@@ -394,9 +432,25 @@ std::vector<std::string> split(const std::string &str, char sep) {
 	return v;
 }
 
+class Initializer {
+public:
+	Initializer() {
+		::FPDF_InitLibrary();
+		::CoInitialize(NULL);
+	}
+	~Initializer() {
+		::FPDF_DestroyLibrary();
+		::CoUninitialize();
+	}
+};
+
 int main(int argc, char *argv[]) {
-	::FPDF_InitLibrary();
-	::CoInitialize(NULL);
+	if(argc <= 1) {
+		cout << "No input file" << endl;
+		ShowUsage();
+		return 0;
+	}
+	Initializer init;
 	vector<Data> files;
 	{
 		Data current_data;
@@ -413,6 +467,12 @@ int main(int argc, char *argv[]) {
 			else if(arg == "--jpg")current_data.target = JPG;
 			else if(arg == "--gif")current_data.target = GIF;
 			else if(arg == "--tiff")current_data.target = TIFF;
+			else if(arg == "--input-format=png")current_data.input_format = PNG;
+			else if(arg == "--input-format=bmp")current_data.input_format = BMP;
+			else if(arg == "--input-format=jpg")current_data.input_format = JPG;
+			else if(arg == "--input-format=gif")current_data.input_format = GIF;
+			else if(arg == "--input-format=tiff")current_data.input_format = TIFF;
+			else if(arg == "--input-format=pdf")current_data.input_format = PDF;
 			else if(arg == "--output-page")output_page = true;// ページ数を出力する
 			else if(arg.find("--pages=") == 0)current_data.pages.push_back(std::atoi(arg.substr(string("--pages=").length()).c_str()) - 1);
 			else if(arg.find("--scale=") == 0)current_data.scale = std::atoi(arg.substr(string("--scale=").length()).c_str());
@@ -448,39 +508,34 @@ int main(int argc, char *argv[]) {
 			}
 		}
 	}
-	Data d;
-	d.input = "C:\\Users\\Abe_Noriyuki\\Desktop\\TeX2img\\equation.pdf";
-	d.target = GIF;
-	d.scale = 5;
-	d.transparent = true;
-	files.push_back(d);
-	d.target = JPG;
-	files.push_back(d);
-
 	int errpages = 0;
 	for(auto d : files) {
 		try {
-			switch(d.target) {
-			case EMF:
-				errpages += WriteEMF(d);
-				break;
-			case BMP:
-				errpages += WriteBMP(d);
-				break;
-			case PNG:
-				errpages += WritePNG(d);
-				break;
-			case JPG:
-				errpages += WriteJPG(d);
-				break;
-			case GIF:
-				errpages += WriteGIF(d);
-				break;
-			case TIFF:
-				errpages += WriteTIFF(d);
-				break;
-			default:
-				break;
+			if(d.input_format == PDF) {
+				switch(d.target) {
+				case EMF:
+					errpages += WriteEMF(d);
+					break;
+				case BMP:
+					errpages += WriteBMP(d);
+					break;
+				case PNG:
+					errpages += WritePNG(d);
+					break;
+				case JPG:
+					errpages += WriteJPG(d);
+					break;
+				case GIF:
+					errpages += WriteGIF(d);
+					break;
+				case TIFF:
+					errpages += WriteTIFF(d);
+					break;
+				default:
+					break;
+				}
+			} else {
+				ConvertIMG(d);
 			}
 		}
 		catch(runtime_error e) {
@@ -488,7 +543,5 @@ int main(int argc, char *argv[]) {
 		}
 	}
 
-	::FPDF_DestroyLibrary();
-	::CoUninitialize();
 	return errpages;
 }

@@ -326,7 +326,7 @@ namespace TeX2img.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
         public bool useMagickFlag {
             get {
                 return ((bool)(this["useMagickFlag"]));

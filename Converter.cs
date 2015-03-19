@@ -400,6 +400,7 @@ namespace TeX2img {
                     while(!proc.StandardOutput.EndOfStream) {
                         output += proc.StandardOutput.ReadToEnd();
                     }
+                    System.Diagnostics.Debug.WriteLine("pdfpages: " + output);
                     output = output.Replace("\r", "").Replace("\n", "");
                     output.Trim();
                     try {
@@ -621,7 +622,6 @@ namespace TeX2img {
             switch(extension) {
             case ".png":
                 device = Properties.Settings.Default.transparentPngFlag ? "pngalpha" : "png16m";
-                device = "png256";
                 break;
             case ".bmp":
                 device = "bmp16m";
@@ -637,7 +637,15 @@ namespace TeX2img {
                     controller_.showPathError("gswin32c.exe", "Ghostscript");
                     return false;
                 }
-                proc.StartInfo.Arguments = arg + String.Format("-q -dTextAlphaBits=1 -dGraphicsAlphaBits=1 -sDEVICE={0} -sOutputFile={1} -dNOPAUSE -dBATCH -dPDFFitPage -r{2} -g{3}x{4} {5}", device, outputFileName, 72 * Properties.Settings.Default.resolutionScale, (int) ((righttop_x - leftbottom_x) * Properties.Settings.Default.resolutionScale), (int) ((righttop_y - leftbottom_y) * Properties.Settings.Default.resolutionScale), trimEpsFileName);
+                string antialias = Properties.Settings.Default.useMagickFlag ? "4" : "1";
+                proc.StartInfo.Arguments = arg;
+                proc.StartInfo.Arguments += String.Format(
+                    "-q -sDEVICE={0} -sOutputFile={1} -dNOPAUSE -dBATCH -dPDFFitPage -dTextAlphaBits={2} -dGraphicsAlphaBits={2} -r{3} -g{4}x{5} {6}",
+                    device, outputFileName, antialias, 
+                    72 * Properties.Settings.Default.resolutionScale,
+                    (int) ((righttop_x - leftbottom_x) * Properties.Settings.Default.resolutionScale),
+                    (int) ((righttop_y - leftbottom_y) * Properties.Settings.Default.resolutionScale),
+                    trimEpsFileName);
                 try {
                     ReadOutputs(proc, "Ghostscript の実行");
                 }
@@ -664,6 +672,31 @@ namespace TeX2img {
                     "--" + type + " " + (Properties.Settings.Default.transparentPngFlag ? "--transparent " : "") +
                     (pages > 0 ? "--pages=" + pages.ToString() + " " : "") + 
                     "--output=\"" + outputFileName + "\" \"" + inputFilename + "\"";
+                try {
+                    ReadOutputs(proc, "pdfiumdraw の実行");
+                }
+                catch(Win32Exception) {
+                    controller_.showToolError("pdfiumdraw.exe");
+                    return false;
+                }
+                if(!File.Exists(Path.Combine(workingDir, outputFileName))) {
+                    controller_.showToolError("pdfiumdraw.exe");
+                    return false;
+                } else {
+                    generatedImageFiles.Add(Path.Combine(workingDir, outputFileName));
+                    return true;
+                }
+            }
+        }
+
+        bool img2img_pdfium(string inputFileName, string outputFileName) {
+            var inputtype = Path.GetExtension(inputFileName).Substring(1).ToLower();
+            var type = Path.GetExtension(outputFileName).Substring(1).ToLower();
+            using(var proc = GetProcess()) {
+                proc.StartInfo.FileName = Path.Combine(GetToolsPath(), "pdfiumdraw.exe");
+                proc.StartInfo.Arguments =
+                    "--" + type + " --input-format=" + inputtype + 
+                    " --output=\"" + outputFileName + "\" \"" + inputFileName + "\"";
                 try {
                     ReadOutputs(proc, "pdfiumdraw の実行");
                 }
@@ -731,11 +764,11 @@ namespace TeX2img {
             // ページ数を取得
             int page = pdfpages(Path.Combine(workingDir, tmpFileBaseName + ".pdf"));
 
-            // .svg，テキスト情報保持な pdf，アンチエイリアスな画像の場合は PDF から作る
+            // .svg，テキスト情報保持な pdf は PDF から作る
             if(
                 extension == ".svg" || 
-                (extension == ".pdf" && !Properties.Settings.Default.outlinedText) || 
-                (bmpExtensions.Contains(extension) && Properties.Settings.Default.useMagickFlag) 
+                (extension == ".pdf" && !Properties.Settings.Default.outlinedText) ||
+                extension == ".gif" && Properties.Settings.Default.transparentPngFlag
                 ) {
                 for(int i = 1 ; i <= page ; ++i) {
                     if(extension == ".svg") {
@@ -783,7 +816,7 @@ namespace TeX2img {
                     case ".gif":
                     case ".tiff":
                         if(!eps2img(tmpFileBaseName + "-" + i + ".eps", tmpFileBaseName + "-" + i + ".png")) return false;
-                        if(!png2img(tmpFileBaseName + "-" + i + ".png", tmpFileBaseName + "-" + i + extension)) return false;
+                        if(!img2img_pdfium(tmpFileBaseName + "-" + i + ".png", tmpFileBaseName + "-" + i + extension)) return false;
                         break;
                     }
                 }

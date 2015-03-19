@@ -64,7 +64,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>gdiplus.lib;winmm.lib;Debug\lib\fdrm.lib;Debug\lib\fpdfdoc.lib;Debug\lib\fpdfapi.lib;Debug\lib\fpdftext.lib;Debug\lib\formfiller.lib;Debug\lib\fxcodec.lib;Debug\lib\fxcrt.lib;Debug\lib\fxedit.lib;Debug\lib\fxge.lib;Debug\lib\javascript.lib;Debug\lib\v8_base.lib;Debug\lib\v8_libbase.lib;Debug\lib\v8_libplatform.lib;Debug\lib\icui18n.lib;Debug\lib\icuuc.lib;Debug\lib\v8_snapshot.lib;Debug\lib\jsapi.lib;Debug\lib\pdfwindow.lib;Debug\lib\freetype.lib;Debug\lib\pdfium.lib;Debug\lib\fx_lpng.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>gdiplus.lib;winmm.lib;Shlwapi.lib;Debug\lib\fdrm.lib;Debug\lib\fpdfdoc.lib;Debug\lib\fpdfapi.lib;Debug\lib\fpdftext.lib;Debug\lib\formfiller.lib;Debug\lib\fxcodec.lib;Debug\lib\fxcrt.lib;Debug\lib\fxedit.lib;Debug\lib\fxge.lib;Debug\lib\javascript.lib;Debug\lib\v8_base.lib;Debug\lib\v8_libbase.lib;Debug\lib\v8_libplatform.lib;Debug\lib\icui18n.lib;Debug\lib\icuuc.lib;Debug\lib\v8_snapshot.lib;Debug\lib\jsapi.lib;Debug\lib\pdfwindow.lib;Debug\lib\freetype.lib;Debug\lib\pdfium.lib;Debug\lib\fx_lpng.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">

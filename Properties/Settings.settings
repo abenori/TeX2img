@@ -81,7 +81,7 @@
       <Value Profile="(Default)">0</Value>
     </Setting>
     <Setting Name="useMagickFlag" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">False</Value>
+      <Value Profile="(Default)">True</Value>
     </Setting>
     <Setting Name="ignoreErrorFlag" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
