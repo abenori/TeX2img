@@ -338,7 +338,7 @@ int WriteBMP(const Data &d) {
 int WritePNG(const Data &d) {
 	return WriteIMG(d, "png");
 }
-int WriteJPG( Data &d) {
+int WriteJPG(const Data &d) {
 	Data dd = d;
 	dd.transparent = false;
 	return WriteIMG(dd, "jpg");
@@ -350,6 +350,7 @@ int WriteTIFF(const Data &d) {
 	return WriteIMG(d, "tiff");
 }
 
+// d.transparent is ignored
 int WriteEMF(const Data &d){
 	string outputpre,outputpost;
 	GetOutputFileName(d.input, d.output, ".emf", outputpre, outputpost);

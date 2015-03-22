@@ -479,7 +479,7 @@ namespace TeX2img {
                 return true;
             }
         }
-        void RemoveHeightAndWidthFromSVGFile(string svgFile) {
+        void DeleteHeightAndWidthFromSVGFile(string svgFile) {
             var fullpath = Path.Combine(workingDir, svgFile);
             var xml = new System.Xml.XmlDocument();
             xml.XmlResolver = null;
@@ -774,8 +774,8 @@ namespace TeX2img {
                     if(extension == ".svg") {
                         if(!pdfcrop(tmpFileBaseName + ".pdf", tmpFileBaseName + "-" + i + ".pdf", true, i)) return false;
                         if(!pdf2img_mudraw(tmpFileBaseName + "-" + i + ".pdf", tmpFileBaseName + "-" + i + ".svg")) return false;
-                        if(!Properties.Settings.Default.fixedSVGSize) {
-                            RemoveHeightAndWidthFromSVGFile(tmpFileBaseName + "-" + i + extension);
+                        if(Properties.Settings.Default.deleteDisplaySize) {
+                            DeleteHeightAndWidthFromSVGFile(tmpFileBaseName + "-" + i + extension);
                         }
                     } else {
                         if(!pdfcrop(tmpFileBaseName + ".pdf", tmpFileBaseName + "-" + i + ".pdf", Properties.Settings.Default.yohakuUnitBP, i)) return false;

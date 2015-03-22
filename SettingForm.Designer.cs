@@ -59,7 +59,7 @@
             this.label1 = new System.Windows.Forms.Label();
             this.OutputImgSettingTab = new System.Windows.Forms.TabPage();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
-            this.fixSVGSizeCheckBox = new System.Windows.Forms.CheckBox();
+            this.deleteDisplaySizeCheckBox = new System.Windows.Forms.CheckBox();
             this.useMagickCheckBox = new System.Windows.Forms.CheckBox();
             this.notOutllinedTextCheckBox = new System.Windows.Forms.CheckBox();
             this.transparentPngCheckBox = new System.Windows.Forms.CheckBox();
@@ -359,7 +359,7 @@
             // 
             // groupBox2
             // 
-            this.groupBox2.Controls.Add(this.fixSVGSizeCheckBox);
+            this.groupBox2.Controls.Add(this.deleteDisplaySizeCheckBox);
             this.groupBox2.Controls.Add(this.useMagickCheckBox);
             this.groupBox2.Controls.Add(this.notOutllinedTextCheckBox);
             this.groupBox2.Controls.Add(this.transparentPngCheckBox);
@@ -370,15 +370,15 @@
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "画像形式ごとの設定";
             // 
-            // fixSVGSizeCheckBox
+            // deleteDisplaySizeCheckBox
             // 
-            this.fixSVGSizeCheckBox.AutoSize = true;
-            this.fixSVGSizeCheckBox.Location = new System.Drawing.Point(24, 94);
-            this.fixSVGSizeCheckBox.Name = "fixSVGSizeCheckBox";
-            this.fixSVGSizeCheckBox.Size = new System.Drawing.Size(208, 22);
-            this.fixSVGSizeCheckBox.TabIndex = 2;
-            this.fixSVGSizeCheckBox.Text = "寸法情報を削除（SVG）";
-            this.fixSVGSizeCheckBox.UseVisualStyleBackColor = true;
+            this.deleteDisplaySizeCheckBox.AutoSize = true;
+            this.deleteDisplaySizeCheckBox.Location = new System.Drawing.Point(24, 94);
+            this.deleteDisplaySizeCheckBox.Name = "deleteDisplaySizeCheckBox";
+            this.deleteDisplaySizeCheckBox.Size = new System.Drawing.Size(208, 22);
+            this.deleteDisplaySizeCheckBox.TabIndex = 2;
+            this.deleteDisplaySizeCheckBox.Text = "寸法情報を削除（SVG）";
+            this.deleteDisplaySizeCheckBox.UseVisualStyleBackColor = true;
             // 
             // useMagickCheckBox
             // 
@@ -936,6 +936,6 @@
         private System.Windows.Forms.CheckBox useMagickCheckBox;
         private System.Windows.Forms.CheckBox notOutllinedTextCheckBox;
         private System.Windows.Forms.GroupBox groupBox2;
-        private System.Windows.Forms.CheckBox fixSVGSizeCheckBox;
+        private System.Windows.Forms.CheckBox deleteDisplaySizeCheckBox;
     }
 }

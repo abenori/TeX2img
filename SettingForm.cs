@@ -71,7 +71,7 @@ namespace TeX2img {
             useMagickCheckBox.Checked = Properties.Settings.Default.useMagickFlag;
             transparentPngCheckBox.Checked = Properties.Settings.Default.transparentPngFlag;
             notOutllinedTextCheckBox.Checked = !Properties.Settings.Default.outlinedText;
-            fixSVGSizeCheckBox.Checked = Properties.Settings.Default.fixedSVGSize;
+            deleteDisplaySizeCheckBox.Checked = Properties.Settings.Default.deleteDisplaySize;
 
             showOutputWindowCheckBox.Checked = Properties.Settings.Default.showOutputWindowFlag;
             previewCheckBox.Checked = Properties.Settings.Default.previewFlag;
@@ -129,7 +129,7 @@ namespace TeX2img {
             Properties.Settings.Default.useMagickFlag = useMagickCheckBox.Checked;
             Properties.Settings.Default.transparentPngFlag = transparentPngCheckBox.Checked;
             Properties.Settings.Default.outlinedText = !notOutllinedTextCheckBox.Checked;
-            Properties.Settings.Default.fixedSVGSize = fixSVGSizeCheckBox.Checked;
+            Properties.Settings.Default.deleteDisplaySize = deleteDisplaySizeCheckBox.Checked;
 
             Properties.Settings.Default.showOutputWindowFlag = showOutputWindowCheckBox.Checked;
             Properties.Settings.Default.previewFlag = previewCheckBox.Checked;

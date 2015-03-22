@@ -167,7 +167,7 @@
     <Setting Name="outlinedText" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
     </Setting>
-    <Setting Name="fixedSVGSize" Type="System.Boolean" Scope="User">
+    <Setting Name="deleteDisplaySize" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
     </Setting>
   </Settings>

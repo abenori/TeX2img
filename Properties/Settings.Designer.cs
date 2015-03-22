@@ -674,12 +674,12 @@ namespace TeX2img.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("True")]
-        public bool fixedSVGSize {
+        public bool deleteDisplaySize {
             get {
-                return ((bool)(this["fixedSVGSize"]));
+                return ((bool)(this["deleteDisplaySize"]));
             }
             set {
-                this["fixedSVGSize"] = value;
+                this["deleteDisplaySize"] = value;
             }
         }
     }
