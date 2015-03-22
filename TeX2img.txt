@@ -50,32 +50,34 @@ TeX2img.exe または TeX2imgc.exe が受けつけるオプションです．な
 TeX2img.exe input output
 とすると起動直後に変換が行われます．
 
-/platex=<VAL>        platex のパス
-/dvipdfmx=<VAL>      dvipdfmx のパス
-/gs=<VAL>            Ghostscript のパス
-/gsdevice=<VAL>      Ghostscript の device の値（epswrite/eps2write）
-/kanji=<VAL>         文字コードの指定（utf8/sjis/jis/euc/no)
-/guess-compile[-]    LaTeX ソースコンパイル回数を推定
-/num=<VAL>           LaTeX ソースコンパイルの（最大）回数
-/resolution=<VAL>    解像度レベル
-/left-margin=<VAL>   左余白
-/right-margin=<VAL>  右余白
-/top-margin=<VAL>    上余白
-/bottom-margin=<VAL> 下余白
-/unit=<VAL>          余白の単位（bp/px）
-/transparent[-]      透過 PNG を作る
-/imagemagick[-]      ImageMagick を使う
-/low-resolution[-]   低解像度で処理する
-/ignore-errors[-]    少々のエラーは無視する
-/no-delete[-]        一時ファイルを削除しない
-/preview             生成されたファイルを開く
-/no-embed-source[-]  ソース情報を生成ファイルに保存しない
-/savesettings        設定の保存を行う
-/quiet               Quiet モード
-/batch=<VAL>         Batch モード（stop/nonstop）
-/exit                設定の保存のみを行い終了する
-/help                このメッセージを表示する
-/version             バージョン情報を表示する
+/platex=<VAL>            platex のパス
+/dvipdfmx=<VAL>          dvipdfmx のパス
+/gs=<VAL>                Ghostscript のパス
+/gsdevice=<VAL>          Ghostscript の device の値（epswrite/eps2write）
+/kanji=<VAL>             文字コード（utf8/sjis/jis/euc/no)
+/guess-compile[-]        LaTeX ソースコンパイル回数を推定
+/num=<VAL>               LaTeX ソースコンパイルの（最大）回数
+/resolution=<VAL>        解像度レベル
+/left-margin=<VAL>       左余白
+/right-margin=<VAL>      右余白
+/top-margin=<VAL>        上余白
+/bottom-margin=<VAL>     下余白
+/unit=<VAL>              余白の単位（bp/px）
+/transparent[-]          透過 PNG
+/with-text[-]            PDF のテキスト情報を保持
+/delete-display-size[-]  SVG の表示寸法を削除
+/antialias[-]            アンチエイリアス処理
+/low-resolution[-]       低解像度で処理
+/ignore-errors[-]        少々のエラーは無視
+/no-delete[-]            一時ファイルを削除しない
+/preview                 生成されたファイルを開く
+/no-embed-source[-]      ソース情報を生成ファイルに保存しない
+/savesettings            設定の保存を行う
+/quiet                   Quiet モード
+/batch=<VAL>             Batch モード（stop/nonstop）
+/exit                    設定の保存のみを行い終了する
+/help                    このメッセージを表示する
+/version                 バージョン情報を表示する
 
 [-] はオプションの否定を意味します．たとえば /guess-compile- と指定すると，コンパイル回数の推定を行わなくなります．
 
