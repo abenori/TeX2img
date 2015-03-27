@@ -1,6 +1,6 @@
 # TeX2img
 
-(C) Terada Yusuke and Abe Noriyuki http://www.math.sci.hokudai.ac.jp/~abenori/
+(C) Yusuke Terada and Noriyuki Abe http://www.math.sci.hokudai.ac.jp/~abenori/
 
 ## これは何？
 入力した TeX ソースコードを TeX でコンパイルして，次のような形式の画像で出力するアプリケーションです．
@@ -190,7 +190,8 @@ https://code.google.com/p/pdfium/
 ** 変換のために mudraw 及び pdfiumdraw を同封．
 ** SVG / BMP ファイルを出力できるようにした．
 ** EMF ファイルの出力を復活させた．（pstoedit ではなく，pdfiumdraw 内の PDFium + GDI 描画による．）
-** テキストをそのまま保持した PDF ファイルを出力できるようにした．
+** ページ数の取得も pdfiumdraw を用いて行うことにした．
+** テキストをそのまま保持した PDF ファイルを出力できるようにした．（要 pdftex）
 ** 外部ソース読み込み時に，元ソースのあるフォルダ内のファイルを \input 等で読めるようにした．
-** ImageMagickを不要とし，代わりに pdfiumdraw を用いることにした．
+** ImageMagickを不要とした．
 ** /imagemagick オプションを削除し，代わりにアンチエイリアス処理を行う /antialias オプションを追加．

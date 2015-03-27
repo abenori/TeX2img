@@ -887,9 +887,8 @@ namespace TeX2img {
             proc.Start();
             bool abort = false;
             object syncObj = new object();
-            var thStart = new System.Threading.ParameterizedThreadStart((o) => {
+            var readThread = new Action<StreamReader>((sr) => {
                 try {
-                    StreamReader sr = (StreamReader) o;
                     while(!sr.EndOfStream) {
                         if(abort) return;
                         var str = sr.ReadLine();
@@ -902,12 +901,8 @@ namespace TeX2img {
                 }
                 catch(System.Threading.ThreadAbortException) { return; }
             });
-            var ReadStdOutThread = new System.Threading.Thread(thStart);
-            ReadStdOutThread.IsBackground = true;
-            var ReadStdErrThread = new System.Threading.Thread(thStart);
-            ReadStdErrThread.IsBackground = true;
-            ReadStdOutThread.Start(proc.StandardOutput);
-            ReadStdErrThread.Start(proc.StandardError);
+            var ReadStdOutThread = readThread.BeginInvoke(proc.StandardOutput, null, null);
+            var ReadStdErrThread = readThread.BeginInvoke(proc.StandardError, null, null);
             while(true) {
                 // 10秒待つ
                 proc.WaitForExit(10000);
@@ -929,19 +924,23 @@ namespace TeX2img {
                     if(kill) {
                         //proc.Kill();
                         KillChildProcesses(proc);
-                        if(ReadStdOutThread.IsAlive || ReadStdErrThread.IsAlive) {
+                        if(!ReadStdOutThread.IsCompleted || ReadStdErrThread.IsCompleted) {
                             System.Threading.Thread.Sleep(500);
                             abort = true;
                         }
                         controller_.appendOutput("処理を中断しました．\r\n");
+                        readThread.EndInvoke(ReadStdOutThread);
+                        readThread.EndInvoke(ReadStdErrThread);                        
                         throw new System.TimeoutException();
                     } else continue;
                 }
             }
             // 残っているかもしれないのを読む．
-            while(ReadStdOutThread.IsAlive || ReadStdErrThread.IsAlive) {
+            while(!ReadStdOutThread.IsCompleted || !ReadStdErrThread.IsCompleted) {
                 System.Threading.Thread.Sleep(300);
             }
+            readThread.EndInvoke(ReadStdOutThread);
+            readThread.EndInvoke(ReadStdErrThread);
             controller_.appendOutput("\r\n");
         }
 
@@ -965,7 +964,18 @@ namespace TeX2img {
         }
 
         public void AddInputPath(string path) {
-            if(!Environments.ContainsKey("TEXINUTS")) Environments["TEXINPUTS"] = "";
+            if(!Environments.ContainsKey("TEXINPUTS")) {
+                string env;
+                try {
+                    env = Environment.GetEnvironmentVariable("TEXINPUTS");
+                    if(env == null) env = "";
+                }
+                catch(System.Security.SecurityException) {
+                    env = "";
+                }
+                if(!env.EndsWith(";")) env += ";";
+                Environments["TEXINPUTS"] = env;
+            }
             Environments["TEXINPUTS"] += path + ";";
         }
 
