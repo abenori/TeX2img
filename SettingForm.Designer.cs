@@ -409,9 +409,9 @@
             this.transparentPngCheckBox.Location = new System.Drawing.Point(24, 65);
             this.transparentPngCheckBox.Margin = new System.Windows.Forms.Padding(5, 4, 5, 4);
             this.transparentPngCheckBox.Name = "transparentPngCheckBox";
-            this.transparentPngCheckBox.Size = new System.Drawing.Size(232, 22);
+            this.transparentPngCheckBox.Size = new System.Drawing.Size(284, 22);
             this.transparentPngCheckBox.TabIndex = 0;
-            this.transparentPngCheckBox.Text = "背景色を透過させる（PNG）";
+            this.transparentPngCheckBox.Text = "背景色を透過させる（PNG / EMF）";
             this.transparentPngCheckBox.UseVisualStyleBackColor = true;
             // 
             // groupBox1

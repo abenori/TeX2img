@@ -161,7 +161,6 @@ namespace TeX2img {
                 Properties.Settings.Default.Save();
                 return r;
             } else {
-                // ファイルの存在チェック
                 if(chkfile_errmsg != null){
                     MessageBox.Show(chkfile_errmsg, "TeX2img");
                     return -3;

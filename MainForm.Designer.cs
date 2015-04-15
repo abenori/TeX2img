@@ -42,6 +42,7 @@
             this.showOutputWindowToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.SettingToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.オプションOToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.ColorInputHelperToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.ヘルプHToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.AboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
@@ -160,7 +161,8 @@
             // SettingToolStripMenuItem
             // 
             this.SettingToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.オプションOToolStripMenuItem});
+            this.オプションOToolStripMenuItem,
+            this.ColorInputHelperToolStripMenuItem});
             this.SettingToolStripMenuItem.Name = "SettingToolStripMenuItem";
             this.SettingToolStripMenuItem.Size = new System.Drawing.Size(92, 27);
             this.SettingToolStripMenuItem.Text = "ツール(&T)";
@@ -172,6 +174,13 @@
             this.オプションOToolStripMenuItem.Size = new System.Drawing.Size(259, 28);
             this.オプションOToolStripMenuItem.Text = "オプション...(&O)";
             this.オプションOToolStripMenuItem.Click += new System.EventHandler(this.SettingToolStripMenuItem_Click);
+            // 
+            // ColorInputHelperToolStripMenuItem
+            // 
+            this.ColorInputHelperToolStripMenuItem.Name = "ColorInputHelperToolStripMenuItem";
+            this.ColorInputHelperToolStripMenuItem.Size = new System.Drawing.Size(259, 28);
+            this.ColorInputHelperToolStripMenuItem.Text = "色入力補助";
+            this.ColorInputHelperToolStripMenuItem.Click += new System.EventHandler(this.ColorInputHelperToolStripMenuItem_Click);
             // 
             // ヘルプHToolStripMenuItem
             // 
@@ -511,6 +520,7 @@
         private System.Windows.Forms.ToolStripMenuItem Redo;
         private System.Windows.Forms.ToolStripMenuItem ImportToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem ExportToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem ColorInputHelperToolStripMenuItem;
     }
 }
 

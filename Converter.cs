@@ -924,7 +924,7 @@ namespace TeX2img {
                     if(kill) {
                         //proc.Kill();
                         KillChildProcesses(proc);
-                        if(!ReadStdOutThread.IsCompleted || ReadStdErrThread.IsCompleted) {
+                        if(!ReadStdOutThread.IsCompleted || !ReadStdErrThread.IsCompleted) {
                             System.Threading.Thread.Sleep(500);
                             abort = true;
                         }

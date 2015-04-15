@@ -21,7 +21,7 @@ namespace TeX2img {
             if(files.Count != 0) FirstFiles = files;
 
             InitializeComponent();
-            
+
             saveFileDialog1.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
             myPreambleForm = new PreambleForm(this);
             myOutputForm = new OutputForm(this);
@@ -30,6 +30,7 @@ namespace TeX2img {
             sourceTextBox.Resize += delegate { sourceTextBox.ViewWidth = sourceTextBox.ClientSize.Width; };
             sourceTextBox.ShowsHScrollBar = false;
             sourceTextBox.Document.WordProc.EnableWordWrap = false;
+            sourceTextBox.Document.EolCode = "\n";
             loadSettings();
 
             if(InputFromTextboxRadioButton.Checked) ActiveControl = sourceTextBox;
@@ -548,6 +549,26 @@ namespace TeX2img {
                 if(files.Length == 0) return;
                 inputFileNameTextBox.Text = files[0];
             }
+        }
+
+        private void ColorInputHelperToolStripMenuItem_Click(object sender, EventArgs e) {
+            using(var cdg = new SampleDialog()) {
+                if(cdg.ShowDialog() == System.Windows.Forms.DialogResult.OK) {
+                    sourceTextBox.Document.SetSelection(sourceTextBox.CaretIndex, sourceTextBox.CaretIndex);
+                    string color = "{" +
+                        ((double) cdg.Color.R / (double) 255).ToString() + "," +
+                        ((double) cdg.Color.G / (double) 255).ToString() + "," +
+                        ((double) cdg.Color.B / (double) 255).ToString() + "}";
+                    sourceTextBox.Document.Replace(color);
+                }
+            }
+        }
+    }
+
+    public class SampleDialog : ColorDialog {
+        protected override IntPtr HookProc(IntPtr hWnd, int msg, IntPtr wparam, IntPtr lparam) {
+            System.Diagnostics.Debug.WriteLine(msg.ToString("X"));
+            return base.HookProc(hWnd, msg, wparam, lparam);
         }
     }
 }
