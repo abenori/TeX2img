@@ -350,7 +350,6 @@ int WriteTIFF(const Data &d) {
 	return WriteIMG(d, "tiff");
 }
 
-// d.transparent is ignored
 int WriteEMF(const Data &d){
 	string outputpre,outputpost;
 	GetOutputFileName(d.input, d.output, ".emf", outputpre, outputpost);
@@ -374,7 +373,11 @@ int WriteEMF(const Data &d){
 			::DeleteObject(rgn);
 			RECT rc;
 			rc.left = 0; rc.top = 0; rc.right = width; rc.bottom = height;
-			::FillRect(dc, &rc, (HBRUSH)::GetStockObject(WHITE_BRUSH));
+			if(d.transparent) ::SetBkMode(dc, TRANSPARENT);
+			else {
+				::SetBkMode(dc, OPAQUE);
+				::FillRect(dc, &rc, (HBRUSH)::GetStockObject(WHITE_BRUSH));
+			}
 			page.Render(dc, width, height);
 			::DeleteEnhMetaFile(::CloseEnhMetaFile(dc));
 		}
