@@ -552,23 +552,38 @@ namespace TeX2img {
         }
 
         private void ColorInputHelperToolStripMenuItem_Click(object sender, EventArgs e) {
-            using(var cdg = new SampleDialog()) {
+            Func<Color, string> GetColorString = (c) => {
+                return "{" + 
+                    ((double) c.R / (double) 255).ToString() + "," +
+                    ((double) c.G / (double) 255).ToString() + "," +
+                    ((double) c.B / (double) 255).ToString() + "}";
+            };
+            using(var cdg = new SupportInputColorDialog()) {
                 if(cdg.ShowDialog() == System.Windows.Forms.DialogResult.OK) {
                     sourceTextBox.Document.SetSelection(sourceTextBox.CaretIndex, sourceTextBox.CaretIndex);
-                    string color = "{" +
-                        ((double) cdg.Color.R / (double) 255).ToString() + "," +
-                        ((double) cdg.Color.G / (double) 255).ToString() + "," +
-                        ((double) cdg.Color.B / (double) 255).ToString() + "}";
-                    sourceTextBox.Document.Replace(color);
+                    int startcaret = sourceTextBox.CaretIndex;
+                    var colstring = GetColorString(cdg.Color);
+                    switch(cdg.CheckedControlSequence) {
+                    case SupportInputColorDialog.ControlSequence.colorbox:
+                        sourceTextBox.Document.Replace("\\colorbox[rgb]" + colstring + "{}");
+                        sourceTextBox.SetSelection(sourceTextBox.CaretIndex-1,sourceTextBox.CaretIndex-1);
+                        break;
+                    case SupportInputColorDialog.ControlSequence.textcolor:
+                        sourceTextBox.Document.Replace("\\textcolor[rgb]" + colstring + "{}");
+                        sourceTextBox.SetSelection(sourceTextBox.CaretIndex-1,sourceTextBox.CaretIndex-1);
+                        break;
+                    case SupportInputColorDialog.ControlSequence.definecolor:
+                        sourceTextBox.Document.Replace("\\definecolor{}{rgb}" + colstring);
+                        int shift = "\\definecolor{".Length;
+                        sourceTextBox.SetSelection(startcaret + shift,startcaret +shift);
+                        break;
+                    case SupportInputColorDialog.ControlSequence.color:
+                    default:
+                        sourceTextBox.Document.Replace("\\color[rgb]" + colstring);
+                        break;
+                    }
                 }
             }
-        }
-    }
-
-    public class SampleDialog : ColorDialog {
-        protected override IntPtr HookProc(IntPtr hWnd, int msg, IntPtr wparam, IntPtr lparam) {
-            System.Diagnostics.Debug.WriteLine(msg.ToString("X"));
-            return base.HookProc(hWnd, msg, wparam, lparam);
         }
     }
 }

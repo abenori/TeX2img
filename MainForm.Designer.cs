@@ -40,9 +40,9 @@
             this.表示VToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.showPreambleWindowToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.showOutputWindowToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.色入力ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.SettingToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.オプションOToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.ColorInputHelperToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.ヘルプHToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.AboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
@@ -84,7 +84,7 @@
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Padding = new System.Windows.Forms.Padding(10, 3, 0, 3);
-            this.menuStrip1.Size = new System.Drawing.Size(1115, 33);
+            this.menuStrip1.Size = new System.Drawing.Size(1115, 34);
             this.menuStrip1.TabIndex = 0;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -96,7 +96,7 @@
             this.ExportToolStripMenuItem,
             this.ExitToolStripMenuItem});
             this.FileToolStripMenuItem.Name = "FileToolStripMenuItem";
-            this.FileToolStripMenuItem.Size = new System.Drawing.Size(99, 27);
+            this.FileToolStripMenuItem.Size = new System.Drawing.Size(99, 28);
             this.FileToolStripMenuItem.Text = "ファイル(&F)";
             // 
             // GenerateEPSToolStripMenuItem
@@ -135,9 +135,10 @@
             // 
             this.表示VToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.showPreambleWindowToolStripMenuItem,
-            this.showOutputWindowToolStripMenuItem});
+            this.showOutputWindowToolStripMenuItem,
+            this.色入力ToolStripMenuItem});
             this.表示VToolStripMenuItem.Name = "表示VToolStripMenuItem";
-            this.表示VToolStripMenuItem.Size = new System.Drawing.Size(86, 27);
+            this.表示VToolStripMenuItem.Size = new System.Drawing.Size(86, 28);
             this.表示VToolStripMenuItem.Text = "表示(&V)";
             // 
             // showPreambleWindowToolStripMenuItem
@@ -158,13 +159,21 @@
             this.showOutputWindowToolStripMenuItem.Text = "出力ウィンドウ(&O)";
             this.showOutputWindowToolStripMenuItem.Click += new System.EventHandler(this.showOutputWindowToolStripMenuItem_Click);
             // 
+            // 色入力ToolStripMenuItem
+            // 
+            this.色入力ToolStripMenuItem.Name = "色入力ToolStripMenuItem";
+            this.色入力ToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)(((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Shift) 
+            | System.Windows.Forms.Keys.C)));
+            this.色入力ToolStripMenuItem.Size = new System.Drawing.Size(406, 28);
+            this.色入力ToolStripMenuItem.Text = "色入力補助";
+            this.色入力ToolStripMenuItem.Click += new System.EventHandler(this.ColorInputHelperToolStripMenuItem_Click);
+            // 
             // SettingToolStripMenuItem
             // 
             this.SettingToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.オプションOToolStripMenuItem,
-            this.ColorInputHelperToolStripMenuItem});
+            this.オプションOToolStripMenuItem});
             this.SettingToolStripMenuItem.Name = "SettingToolStripMenuItem";
-            this.SettingToolStripMenuItem.Size = new System.Drawing.Size(92, 27);
+            this.SettingToolStripMenuItem.Size = new System.Drawing.Size(92, 28);
             this.SettingToolStripMenuItem.Text = "ツール(&T)";
             // 
             // オプションOToolStripMenuItem
@@ -175,19 +184,12 @@
             this.オプションOToolStripMenuItem.Text = "オプション...(&O)";
             this.オプションOToolStripMenuItem.Click += new System.EventHandler(this.SettingToolStripMenuItem_Click);
             // 
-            // ColorInputHelperToolStripMenuItem
-            // 
-            this.ColorInputHelperToolStripMenuItem.Name = "ColorInputHelperToolStripMenuItem";
-            this.ColorInputHelperToolStripMenuItem.Size = new System.Drawing.Size(259, 28);
-            this.ColorInputHelperToolStripMenuItem.Text = "色入力補助";
-            this.ColorInputHelperToolStripMenuItem.Click += new System.EventHandler(this.ColorInputHelperToolStripMenuItem_Click);
-            // 
             // ヘルプHToolStripMenuItem
             // 
             this.ヘルプHToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.AboutToolStripMenuItem});
             this.ヘルプHToolStripMenuItem.Name = "ヘルプHToolStripMenuItem";
-            this.ヘルプHToolStripMenuItem.Size = new System.Drawing.Size(95, 27);
+            this.ヘルプHToolStripMenuItem.Size = new System.Drawing.Size(95, 28);
             this.ヘルプHToolStripMenuItem.Text = "ヘルプ(&H)";
             // 
             // AboutToolStripMenuItem
@@ -520,7 +522,7 @@
         private System.Windows.Forms.ToolStripMenuItem Redo;
         private System.Windows.Forms.ToolStripMenuItem ImportToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem ExportToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem ColorInputHelperToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem 色入力ToolStripMenuItem;
     }
 }
 
