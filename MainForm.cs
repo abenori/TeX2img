@@ -565,6 +565,7 @@ namespace TeX2img {
             };
             using(var cdg = new SupportInputColorDialog()) {
                 cdg.CustomColors = (int[])ColorDialogCustomColors.Clone();
+                cdg.AnyColor = true;
                 if(cdg.ShowDialog() == System.Windows.Forms.DialogResult.OK) {
                     sourceTextBox.Document.SetSelection(sourceTextBox.CaretIndex, sourceTextBox.CaretIndex);
                     int startcaret = sourceTextBox.CaretIndex;
@@ -588,8 +589,8 @@ namespace TeX2img {
                         sourceTextBox.Document.Replace("\\color[rgb]" + colstring);
                         break;
                     }
-                    cdg.CustomColors.CopyTo(ColorDialogCustomColors, 0);
                 }
+                cdg.CustomColors.CopyTo(ColorDialogCustomColors, 0);
             }
         }
     }

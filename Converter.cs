@@ -143,6 +143,7 @@ namespace TeX2img {
                         File.Delete(f + ".aux");
                         File.Delete(f + ".tmp");
                         File.Delete(f + ".out");
+                        File.Delete(f + ".pdf");
                     }
                     foreach(var d in generatedImageFiles) {
                         File.Delete(d);
@@ -188,6 +189,7 @@ namespace TeX2img {
         private bool tex2dvi(string fileName) {
             string baseName = Path.GetFileNameWithoutExtension(fileName);
             string arg;
+            generatedTeXFilesWithoutExtension.Add(Path.Combine(workingDir, baseName));
             ProcessStartInfo startinfo = GetProcessStartInfo();
             startinfo.FileName = setProcStartInfo(Properties.Settings.Default.platexPath, out arg);
             if(Properties.Settings.Default.platexPath == "") {
@@ -238,7 +240,6 @@ namespace TeX2img {
             catch(TimeoutException) {
                 return false;
             }
-            generatedTeXFilesWithoutExtension.Add(Path.Combine(workingDir,baseName));
 
             return true;
         }
@@ -275,6 +276,7 @@ namespace TeX2img {
 
         private bool pdf2eps(string inputFileName, string outputFileName, int resolution, int page) {
             string arg;
+            generatedImageFiles.Add(Path.Combine(workingDir, outputFileName));
             using(var proc = GetProcess()) {
                 proc.StartInfo.FileName = setProcStartInfo(Properties.Settings.Default.gsPath, out arg);
                 if(proc.StartInfo.FileName == "") {
@@ -300,7 +302,6 @@ namespace TeX2img {
                     controller_.showGenerateError();
                     return false;
                 }
-                generatedImageFiles.Add(Path.Combine(workingDir, outputFileName));
             }
             return true;
         }
@@ -419,6 +420,7 @@ namespace TeX2img {
         }
 
         bool png2img(string inputFileName, string outputFileName) {
+            generatedImageFiles.Add(Path.Combine(workingDir, outputFileName));
             System.Drawing.Imaging.ImageFormat format;
             var extension = Path.GetExtension(outputFileName).ToLower();
             switch(extension) {
@@ -449,7 +451,6 @@ namespace TeX2img {
                     }
                     bitmap.Save(Path.Combine(workingDir, outputFileName), format);
                 }
-                generatedImageFiles.Add(Path.Combine(workingDir, outputFileName));
                 return true;
             }
             catch(FileNotFoundException) {
@@ -461,6 +462,7 @@ namespace TeX2img {
         }
 
         bool pdf2img_mudraw(string inputFileName, string outputFileName,int page = 0) {
+            generatedImageFiles.Add(Path.Combine(workingDir, outputFileName));
             using(var proc = GetProcess()) {
                 proc.StartInfo.FileName = Path.Combine(GetToolsPath(), "mudraw.exe");
                 proc.StartInfo.Arguments = "-l -o \"" + outputFileName + "\" \"" + inputFileName + "\" " + page.ToString();
@@ -475,7 +477,6 @@ namespace TeX2img {
                     controller_.showToolError("mudraw.exe");
                     return false;
                 }
-                generatedImageFiles.Add(Path.Combine(workingDir, outputFileName));
                 return true;
             }
         }
@@ -504,6 +505,8 @@ namespace TeX2img {
             var tmpfile = Path.GetTempFileName();
             File.Delete(tmpfile);
             tmpfile = Path.GetFileNameWithoutExtension(tmpfile) + ".tex";
+            generatedTeXFilesWithoutExtension.Add(Path.Combine(workingDir, Path.GetFileNameWithoutExtension(tmpfile)));
+            generatedImageFiles.Add(Path.Combine(workingDir, outputFileName));
 
             var gspath = setProcStartInfo(Properties.Settings.Default.gsPath);
             var bbBox = new List<RectangleDecimal>();
@@ -543,7 +546,6 @@ namespace TeX2img {
                 rect.Top += Properties.Settings.Default.topMargin / margindevide;
                 bbBox.Add(rect);
             }
-            generatedTeXFilesWithoutExtension.Add(Path.Combine(workingDir,Path.GetFileNameWithoutExtension(tmpfile)));
             using(var fw = new StreamWriter(Path.Combine(workingDir,tmpfile))) {
                 fw.WriteLine(@"\pdfoutput=1\relax");
                 for(int i = 0 ; i < pages.Count ; ++i){
@@ -573,7 +575,6 @@ namespace TeX2img {
             }
             File.Delete(Path.Combine(workingDir, outputFileName));
             File.Move(Path.Combine(workingDir, Path.GetFileNameWithoutExtension(tmpfile) + ".pdf"),Path.Combine(workingDir,outputFileName));
-            generatedImageFiles.Add(Path.Combine(workingDir, outputFileName));
             return true;
         }
 
@@ -581,6 +582,7 @@ namespace TeX2img {
             string extension = Path.GetExtension(outputFileName).ToLower();
             string baseName = Path.GetFileNameWithoutExtension(inputFileName);
             string inputEpsFileName = baseName + ".eps";
+            generatedImageFiles.Add(Path.Combine(workingDir, outputFileName));
 
             // Ghostscript を使ったJPEG,PNG生成
             #region Ghostscript を利用して JPEG/PNG を生成
@@ -659,11 +661,11 @@ namespace TeX2img {
             }
             #endregion
             #endregion
-            generatedImageFiles.Add(Path.Combine(workingDir, outputFileName));
             return true;
         }
 
         bool pdf2img_pdfium(string inputFilename, string outputFileName,int pages = 0) {
+            generatedImageFiles.Add(Path.Combine(workingDir, outputFileName));
             var type = Path.GetExtension(outputFileName).Substring(1).ToLower();
             using(var proc = GetProcess()) {
                 proc.StartInfo.FileName = Path.Combine(GetToolsPath(), "pdfiumdraw.exe");
@@ -683,13 +685,13 @@ namespace TeX2img {
                     controller_.showToolError("pdfiumdraw.exe");
                     return false;
                 } else {
-                    generatedImageFiles.Add(Path.Combine(workingDir, outputFileName));
                     return true;
                 }
             }
         }
 
         bool img2img_pdfium(string inputFileName, string outputFileName) {
+            generatedImageFiles.Add(Path.Combine(workingDir, outputFileName));
             var inputtype = Path.GetExtension(inputFileName).Substring(1).ToLower();
             var type = Path.GetExtension(outputFileName).Substring(1).ToLower();
             using(var proc = GetProcess()) {
@@ -708,13 +710,13 @@ namespace TeX2img {
                     controller_.showToolError("pdfiumdraw.exe");
                     return false;
                 } else {
-                    generatedImageFiles.Add(Path.Combine(workingDir, outputFileName));
                     return true;
                 }
             }
         }
 
         bool eps2pdf(string inputFileName, string outputFileName) {
+            generatedImageFiles.Add(Path.Combine(workingDir, outputFileName));
             string arg;
             using(var proc = GetProcess()) {
                 proc.StartInfo.FileName = setProcStartInfo(Properties.Settings.Default.gsPath, out arg);
@@ -734,7 +736,6 @@ namespace TeX2img {
                     controller_.showPathError(proc.StartInfo.FileName, "Ghostscript ");
                     return false;
                 } else {
-                    generatedImageFiles.Add(Path.Combine(workingDir, outputFileName));
                     return true;
                 }
             }

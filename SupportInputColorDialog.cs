@@ -209,9 +209,9 @@ namespace TeX2img {
             return color.B << 16 | color.G << 8 | color.R;
         }
         public class SelectedColorChangedEventArgs : EventArgs {
-            public SelectedColorChangedEventArgs(System.Drawing.Color c, ControlSequence cs) { Color = c; CS = cs; }
+            public SelectedColorChangedEventArgs(System.Drawing.Color c, ControlSequence cs) { Color = c; ControlSequence = cs; }
             public System.Drawing.Color Color { get; private set;}
-            public ControlSequence CS { get; private set; }
+            public ControlSequence ControlSequence { get; private set; }
         }
         public delegate void SelectedColorChangedEventHandler(object sender, SelectedColorChangedEventArgs e);
         public event SelectedColorChangedEventHandler SelectedColorChanged = (s, e) => { };
