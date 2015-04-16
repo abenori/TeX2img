@@ -786,7 +786,6 @@ namespace TeX2img {
                 }
             } else {
                 // それ以外はEPSを経由する．
-                // epsに変換する
                 int resolution;
                 if(Properties.Settings.Default.useLowResolution) epsResolution_ = 72 * Properties.Settings.Default.resolutionScale;
                 else epsResolution_ = 20016;

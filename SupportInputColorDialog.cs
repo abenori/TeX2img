@@ -7,7 +7,6 @@ using System.Runtime.InteropServices;
 
 namespace TeX2img {
     // ColorDialogを拡張する．
-    // 
     class SupportInputColorDialog : ColorDialog {
         public enum ControlSequence { color, textcolor, colorbox, definecolor };
         public ControlSequence CheckedControlSequence;
@@ -31,11 +30,16 @@ namespace TeX2img {
             base.Dispose(disposing);
         }
         public SupportInputColorDialog() : base(){
+            AllowFullOpen = true;
             FullOpen = true;
         }
         public new bool FullOpen {
             get { return base.FullOpen; }
             private set { base.FullOpen = value; }
+        }
+        public new bool AllowFullOpen {
+            get { return base.AllowFullOpen; }
+            private set { base.AllowFullOpen = value; }
         }
         protected override IntPtr HookProc(IntPtr hWnd, int msg, IntPtr wparam, IntPtr lparam) {
             PInvoke.RECT rect;
@@ -56,15 +60,15 @@ namespace TeX2img {
                 GetControlRect(hWnd, dlg, out rect);
                 PInvoke.MoveWindow(dlg, rect.Left, rect.Top, rect.Right - rect.Left, (rect.Bottom - rect.Top) / 2-2, true);
                 // その下にテキストのサンプル
-                dlg = PInvoke.CreateWindowEx(0,"EDIT","",
-                    PInvoke.WindowStyles.WS_CHILD | PInvoke.WindowStyles.WS_VISIBLE | PInvoke.WindowStyles.WS_BORDER,
+                dlg = PInvoke.CreateWindowEx(0,"EDIT","サンプル",
+                    PInvoke.WindowStyles.WS_CHILD | PInvoke.WindowStyles.WS_VISIBLE | PInvoke.WindowStyles.WS_BORDER | PInvoke.WindowStyles.ES_CENTER,
                     rect.Left,(rect.Top + rect.Bottom)/2+4,rect.Right - rect.Left,(rect.Bottom - rect.Top)/2-2,
                     hWnd,new IntPtr(ID_CURRENTTEXTCOLOR),Marshal.GetHINSTANCE(System.Reflection.Assembly.GetExecutingAssembly().ManifestModule), IntPtr.Zero);
-                PInvoke.SetWindowText(dlg, "あいう");
                 PInvoke.SendMessage(dlg, PInvoke.EM_SETREADONLY, new IntPtr(1), IntPtr.Zero);
                 PInvoke.SendMessage(dlg, PInvoke.WM_SETFONT, dialogFont, new IntPtr(1));
                 // OK,キャンセル,色の追加を下に移動．
                 dlg = PInvoke.GetDlgItem(hWnd,PInvoke.IDOK);
+                var okButton = dlg;
                 GetControlRect(hWnd, dlg, out rect);
                 var RadioBtnPos = new System.Drawing.Point(rect.Left, rect.Top + 5);
                 PInvoke.MoveWindow(dlg, rect.Left, rect.Top + 50, rect.Right - rect.Left, rect.Bottom - rect.Top, true);
@@ -74,33 +78,43 @@ namespace TeX2img {
                 dlg = PInvoke.GetDlgItem(hWnd, PInvoke.COLOR_ADD);
                 GetControlRect(hWnd,dlg, out rect);
                 PInvoke.MoveWindow(dlg, rect.Left, rect.Top + 50, OriginalClientSize.Width - 10 - rect.Left, rect.Bottom - rect.Top, true);
-                // チェックボタン四つ
+                // ラジオボタン四つ
+                var instance = Marshal.GetHINSTANCE(System.Reflection.Assembly.GetExecutingAssembly().ManifestModule);
                 dlg = PInvoke.CreateWindowEx(0, "BUTTON", "\\color",
-                    PInvoke.WindowStyles.WS_CHILD | PInvoke.WindowStyles.WS_VISIBLE | PInvoke.WindowStyles.WS_GROUP | PInvoke.WindowStyles.BS_AUTORADIOBUTTON,
+                    PInvoke.WindowStyles.WS_CHILD | PInvoke.WindowStyles.WS_VISIBLE | PInvoke.WindowStyles.WS_TABSTOP | PInvoke.WindowStyles.BS_AUTORADIOBUTTON | PInvoke.WindowStyles.WS_GROUP,
                     RadioBtnPos.X, RadioBtnPos.Y, ClientSize.Width / 4, 15,
-                    hWnd, new IntPtr(ID_CHECKBOX_COLOR), Marshal.GetHINSTANCE(System.Reflection.Assembly.GetExecutingAssembly().ManifestModule), IntPtr.Zero);
+                    hWnd, new IntPtr(ID_CHECKBOX_COLOR), instance, IntPtr.Zero);
                 PInvoke.SendMessage(dlg, PInvoke.WM_SETFONT, dialogFont, new IntPtr(1));
                 PInvoke.SendMessage(dlg, PInvoke.BM_SETCHECK, new IntPtr(1), IntPtr.Zero);
+                // タブオーダーをCOLOR_CUSTOM1の後に持ってくる．
+                // http://stackoverflow.com/questions/50236/how-do-you-programmatically-change-the-tab-order-in-a-win32-dialog
+                PInvoke.SetWindowPos(dlg, PInvoke.GetDlgItem(hWnd,PInvoke.COLOR_CUSTOM1), 0, 0, 0, 0, PInvoke.SetWindowPosFlags.SWP_NOMOVE | PInvoke.SetWindowPosFlags.SWP_NOSIZE);
+                var prevdlg = dlg;
                 dlg = PInvoke.CreateWindowEx(0, "BUTTON", "\\textcolor",
-                    PInvoke.WindowStyles.WS_CHILD | PInvoke.WindowStyles.WS_VISIBLE | PInvoke.WindowStyles.BS_AUTORADIOBUTTON,
+                    PInvoke.WindowStyles.WS_CHILD | PInvoke.WindowStyles.WS_VISIBLE | PInvoke.WindowStyles.WS_TABSTOP | PInvoke.WindowStyles.BS_AUTORADIOBUTTON,
                     RadioBtnPos.X + ClientSize.Width / 4, RadioBtnPos.Y, ClientSize.Width / 4, 15,
-                    hWnd, new IntPtr(ID_CHECKBOX_TEXTCOLOR), Marshal.GetHINSTANCE(System.Reflection.Assembly.GetExecutingAssembly().ManifestModule), IntPtr.Zero);
+                    hWnd, new IntPtr(ID_CHECKBOX_TEXTCOLOR), instance, IntPtr.Zero);
                 PInvoke.SendMessage(dlg, PInvoke.WM_SETFONT, dialogFont, new IntPtr(1));
+                PInvoke.SetWindowPos(dlg, prevdlg, 0, 0, 0, 0, PInvoke.SetWindowPosFlags.SWP_NOMOVE | PInvoke.SetWindowPosFlags.SWP_NOSIZE);
+                prevdlg = dlg;
                 dlg = PInvoke.CreateWindowEx(0, "BUTTON", "\\colorbox",
-                    PInvoke.WindowStyles.WS_CHILD | PInvoke.WindowStyles.WS_VISIBLE | PInvoke.WindowStyles.BS_AUTORADIOBUTTON,
+                    PInvoke.WindowStyles.WS_CHILD | PInvoke.WindowStyles.WS_VISIBLE | PInvoke.WindowStyles.WS_TABSTOP | PInvoke.WindowStyles.BS_AUTORADIOBUTTON,
                     RadioBtnPos.X + ClientSize.Width / 2, RadioBtnPos.Y, ClientSize.Width / 4, 15,
-                    hWnd, new IntPtr(ID_CHECKBOX_COLORBOX), Marshal.GetHINSTANCE(System.Reflection.Assembly.GetExecutingAssembly().ManifestModule), IntPtr.Zero);
+                    hWnd, new IntPtr(ID_CHECKBOX_COLORBOX), instance, IntPtr.Zero);
                 PInvoke.SendMessage(dlg, PInvoke.WM_SETFONT, dialogFont, new IntPtr(1));
+                PInvoke.SetWindowPos(dlg, prevdlg, 0, 0, 0, 0, PInvoke.SetWindowPosFlags.SWP_NOMOVE | PInvoke.SetWindowPosFlags.SWP_NOSIZE);
+                prevdlg = dlg;
                 dlg = PInvoke.CreateWindowEx(0, "BUTTON", "\\definecolor",
-                    PInvoke.WindowStyles.WS_CHILD | PInvoke.WindowStyles.WS_VISIBLE | PInvoke.WindowStyles.BS_AUTORADIOBUTTON,
+                    PInvoke.WindowStyles.WS_CHILD | PInvoke.WindowStyles.WS_VISIBLE | PInvoke.WindowStyles.WS_TABSTOP | PInvoke.WindowStyles.BS_AUTORADIOBUTTON,
                     RadioBtnPos.X + ClientSize.Width * 3 / 4, RadioBtnPos.Y, ClientSize.Width / 4, 15,
-                    hWnd, new IntPtr(ID_CHECKBOX_DEFINECOLOR), Marshal.GetHINSTANCE(System.Reflection.Assembly.GetExecutingAssembly().ManifestModule), IntPtr.Zero);
+                    hWnd, new IntPtr(ID_CHECKBOX_DEFINECOLOR), instance, IntPtr.Zero);
                 PInvoke.SendMessage(dlg, PInvoke.WM_SETFONT, dialogFont, new IntPtr(1));
-                // \colorのサンプル
+                PInvoke.SetWindowPos(dlg, prevdlg, 0, 0, 0, 0, PInvoke.SetWindowPosFlags.SWP_NOMOVE | PInvoke.SetWindowPosFlags.SWP_NOSIZE);
+                // 入力される命令を出すエディトボックス
                 dlg = PInvoke.CreateWindowEx(0, "EDIT", "",
                     PInvoke.WindowStyles.WS_CHILD | PInvoke.WindowStyles.WS_VISIBLE | PInvoke.WindowStyles.WS_BORDER,
                     RadioBtnPos.X, RadioBtnPos.Y + 20, ClientSize.Width - 10 - RadioBtnPos.X, 20,
-                    hWnd, new IntPtr(ID_SAMPLETEXTBOX), Marshal.GetHINSTANCE(System.Reflection.Assembly.GetExecutingAssembly().ManifestModule), IntPtr.Zero);
+                    hWnd, new IntPtr(ID_SAMPLETEXTBOX), instance, IntPtr.Zero);
                 PInvoke.SendMessage(dlg, PInvoke.WM_SETFONT, dialogFont, new IntPtr(1));
                 PInvoke.SendMessage(dlg, PInvoke.EM_SETREADONLY, new IntPtr(1), IntPtr.Zero);
                 PInvoke.SetWindowText(dlg, GetControlSequenceString(hWnd));
@@ -115,7 +129,7 @@ namespace TeX2img {
                 case PInvoke.COLOR_RED:
                 case PInvoke.COLOR_BLUE:
                 case PInvoke.COLOR_GREEN:
-                    OnSelectedColorChanged(GetCurrentColor(hWnd));
+                    OnSelectedColorChanged(GetCurrentColor(hWnd),GetControlSequence(hWnd));
                     dlg = PInvoke.GetDlgItem(hWnd, ID_CURRENTTEXTCOLOR);
                     PInvoke.InvalidateRect(dlg, IntPtr.Zero, true);
                     PInvoke.SetWindowText(PInvoke.GetDlgItem(hWnd, ID_SAMPLETEXTBOX), GetControlSequenceString(hWnd));
@@ -195,13 +209,14 @@ namespace TeX2img {
             return color.B << 16 | color.G << 8 | color.R;
         }
         public class SelectedColorChangedEventArgs : EventArgs {
-            public SelectedColorChangedEventArgs(System.Drawing.Color c) { Color = c; }
+            public SelectedColorChangedEventArgs(System.Drawing.Color c, ControlSequence cs) { Color = c; CS = cs; }
             public System.Drawing.Color Color { get; private set;}
+            public ControlSequence CS { get; private set; }
         }
         public delegate void SelectedColorChangedEventHandler(object sender, SelectedColorChangedEventArgs e);
         public event SelectedColorChangedEventHandler SelectedColorChanged = (s, e) => { };
-        protected void OnSelectedColorChanged(System.Drawing.Color c) {
-            SelectedColorChanged(this, new SelectedColorChangedEventArgs(c));
+        protected void OnSelectedColorChanged(System.Drawing.Color c,ControlSequence cs) {
+            SelectedColorChanged(this, new SelectedColorChangedEventArgs(c, cs));
         }
         static void GetControlRect(IntPtr hWnd, IntPtr controlHWND, out PInvoke.RECT rect) {
             PInvoke.GetWindowRect(controlHWND, out rect);
@@ -234,6 +249,26 @@ namespace TeX2img {
             public const int BM_SETCHECK = 0x00F1;
             [DllImport("user32.dll", CharSet = CharSet.Auto, CallingConvention = CallingConvention.StdCall, ExactSpelling = true, SetLastError = true)]
             public static extern void MoveWindow(IntPtr hwnd, int X, int Y, int nWidth, int nHeight, bool bRepaint);
+            [DllImport("user32.dll", SetLastError = true)]
+            public static extern bool SetWindowPos(IntPtr hWnd, IntPtr hWndInsertAfter, int X, int Y, int cx, int cy, SetWindowPosFlags uFlags);
+            [Flags()]
+            public enum SetWindowPosFlags : uint {
+                SWP_ASYNCWINDOWPOS = 0x4000,
+                SWP_DEFERERASE = 0x2000,
+                SWP_DRAWFRAME = 0x0020,
+                SWP_FRAMECHANGED = 0x0020,
+                SWP_HIDEWINDOW = 0x0080,
+                SWP_NOACTIVATE = 0x0010,
+                SWP_NOCOPYBITS = 0x0100,
+                SWP_NOMOVE = 0x0002,
+                SWP_NOOWNERZORDER = 0x0200,
+                SWP_NOREDRAW = 0x0008,
+                SWP_NOREPOSITION = 0x0200,
+                SWP_NOSENDCHANGING = 0x0400,
+                SWP_NOSIZE = 0x0001,
+                SWP_NOZORDER = 0x0004,
+                SWP_SHOWWINDOW = 0x0040,
+            }
             [StructLayout(LayoutKind.Sequential)]
             public struct RECT {
                 public int Left;
@@ -255,8 +290,6 @@ namespace TeX2img {
             public static extern bool SetWindowText(IntPtr hwnd, String lpString);
             [DllImport("user32.dll")]
             public static extern bool InvalidateRect(IntPtr hWnd, IntPtr lpRect, bool bErase);
-            [DllImport("user32.dll")]
-            public static extern bool UpdateWindow(IntPtr hWnd);
             [DllImport("gdi32.dll")]
             public static extern IntPtr CreateSolidBrush(int crColor);
             [DllImport("gdi32.dll", EntryPoint = "DeleteObject")]
@@ -357,7 +390,8 @@ namespace TeX2img {
                 WS_VISIBLE = 0x10000000,
                 WS_VSCROLL = 0x200000,
                 BS_RADIOBUTTON = 0x0004,
-                BS_AUTORADIOBUTTON = 0x0009
+                BS_AUTORADIOBUTTON = 0x0009,
+                ES_CENTER = 0x0001,
             }
             [DllImport("gdi32.dll")]
             public static extern IntPtr GetStockObject(StockObjects fnObject);
@@ -391,6 +425,8 @@ namespace TeX2img {
             public const int COLOR_ADD = 712;
             public const int COLOR_CURRENT = 709;
             public const int COLOR_SOLID = 713;
+            public const int COLOR_CUSTOM1 = 721;
+
             public const int IDOK = 1;
             public const int IDCANCEL = 2;
         }
