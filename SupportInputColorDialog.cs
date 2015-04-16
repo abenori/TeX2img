@@ -78,6 +78,11 @@ namespace TeX2img {
                 dlg = PInvoke.GetDlgItem(hWnd, PInvoke.COLOR_ADD);
                 GetControlRect(hWnd,dlg, out rect);
                 PInvoke.MoveWindow(dlg, rect.Left, rect.Top + 50, OriginalClientSize.Width - 10 - rect.Left, rect.Bottom - rect.Top, true);
+                if(ShowHelp) {
+                    dlg = PInvoke.GetDlgItem(hWnd, PInvoke.pshHelp);
+                    GetControlRect(hWnd, dlg, out rect);
+                    PInvoke.MoveWindow(dlg, rect.Left, rect.Top + 50, rect.Right - rect.Left, rect.Bottom - rect.Top, true);
+                }
                 // ラジオボタン四つ
                 var instance = Marshal.GetHINSTANCE(System.Reflection.Assembly.GetExecutingAssembly().ManifestModule);
                 dlg = PInvoke.CreateWindowEx(0, "BUTTON", "\\color",
@@ -426,6 +431,9 @@ namespace TeX2img {
             public const int COLOR_CURRENT = 709;
             public const int COLOR_SOLID = 713;
             public const int COLOR_CUSTOM1 = 721;
+            public const int psh15 = 0x040E;
+            public const int pshHelp = psh15;
+
 
             public const int IDOK = 1;
             public const int IDCANCEL = 2;

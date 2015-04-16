@@ -48,7 +48,7 @@ void ShowUsage() {
 	cout << "  --gif: output gif file" << endl;
 	cout << "  --tiff: output tiff file" << endl;
 	cout << "  --scale: specify scale" << endl;
-	cout << "  --transparent: output transparent png/tiff file" << endl;
+	cout << "  --transparent: output transparent file (if possible)" << endl;
 	cout << "  --output=<file>: specify output file name" << endl;
 	cout << "  --pages=<page>: specify output page" << endl;
 //	cout << "  --viewport=<left>,<top>,<right>,<bottom>: specify viewport" << endl;
