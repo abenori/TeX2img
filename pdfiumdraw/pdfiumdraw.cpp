@@ -375,11 +375,7 @@ int WriteEMF(const Data &d){
 			::DeleteObject(rgn);
 			if(d.transparent) {
 				::SetBkMode(dc, TRANSPARENT);
-				LOGBRUSH logbrush;
-				logbrush.lbStyle = BS_NULL;
-				auto brush = ::CreateBrushIndirect(&logbrush);
-				::FillRect(dc, &rc, brush);
-				::DeleteObject(brush);
+				::FillRect(dc, &rc, (HBRUSH)::GetStockObject(NULL_BRUSH));
 			} else {
 				::SetBkMode(dc, OPAQUE);
 				::FillRect(dc, &rc, (HBRUSH)::GetStockObject(WHITE_BRUSH));
