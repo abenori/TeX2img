@@ -366,15 +366,21 @@ int WriteEMF(const Data &d){
 			HDC dc = ::CreateEnhMetaFile(NULL, outfile.c_str(), NULL, NULL);
 			::SetMapMode(dc, MM_ANISOTROPIC);
 			::SetWindowExtEx(dc, 1000, 1000, NULL);
-			int width = (int) (page.GetWidth() * 1000*d.scale);
-			int height = (int) (page.GetHeight() * 1000*d.scale);
+			int width = (int) (page.GetWidth() * 1000 * d.scale);
+			int height = (int) (page.GetHeight() * 1000 * d.scale);
+			RECT rc;
+			rc.left = 0; rc.top = 0; rc.right = width; rc.bottom = height;
 			HRGN rgn = CreateRectRgn(0, 0, width, height);
 			::SelectClipRgn(dc, rgn);
 			::DeleteObject(rgn);
-			RECT rc;
-			rc.left = 0; rc.top = 0; rc.right = width; rc.bottom = height;
-			if(d.transparent) ::SetBkMode(dc, TRANSPARENT);
-			else {
+			if(d.transparent) {
+				::SetBkMode(dc, TRANSPARENT);
+				LOGBRUSH logbrush;
+				logbrush.lbStyle = BS_NULL;
+				auto brush = ::CreateBrushIndirect(&logbrush);
+				::FillRect(dc, &rc, brush);
+				::DeleteObject(brush);
+			} else {
 				::SetBkMode(dc, OPAQUE);
 				::FillRect(dc, &rc, (HBRUSH)::GetStockObject(WHITE_BRUSH));
 			}
