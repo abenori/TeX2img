@@ -157,6 +157,11 @@
         public bool SaveSettings = true;
         public enum BatchMode { Default, NonStop, Stop };
         public BatchMode batchMode = BatchMode.Default;
+        public int[] ColorDialogCustomColors = new int[16]{
+            0xFFFFFF,0xFFFFFF,0xFFFFFF,0xFFFFFF,
+            0xFFFFFF,0xFFFFFF,0xFFFFFF,0xFFFFFF,
+            0xFFFFFF,0xFFFFFF,0xFFFFFF,0xFFFFFF,
+            0xFFFFFF,0xFFFFFF,0xFFFFFF,0xFFFFFF};
 
         public System.Collections.Generic.Dictionary<string, string> preambleTemplates;
         static System.Collections.Generic.Dictionary<string, string> StringCollectionToDictionary(System.Collections.Specialized.StringCollection sc) {

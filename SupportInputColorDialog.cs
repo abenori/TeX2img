@@ -168,13 +168,6 @@ namespace TeX2img {
             return base.HookProc(hWnd, msg, wparam, lparam);
         }
         System.Drawing.Color GetCurrentColor(IntPtr hWnd) {
-            /*
-            System.Diagnostics.Debug.WriteLine(
-                    "Red = " + GetWindowText(hWnd, PInvoke.COLOR_RED) +
-                    ", Green = " + GetWindowText(hWnd, PInvoke.COLOR_GREEN) +
-                    ", Blue = " + GetWindowText(hWnd, PInvoke.COLOR_BLUE)
-                    );
-             */ 
             int red, blue, green;
             if(!Int32.TryParse(GetWindowText(hWnd, PInvoke.COLOR_RED),out red))red = 0;
             if(!Int32.TryParse(GetWindowText(hWnd, PInvoke.COLOR_GREEN),out green))green = 0;

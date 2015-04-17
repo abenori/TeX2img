@@ -583,6 +583,8 @@ namespace TeX2img {
             string baseName = Path.GetFileNameWithoutExtension(inputFileName);
             string inputEpsFileName = baseName + ".eps";
             generatedImageFiles.Add(Path.Combine(workingDir, outputFileName));
+            string trimEpsFileName = baseName + "-trim.eps";
+            generatedImageFiles.Add(Path.Combine(workingDir, trimEpsFileName));
 
             // Ghostscript を使ったJPEG,PNG生成
             #region Ghostscript を利用して JPEG/PNG を生成
@@ -597,7 +599,6 @@ namespace TeX2img {
             #endregion
 
             #region 次にトリミングするためのEPSファイルを作成
-            string trimEpsFileName = baseName + "-trim.eps";
             using(StreamWriter sw = new StreamWriter(Path.Combine(workingDir, trimEpsFileName), false, Encoding.GetEncoding("shift_jis"))) {
                 try {
                     sw.WriteLine("/NumbDict countdictstack def");
@@ -615,7 +616,6 @@ namespace TeX2img {
                     if(sw != null) sw.Close();
                 }
             }
-            generatedImageFiles.Add(Path.Combine(workingDir, trimEpsFileName));
             #endregion
 
             #region 最後に目的の画像形式に変換

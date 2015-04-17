@@ -551,12 +551,11 @@ namespace TeX2img {
             }
         }
 
-        int[] ColorDialogCustomColors = new int[16]{
-            0xFFFFFF,0xFFFFFF,0xFFFFFF,0xFFFFFF,
-            0xFFFFFF,0xFFFFFF,0xFFFFFF,0xFFFFFF,
-            0xFFFFFF,0xFFFFFF,0xFFFFFF,0xFFFFFF,
-            0xFFFFFF,0xFFFFFF,0xFFFFFF,0xFFFFFF};
         private void ColorInputHelperToolStripMenuItem_Click(object sender, EventArgs e) {
+            if(!InputFromTextboxRadioButton.Checked) {
+                MessageBox.Show("TeX コード直接入力時のみ利用可能です．","TeX2img");
+                return;
+            }
             Func<Color, string> GetColorString = (c) => {
                 return "{" + 
                     ((double) c.R / (double) 255).ToString() + "," +
@@ -564,7 +563,7 @@ namespace TeX2img {
                     ((double) c.B / (double) 255).ToString() + "}";
             };
             using(var cdg = new SupportInputColorDialog()) {
-                cdg.CustomColors = (int[])ColorDialogCustomColors.Clone();
+                cdg.CustomColors = (int[])Properties.Settings.Default.ColorDialogCustomColors.Clone();
                 cdg.AnyColor = true;
                 if(cdg.ShowDialog() == System.Windows.Forms.DialogResult.OK) {
                     sourceTextBox.Document.SetSelection(sourceTextBox.CaretIndex, sourceTextBox.CaretIndex);
@@ -590,7 +589,7 @@ namespace TeX2img {
                         break;
                     }
                 }
-                cdg.CustomColors.CopyTo(ColorDialogCustomColors, 0);
+                cdg.CustomColors.CopyTo(Properties.Settings.Default.ColorDialogCustomColors, 0);
             }
         }
     }

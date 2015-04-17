@@ -167,7 +167,6 @@ namespace TeX2img {
         string GetFontString(Font f) {
             int fontsize = (int) f.Size;
             if(f.Size - fontsize > 0.5) ++fontsize;
-
             return f.Name + " " + fontsize + " pt" + (f.Bold ? " 太字" : "") + (f.Italic ? " 斜体" : "");
         }
 
@@ -184,30 +183,36 @@ namespace TeX2img {
         private void FontColorButton_Click(object sender, EventArgs e) {
             if(FontColorListView.SelectedIndices.Count == 0) return;
             string item = FontColorListView.SelectedItems[0].Text;
-            ColorDialog cd = new ColorDialog();
-            cd.Color = Properties.Settings.Default.editorFontColor[item].Font;
-            if(cd.ShowDialog() == DialogResult.OK) {
-                Properties.Settings.Default.editorFontColor[item].Font = cd.Color;
-                FontColorButton.BackColor = cd.Color;
-                FontColorListView.SelectedItems[0].ForeColor = cd.Color;
+            using(ColorDialog cd = new ColorDialog()) {
+                cd.CustomColors = (int[]) Properties.Settings.Default.ColorDialogCustomColors.Clone();
+                cd.Color = Properties.Settings.Default.editorFontColor[item].Font;
+                if(cd.ShowDialog() == DialogResult.OK) {
+                    Properties.Settings.Default.editorFontColor[item].Font = cd.Color;
+                    FontColorButton.BackColor = cd.Color;
+                    FontColorListView.SelectedItems[0].ForeColor = cd.Color;
+                    cd.CustomColors.CopyTo(Properties.Settings.Default.ColorDialogCustomColors, 0);
+                }
             }
         }
 
         private void BackColorButton_Click(object sender, EventArgs e) {
             if(FontColorListView.SelectedIndices.Count == 0) return;
             string item = FontColorListView.SelectedItems[0].Text;
-            ColorDialog cd = new ColorDialog();
-            cd.Color = Properties.Settings.Default.editorFontColor[item].Back;
-            if(cd.ShowDialog() == DialogResult.OK) {
-                Properties.Settings.Default.editorFontColor[item].Back = cd.Color;
-                BackColorButton.BackColor = cd.Color;
-                FontColorListView.SelectedItems[0].BackColor = cd.Color;
-                if(item == "テキスト") {
-                    for(int i = 0 ; i < FontColorListView.Items.Count ; ++i) {
-                        if(FontColorListView.Items[i].Text == "改行，EOF") {
-                            FontColorListView.Items[i].BackColor = cd.Color;
+            using(ColorDialog cd = new ColorDialog()) {
+                cd.Color = Properties.Settings.Default.editorFontColor[item].Back;
+                cd.CustomColors = (int[]) Properties.Settings.Default.ColorDialogCustomColors.Clone();
+                if(cd.ShowDialog() == DialogResult.OK) {
+                    Properties.Settings.Default.editorFontColor[item].Back = cd.Color;
+                    BackColorButton.BackColor = cd.Color;
+                    FontColorListView.SelectedItems[0].BackColor = cd.Color;
+                    if(item == "テキスト") {
+                        for(int i = 0 ; i < FontColorListView.Items.Count ; ++i) {
+                            if(FontColorListView.Items[i].Text == "改行，EOF") {
+                                FontColorListView.Items[i].BackColor = cd.Color;
+                            }
                         }
                     }
+                    cd.CustomColors.CopyTo(Properties.Settings.Default.ColorDialogCustomColors, 0);
                 }
             }
         }
