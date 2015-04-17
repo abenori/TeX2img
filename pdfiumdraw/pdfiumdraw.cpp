@@ -3,10 +3,8 @@
 #include <string>
 #include <vector>
 #include <iostream>
-#include <memory>
 #include <exception>
 #include <fpdfview.h>
-#include <algorithm>
 #include <sstream>
 #include <shlwapi.h>
 #include <wincodec.h>
@@ -66,6 +64,10 @@ string GetCurrentDirectory() {
 	return currentdir;
 }
 
+inline bool EndsWith(string s, char c) {
+	return (s.length() > 0 && s[s.length() - 1] == c);
+}
+
 string GetFullName(const string &f) {
 	if(f == "")return "";
 	else if(f.length() > 1 && f[1] == ':')return f;
@@ -73,50 +75,44 @@ string GetFullName(const string &f) {
 }
 
 string GetExtension(string file) {
-	auto dot = file.rfind(".");
-	if(dot == string::npos)return "";
-	auto yen = file.rfind("\\");
-	auto slash = file.rfind("/");
-	if(yen == string::npos || (slash != string::npos && slash > yen))yen = slash;
-	if(yen != string::npos && yen > dot)return "";
-	else return file.substr(dot);
+	auto r = ::PathFindExtension(file.c_str());
+	if(r == nullptr)return "";
+	else return string(r);
 }
 
 string GetDirectory(string file) {
-	auto yen = file.rfind("\\");
-	auto slash = file.rfind("/");
-	if(yen == string::npos || (slash != string::npos && slash > yen))yen = slash;
-	if(yen == string::npos)return "";
-	else return file.substr(0, yen);
+	if(EndsWith(file, '\\'))return file;
+	auto r = ::PathFindFileName(file.c_str());
+	if(r == nullptr || r == file.c_str())return "";
+	else return file.substr(0, r - file.c_str() - 1);
 }
 
 string GetFileName(string file) {
-	auto yen = file.rfind("\\");
-	auto slash = file.rfind("/");
-	if(yen == string::npos || (slash != string::npos && slash > yen))yen = slash;
-	if(yen == string::npos)return file;
-	else return file.substr(yen + 1);
+	if(EndsWith(file, '\\'))return "";
+	auto r = ::PathFindFileName(file.c_str());
+	if(r == nullptr)return file;
+	else return string(r);
 }
 
 string GetFileNameWithoutExtension(string file) {
 	auto f = GetFileName(file);
-	auto dot = f.rfind(".");
-	if(dot == string::npos)return f;
-	else return f.substr(0, dot);
+	auto r = ::PathFindExtension(f.c_str());
+	if(r == nullptr)return f;
+	else return f.substr(0, r - f.c_str());
 }
 
 class PDFPage;
 class PDFDoc {
 public:
 	PDFDoc(const string &path) {
-		doc = ::FPDF_LoadDocument(path.c_str(), NULL);
-		if(doc == NULL)throw runtime_error("filed to open " + path);
+		doc = ::FPDF_LoadDocument(path.c_str(), nullptr);
+		if(doc == nullptr)throw runtime_error("filed to open " + path);
 	}
 	PDFDoc(FPDF_DOCUMENT d) {
 		doc = d;
 	}
 	~PDFDoc() {
-		if(doc != NULL)::FPDF_CloseDocument(doc);
+		if(doc != nullptr)::FPDF_CloseDocument(doc);
 	}
 	int GetPageCount() { return ::FPDF_GetPageCount(doc); }
 	FPDF_DOCUMENT doc;
@@ -131,7 +127,7 @@ class PDFPage {
 public:
 	PDFPage(const PDFDoc &doc, int pageNum) {
 		auto p = ::FPDF_LoadPage(doc.doc, pageNum);
-		if(p == NULL)throw runtime_error("failt to open page + " + to_string(pageNum));
+		if(p == nullptr)throw runtime_error("failt to open page + " + to_string(pageNum));
 		page = p;
 	}
 	~PDFPage() { ::FPDF_ClosePage(page); }
@@ -171,33 +167,33 @@ void GetOutputFileName(const string &input, const string &output, string extensi
 
 class hBitmap{
 public:
-	HBITMAP bitmap = NULL;
+	HBITMAP bitmap = nullptr;
 	~hBitmap() {
 		if(bitmap)::DeleteObject(bitmap);
-		bitmap = NULL;
+		bitmap = nullptr;
 	}
 };
 class hDC {
 public:
-	HDC dc = NULL;
+	HDC dc = nullptr;
 	~hDC() {
 		if(dc)::DeleteObject(dc);
-		dc = NULL;
+		dc = nullptr;
 	}
 };
 class PDFiumBitmap {
 public:
-	FPDF_BITMAP bitmap = NULL;
+	FPDF_BITMAP bitmap = nullptr;
 	~PDFiumBitmap() {
 		if(bitmap)::FPDFBitmap_Destroy(bitmap);
-		bitmap = NULL;
+		bitmap = nullptr;
 	}
 };
 
 wstring ToUnicode(const string &str) {
 	static vector<wchar_t> buf;
-	DWORD size = ::MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, str.c_str(), str.length(), NULL, 0);
-	buf.resize(size + 1);
+	DWORD size = ::MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, str.c_str(), str.length(), nullptr, 0);
+	buf.reserve(size + 1);
 	size = ::MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, str.c_str(), str.length(), &buf[0], size);
 	buf[size] = L'\0';
 	return wstring(&buf[0]);
@@ -209,11 +205,11 @@ void *GetBitmapByGDI(PDFPage &page, HBITMAP &bitmap, const BITMAPINFOHEADER &inf
 	int height = abs(infohead.biHeight);
 	BITMAPINFO info = {0};
 	info.bmiHeader = infohead;
-	HDC hdc = ::GetDC(NULL);
-	bitmap = ::CreateDIBSection(NULL, &info, DIB_RGB_COLORS, (void**) &buf, NULL, 0);
+	HDC hdc = ::GetDC(nullptr);
+	bitmap = ::CreateDIBSection(nullptr, &info, DIB_RGB_COLORS, (void**) &buf, nullptr, 0);
 	hDC bitmapdc;
 	bitmapdc.dc = ::CreateCompatibleDC(hdc);
-	::ReleaseDC(NULL, hdc);
+	::ReleaseDC(nullptr, hdc);
 	auto savebitmap = (HBITMAP)::SelectObject(bitmapdc.dc, bitmap);
 	RECT rc;
 	rc.left = 0; rc.top = 0; rc.right = width; rc.bottom = height;
@@ -240,7 +236,7 @@ BITMAPINFOHEADER GetInfoHeader(int width, int height) {
 	infohead.biPlanes = 1;
 	infohead.biBitCount = 32;
 	infohead.biCompression = BI_RGB;
-	infohead.biSizeImage = width*height * 4;
+	infohead.biSizeImage = width * height * 4;
 	return infohead;
 }
 
@@ -282,7 +278,7 @@ void SaveIMG(string outfile, _GUID format, IWICImagingFactory *factory, IWICBitm
 	if(!SUCCEEDED(encoder->Initialize(stream, WICBitmapEncoderNoCache)))throw runtime_error("failed to initialize encoder");
 	ComPtr<IWICBitmapFrameEncode> frame;
 	if(!SUCCEEDED(encoder->CreateNewFrame(&frame, nullptr)))throw runtime_error("failed to create frame");
-	if(!SUCCEEDED(frame->Initialize(NULL)))throw runtime_error("failed to initialize frame");
+	if(!SUCCEEDED(frame->Initialize(nullptr)))throw runtime_error("failed to initialize frame");
 	if(!SUCCEEDED(frame->WriteSource(b, nullptr)))throw runtime_error("failed to write bitmap");
 	if(!SUCCEEDED(frame->Commit()))throw runtime_error("failed to commit frame");
 	if(!SUCCEEDED(encoder->Commit()))throw runtime_error("failed to write " + outfile);
@@ -303,7 +299,7 @@ int WriteIMG(const Data &d,string imgtype) {
 			else outfile = outputpre + to_string(i) + outputpost;
 			int width = (int) (page.GetWidth() *d.scale);
 			int height = (int) (page.GetHeight() * d.scale);
-			if(abs(width) >(1 << 15) || abs(height) > (1 << 15)) {
+			if(abs(width) > (1 << 15) || abs(height) > (1 << 15)) {
 				throw runtime_error("image size is boo big (" + d.input + ", page=" + to_string(i + 1) + ")");
 			}
 			BITMAPINFOHEADER infohead = GetInfoHeader(width, height);
@@ -363,9 +359,9 @@ int WriteEMF(const Data &d){
 			string outfile;
 			if(pages == 1)outfile = (d.output != "" ? d.output : GetDirectory(d.input) + "\\" + GetFileNameWithoutExtension(d.input) + ".emf");
 			else outfile = outputpre + to_string(i) + outputpost;
-			HDC dc = ::CreateEnhMetaFile(NULL, outfile.c_str(), NULL, NULL);
+			HDC dc = ::CreateEnhMetaFile(nullptr, outfile.c_str(), nullptr, nullptr);
 			::SetMapMode(dc, MM_ANISOTROPIC);
-			::SetWindowExtEx(dc, 1000, 1000, NULL);
+			::SetWindowExtEx(dc, 1000, 1000, nullptr);
 			int width = (int) (page.GetWidth() * 1000 * d.scale);
 			int height = (int) (page.GetHeight() * 1000 * d.scale);
 			RECT rc;
@@ -410,7 +406,7 @@ int ConvertIMG(Data &d) {
 	ComPtr<IStream> instream;
 	if(!SUCCEEDED(hr = SHCreateStreamOnFile(d.input.c_str(), STGM_READ, &instream)))throw runtime_error("failed t create stream (" + to_string(hr) + ")");
 	ComPtr<IWICBitmapDecoder> decoder;
-	if(!SUCCEEDED(hr = factory->CreateDecoderFromStream(instream, NULL, WICDecodeMetadataCacheOnDemand, &decoder)))throw runtime_error("failed to create decoder (" + to_string(hr) + ")");
+	if(!SUCCEEDED(hr = factory->CreateDecoderFromStream(instream, nullptr, WICDecodeMetadataCacheOnDemand, &decoder)))throw runtime_error("failed to create decoder (" + to_string(hr) + ")");
 	ComPtr<IWICBitmapFrameDecode> inframe;
 	if(!SUCCEEDED(hr = decoder->GetFrame(0, &inframe)))throw runtime_error("failed to get frame (" + to_string(hr) + ")");
 	ComPtr<IWICBitmapEncoder> encoder;
@@ -421,8 +417,8 @@ int ConvertIMG(Data &d) {
 	if(!SUCCEEDED(encoder->Initialize(outstream, WICBitmapEncoderNoCache)))throw runtime_error("failed to initialize encoder");
 	ComPtr<IWICBitmapFrameEncode> outframe;
 	if(!SUCCEEDED(hr = encoder->CreateNewFrame(&outframe, nullptr)))throw runtime_error("failed to create frame for output(" + to_string(hr) + ")");
-	if(!SUCCEEDED(outframe->Initialize(NULL)))throw runtime_error("failed to initialize frame");
-	if(!SUCCEEDED(hr = outframe->WriteSource(inframe, NULL)))throw runtime_error("failed to write bitmap (" + to_string(hr) + ")");
+	if(!SUCCEEDED(outframe->Initialize(nullptr)))throw runtime_error("failed to initialize frame");
+	if(!SUCCEEDED(hr = outframe->WriteSource(inframe, nullptr)))throw runtime_error("failed to write bitmap (" + to_string(hr) + ")");
 	if(!SUCCEEDED(hr = outframe->Commit()))throw runtime_error("failed to commit frame (" + to_string(hr) + ")");
 	if(!SUCCEEDED(hr = encoder->Commit()))throw runtime_error("failed to write " + outfile + " (" + to_string(hr) + ")");
 	return 0;
@@ -442,7 +438,7 @@ class Initializer {
 public:
 	Initializer() {
 		::FPDF_InitLibrary();
-		::CoInitialize(NULL);
+		::CoInitialize(nullptr);
 	}
 	~Initializer() {
 		::FPDF_DestroyLibrary();
@@ -548,6 +544,5 @@ int main(int argc, char *argv[]) {
 			cout << e.what() << endl;
 		}
 	}
-
 	return errpages;
 }
