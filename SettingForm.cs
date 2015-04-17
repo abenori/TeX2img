@@ -226,6 +226,5 @@ namespace TeX2img {
             string gsdevice = Properties.Settings.Default.GuessGsdevice(gs);
             if(gsdevice != "") GSUseepswriteCheckButton.Checked = (gsdevice == "epswrite");
         }
-
     }
 }
