@@ -18,6 +18,7 @@ namespace TeX2img {
             preambleTextBox.Resize += ((s, e) => { preambleTextBox.ViewWidth = preambleTextBox.ClientSize.Width; });
             preambleTextBox.ShowsHScrollBar = false;
             preambleTextBox.Document.WordProc.EnableWordWrap = false;
+            preambleTextBox.Document.EolCode = "\n";
             ActiveControl = preambleTextBox;
         }
 

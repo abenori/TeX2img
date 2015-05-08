@@ -563,7 +563,7 @@ namespace TeX2img {
             }
             using(var proc = GetProcess()) {
                 proc.StartInfo.FileName = Path.Combine(Path.GetDirectoryName(setProcStartInfo(Properties.Settings.Default.platexPath)), "pdftex.exe");
-                proc.StartInfo.Arguments = "-no-shell-escape  -interaction=batchmode \"" + tmpfile + "\"";
+                proc.StartInfo.Arguments = "-no-shell-escape -interaction=batchmode \"" + tmpfile + "\"";
                 try {
                     ReadOutputs(proc, "pdftex の実行 ");
                 }
