@@ -123,6 +123,11 @@ namespace TeX2img {
             } else return Encoding.UTF8;
         }
 
+        volatile bool abort = false;
+        public void Abort() {
+            abort = true;
+        }
+
         List<string> generatedImageFiles = new List<string>();
         List<string> generatedTeXFilesWithoutExtension = new List<string>();
 
@@ -742,6 +747,7 @@ namespace TeX2img {
         }
 
         bool generate(string inputTeXFilePath, string outputFilePath) {
+            abort = false;
             string extension = Path.GetExtension(outputFilePath).ToLower();
             string tmpFileBaseName = Path.GetFileNameWithoutExtension(inputTeXFilePath);
 
@@ -885,7 +891,6 @@ namespace TeX2img {
         void ReadOutputs(Process proc, string freezemsg) {
             printCommandLine(proc);
             proc.Start();
-            bool abort = false;
             object syncObj = new object();
             var readThread = new Action<StreamReader>((sr) => {
                 try {
@@ -904,24 +909,24 @@ namespace TeX2img {
             var ReadStdOutThread = readThread.BeginInvoke(proc.StandardOutput, null, null);
             var ReadStdErrThread = readThread.BeginInvoke(proc.StandardError, null, null);
             while(true) {
-                // 10秒待つ
-                proc.WaitForExit(10000);
-                //proc.WaitForExit(1000);
+                proc.WaitForExit(Properties.Settings.Default.timeOut <= 0 ? 100 : Properties.Settings.Default.timeOut);
                 if(proc.HasExited) {
                     break;
                 } else {
-                    bool kill;
-                    if(Properties.Settings.Default.batchMode == Properties.Settings.BatchMode.Default) {
-                        // プロセスからの読み取りを一時中断するためのlock．
-                        // でないと特にCUI時にメッセージが混ざってわけがわからなくなる．
-                        lock(syncObj) {
-                            kill = !controller_.askYesorNo(
-                                freezemsg + "に時間がかかっているようです．\n" +
-                                "フリーズしている可能性もありますが，このまま実行を続けますか？\n" +
-                                "続けない場合は，現在実行中のプログラムを強制終了します．");
-                        }
-                    } else kill = (Properties.Settings.Default.batchMode == Properties.Settings.BatchMode.Stop);
-                    if(kill) {
+                    bool kill = false;
+                    if(Properties.Settings.Default.timeOut > 0) {
+                        if(Properties.Settings.Default.batchMode == Properties.Settings.BatchMode.Default) {
+                            // プロセスからの読み取りを一時中断するためのlock．
+                            // でないと特にCUI時にメッセージが混ざってわけがわからなくなる．
+                            lock(syncObj) {
+                                kill = !controller_.askYesorNo(
+                                    freezemsg + "に時間がかかっているようです．\n" +
+                                    "フリーズしている可能性もありますが，このまま実行を続けますか？\n" +
+                                    "続けない場合は，現在実行中のプログラムを強制終了します．");
+                            }
+                        } else kill = (Properties.Settings.Default.batchMode == Properties.Settings.BatchMode.Stop);
+                    }
+                    if(kill || abort) {
                         //proc.Kill();
                         KillChildProcesses(proc);
                         if(!ReadStdOutThread.IsCompleted || !ReadStdErrThread.IsCompleted) {
@@ -930,7 +935,7 @@ namespace TeX2img {
                         }
                         controller_.appendOutput("処理を中断しました．\r\n");
                         readThread.EndInvoke(ReadStdOutThread);
-                        readThread.EndInvoke(ReadStdErrThread);                        
+                        readThread.EndInvoke(ReadStdErrThread);
                         throw new System.TimeoutException();
                     } else continue;
                 }
@@ -942,6 +947,7 @@ namespace TeX2img {
             readThread.EndInvoke(ReadStdOutThread);
             readThread.EndInvoke(ReadStdErrThread);
             controller_.appendOutput("\r\n");
+            if(abort) throw new System.TimeoutException();
         }
 
         public static void KillChildProcesses(Process proc) {

@@ -42,7 +42,7 @@ namespace TeX2img {
             if(FirstFiles != null) {
                 clearOutputTextBox();
                 if(Properties.Settings.Default.showOutputWindowFlag) showOutputWindow(true);
-                this.Enabled = false;
+                setEnabled(false);
                 convertWorker.RunWorkerAsync(100);
             }
             base.OnShown(e);
@@ -127,10 +127,23 @@ namespace TeX2img {
             setEnabled();
         }
 
-        private void setEnabled() {
-            sourceTextBox.BackColor = (InputFromTextboxRadioButton.Checked ? Properties.Settings.Default.editorFontColor["テキスト"].Back : System.Drawing.SystemColors.ButtonFace);
-            sourceTextBox.Enabled = InputFromTextboxRadioButton.Checked;
-            inputFileNameTextBox.Enabled = InputFileBrowseButton.Enabled = InputFromFileRadioButton.Checked;
+        private void setEnabled(bool enabled = true) {
+            menuStrip1.Enabled = enabled;
+            groupBox1.Enabled = enabled;
+            groupBox2.Enabled = enabled;
+            InputFileBrowseButton.Enabled = enabled;
+            InputFromFileRadioButton.Enabled = enabled;
+            InputFromTextboxRadioButton.Enabled = enabled;
+            OutputBrowseButton.Enabled = enabled;
+            outputFileNameTextBox.Enabled = enabled;
+            if(enabled) {
+                sourceTextBox.BackColor = (InputFromTextboxRadioButton.Checked ? Properties.Settings.Default.editorFontColor["テキスト"].Back : System.Drawing.SystemColors.ButtonFace);
+                sourceTextBox.Enabled = InputFromTextboxRadioButton.Checked;
+                inputFileNameTextBox.Enabled = InputFileBrowseButton.Enabled = InputFromFileRadioButton.Checked;
+            } else {
+                sourceTextBox.Enabled = false;
+                inputFileNameTextBox.Enabled = false;
+            }
         }
 
         private void ExitCToolStripMenuItem_Click(object sender, EventArgs e) {
@@ -242,15 +255,21 @@ namespace TeX2img {
         }
 
         private void GenerateButton_Click(object sender, EventArgs arg) {
-            clearOutputTextBox();
-            if(Properties.Settings.Default.showOutputWindowFlag) showOutputWindow(true);
-            this.Enabled = false;
+            if(converter == null) {
+                clearOutputTextBox();
+                if(Properties.Settings.Default.showOutputWindowFlag) showOutputWindow(true);
+                GenerateButton.Text = "中断";
+                setEnabled(false);
 
-            myOutputForm.Activate();
-            this.Activate();
-            convertWorker.RunWorkerAsync(100);
+                myOutputForm.Activate();
+                this.Activate();
+                convertWorker.RunWorkerAsync(100);
+            } else {
+                converter.Abort();
+            }
         }
 
+        Converter converter = null;// 実行中でなければnull
         private void convertWorker_DoWork(object sender, DoWorkEventArgs e) {
             if(FirstFiles != null) {
                 for(int i = 0 ; i < FirstFiles.Count / 2 ; ++i) {
@@ -259,67 +278,75 @@ namespace TeX2img {
                     string tmptexfn = Path.Combine(Path.GetDirectoryName(tmppath), Path.GetFileNameWithoutExtension(tmppath) + ".tex");
                     File.Delete(tmptexfn);
                     File.Copy(file, tmptexfn, true);
-                    (new Converter(this, tmptexfn, FirstFiles[2 * i + 1])).Convert();
+                    converter = new Converter(this, tmptexfn, FirstFiles[2 * i + 1]);
+                    converter.Convert();
                 }
                 FirstFiles = null;
+                converter = null;
                 return;
             }
 
-            string outputFilePath = outputFileNameTextBox.Text;
+            try {
+                string outputFilePath = outputFileNameTextBox.Text;
 
-            if(InputFromFileRadioButton.Checked) {
-                string inputTeXFilePath = inputFileNameTextBox.Text;
-                if(!File.Exists(inputTeXFilePath)) {
-                    MessageBox.Show(inputTeXFilePath + "  が存在しません。", "エラー", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-                    return;
-                }
-            }
-
-            string extension = Path.GetExtension(outputFilePath).ToLower();
-
-            string tmpFilePath = Path.GetTempFileName();
-            //string tmpFilePath = @"C:\Users\Abe_Noriyuki\Desktop\TeX2img\test";
-            //using(var fw = new StreamWriter(tmpFilePath)) { fw.WriteLine(""); }
-
-            string tmpFileName = Path.GetFileName(tmpFilePath);
-            string tmpFileBaseName = Path.GetFileNameWithoutExtension(tmpFileName);
-
-            string tmpTeXFileName = tmpFileBaseName + ".tex";
-            string tmpDir = Path.GetDirectoryName(tmpFilePath);
-
-            var converter = new Converter(this, Path.Combine(tmpDir, tmpTeXFileName), outputFileNameTextBox.Text);
-            if(!converter.CheckFormat()) return;
-
-            File.Delete(Path.Combine(tmpDir, tmpTeXFileName));
-            File.Move(Path.Combine(tmpDir, tmpFileName), Path.Combine(tmpDir, tmpTeXFileName));
-
-            #region TeX ソースファイルの準備
-            // 外部ファイルから入力する場合はテンポラリディレクトリにコピー
-            if(InputFromFileRadioButton.Checked) {
-                string inputTeXFilePath = inputFileNameTextBox.Text;
-                string tmpfile = Path.Combine(tmpDir, tmpTeXFileName);
-                File.Copy(inputTeXFilePath,tmpfile , true);
-                // 読み取り専用の場合解除しておく（後でFile.Deleteに失敗するため）．
-                (new FileInfo(tmpfile)).Attributes = FileAttributes.Normal;
-                converter.AddInputPath(Path.GetDirectoryName(inputTeXFilePath));
-            }
-
-            // 直接入力の場合 tex ソースを出力
-            if(InputFromTextboxRadioButton.Checked) {
-                using(StreamWriter sw = new StreamWriter(Path.Combine(tmpDir, tmpTeXFileName), false, Converter.GetInputEncoding())) {
-                    try {
-                        WriteTeXSourceFile(sw, myPreambleForm.PreambleTextBox.Text, sourceTextBox.Text);
+                if(InputFromFileRadioButton.Checked) {
+                    string inputTeXFilePath = inputFileNameTextBox.Text;
+                    if(!File.Exists(inputTeXFilePath)) {
+                        MessageBox.Show(inputTeXFilePath + "  が存在しません。", "エラー", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                        return;
                     }
-                    catch{}
                 }
-            }
-            #endregion
 
-            converter.Convert();
+                string extension = Path.GetExtension(outputFilePath).ToLower();
+
+                string tmpFilePath = Path.GetTempFileName();
+                //string tmpFilePath = @"C:\Users\Abe_Noriyuki\Desktop\TeX2img\test";
+                //using(var fw = new StreamWriter(tmpFilePath)) { fw.WriteLine(""); }
+
+                string tmpFileName = Path.GetFileName(tmpFilePath);
+                string tmpFileBaseName = Path.GetFileNameWithoutExtension(tmpFileName);
+
+                string tmpTeXFileName = tmpFileBaseName + ".tex";
+                string tmpDir = Path.GetDirectoryName(tmpFilePath);
+
+                converter = new Converter(this, Path.Combine(tmpDir, tmpTeXFileName), outputFileNameTextBox.Text);
+                if(!converter.CheckFormat()) return;
+
+                File.Delete(Path.Combine(tmpDir, tmpTeXFileName));
+                File.Move(Path.Combine(tmpDir, tmpFileName), Path.Combine(tmpDir, tmpTeXFileName));
+
+                #region TeX ソースファイルの準備
+                // 外部ファイルから入力する場合はテンポラリディレクトリにコピー
+                if(InputFromFileRadioButton.Checked) {
+                    string inputTeXFilePath = inputFileNameTextBox.Text;
+                    string tmpfile = Path.Combine(tmpDir, tmpTeXFileName);
+                    File.Copy(inputTeXFilePath, tmpfile, true);
+                    // 読み取り専用の場合解除しておく（後でFile.Deleteに失敗するため）．
+                    (new FileInfo(tmpfile)).Attributes = FileAttributes.Normal;
+                    converter.AddInputPath(Path.GetDirectoryName(inputTeXFilePath));
+                }
+
+                // 直接入力の場合 tex ソースを出力
+                if(InputFromTextboxRadioButton.Checked) {
+                    using(StreamWriter sw = new StreamWriter(Path.Combine(tmpDir, tmpTeXFileName), false, Converter.GetInputEncoding())) {
+                        try {
+                            WriteTeXSourceFile(sw, myPreambleForm.PreambleTextBox.Text, sourceTextBox.Text);
+                        }
+                        catch { }
+                    }
+                }
+                #endregion
+
+                converter.Convert();
+            }
+            finally {
+                converter = null;
+            }
         }
 
         private void convertWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e) {
-            this.Enabled = true;
+            setEnabled(true);
+            this.GenerateButton.Text = "画像ファイル生成";
         }
 
         #region 設定変更通知関連

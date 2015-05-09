@@ -132,7 +132,7 @@
             this.SettingTab.Name = "SettingTab";
             this.SettingTab.SelectedIndex = 0;
             this.SettingTab.Size = new System.Drawing.Size(683, 503);
-            this.SettingTab.TabIndex = 1;
+            this.SettingTab.TabIndex = 0;
             // 
             // BasicSettingTab
             // 
@@ -394,7 +394,7 @@
             // notOutllinedTextCheckBox
             // 
             this.notOutllinedTextCheckBox.AutoSize = true;
-            this.notOutllinedTextCheckBox.Location = new System.Drawing.Point(325, 64);
+            this.notOutllinedTextCheckBox.Location = new System.Drawing.Point(351, 64);
             this.notOutllinedTextCheckBox.Name = "notOutllinedTextCheckBox";
             this.notOutllinedTextCheckBox.Size = new System.Drawing.Size(220, 22);
             this.notOutllinedTextCheckBox.TabIndex = 1;
@@ -603,7 +603,7 @@
             this.embedTeXSourCecheckBox.Location = new System.Drawing.Point(25, 128);
             this.embedTeXSourCecheckBox.Name = "embedTeXSourCecheckBox";
             this.embedTeXSourCecheckBox.Size = new System.Drawing.Size(379, 22);
-            this.embedTeXSourCecheckBox.TabIndex = 4;
+            this.embedTeXSourCecheckBox.TabIndex = 3;
             this.embedTeXSourCecheckBox.Text = "生成したファイルからソースを復元できるようにする";
             this.embedTeXSourCecheckBox.UseVisualStyleBackColor = true;
             // 
@@ -639,7 +639,7 @@
             this.openTmpFolderButton.Margin = new System.Windows.Forms.Padding(5, 4, 5, 4);
             this.openTmpFolderButton.Name = "openTmpFolderButton";
             this.openTmpFolderButton.Size = new System.Drawing.Size(260, 30);
-            this.openTmpFolderButton.TabIndex = 3;
+            this.openTmpFolderButton.TabIndex = 4;
             this.openTmpFolderButton.Text = "作業フォルダを開く...";
             this.openTmpFolderButton.UseVisualStyleBackColor = true;
             this.openTmpFolderButton.Click += new System.EventHandler(this.openTmpFolderButton_Click);
@@ -780,6 +780,7 @@
             this.FontDataText.ReadOnly = true;
             this.FontDataText.Size = new System.Drawing.Size(387, 25);
             this.FontDataText.TabIndex = 1;
+            this.FontDataText.TabStop = false;
             // 
             // label11
             // 
@@ -797,7 +798,7 @@
             this.OKButton.Margin = new System.Windows.Forms.Padding(5, 4, 5, 4);
             this.OKButton.Name = "OKButton";
             this.OKButton.Size = new System.Drawing.Size(125, 34);
-            this.OKButton.TabIndex = 0;
+            this.OKButton.TabIndex = 1;
             this.OKButton.Text = "OK";
             this.OKButton.UseVisualStyleBackColor = true;
             this.OKButton.Click += new System.EventHandler(this.OKButton_Click);
@@ -810,7 +811,7 @@
             this.cancelButton.Margin = new System.Windows.Forms.Padding(5, 4, 5, 4);
             this.cancelButton.Name = "cancelButton";
             this.cancelButton.Size = new System.Drawing.Size(125, 34);
-            this.cancelButton.TabIndex = 1;
+            this.cancelButton.TabIndex = 2;
             this.cancelButton.Text = "キャンセル";
             this.cancelButton.UseVisualStyleBackColor = true;
             this.cancelButton.Click += new System.EventHandler(this.cancelButton_Click);

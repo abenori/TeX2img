@@ -65,6 +65,7 @@
             if(SaveSettings) base.Save();
         }
 
+        #region TeX関連パスの推定
         public string GuessPlatexPath() {
             return Converter.which("platex");
         }
@@ -133,6 +134,7 @@
             }
             return gsdevice;
         }
+        #endregion
 
         public class FontColor {
             public System.Drawing.Color Font { get; set; }
@@ -157,6 +159,7 @@
         public bool SaveSettings = true;
         public enum BatchMode { Default, NonStop, Stop };
         public BatchMode batchMode = BatchMode.Default;
+        public int timeOut = 0;//ミリ秒，負なら無限大
         public int[] ColorDialogCustomColors = new int[16]{
             0xFFFFFF,0xFFFFFF,0xFFFFFF,0xFFFFFF,
             0xFFFFFF,0xFFFFFF,0xFFFFFF,0xFFFFFF,

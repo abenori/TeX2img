@@ -58,6 +58,7 @@ namespace TeX2img {
             {"no-embed-source","ソース情報を生成ファイルに保存しない[-]",val => {Properties.Settings.Default.embedTeXSource = !(val != null);}},
 			{"savesettings","設定の保存を行う",val => {Properties.Settings.Default.SaveSettings = (val != null);}},
 			{"quiet","Quiet モード",val => {quiet = true;}},
+            {"timeout=","タイムアウト時間を設定（秒）", (int val) => {Properties.Settings.Default.timeOut = val * 1000;}},
             {"batch=","Batch モード（stop/nonstop）", val => {
                 switch(val) {
                 case "nonstop": Properties.Settings.Default.batchMode = Properties.Settings.BatchMode.NonStop; break;
