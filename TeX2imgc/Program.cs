@@ -11,8 +11,8 @@ namespace TeX2imgc {
             string tex2img = Path.Combine(dir, "tex2img.exe");
 
 #if DEBUG
-            Console.WriteLine("TeX2imgc.exe，ビルド時刻：" + (new System.IO.FileInfo(Path.Combine(dir, "TeX2imgc.exe"))).CreationTime);
-            Console.WriteLine("TeX2img.exe，ビルド時刻：" + (new System.IO.FileInfo(tex2img).CreationTime));
+            Console.WriteLine("TeX2imgc.exe，ビルド時刻：" + GetBuildDateTime(Path.Combine(dir, "TeX2imgc.exe")));
+            Console.WriteLine("TeX2img.exe，ビルド時刻：" + GetBuildDateTime(tex2img));
 #endif
 
             if(!File.Exists(tex2img)) {
@@ -44,7 +44,7 @@ namespace TeX2imgc {
                 Console.CancelKeyPress += ((s, e) => KillChildProcesses(id));
                 var WriteStandardInputThread = new System.Threading.Thread((o) => {
                     StreamWriter sw = (StreamWriter) o;
-                    while(true){
+                    while(true) {
                         try { sw.WriteLine(Console.ReadLine()); }
                         catch { return; }
                     }
@@ -73,5 +73,50 @@ namespace TeX2imgc {
                 catch(System.ComponentModel.Win32Exception) { }
             }
         }
+#if DEBUG
+        // http://sumikko8note.blog.fc2.com/blog-entry-30.html
+        static DateTime GetBuildDateTime(string asmPath) {
+            // ファイルオープン
+            using(FileStream fs = new FileStream(asmPath, FileMode.Open, FileAccess.Read))
+            using(BinaryReader br = new BinaryReader(fs)) {
+                // まずはシグネチャを探す
+                byte[] signature = { 0x50, 0x45, 0x00, 0x00 };// "PE\0\0"
+                List<byte> bytes = new List<byte>();
+                while(true) {
+                    bytes.Add(br.ReadByte());
+                    if(bytes.Count < signature.Length) continue;
+
+                    while(signature.Length < bytes.Count) bytes.RemoveAt(0);
+
+                    bool isMatch = true;
+                    for(int i = 0 ; i < signature.Length ; i++) {
+                        if(signature[i] != bytes[i]) {
+                            isMatch = false;
+                            break;
+                        }
+                    }
+                    if(isMatch) break;
+                }
+
+                // COFFファイルヘッダを読み取る
+                var coff = new {
+                    Machine = br.ReadBytes(2),
+                    NumberOfSections = br.ReadBytes(2),
+                    TimeDateStamp = br.ReadBytes(4),
+                    PointerToSymbolTable = br.ReadBytes(4),
+                    NumberOfSymbols = br.ReadBytes(4),
+                    SizeOfOptionalHeader = br.ReadBytes(2),
+                    Characteristics = br.ReadBytes(2),
+                };
+
+                // タイムスタンプをDateTimeに変換
+                int timestamp = BitConverter.ToInt32(coff.TimeDateStamp, 0);
+                DateTime baseDateTime = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+                DateTime buildDateTimeUtc = baseDateTime.AddSeconds(timestamp);
+                DateTime buildDateTimeLocal = buildDateTimeUtc.ToLocalTime();
+                return buildDateTimeLocal;
+            }
+        }
+#endif
     }
 }
