@@ -174,12 +174,6 @@ namespace TeX2img {
 
         [STAThread]
         static void Main() {
-            /*
-            byte[] buf = System.Text.Encoding.GetEncoding("utf-8").GetBytes("完璧");
-            var encs = KanjiEncoding.GuessKajiEncoding(buf);
-            foreach(var enc in encs) { System.Diagnostics.Debug.WriteLine(enc.EncodingName + "： " + enc.GetString(buf)); }
-            return;
-            */
             // アップデートしていたら前バージョンの設定を読み込む
             if(!Properties.Settings.Default.IsUpgraded) {
                 Properties.Settings.Default.Upgrade();
@@ -321,14 +315,18 @@ namespace TeX2img {
                         maxlength = Math.Max(maxlength, length);
                     }
                 }
+                // オプション名に[-]が加わる可能性があるのでその分増やしておく．
                 maxlength += 3;
                 foreach(var oh in this) {
                     if(oh.Description != null) {
+                        string valtype = "VAL";
+                        if(oh.GetType().ToString().EndsWith("[System.Int32]")) valtype = "NUM";
                         string opstr = "/" + oh.GetNames()[0];
                         string desc = oh.Description.Replace("\n", "\n" + new string(' ', maxlength + 1));
-                        if(oh.OptionValueType == NDesk.Options.OptionValueType.Optional) opstr += "[=<VAL>]";
-                        else if(oh.OptionValueType == NDesk.Options.OptionValueType.Required) opstr += "=<VAL>";
+                        if(oh.OptionValueType == NDesk.Options.OptionValueType.Optional) opstr += "[=<" + valtype + ">]";
+                        else if(oh.OptionValueType == NDesk.Options.OptionValueType.Required) opstr += "=<" + valtype + ">";
                         else if(desc.EndsWith("[-]")) {
+                            // 説明文の最後が[-]なものは，否定が可能なオプション．/helpではオプション名の最後に表示する．
                             opstr += "[-]";
                             desc = desc.Substring(0, desc.Length - 3);
                         }

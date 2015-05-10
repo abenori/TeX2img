@@ -27,7 +27,7 @@
 ## インストール
 解凍後出てくる TeX2img.exe をダブルクリックすれば起動します．初回に platex.exe などの場所を推定しますが，推定に失敗した場合は，メニューの「ツール(T)」→「オプション... (O) Ctrl+E」から設定をしてください．
 TeX2imgc.exe は CUI モードで動かすためのラッパです．TeX2img.exe と同じフォルダに置いてください．使い方は
-> TeX2imgc.exe [Options] Input Output (Input Output...)
+ > TeX2imgc.exe [Options] Input Output (Input Output...)
 です．
 
 ## Tips
@@ -74,6 +74,7 @@ TeX2img.exe input output
 /no-embed-source[-]      ソース情報を生成ファイルに保存しない
 /savesettings            設定の保存を行う
 /quiet                   Quiet モード
+/timeout=<VAL>           タイムアウト時間を設定（秒）
 /batch=<VAL>             Batch モード（stop/nonstop）
 /exit                    設定の保存のみを行い終了する
 /help                    このメッセージを表示する
@@ -203,7 +204,8 @@ https://code.google.com/p/pdfium/
     - デフォルトテンプレートにcolorパッケージを追加．
     - 設定ダイアログでフォント色を変更した後キャンセルしても変更が有効になっていたバグ修正．
     - コンパイル失敗時に一時ファイルが削除されなかったのを修正．
-* 1.5.2（）
+
+* 1.5.2（2015/05/10）
     - 「画像ファイル生成」を押すとこのボタンが「中断」に変わり，押すことで現在実行中の処理を中断できるようにした．
     - その代わり，10 秒ごとの中断処理の問い合わせを無くした．
     - /timeout オプションを追加．
