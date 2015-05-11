@@ -263,7 +263,10 @@ namespace TeX2img {
 
                 myOutputForm.Activate();
                 this.Activate();
-                convertWorker.RunWorkerAsync(100);
+                try { convertWorker.RunWorkerAsync(100); }
+                catch(InvalidOperationException e){
+                    MessageBox.Show("エラーが発生しました．しばらくしてからもう一度試してみてください．\n" + e.Message);
+                }
             } else {
                 converter.Abort();
             }
@@ -271,13 +274,28 @@ namespace TeX2img {
 
         Converter converter = null;// 実行中でなければnull
         private void convertWorker_DoWork(object sender, DoWorkEventArgs e) {
+            try {
+                Directory.CreateDirectory(Path.GetTempPath());
+            }
+            catch(Exception) {
+                MessageBox.Show("一時フォルダ\n" + Path.GetTempPath() + "の作成に失敗しました．環境変数 TMP 及び TEMP を確認してください．");
+                return;
+            }
+
             if(FirstFiles != null) {
                 for(int i = 0 ; i < FirstFiles.Count / 2 ; ++i) {
                     string file = FirstFiles[2 * i];
-                    string tmppath = Path.GetTempFileName();
-                    string tmptexfn = Path.Combine(Path.GetDirectoryName(tmppath), Path.GetFileNameWithoutExtension(tmppath) + ".tex");
-                    File.Delete(tmptexfn);
-                    File.Copy(file, tmptexfn, true);
+                    string tmppath, tmptexfn;
+                    try {
+                        tmppath = Path.GetTempFileName();
+                        tmptexfn = Path.Combine(Path.GetDirectoryName(tmppath), Path.GetFileNameWithoutExtension(tmppath) + ".tex");
+                        File.Delete(tmptexfn);
+                        File.Copy(file, tmptexfn, true);
+                    }
+                    catch(Exception) {
+                        MessageBox.Show(file + "\nに対する一時ファイルの生成に失敗しました．");
+                        continue;
+                    }
                     converter = new Converter(this, tmptexfn, FirstFiles[2 * i + 1]);
                     converter.Convert();
                 }
@@ -299,45 +317,50 @@ namespace TeX2img {
 
                 string extension = Path.GetExtension(outputFilePath).ToLower();
 
-                string tmpFilePath = Path.GetTempFileName();
+                string tmpTeXFileName = null;
+                string tmpFileBaseName = null;
+                string tmpDir = Path.GetTempPath();
+                for(int i = 0 ; i < 100000 ; ++i) {
+                    tmpTeXFileName = Path.ChangeExtension(Path.GetRandomFileName(), ".tex");
+                    if(!File.Exists(Path.Combine(tmpDir,tmpTeXFileName))) {
+                        tmpFileBaseName = Path.GetFileNameWithoutExtension(tmpTeXFileName);
+                        break;
+                    }
+                }
+                if(tmpFileBaseName == null) {
+                    MessageBox.Show("一時ファイル名の決定に失敗しました．作業フォルダ：\n" + Path.GetTempPath() + "\nを確認してください．");
+                    return;
+                }
                 //string tmpFilePath = @"C:\Users\Abe_Noriyuki\Desktop\TeX2img\test";
                 //using(var fw = new StreamWriter(tmpFilePath)) { fw.WriteLine(""); }
 
-                string tmpFileName = Path.GetFileName(tmpFilePath);
-                string tmpFileBaseName = Path.GetFileNameWithoutExtension(tmpFileName);
+                using(converter = new Converter(this, Path.Combine(tmpDir, tmpTeXFileName), outputFileNameTextBox.Text)) {
+                    if(!converter.CheckFormat()) return;
 
-                string tmpTeXFileName = tmpFileBaseName + ".tex";
-                string tmpDir = Path.GetDirectoryName(tmpFilePath);
-
-                converter = new Converter(this, Path.Combine(tmpDir, tmpTeXFileName), outputFileNameTextBox.Text);
-                if(!converter.CheckFormat()) return;
-
-                File.Delete(Path.Combine(tmpDir, tmpTeXFileName));
-                File.Move(Path.Combine(tmpDir, tmpFileName), Path.Combine(tmpDir, tmpTeXFileName));
-
-                #region TeX ソースファイルの準備
-                // 外部ファイルから入力する場合はテンポラリディレクトリにコピー
-                if(InputFromFileRadioButton.Checked) {
-                    string inputTeXFilePath = inputFileNameTextBox.Text;
-                    string tmpfile = Path.Combine(tmpDir, tmpTeXFileName);
-                    File.Copy(inputTeXFilePath, tmpfile, true);
-                    // 読み取り専用の場合解除しておく（後でFile.Deleteに失敗するため）．
-                    (new FileInfo(tmpfile)).Attributes = FileAttributes.Normal;
-                    converter.AddInputPath(Path.GetDirectoryName(inputTeXFilePath));
-                }
-
-                // 直接入力の場合 tex ソースを出力
-                if(InputFromTextboxRadioButton.Checked) {
-                    using(StreamWriter sw = new StreamWriter(Path.Combine(tmpDir, tmpTeXFileName), false, Converter.GetInputEncoding())) {
-                        try {
-                            WriteTeXSourceFile(sw, myPreambleForm.PreambleTextBox.Text, sourceTextBox.Text);
-                        }
-                        catch { }
+                    #region TeX ソースファイルの準備
+                    // 外部ファイルから入力する場合はテンポラリディレクトリにコピー
+                    if(InputFromFileRadioButton.Checked) {
+                        string inputTeXFilePath = inputFileNameTextBox.Text;
+                        string tmpfile = Path.Combine(tmpDir, tmpTeXFileName);
+                        File.Copy(inputTeXFilePath, tmpfile, true);
+                        // 読み取り専用の場合解除しておく（後でFile.Deleteに失敗するため）．
+                        (new FileInfo(tmpfile)).Attributes = FileAttributes.Normal;
+                        converter.AddInputPath(Path.GetDirectoryName(inputTeXFilePath));
                     }
-                }
-                #endregion
 
-                converter.Convert();
+                    // 直接入力の場合 tex ソースを出力
+                    if(InputFromTextboxRadioButton.Checked) {
+                        using(StreamWriter sw = new StreamWriter(Path.Combine(tmpDir, tmpTeXFileName), false, Converter.GetInputEncoding())) {
+                            try {
+                                WriteTeXSourceFile(sw, myPreambleForm.PreambleTextBox.Text, sourceTextBox.Text);
+                            }
+                            catch { }
+                        }
+                    }
+                    #endregion
+
+                    converter.Convert();
+                }
             }
             finally {
                 converter = null;

@@ -4,4 +4,4 @@ pdfium is needed.
 * add "pdfium\build" to the library directories
 
 pdfium.patch should be applied to the PDFium source tree.
-PDFium ignores the outside of clipbox of the device context. However, the clipbox attached to EMF file cannot be bigger than (maybe) the size of the display. This patch force PDFium to think that the clipbox is very big. You should not use this patch for the usual usage of PDFium.
+PDFium ignores the outside of the clipbox of the device context. However, the clipbox attached to EMF file cannot be bigger than (maybe) the size of the display. This patch force PDFium to think that the clipbox is very big. You should not use this patch for the usual usage of PDFium.

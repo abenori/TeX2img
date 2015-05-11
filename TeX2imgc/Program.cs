@@ -13,6 +13,7 @@ namespace TeX2imgc {
 #if DEBUG
             Console.WriteLine("TeX2imgc.exe，ビルド時刻：" + GetBuildDateTime(Path.Combine(dir, "TeX2imgc.exe")));
             Console.WriteLine("TeX2img.exe，ビルド時刻：" + GetBuildDateTime(tex2img));
+            Console.WriteLine("pdfiumdraw.exe，ビルド時刻：" + GetBuildDateTime(Path.Combine(dir,"pdfiumdraw.exe")));
 #endif
 
             if(!File.Exists(tex2img)) {
@@ -26,7 +27,7 @@ namespace TeX2imgc {
                 proc.StartInfo.Arguments = "/nogui ";
                 // Environmet.CommandLine からTeX2imgc.exe... の部分を除去する．
                 // Environment.GetCommandLineArgsを使うと"が完全に再現できないと思うので．
-                var reg = new System.Text.RegularExpressions.Regex("^[^\" ]*(\"[^\"]*\")*[^\" ]* *");
+                var reg = new System.Text.RegularExpressions.Regex("^[^\" ]*(\"[^\"]*\")*[^\" ]* +");
                 var m = reg.Match(Environment.CommandLine);
                 if(m.Success) proc.StartInfo.Arguments += Environment.CommandLine.Substring(m.Length);
                 else proc.StartInfo.Arguments += Environment.CommandLine;

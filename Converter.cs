@@ -9,7 +9,7 @@ using System.ComponentModel;
 using System.Text.RegularExpressions;
 
 namespace TeX2img {
-    class Converter {
+    class Converter : IDisposable{
         // ADS名
         public const string ADSName = "TeX2img.source";
         public static readonly string[] bmpExtensions = new string[] { ".jpg", ".png", ".bmp", ".gif", ".tiff" };
@@ -50,6 +50,33 @@ namespace TeX2img {
             workingDir = Path.GetDirectoryName(inputTeXFilePath);
         }
         Dictionary<string, string> Environments = new Dictionary<string, string>();
+        ~Converter() {
+            Dispose();
+        }
+        public void Dispose() {
+            if(Properties.Settings.Default.deleteTmpFileFlag) {
+                try {
+                    foreach(var f in generatedTeXFilesWithoutExtension) {
+                        File.Delete(f + ".tex");
+                        File.Delete(f + ".dvi");
+                        File.Delete(f + ".pdf");
+                        File.Delete(f + ".log");
+                        File.Delete(f + ".aux");
+                        File.Delete(f + ".tmp");
+                        File.Delete(f + ".out");
+                        File.Delete(f + ".pdf");
+                    }
+                    foreach(var d in generatedImageFiles) {
+                        File.Delete(d);
+                    }
+                }
+                catch(UnauthorizedAccessException) {
+                    controller_.appendOutput("一部の一時ファイルの削除に失敗しました．\r\n");
+                }
+            }
+            generatedTeXFilesWithoutExtension.Clear();
+            generatedImageFiles.Clear();
+        }
 
         ProcessStartInfo GetProcessStartInfo() {
             var rv = new ProcessStartInfo();
@@ -138,28 +165,6 @@ namespace TeX2img {
 
             bool rv = generate(InputFile, OutputFile);
 
-            if(Properties.Settings.Default.deleteTmpFileFlag) {
-                try {
-                    foreach(var f in generatedTeXFilesWithoutExtension) {
-                        File.Delete(f + ".tex");
-                        File.Delete(f + ".dvi");
-                        File.Delete(f + ".pdf");
-                        File.Delete(f + ".log");
-                        File.Delete(f + ".aux");
-                        File.Delete(f + ".tmp");
-                        File.Delete(f + ".out");
-                        File.Delete(f + ".pdf");
-                    }
-                    foreach(var d in generatedImageFiles) {
-                        File.Delete(d);
-                    }
-                }
-                catch(UnauthorizedAccessException) {
-                    controller_.appendOutput("一部の一時ファイルの削除に失敗しました．\r\n");
-                }
-            }
-            generatedTeXFilesWithoutExtension.Clear();
-            generatedImageFiles.Clear();
             return rv;
         }
 

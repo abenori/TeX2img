@@ -42,7 +42,7 @@ TeX2imgc.exe は CUI モードで動かすためのラッパです．TeX2img.exe
 
 * 「platex」で指定されたプログラムが pdf を生成したと判断した場合，TeX2img は dvipdfmx の実行をスキップします．これを利用して，pdflatex や lualatex などを指定することができます．なお，この場合は文字コードの設定を「指定しない（入力 UTF-8）」としておくとよいでしょう．
 
-* 生成された画像を TeX2img にドラッグアンドドロップ（またはメニューから「ファイル(F)」→「インポート(O)」）とすると生成した際のソースが復元されます．（オプションで無効化可能．）
+* 生成された画像を TeX2img にドラッグアンドドロップ（またはメニューから「ファイル(F)」→「インポート(O)」）とすると生成した際のソースが復元されます．（ファイルシステムが NTFS の時のみ．オプションで無効化可能．）
 
 
 ## 起動オプション
@@ -56,12 +56,12 @@ TeX2img.exe input output
 /gsdevice=<VAL>          Ghostscript の device の値（epswrite/eps2write）
 /kanji=<VAL>             文字コード（utf8/sjis/jis/euc/no)
 /guess-compile[-]        LaTeX ソースコンパイル回数を推定
-/num=<VAL>               LaTeX ソースコンパイルの（最大）回数
-/resolution=<VAL>        解像度レベル
-/left-margin=<VAL>       左余白
-/right-margin=<VAL>      右余白
-/top-margin=<VAL>        上余白
-/bottom-margin=<VAL>     下余白
+/num=<NUM>               LaTeX ソースコンパイルの（最大）回数
+/resolution=<NUM>        解像度レベル
+/left-margin=<NUM>       左余白
+/right-margin=<NUM>      右余白
+/top-margin=<NUM>        上余白
+/bottom-margin=<NUM>     下余白
 /unit=<VAL>              余白の単位（bp/px）
 /transparent[-]          透過 PNG
 /with-text[-]            PDF のテキスト情報を保持
@@ -74,7 +74,7 @@ TeX2img.exe input output
 /no-embed-source[-]      ソース情報を生成ファイルに保存しない
 /savesettings            設定の保存を行う
 /quiet                   Quiet モード
-/timeout=<VAL>           タイムアウト時間を設定（秒）
+/timeout=<NUM>           タイムアウト時間を設定（秒）
 /batch=<VAL>             Batch モード（stop/nonstop）
 /exit                    設定の保存のみを行い終了する
 /help                    このメッセージを表示する
@@ -194,14 +194,14 @@ https://code.google.com/p/pdfium/
     - ページ数の取得も pdfiumdraw を用いて行うことにした．
     - テキストをそのまま保持した PDF ファイルを出力できるようにした．（要 pdftex）
     - 外部ソース読み込み時に，元ソースのあるフォルダ内のファイルを \input 等で読めるようにした．
-    - ImageMagickを不要とした．
+    - ImageMagick を不要とした．
     - /imagemagick オプションを削除し，代わりにアンチエイリアス処理を行う /antialias オプションを追加．
 
 * 1.5.1（2015/04/17）
     - 内部コードを全て LF とした．（ソース入力エリアなどの改行コードの表示に影響する．）
     - EMF で透過を有効にした．
     - 色入力補助ダイアログの追加．
-    - デフォルトテンプレートにcolorパッケージを追加．
+    - デフォルトテンプレートに color パッケージを追加．
     - 設定ダイアログでフォント色を変更した後キャンセルしても変更が有効になっていたバグ修正．
     - コンパイル失敗時に一時ファイルが削除されなかったのを修正．
 
@@ -211,3 +211,8 @@ https://code.google.com/p/pdfium/
     - /timeout オプションを追加．
     - プレアンブル設定ウィンドウの内部コードが LF になっていなかったのを修正．
     - 出力先ファイルの参照ボタンのファイルの種類に svg / emf / bmp を追加（忘れていた）．
+
+* 1.5.3
+    - 一時フォルダが存在しなかった場合に作成するようにした．
+    - 一時ファイルが作成できなかった場合エラーを通知するようにした．
+

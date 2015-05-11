@@ -239,22 +239,42 @@ namespace TeX2img {
         // CUIモード
         static int CUIExec(bool q, List<string> files) {
             IOutputController Output = new CUIOutput(q);
-            //Console.WriteLine(Output.askYesorNo("テストのyes or no"));
             if(files.Count == 0) {
                 Console.WriteLine("入力ファイルが存在しません．");
                 return -5;
             }
+            try {
+                Directory.CreateDirectory(Path.GetTempPath());
+            }
+            catch(Exception) {
+                Console.WriteLine("一時フォルダ\n" + Path.GetTempPath() + "の作成に失敗しました．環境変数 TMP 及び TEMP を確認してください．");
+                return -7;
+            }
+
             int failnum = 0;
+            string tmpTeXFileName = null;
+            for(int i = 0 ; i < 10000 ; ++i) {
+                var random= Path.Combine(Path.GetTempPath(), Path.ChangeExtension(Path.GetRandomFileName(), ".tex"));
+                if(!File.Exists(random)) {
+                    tmpTeXFileName = random;
+                    break;
+                }
+            }
+            if(tmpTeXFileName == null) {
+                Console.WriteLine("一時ファイル名の決定に失敗しました．作業フォルダ：\n" + Path.GetTempPath() + "\nを確認してください．");
+                return -6;
+            }
+
             for(int i = 0 ; i < files.Count / 2 ; ++i) {
                 string file = files[2 * i];
                 // 一時フォルダにコピー
-                string tmpFilePath = Path.GetTempFileName();
-                string tmpTeXFileName = Path.Combine(Path.GetDirectoryName(tmpFilePath), Path.GetFileNameWithoutExtension(tmpFilePath) + ".tex");
-                File.Delete(tmpTeXFileName);
                 File.Copy(file, tmpTeXFileName, true);
-
                 // 変換！
-                try { if(!((new Converter(Output,tmpTeXFileName, files[2 * i + 1])).Convert())) ++failnum; }
+                try {
+                    using(var converter = new Converter(Output, tmpTeXFileName, files[2 * i + 1])) {
+                        if(!converter.Convert()) ++failnum;
+                    }
+                }
                 catch(Exception e) { Console.WriteLine(e.Message); }
             }
             return failnum;

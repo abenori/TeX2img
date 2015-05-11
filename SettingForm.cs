@@ -147,11 +147,10 @@ namespace TeX2img {
         }
 
         private void openTmpFolderButton_Click(object sender, EventArgs e) {
-            Process.Start(Path.GetTempPath());
-        }
-
-        private void imageMagickLinkLabel_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {
-            Process.Start("http://imagemagick.org/script/binary-releases.php#windows");
+            try { Process.Start(Path.GetTempPath()); }
+            catch(Exception) {
+                MessageBox.Show("作業フォルダ\n" + Path.GetTempPath() + "\nを開けませんでした．環境変数 TMP 及び TEMP を確認してください．");
+            }
         }
 
         private void ChangeFontButton_Click(object sender, EventArgs e) {
