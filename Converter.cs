@@ -38,6 +38,19 @@ namespace TeX2img {
             }
             return string.Empty;
         }
+        public static string GetTempFileName(string ext = ".tex") {
+            return GetTempFileName(ext, Path.GetTempPath());
+        }
+
+        public static string GetTempFileName(string ext, string dir) {
+            for(int i = 0 ; i < 1000 ; ++i) {
+                var random = Path.ChangeExtension(Path.GetRandomFileName(), ext);
+                if(!File.Exists(Path.Combine(dir, random))) {
+                    return random;
+                }
+            }
+            return null;
+        }
 
         IOutputController controller_;
         int epsResolution_ = 20016;
@@ -79,12 +92,13 @@ namespace TeX2img {
         }
 
         ProcessStartInfo GetProcessStartInfo() {
-            var rv = new ProcessStartInfo();
-            rv.UseShellExecute = false;
-            rv.CreateNoWindow = true;
-            rv.RedirectStandardOutput = true;
-            rv.RedirectStandardError = true;
-            rv.WorkingDirectory = workingDir;
+            var rv = new ProcessStartInfo() {
+                UseShellExecute = false,
+                CreateNoWindow = true,
+                RedirectStandardOutput = true,
+                RedirectStandardError = true,
+                WorkingDirectory = workingDir,
+            };
             foreach(var e in Environments) {
                 try { rv.EnvironmentVariables.Add(e.Key, e.Value); }
                 catch(ArgumentException) { }
@@ -92,9 +106,7 @@ namespace TeX2img {
             return rv;
         }
         Process GetProcess() {
-            var proc = new Process();
-            proc.StartInfo = GetProcessStartInfo();
-            return proc;
+            return new Process() { StartInfo = GetProcessStartInfo() };
         }
 
         public bool CheckFormat() {
@@ -512,9 +524,8 @@ namespace TeX2img {
         }
 
         bool pdfcrop(string inputFileName, string outputFileName, bool use_bp, List<int> pages) {
-            var tmpfile = Path.GetTempFileName();
-            File.Delete(tmpfile);
-            tmpfile = Path.GetFileNameWithoutExtension(tmpfile) + ".tex";
+            var tmpfile = GetTempFileName(".tex");
+            if(tmpfile == null) return false;
             generatedTeXFilesWithoutExtension.Add(Path.Combine(workingDir, Path.GetFileNameWithoutExtension(tmpfile)));
             generatedImageFiles.Add(Path.Combine(workingDir, outputFileName));
 

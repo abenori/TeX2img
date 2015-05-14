@@ -77,6 +77,7 @@ namespace TeX2img {
         }
 
         static int TeX2imgMain(List<string> cmds) {
+            Properties.Settings.Default.SaveSettings = !nogui;
             // 各種バイナリのパスが設定されていなかったら推測する．
             // "/exit"が指定されている場合はメッセージ表示をしない．
             setPath(cmds.Contains("/exit") || cmds.Contains("-exit") || cmds.Contains("--exit"));
@@ -86,7 +87,6 @@ namespace TeX2img {
                 ShowHelp();
                 return -1;
             }
-            Properties.Settings.Default.SaveSettings = !nogui;
 
             // オプション解析
             List<string> files;
@@ -159,7 +159,6 @@ namespace TeX2img {
                 }
                 int r = CUIExec(quiet, files);
                 Properties.Settings.Default.previewFlag = (bool) preview;
-                Properties.Settings.Default.Save();
                 return r;
             } else {
                 if(chkfile_errmsg != null){
@@ -167,7 +166,6 @@ namespace TeX2img {
                     return -3;
                 }
                 Application.Run(new MainForm(files));
-                Properties.Settings.Default.Save();
                 return 0;
             }
         }
@@ -204,7 +202,9 @@ namespace TeX2img {
                 cmds.RemoveAt(0);
             }
             // メイン
-            Environment.ExitCode = TeX2imgMain(cmds);
+            var exitcode = TeX2imgMain(cmds);
+            Properties.Settings.Default.Save();
+            Environment.ExitCode = exitcode;
         }
 
         static void setPath(bool nomsg) {
@@ -252,14 +252,7 @@ namespace TeX2img {
             }
 
             int failnum = 0;
-            string tmpTeXFileName = null;
-            for(int i = 0 ; i < 10000 ; ++i) {
-                var random= Path.Combine(Path.GetTempPath(), Path.ChangeExtension(Path.GetRandomFileName(), ".tex"));
-                if(!File.Exists(random)) {
-                    tmpTeXFileName = random;
-                    break;
-                }
-            }
+            string tmpTeXFileName = Converter.GetTempFileName(".tex");
             if(tmpTeXFileName == null) {
                 Console.WriteLine("一時ファイル名の決定に失敗しました．作業フォルダ：\n" + Path.GetTempPath() + "\nを確認してください．");
                 return -6;

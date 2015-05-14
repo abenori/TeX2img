@@ -317,22 +317,13 @@ namespace TeX2img {
 
                 string extension = Path.GetExtension(outputFilePath).ToLower();
 
-                string tmpTeXFileName = null;
-                string tmpFileBaseName = null;
-                string tmpDir = Path.GetTempPath();
-                for(int i = 0 ; i < 100000 ; ++i) {
-                    tmpTeXFileName = Path.ChangeExtension(Path.GetRandomFileName(), ".tex");
-                    if(!File.Exists(Path.Combine(tmpDir,tmpTeXFileName))) {
-                        tmpFileBaseName = Path.GetFileNameWithoutExtension(tmpTeXFileName);
-                        break;
-                    }
-                }
-                if(tmpFileBaseName == null) {
+                string tmpTeXFileName = Converter.GetTempFileName(".tex");
+                if(tmpTeXFileName == null) {
                     MessageBox.Show("一時ファイル名の決定に失敗しました．作業フォルダ：\n" + Path.GetTempPath() + "\nを確認してください．");
                     return;
                 }
-                //string tmpFilePath = @"C:\Users\Abe_Noriyuki\Desktop\TeX2img\test";
-                //using(var fw = new StreamWriter(tmpFilePath)) { fw.WriteLine(""); }
+                string tmpFileBaseName = Path.GetFileNameWithoutExtension(tmpTeXFileName);
+                string tmpDir = Path.GetTempPath();
 
                 using(converter = new Converter(this, Path.Combine(tmpDir, tmpTeXFileName), outputFileNameTextBox.Text)) {
                     if(!converter.CheckFormat()) return;
