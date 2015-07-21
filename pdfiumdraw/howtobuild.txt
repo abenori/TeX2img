@@ -1,6 +1,6 @@
 pdfium is needed.
 
-* add "pdfium\fpdfsdk\include" to the include directories
+* add "pdfium\public" to the include directories
 * add "pdfium\build" to the library directories
 
 pdfium.patch should be applied to the PDFium source tree.

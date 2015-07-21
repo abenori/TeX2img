@@ -18,7 +18,7 @@ namespace TeX2img {
             preambleTextBox.Resize += ((s, e) => { preambleTextBox.ViewWidth = preambleTextBox.ClientSize.Width; });
             preambleTextBox.ShowsHScrollBar = false;
             preambleTextBox.Document.WordProc.EnableWordWrap = false;
-            preambleTextBox.Document.EolCode = "\n";
+            preambleTextBox.Document.EolCode = System.Environment.NewLine;
             ActiveControl = preambleTextBox;
         }
 
@@ -107,7 +107,7 @@ namespace TeX2img {
                         var text = Properties.Settings.Default.preambleTemplates[tag];
                         if(text != null) {
                             if(MessageBox.Show("現在のプリアンブルを以下の内容に変更します．よろしいですか？\n" + text, "TeX2img", MessageBoxButtons.YesNo) == System.Windows.Forms.DialogResult.Yes) {
-                                preambleTextBox.Text = text;
+                                preambleTextBox.Text = ChangeReturnCode(text);
                             }
                         }
                     }
@@ -119,5 +119,16 @@ namespace TeX2img {
             var btn = (Button) sender;
             menu.Show(btn, new Point(0, btn.Height));
         }
+        static string ChangeReturnCode(string str) {
+            return ChangeReturnCode(str, System.Environment.NewLine);
+        }
+        static string ChangeReturnCode(string str, string returncode) {
+            string r = str;
+            r = r.Replace("\r\n", "\n");
+            r = r.Replace("\r", "\n");
+            r = r.Replace("\n", "\r\n");
+            return r;
+        }
+
     }
 }

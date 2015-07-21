@@ -30,7 +30,7 @@ namespace TeX2img {
             sourceTextBox.Resize += delegate { sourceTextBox.ViewWidth = sourceTextBox.ClientSize.Width; };
             sourceTextBox.ShowsHScrollBar = false;
             sourceTextBox.Document.WordProc.EnableWordWrap = false;
-            sourceTextBox.Document.EolCode = "\n";
+            sourceTextBox.Document.EolCode = System.Environment.NewLine;
             loadSettings();
 
             if(InputFromTextboxRadioButton.Checked) ActiveControl = sourceTextBox;
@@ -287,8 +287,9 @@ namespace TeX2img {
                     string file = FirstFiles[2 * i];
                     string tmppath, tmptexfn;
                     try {
-                        tmppath = Path.GetTempFileName();
-                        tmptexfn = Path.Combine(Path.GetDirectoryName(tmppath), Path.GetFileNameWithoutExtension(tmppath) + ".tex");
+                        string inputextension = Path.GetExtension(file);
+                        tmppath = Converter.GetTempFileName(inputextension);
+                        tmptexfn = Path.Combine(Path.GetDirectoryName(tmppath), Path.GetFileNameWithoutExtension(tmppath) + inputextension);
                         File.Delete(tmptexfn);
                         File.Copy(file, tmptexfn, true);
                     }
@@ -316,8 +317,13 @@ namespace TeX2img {
                 }
 
                 string extension = Path.GetExtension(outputFilePath).ToLower();
+                string tmpTeXFileName;
+                if(InputFromFileRadioButton.Checked) {
+                    tmpTeXFileName = Converter.GetTempFileName(Path.GetExtension(inputFileNameTextBox.Text));
+                }else{
+                    tmpTeXFileName = Converter.GetTempFileName();
+                }
 
-                string tmpTeXFileName = Converter.GetTempFileName(".tex");
                 if(tmpTeXFileName == null) {
                     MessageBox.Show("一時ファイル名の決定に失敗しました．作業フォルダ：\n" + Path.GetTempPath() + "\nを確認してください．");
                     return;
@@ -465,8 +471,8 @@ namespace TeX2img {
         public void ImportFile(string path) {
             string preamble, body;
             ImportFile(path, out preamble, out body);
-            if(preamble != null) myPreambleForm.PreambleTextBox.Text = preamble;
-            if(body != null) sourceTextBox.Text = body;
+            if(preamble != null) myPreambleForm.PreambleTextBox.Text = ChangeReturnCode(preamble);
+            if(body != null) sourceTextBox.Text = ChangeReturnCode(body);
         }
 
         public static void ImportFile(string path, out string preamble, out string body) {
@@ -559,12 +565,22 @@ namespace TeX2img {
                 return true;
             }
         }
+        static string ChangeReturnCode(string str) {
+            return ChangeReturnCode(str, System.Environment.NewLine);
+        }
+        static string ChangeReturnCode(string str,string returncode){
+            string r = str;
+            r = r.Replace("\r\n", "\n");
+            r = r.Replace("\r", "\n");
+            r = r.Replace("\n", "\r\n");
+            return r;
+        }
 
         static void WriteTeXSourceFile(TextWriter sw, string preamble, string body) {
-            sw.Write(preamble);
+            sw.Write(ChangeReturnCode(preamble));
             if(!preamble.EndsWith("\n")) sw.WriteLine("");
             sw.WriteLine("\\begin{document}");
-            sw.Write(body);
+            sw.Write(ChangeReturnCode(body));
             if(!body.EndsWith("\n")) sw.WriteLine("");
             sw.WriteLine("\\end{document}");
         }

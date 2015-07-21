@@ -64,7 +64,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>gdiplus.lib;winmm.lib;Shlwapi.lib;Debug\lib\fdrm.lib;Debug\lib\fpdfdoc.lib;Debug\lib\fpdfapi.lib;Debug\lib\fpdftext.lib;Debug\lib\formfiller.lib;Debug\lib\fxcodec.lib;Debug\lib\fxcrt.lib;Debug\lib\fxedit.lib;Debug\lib\fxge.lib;Debug\lib\javascript.lib;Debug\lib\v8_base.lib;Debug\lib\v8_libbase.lib;Debug\lib\v8_libplatform.lib;Debug\lib\icui18n.lib;Debug\lib\icuuc.lib;Debug\lib\v8_snapshot.lib;Debug\lib\jsapi.lib;Debug\lib\pdfwindow.lib;Debug\lib\freetype.lib;Debug\lib\pdfium.lib;Debug\lib\fx_lpng.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>gdiplus.lib;winmm.lib;Shlwapi.lib;Debug\lib\fdrm.lib;Debug\lib\fpdfdoc.lib;Debug\lib\fpdfapi.lib;Debug\lib\fpdftext.lib;Debug\lib\formfiller.lib;Debug\lib\fxcodec.lib;Debug\lib\fxcrt.lib;Debug\lib\fxedit.lib;Debug\lib\fxge.lib;Debug\lib\javascript.lib;Debug\lib\v8_libbase.lib;Debug\lib\v8_libplatform.lib;Debug\lib\icui18n.lib;Debug\lib\icuuc.lib;Debug\lib\v8_snapshot.lib;Debug\lib\jsapi.lib;Debug\lib\pdfwindow.lib;Debug\lib\freetype.lib;Debug\lib\pdfium.lib;Debug\lib\fx_lpng.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -84,7 +84,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>Shlwapi.lib;gdiplus.lib;winmm.lib;Release\lib\fdrm.lib;Release\lib\fpdfdoc.lib;Release\lib\fpdfapi.lib;Release\lib\fpdftext.lib;Release\lib\formfiller.lib;Release\lib\fxcodec.lib;Release\lib\fxcrt.lib;Release\lib\fxedit.lib;Release\lib\fxge.lib;Release\lib\javascript.lib;Release\lib\v8_base.lib;Release\lib\v8_libbase.lib;Release\lib\v8_libplatform.lib;Release\lib\icui18n.lib;Release\lib\icuuc.lib;Release\lib\v8_snapshot.lib;Release\lib\jsapi.lib;Release\lib\pdfwindow.lib;Release\lib\freetype.lib;Release\lib\pdfium.lib;Release\lib\fx_lpng.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Shlwapi.lib;gdiplus.lib;winmm.lib;Release\lib\fdrm.lib;Release\lib\fpdfdoc.lib;Release\lib\fpdfapi.lib;Release\lib\fpdftext.lib;Release\lib\formfiller.lib;Release\lib\fxcodec.lib;Release\lib\fxcrt.lib;Release\lib\fxedit.lib;Release\lib\fxge.lib;Release\lib\javascript.lib;Release\lib\v8_libbase.lib;Release\lib\v8_libplatform.lib;Release\lib\icui18n.lib;Release\lib\icuuc.lib;Release\lib\v8_snapshot.lib;Release\lib\jsapi.lib;Release\lib\pdfwindow.lib;Release\lib\freetype.lib;Release\lib\pdfium.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>

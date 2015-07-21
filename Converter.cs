@@ -768,19 +768,21 @@ namespace TeX2img {
             string tmpFileBaseName = Path.GetFileNameWithoutExtension(inputTeXFilePath);
 
             // とりあえずPDFを作る
-            if(!tex2dvi(tmpFileBaseName + ".tex")) return false;
-            string outdvi = Path.Combine(workingDir, tmpFileBaseName + ".dvi");
-            string outpdf = Path.Combine(workingDir, tmpFileBaseName + ".pdf");
-            if(!File.Exists(outpdf)) {
-                if(!File.Exists(outdvi)) {
-                    controller_.showGenerateError();
-                    return false;
+            if(extension == ".tex") {
+                if(!tex2dvi(tmpFileBaseName + ".tex")) return false;
+                string outdvi = Path.Combine(workingDir, tmpFileBaseName + ".dvi");
+                string outpdf = Path.Combine(workingDir, tmpFileBaseName + ".pdf");
+                if(!File.Exists(outpdf)) {
+                    if(!File.Exists(outdvi)) {
+                        controller_.showGenerateError();
+                        return false;
+                    } else {
+                        if(!dvi2pdf(tmpFileBaseName + ".dvi")) return false;
+                    }
                 } else {
-                    if(!dvi2pdf(tmpFileBaseName + ".dvi")) return false;
-                }
-            } else {
-                if(File.Exists(outdvi) && System.IO.File.GetLastWriteTime(outdvi) > System.IO.File.GetLastWriteTime(outpdf)) {
-                    if(!dvi2pdf(tmpFileBaseName + ".dvi")) return false;
+                    if(File.Exists(outdvi) && System.IO.File.GetLastWriteTime(outdvi) > System.IO.File.GetLastWriteTime(outpdf)) {
+                        if(!dvi2pdf(tmpFileBaseName + ".dvi")) return false;
+                    }
                 }
             }
 

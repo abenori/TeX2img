@@ -5,6 +5,7 @@
 #include <iostream>
 #include <exception>
 #include <fpdfview.h>
+#include <fpdf_transformpage.h>
 #include <sstream>
 #include <shlwapi.h>
 #include <wincodec.h>
@@ -32,6 +33,7 @@ struct Data {
 	int scale = 1;
 	vector<int> pages;
 	bool transparent = false;
+	float extent = 50;
 	RECT viewport;
 };
 
@@ -193,7 +195,7 @@ public:
 wstring ToUnicode(const string &str) {
 	static vector<wchar_t> buf;
 	DWORD size = ::MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, str.c_str(), str.length(), nullptr, 0);
-	buf.reserve(size + 1);
+	buf.resize(size + 1);
 	size = ::MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, str.c_str(), str.length(), &buf[0], size);
 	buf[size] = L'\0';
 	return wstring(&buf[0]);
@@ -360,15 +362,32 @@ int WriteEMF(const Data &d){
 			if(pages == 1)outfile = (d.output != "" ? d.output : GetDirectory(d.input) + "\\" + GetFileNameWithoutExtension(d.input) + ".emf");
 			else outfile = outputpre + to_string(i) + outputpost;
 			HDC dc = ::CreateEnhMetaFile(nullptr, outfile.c_str(), nullptr, nullptr);
-			::SetMapMode(dc, MM_ANISOTROPIC);
-			::SetWindowExtEx(dc, 1000, 1000, nullptr);
-			int width = (int) (page.GetWidth() * 1000 * d.scale);
-			int height = (int) (page.GetHeight() * 1000 * d.scale);
-			RECT rc;
-			rc.left = 0; rc.top = 0; rc.right = width; rc.bottom = height;
+			float x = d.extent;
+			int width = (int) (page.GetWidth() * d.scale*x);
+			int height = (int) (page.GetHeight()*d.scale*x);
+			//int width = (int) (page.GetWidth() * 1000 * d.scale);
+			//int height = (int) (page.GetHeight() * 1000 * d.scale);
+			if((int) x != 1) {
+				::SetMapMode(dc, MM_ANISOTROPIC);
+				::SetWindowExtEx(dc, x, x, nullptr);
+			}
+			//::SetGraphicsMode(dc, GM_ADVANCED);
+			//XFORM form = {0, 0, 0, 0, 0, 0};
+			//form.eM11 = 1 / x; form.eM22 = 1 / x;
+			//int r;
+			//r = ::SetWorldTransform(dc, &form);
+			//FS_MATRIX mat = {0, 0, 0, 0, 0, 0};
+			//mat.a = x; mat.d = x;
+			//FS_RECTF rect = {0, 0, 0, 0};
+			//rect.left = 0; rect.right = width; rect.bottom = height; rect.top = 0;
+			//r = FPDFPage_TransFormWithClip(page.page, &mat, &rect);
+			/*
 			HRGN rgn = CreateRectRgn(0, 0, width, height);
 			::SelectClipRgn(dc, rgn);
 			::DeleteObject(rgn);
+			*/
+			RECT rc;
+			rc.left = 0; rc.top = 0; rc.right = width; rc.bottom = height;
 			if(d.transparent) {
 				::SetBkMode(dc, TRANSPARENT);
 				::FillRect(dc, &rc, (HBRUSH)::GetStockObject(NULL_BRUSH));
@@ -377,6 +396,15 @@ int WriteEMF(const Data &d){
 				::FillRect(dc, &rc, (HBRUSH)::GetStockObject(WHITE_BRUSH));
 			}
 			page.Render(dc, width, height);
+			/*
+			LOGBRUSH lb;
+			lb.lbColor = RGB(0, 0, 0);
+			lb.lbStyle = BS_SOLID;
+			DWORD dash[2] = {width / 100, width / 100};
+			auto pen = ::ExtCreatePen(PS_GEOMETRIC | PS_USERSTYLE | PS_ENDCAP_FLAT, 1, &lb, 2, dash);
+			::SelectObject(dc, pen);
+			MoveToEx(dc, 0, height*x / 2, nullptr);
+			LineTo(dc, width*x, height*x / 2);*/
 			::DeleteEnhMetaFile(::CloseEnhMetaFile(dc));
 		}
 		catch(runtime_error e) {
@@ -478,6 +506,7 @@ int main(int argc, char *argv[]) {
 			else if(arg == "--output-page")output_page = true;// ページ数を出力する
 			else if(arg.find("--pages=") == 0)current_data.pages.push_back(std::atoi(arg.substr(string("--pages=").length()).c_str()) - 1);
 			else if(arg.find("--scale=") == 0)current_data.scale = std::atoi(arg.substr(string("--scale=").length()).c_str());
+			else if(arg.find("--extent=") == 0)current_data.extent = std::atoi(arg.substr(string("--extent=").length()).c_str());
 			else if(arg.find("--output=") == 0) current_data.output = arg.substr(string("--output=").length());
 			else if(arg.find("--viewport=") == 0) {
 				auto viewport = split(arg.substr(string("--viewport=").length()),',');
