@@ -324,12 +324,40 @@ namespace TeX2img {
                     controller_.showGenerateError();
                     return false;
                 }
+                if(Properties.Settings.Default.gsDevice == "epswrite") {
+                    BoundingBox bb, hiresbb;
+                    readBBFromPDF(inputFileName, page, out bb, out hiresbb);
+                    Func<BoundingBox, BoundingBox> bbfunc = (b) => bb;
+                    Func<BoundingBox, BoundingBox> hiresbbfunc = (b) => hiresbb;
+                    rewriteBB(outputFileName, bbfunc, hiresbbfunc);
+                }
             }
             return true;
         }
 
+        struct BoundingBox{
+            private decimal left, right, bottom, top;
+            public decimal Left { get { return left; } }
+            public decimal Right { get { return right; } }
+            public decimal Bottom { get { return bottom; } }
+            public decimal Top { get { return top; } }
+            public BoundingBox(decimal l, decimal b, decimal r, decimal t) {
+                left = l; right = r; bottom = b; top = t;
+            }
+        };
 
-        private void enlargeBB(string inputEpsFileName) {
+        void enlargeBB(string inputEpsFileName) {
+            Func<BoundingBox, BoundingBox> func = bb => {
+                return new BoundingBox(
+                    bb.Left - Properties.Settings.Default.leftMargin,
+                    bb.Bottom - Properties.Settings.Default.bottomMargin,
+                    bb.Right + Properties.Settings.Default.rightMargin,
+                    bb.Top + Properties.Settings.Default.topMargin);
+            };
+            rewriteBB(inputEpsFileName, func, func);
+        }
+
+        void rewriteBB(string inputEpsFileName,Func<BoundingBox,BoundingBox> bb,Func<BoundingBox,BoundingBox> hiresbb) {
             Regex regexBB = new Regex(@"^\%\%(HiRes|)BoundingBox\: ([\d\.]+) ([\d\.]+) ([\d\.]+) ([\d\.]+)$");
             byte[] inbuf;
             using(var fs = new FileStream(Path.Combine(workingDir, inputEpsFileName), FileMode.Open, FileAccess.Read)) {
@@ -352,17 +380,22 @@ namespace TeX2img {
                     string line = System.Text.Encoding.ASCII.GetString(inbuf, inp, q - inp);
                     Match match = regexBB.Match(line);
                     if(match.Success) {
-                        decimal leftbottom_x = System.Convert.ToDecimal(match.Groups[2].Value);
-                        decimal leftbottom_y = System.Convert.ToDecimal(match.Groups[3].Value);
-                        decimal righttop_x = System.Convert.ToDecimal(match.Groups[4].Value);
-                        decimal righttop_y = System.Convert.ToDecimal(match.Groups[5].Value);
+                        BoundingBox bbinfile = new BoundingBox(
+                            System.Convert.ToDecimal(match.Groups[2].Value),
+                            System.Convert.ToDecimal(match.Groups[3].Value),
+                            System.Convert.ToDecimal(match.Groups[4].Value),
+                            System.Convert.ToDecimal(match.Groups[5].Value));
                         string HiRes = match.Groups[1].Value;
                         if(HiRes == "") {
                             bbfound = true;
-                            line = String.Format("%%BoundingBox: {0} {1} {2} {3}", (int) (leftbottom_x - Properties.Settings.Default.leftMargin), (int) (leftbottom_y - Properties.Settings.Default.bottomMargin), (int) (righttop_x + Properties.Settings.Default.rightMargin), (int) (righttop_y + Properties.Settings.Default.topMargin));
+                            var newbb = bb(bbinfile);
+                            line = String.Format("%%BoundingBox: {0} {1} {2} {3}", (int) newbb.Left, (int) newbb.Bottom, (int) newbb.Right, (int) newbb.Top);
+                            //line = String.Format("%%BoundingBox: {0} {1} {2} {3}", (int) (leftbottom_x - Properties.Settings.Default.leftMargin), (int) (leftbottom_y - Properties.Settings.Default.bottomMargin), (int) (righttop_x + Properties.Settings.Default.rightMargin), (int) (righttop_y + Properties.Settings.Default.topMargin));
                         } else {
                             hiresbbfound = true;
-                            line = String.Format("%%HiResBoundingBox: {0} {1} {2} {3}", leftbottom_x - Properties.Settings.Default.leftMargin, leftbottom_y - Properties.Settings.Default.bottomMargin, righttop_x + Properties.Settings.Default.rightMargin, righttop_y + Properties.Settings.Default.topMargin);
+                            var newbb = hiresbb(bbinfile);
+                            line = String.Format("%%HiResBoundingBox: {0} {1} {2} {3}", newbb.Left, newbb.Bottom, newbb.Right, newbb.Top);
+                            //line = String.Format("%%HiResBoundingBox: {0} {1} {2} {3}", leftbottom_x - Properties.Settings.Default.leftMargin, leftbottom_y - Properties.Settings.Default.bottomMargin, righttop_x + Properties.Settings.Default.rightMargin, righttop_y + Properties.Settings.Default.topMargin);
                         }
                         tmpbuf = System.Text.Encoding.ASCII.GetBytes(line);
                         System.Array.Copy(tmpbuf, 0, outbuf, outp, tmpbuf.Length);
@@ -516,11 +549,45 @@ namespace TeX2img {
             xml.Save(fullpath);
         }
 
-        struct RectangleDecimal {
-            public Decimal Left, Right, Bottom, Top;
-        }
         bool pdfcrop(string inputFileName, string outputFileName, bool use_bp,int page = 1) {
             return pdfcrop(inputFileName,outputFileName,use_bp,new List<int>(){page});
+        }
+        void readBBFromPDF(string inputPDFFileName,int page,out BoundingBox bb,out BoundingBox hiresbb){
+            var gspath = setProcStartInfo(Properties.Settings.Default.gsPath);
+            using(var proc = GetProcess()) {
+                proc.StartInfo.FileName = gspath;
+                proc.StartInfo.Arguments = "-dBATCH -dNOPAUSE -q -sDEVICE=bbox -dFirstPage=" + page.ToString() + " -dLastPage=" + page.ToString() + " \"" + inputPDFFileName + "\"";
+                proc.OutputDataReceived += ((s, e) => { System.Diagnostics.Debug.WriteLine("Std: " + e.Data); });
+
+                Regex regexBB = new Regex(@"^\%\%(HiRes)?BoundingBox\: ([\d\.]+) ([\d\.]+) ([\d\.]+) ([\d\.]+)$");
+                bb = new BoundingBox();
+                hiresbb = new BoundingBox();
+                try {
+                    proc.Start();
+                    proc.BeginOutputReadLine();
+                    while(!proc.StandardError.EndOfStream) {
+                        var line = proc.StandardError.ReadLine();
+                        //System.Diagnostics.Debug.WriteLine(line);
+                        var match = regexBB.Match(line);
+                        if(match.Success) {
+                            var currentbb = new BoundingBox(
+                                System.Convert.ToDecimal(match.Groups[2].Value),
+                                System.Convert.ToDecimal(match.Groups[3].Value),
+                                System.Convert.ToDecimal(match.Groups[4].Value),
+                                System.Convert.ToDecimal(match.Groups[5].Value));
+                            if(match.Groups[1].Value == "HiRes") {
+                                hiresbb = currentbb;
+                            } else {
+                                bb = currentbb;
+                            }
+                        }
+                    }
+                    proc.WaitForExit();
+                }
+                catch(Win32Exception) {
+                    controller_.showPathError(gspath, "Ghostscript");
+                }
+            }
         }
 
         bool pdfcrop(string inputFileName, string outputFileName, bool use_bp, List<int> pages) {
@@ -530,41 +597,18 @@ namespace TeX2img {
             generatedImageFiles.Add(Path.Combine(workingDir, outputFileName));
 
             var gspath = setProcStartInfo(Properties.Settings.Default.gsPath);
-            var bbBox = new List<RectangleDecimal>();
+            var bbBox = new List<BoundingBox>();
             int margindevide = use_bp ? 1 : Properties.Settings.Default.resolutionScale;
             foreach(var page in pages) {
-                var rect = new RectangleDecimal();
-                using(var proc = GetProcess()) {
-                    proc.StartInfo.FileName = gspath;
-                    proc.StartInfo.Arguments = "-dBATCH -dNOPAUSE -q -sDEVICE=bbox -dFirstPage=" + page.ToString() + " -dLastPage=" + page.ToString() + " \"" + inputFileName + "\"";
-                    proc.OutputDataReceived += ((s, e) => { System.Diagnostics.Debug.WriteLine("Std: " + e.Data); });
-                    Regex regexBB = new Regex(@"^\%\%BoundingBox\: ([\d\.]+) ([\d\.]+) ([\d\.]+) ([\d\.]+)$");
-                    try {
-                        proc.Start();
-                        proc.BeginOutputReadLine();
-                        while(!proc.StandardError.EndOfStream) {
-                            var line = proc.StandardError.ReadLine();
-                            System.Diagnostics.Debug.WriteLine(line);
-                            var match = regexBB.Match(line);
-                            if(match.Success) {
-                                rect.Left = System.Convert.ToDecimal(match.Groups[1].Value);
-                                rect.Bottom =  System.Convert.ToDecimal(match.Groups[2].Value);
-                                rect.Right = System.Convert.ToDecimal(match.Groups[3].Value);
-                                rect.Top = System.Convert.ToDecimal(match.Groups[4].Value);
-                                break;
-                            }
-                        }
-                        proc.WaitForExit();
-                    }
-                    catch(Win32Exception) {
-                        controller_.showPathError(gspath, "Ghostscript");
-                        return false;
-                    }
-                }
-                rect.Left -= Properties.Settings.Default.leftMargin / margindevide;
-                rect.Bottom -= Properties.Settings.Default.bottomMargin / margindevide;
-                rect.Right += Properties.Settings.Default.rightMargin / margindevide;
-                rect.Top += Properties.Settings.Default.topMargin / margindevide;
+                var bb = new BoundingBox();
+                var hiresbb = new BoundingBox();
+                readBBFromPDF(inputFileName, page, out bb, out hiresbb);
+                BoundingBox rect = new BoundingBox(
+                    bb.Left - Properties.Settings.Default.leftMargin / margindevide,
+                    bb.Bottom - Properties.Settings.Default.bottomMargin / margindevide,
+                    bb.Right + Properties.Settings.Default.rightMargin / margindevide,
+                    bb.Top + Properties.Settings.Default.topMargin / margindevide
+                    );
                 bbBox.Add(rect);
             }
             using(var fw = new StreamWriter(Path.Combine(workingDir,tmpfile))) {
@@ -766,9 +810,9 @@ namespace TeX2img {
             abort = false;
             string extension = Path.GetExtension(outputFilePath).ToLower();
             string tmpFileBaseName = Path.GetFileNameWithoutExtension(inputTeXFilePath);
-
+            string inputextension = Path.GetExtension(inputTeXFilePath).ToLower();
             // とりあえずPDFを作る
-            if(extension == ".tex") {
+            if(inputextension == ".tex"){
                 if(!tex2dvi(tmpFileBaseName + ".tex")) return false;
                 string outdvi = Path.Combine(workingDir, tmpFileBaseName + ".dvi");
                 string outpdf = Path.Combine(workingDir, tmpFileBaseName + ".pdf");
