@@ -255,16 +255,20 @@ namespace TeX2img {
 
             for(int i = 0 ; i < files.Count / 2 ; ++i) {
                 string file = files[2 * i];
+                if(!Path.IsPathRooted(file)) file = Path.GetFullPath(file);
                 string tmpTeXFileName = Converter.GetTempFileName(Path.GetExtension(file));
                 if(tmpTeXFileName == null) {
                     Console.WriteLine("一時ファイル名の決定に失敗しました．作業フォルダ：\n" + Path.GetTempPath() + "\nを確認してください．");
                     return -6;
                 }
+                tmpTeXFileName = Path.Combine(Path.GetTempPath(), tmpTeXFileName);
                 // 一時フォルダにコピー
                 File.Copy(file, tmpTeXFileName, true);
+                (new FileInfo(tmpTeXFileName)).Attributes = FileAttributes.Normal;
                 // 変換！
                 try {
                     using(var converter = new Converter(Output, tmpTeXFileName, files[2 * i + 1])) {
+                        converter.AddInputPath(Path.GetDirectoryName(file));
                         if(!converter.Convert()) ++failnum;
                     }
                 }

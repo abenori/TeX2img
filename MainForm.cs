@@ -572,7 +572,7 @@ namespace TeX2img {
             string r = str;
             r = r.Replace("\r\n", "\n");
             r = r.Replace("\r", "\n");
-            r = r.Replace("\n", "\r\n");
+            r = r.Replace("\n", returncode);
             return r;
         }
 
