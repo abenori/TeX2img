@@ -252,14 +252,14 @@ namespace TeX2img {
             }
 
             int failnum = 0;
-            string tmpTeXFileName = Converter.GetTempFileName(".tex");
-            if(tmpTeXFileName == null) {
-                Console.WriteLine("一時ファイル名の決定に失敗しました．作業フォルダ：\n" + Path.GetTempPath() + "\nを確認してください．");
-                return -6;
-            }
 
             for(int i = 0 ; i < files.Count / 2 ; ++i) {
                 string file = files[2 * i];
+                string tmpTeXFileName = Converter.GetTempFileName(Path.GetExtension(file));
+                if(tmpTeXFileName == null) {
+                    Console.WriteLine("一時ファイル名の決定に失敗しました．作業フォルダ：\n" + Path.GetTempPath() + "\nを確認してください．");
+                    return -6;
+                }
                 // 一時フォルダにコピー
                 File.Copy(file, tmpTeXFileName, true);
                 // 変換！

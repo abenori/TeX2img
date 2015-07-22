@@ -837,7 +837,7 @@ namespace TeX2img {
             if(
                 extension == ".svg" || 
                 (extension == ".pdf" && !Properties.Settings.Default.outlinedText) ||
-                extension == ".gif" && Properties.Settings.Default.transparentPngFlag
+                (extension == ".gif" && Properties.Settings.Default.transparentPngFlag)
                 ) {
                 for(int i = 1 ; i <= page ; ++i) {
                     if(extension == ".svg") {
