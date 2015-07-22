@@ -254,8 +254,7 @@ namespace TeX2img {
             int failnum = 0;
 
             for(int i = 0 ; i < files.Count / 2 ; ++i) {
-                string file = files[2 * i];
-                if(!Path.IsPathRooted(file)) file = Path.GetFullPath(file);
+                string file = Path.GetFullPath(files[2 * i]);
                 string tmpTeXFileName = Converter.GetTempFileName(Path.GetExtension(file));
                 if(tmpTeXFileName == null) {
                     Console.WriteLine("一時ファイル名の決定に失敗しました．作業フォルダ：\n" + Path.GetTempPath() + "\nを確認してください．");

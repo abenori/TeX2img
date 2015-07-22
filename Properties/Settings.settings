@@ -27,8 +27,9 @@
       <Value Profile="(Default)">100</Value>
     </Setting>
     <Setting Name="preamble" Type="System.String" Scope="User">
-      <Value Profile="(Default)">\documentclass[fleqn]{jsarticle}
+      <Value Profile="(Default)">\documentclass[fleqn,papersize,dvipdfmx]{jsarticle}
 \usepackage{amsmath,amssymb}
+\usepackage{color}
 \pagestyle{empty}
 </Value>
     </Setting>

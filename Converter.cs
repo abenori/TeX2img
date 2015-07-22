@@ -56,6 +56,7 @@ namespace TeX2img {
         int epsResolution_ = 20016;
         string workingDir;
         string InputFile, OutputFile;
+        // フルパスを入れる
         public Converter(IOutputController controller, string inputTeXFilePath, string outputFilePath) {
             InputFile = inputTeXFilePath;
             OutputFile = outputFilePath;
