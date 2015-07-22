@@ -121,8 +121,8 @@ namespace TeX2img.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("\\documentclass[fleqn]{jsarticle}\r\n\\usepackage{amsmath,amssymb}\r\n\\pagestyle{empty}" +
-            "\r\n")]
+        [global::System.Configuration.DefaultSettingValueAttribute("\\documentclass[fleqn,papersize,dvipdfmx]{jsarticle}\r\n\\usepackage{amsmath,amssymb}" +
+            "\r\n\\usepackage{color}\r\n\\pagestyle{empty}\r\n")]
         public string preamble {
             get {
                 return ((string)(this["preamble"]));
