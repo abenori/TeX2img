@@ -79,6 +79,12 @@ namespace TeX2img {
             ignoreErrorCheckBox.Checked = Properties.Settings.Default.ignoreErrorFlag;
             embedTeXSourCecheckBox.Checked = Properties.Settings.Default.embedTeXSource;
 
+            drawEOFCheckBox.Checked = Properties.Settings.Default.editorDrawEOF;
+            drawEOLCheckBox.Checked = Properties.Settings.Default.editorDrawEOL;
+            drawSpaceCheckBox.Checked = Properties.Settings.Default.editorDrawSpace;
+            drawTabCheckBox.Checked = Properties.Settings.Default.editorDrawTab;
+            tabWidthNumericUpDown.Value = Properties.Settings.Default.editorTabWidth;
+
             SettingTab.SelectedIndex = Properties.Settings.Default.settingTabIndex;
 
             radioButtonbp.Checked = Properties.Settings.Default.yohakuUnitBP;
@@ -141,6 +147,12 @@ namespace TeX2img {
 
             Properties.Settings.Default.yohakuUnitBP = radioButtonbp.Checked;
 
+            Properties.Settings.Default.editorDrawEOF = drawEOFCheckBox.Checked;
+            Properties.Settings.Default.editorDrawEOL = drawEOLCheckBox.Checked;
+            Properties.Settings.Default.editorDrawSpace = drawSpaceCheckBox.Checked;
+            Properties.Settings.Default.editorDrawTab = drawTabCheckBox.Checked;
+            Properties.Settings.Default.editorTabWidth = (int) tabWidthNumericUpDown.Value;
+
             Properties.Settings.Default.Save();
 
             this.Close();
@@ -175,7 +187,7 @@ namespace TeX2img {
             FontColorGroup.Text = item;
             FontColorButton.BackColor = Properties.Settings.Default.editorFontColor[item].Font;
             BackColorButton.BackColor = Properties.Settings.Default.editorFontColor[item].Back;
-            if(item == "改行，EOF") BackColorButton.Enabled = false;
+            if(item == "改行，EOF" || item == "空白") BackColorButton.Enabled = false;
             else BackColorButton.Enabled = true;
         }
 
@@ -206,7 +218,7 @@ namespace TeX2img {
                     FontColorListView.SelectedItems[0].BackColor = cd.Color;
                     if(item == "テキスト") {
                         for(int i = 0 ; i < FontColorListView.Items.Count ; ++i) {
-                            if(FontColorListView.Items[i].Text == "改行，EOF") {
+                            if(FontColorListView.Items[i].Text == "改行，EOF" || FontColorListView.Items[i].Text == "空白") {
                                 FontColorListView.Items[i].BackColor = cd.Color;
                             }
                         }

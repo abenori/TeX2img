@@ -31,6 +31,7 @@ namespace TeX2img {
             sourceTextBox.ShowsHScrollBar = false;
             sourceTextBox.Document.WordProc.EnableWordWrap = false;
             sourceTextBox.Document.EolCode = System.Environment.NewLine;
+            Sgry.Azuki.UserPref.Antialias = Sgry.Azuki.Antialias.Default;
             loadSettings();
 
             if(InputFromTextboxRadioButton.Checked) ActiveControl = sourceTextBox;
@@ -379,6 +380,12 @@ namespace TeX2img {
             if(textBox == null) return;
             textBox.FontInfo = new Sgry.Azuki.FontInfo(Properties.Settings.Default.editorFont);
             var x = Properties.Settings.Default.editorFontColor;
+            textBox.DrawsEofMark = Properties.Settings.Default.editorDrawEOF;
+            textBox.DrawsEolCode = Properties.Settings.Default.editorDrawEOL;
+            textBox.DrawsFullWidthSpace = Properties.Settings.Default.editorDrawSpace;
+            textBox.DrawsSpace = Properties.Settings.Default.editorDrawSpace;
+            textBox.DrawsTab = Properties.Settings.Default.editorDrawTab;
+            textBox.TabWidth = Properties.Settings.Default.editorTabWidth;
             textBox.ColorScheme.ForeColor = Properties.Settings.Default.editorFontColor["テキスト"].Font;
             textBox.ColorScheme.SetColor(Sgry.Azuki.CharClass.Normal, Properties.Settings.Default.editorFontColor["テキスト"].Font, Properties.Settings.Default.editorFontColor["テキスト"].Back);
             textBox.ColorScheme.SetColor(Sgry.Azuki.CharClass.Heading1, Properties.Settings.Default.editorFontColor["テキスト"].Font, Properties.Settings.Default.editorFontColor["テキスト"].Back);
@@ -395,6 +402,7 @@ namespace TeX2img {
             textBox.ColorScheme.EolColor = Properties.Settings.Default.editorFontColor["改行，EOF"].Font;
             textBox.ColorScheme.MatchedBracketFore = Properties.Settings.Default.editorFontColor["対応する括弧"].Font;
             textBox.ColorScheme.MatchedBracketBack = Properties.Settings.Default.editorFontColor["対応する括弧"].Back;
+            textBox.ColorScheme.WhiteSpaceColor = Properties.Settings.Default.editorFontColor["空白"].Font;
             Color backColor = new Color();
             if(textBox.Enabled) backColor = Properties.Settings.Default.editorFontColor["テキスト"].Back;
             else backColor = System.Drawing.SystemColors.ButtonFace;

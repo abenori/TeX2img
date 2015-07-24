@@ -34,6 +34,7 @@
             editorFontColor["コメント"] = new FontColor(editorCommentColorFont, editorCommentColorBack);
             editorFontColor["改行，EOF"] = new FontColor(editorEOFColorFont, editorNormalColorBack);
             editorFontColor["対応する括弧"] = new FontColor(editorMatchedBracketColorFont, editorMatchedBracketColorBack);
+            editorFontColor["空白"] = new FontColor(editorSpaceColorFont, editorNormalColorBack);
             if(preambleTemplateCollection == null) {
                 preambleTemplates = GetDefaultTemplate();
                 preambleTemplateCollection = DictionaryToStringCollection(preambleTemplates);
@@ -57,6 +58,7 @@
             editorEOFColorFont = editorFontColor["改行，EOF"].Font;
             editorMatchedBracketColorFont = editorFontColor["対応する括弧"].Font;
             editorMatchedBracketColorBack = editorFontColor["対応する括弧"].Back;
+            editorSpaceColorFont = editorFontColor["空白"].Font;
             preambleTemplateCollection = DictionaryToStringCollection(preambleTemplates);
             base.OnSettingsSaving(sender, e);
         }
@@ -145,12 +147,12 @@
         public class FontColorCollection : System.Collections.Generic.Dictionary<string, FontColor> {
             public new FontColor this[string key] {
                 get {
-                    if(key == "改行，EOF" && base.ContainsKey(key)) base["改行，EOF"].Back = base["テキスト"].Back;
+                    if((key == "改行，EOF" || key == "空白" )&& base.ContainsKey(key)) base[key].Back = base["テキスト"].Back;
                     return base[key];
                 }
                 set {
                     base[key] = value;
-                    if(key == "改行，EOF" && base.ContainsKey(key)) base["改行，EOF"].Back = base["テキスト"].Back;
+                    if((key == "改行，EOF" || key == "空白") && base.ContainsKey(key)) base[key].Back = base["テキスト"].Back;
                 }
             }
         }

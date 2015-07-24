@@ -682,5 +682,77 @@ namespace TeX2img.Properties {
                 this["deleteDisplaySize"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool editorDrawSpace {
+            get {
+                return ((bool)(this["editorDrawSpace"]));
+            }
+            set {
+                this["editorDrawSpace"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool editorDrawTab {
+            get {
+                return ((bool)(this["editorDrawTab"]));
+            }
+            set {
+                this["editorDrawTab"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool editorDrawEOL {
+            get {
+                return ((bool)(this["editorDrawEOL"]));
+            }
+            set {
+                this["editorDrawEOL"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool editorDrawEOF {
+            get {
+                return ((bool)(this["editorDrawEOF"]));
+            }
+            set {
+                this["editorDrawEOF"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("DarkGray")]
+        public global::System.Drawing.Color editorSpaceColorFont {
+            get {
+                return ((global::System.Drawing.Color)(this["editorSpaceColorFont"]));
+            }
+            set {
+                this["editorSpaceColorFont"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("4")]
+        public int editorTabWidth {
+            get {
+                return ((int)(this["editorTabWidth"]));
+            }
+            set {
+                this["editorTabWidth"] = value;
+            }
+        }
     }
 }

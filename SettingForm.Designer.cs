@@ -36,6 +36,7 @@
             System.Windows.Forms.ListViewItem listViewItem6 = new System.Windows.Forms.ListViewItem("中 / 大括弧");
             System.Windows.Forms.ListViewItem listViewItem7 = new System.Windows.Forms.ListViewItem("改行，EOF");
             System.Windows.Forms.ListViewItem listViewItem8 = new System.Windows.Forms.ListViewItem("対応する括弧");
+            System.Windows.Forms.ListViewItem listViewItem9 = new System.Windows.Forms.ListViewItem("空白");
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SettingForm));
             this.SettingTab = new System.Windows.Forms.TabControl();
             this.BasicSettingTab = new System.Windows.Forms.TabPage();
@@ -85,6 +86,13 @@
             this.openTmpFolderButton = new System.Windows.Forms.Button();
             this.deleteTmpFilesCheckBox = new System.Windows.Forms.CheckBox();
             this.EditorSettingTab = new System.Windows.Forms.TabPage();
+            this.tabWidthNumericUpDown = new System.Windows.Forms.NumericUpDown();
+            this.label17 = new System.Windows.Forms.Label();
+            this.showGroupBox = new System.Windows.Forms.GroupBox();
+            this.drawEOFCheckBox = new System.Windows.Forms.CheckBox();
+            this.drawEOLCheckBox = new System.Windows.Forms.CheckBox();
+            this.drawTabCheckBox = new System.Windows.Forms.CheckBox();
+            this.drawSpaceCheckBox = new System.Windows.Forms.CheckBox();
             this.label15 = new System.Windows.Forms.Label();
             this.label12 = new System.Windows.Forms.Label();
             this.FontColorGroup = new System.Windows.Forms.GroupBox();
@@ -115,6 +123,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.resolutionScaleUpDown)).BeginInit();
             this.AfterCompilingTab.SuspendLayout();
             this.EditorSettingTab.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.tabWidthNumericUpDown)).BeginInit();
+            this.showGroupBox.SuspendLayout();
             this.FontColorGroup.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -659,6 +669,9 @@
             // 
             // EditorSettingTab
             // 
+            this.EditorSettingTab.Controls.Add(this.tabWidthNumericUpDown);
+            this.EditorSettingTab.Controls.Add(this.label17);
+            this.EditorSettingTab.Controls.Add(this.showGroupBox);
             this.EditorSettingTab.Controls.Add(this.label15);
             this.EditorSettingTab.Controls.Add(this.label12);
             this.EditorSettingTab.Controls.Add(this.FontColorGroup);
@@ -674,15 +687,84 @@
             this.EditorSettingTab.Text = "エディタの設定";
             this.EditorSettingTab.UseVisualStyleBackColor = true;
             // 
+            // tabWidthNumericUpDown
+            // 
+            this.tabWidthNumericUpDown.Location = new System.Drawing.Point(93, 396);
+            this.tabWidthNumericUpDown.Name = "tabWidthNumericUpDown";
+            this.tabWidthNumericUpDown.Size = new System.Drawing.Size(68, 25);
+            this.tabWidthNumericUpDown.TabIndex = 11;
+            // 
+            // label17
+            // 
+            this.label17.AutoSize = true;
+            this.label17.Location = new System.Drawing.Point(20, 399);
+            this.label17.Name = "label17";
+            this.label17.Size = new System.Drawing.Size(52, 18);
+            this.label17.TabIndex = 10;
+            this.label17.Text = "タブ幅";
+            // 
+            // showGroupBox
+            // 
+            this.showGroupBox.Controls.Add(this.drawEOFCheckBox);
+            this.showGroupBox.Controls.Add(this.drawEOLCheckBox);
+            this.showGroupBox.Controls.Add(this.drawTabCheckBox);
+            this.showGroupBox.Controls.Add(this.drawSpaceCheckBox);
+            this.showGroupBox.Location = new System.Drawing.Point(23, 323);
+            this.showGroupBox.Name = "showGroupBox";
+            this.showGroupBox.Size = new System.Drawing.Size(616, 56);
+            this.showGroupBox.TabIndex = 9;
+            this.showGroupBox.TabStop = false;
+            this.showGroupBox.Text = "表示";
+            // 
+            // drawEOFCheckBox
+            // 
+            this.drawEOFCheckBox.AutoSize = true;
+            this.drawEOFCheckBox.Location = new System.Drawing.Point(500, 26);
+            this.drawEOFCheckBox.Name = "drawEOFCheckBox";
+            this.drawEOFCheckBox.Size = new System.Drawing.Size(67, 22);
+            this.drawEOFCheckBox.TabIndex = 4;
+            this.drawEOFCheckBox.Text = "EOF";
+            this.drawEOFCheckBox.UseVisualStyleBackColor = true;
+            // 
+            // drawEOLCheckBox
+            // 
+            this.drawEOLCheckBox.AutoSize = true;
+            this.drawEOLCheckBox.Location = new System.Drawing.Point(321, 26);
+            this.drawEOLCheckBox.Name = "drawEOLCheckBox";
+            this.drawEOLCheckBox.Size = new System.Drawing.Size(70, 22);
+            this.drawEOLCheckBox.TabIndex = 3;
+            this.drawEOLCheckBox.Text = "改行";
+            this.drawEOLCheckBox.UseVisualStyleBackColor = true;
+            // 
+            // drawTabCheckBox
+            // 
+            this.drawTabCheckBox.AutoSize = true;
+            this.drawTabCheckBox.Location = new System.Drawing.Point(170, 26);
+            this.drawTabCheckBox.Name = "drawTabCheckBox";
+            this.drawTabCheckBox.Size = new System.Drawing.Size(60, 22);
+            this.drawTabCheckBox.TabIndex = 2;
+            this.drawTabCheckBox.Text = "タブ";
+            this.drawTabCheckBox.UseVisualStyleBackColor = true;
+            // 
+            // drawSpaceCheckBox
+            // 
+            this.drawSpaceCheckBox.AutoSize = true;
+            this.drawSpaceCheckBox.Location = new System.Drawing.Point(15, 26);
+            this.drawSpaceCheckBox.Name = "drawSpaceCheckBox";
+            this.drawSpaceCheckBox.Size = new System.Drawing.Size(70, 22);
+            this.drawSpaceCheckBox.TabIndex = 0;
+            this.drawSpaceCheckBox.Text = "空白";
+            this.drawSpaceCheckBox.UseVisualStyleBackColor = true;
+            // 
             // label15
             // 
             this.label15.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label15.AutoSize = true;
-            this.label15.Location = new System.Drawing.Point(131, 293);
+            this.label15.Location = new System.Drawing.Point(131, 300);
             this.label15.Name = "label15";
-            this.label15.Size = new System.Drawing.Size(294, 18);
+            this.label15.Size = new System.Drawing.Size(342, 18);
             this.label15.TabIndex = 8;
-            this.label15.Text = "改行，EOFの背景色は設定できません．";
+            this.label15.Text = "改行，EOF，空白の背景色は設定できません．";
             this.label15.TextAlign = System.Drawing.ContentAlignment.TopRight;
             // 
             // label12
@@ -753,11 +835,12 @@
             listViewItem5,
             listViewItem6,
             listViewItem7,
-            listViewItem8});
+            listViewItem8,
+            listViewItem9});
             this.FontColorListView.Location = new System.Drawing.Point(134, 85);
             this.FontColorListView.MultiSelect = false;
             this.FontColorListView.Name = "FontColorListView";
-            this.FontColorListView.Size = new System.Drawing.Size(219, 190);
+            this.FontColorListView.Size = new System.Drawing.Size(219, 205);
             this.FontColorListView.TabIndex = 3;
             this.FontColorListView.UseCompatibleStateImageBehavior = false;
             this.FontColorListView.View = System.Windows.Forms.View.List;
@@ -867,6 +950,9 @@
             this.AfterCompilingTab.PerformLayout();
             this.EditorSettingTab.ResumeLayout(false);
             this.EditorSettingTab.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.tabWidthNumericUpDown)).EndInit();
+            this.showGroupBox.ResumeLayout(false);
+            this.showGroupBox.PerformLayout();
             this.FontColorGroup.ResumeLayout(false);
             this.FontColorGroup.PerformLayout();
             this.ResumeLayout(false);
@@ -939,5 +1025,12 @@
         private System.Windows.Forms.CheckBox notOutllinedTextCheckBox;
         private System.Windows.Forms.GroupBox groupBox2;
         private System.Windows.Forms.CheckBox deleteDisplaySizeCheckBox;
+        private System.Windows.Forms.GroupBox showGroupBox;
+        private System.Windows.Forms.CheckBox drawSpaceCheckBox;
+        private System.Windows.Forms.CheckBox drawTabCheckBox;
+        private System.Windows.Forms.CheckBox drawEOLCheckBox;
+        private System.Windows.Forms.CheckBox drawEOFCheckBox;
+        private System.Windows.Forms.Label label17;
+        private System.Windows.Forms.NumericUpDown tabWidthNumericUpDown;
     }
 }
