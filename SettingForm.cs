@@ -83,7 +83,9 @@ namespace TeX2img {
             drawEOFCheckBox.Checked = Properties.Settings.Default.editorDrawEOF;
             drawEOLCheckBox.Checked = Properties.Settings.Default.editorDrawEOL;
             drawSpaceCheckBox.Checked = Properties.Settings.Default.editorDrawSpace;
+            drawFullWidthSpaceCheckBox.Checked = Properties.Settings.Default.editorDrawFullWidthSpace;
             drawTabCheckBox.Checked = Properties.Settings.Default.editorDrawTab;
+            acceptTabCheckBox.Checked = Properties.Settings.Default.editorAcceptTab;
             tabWidthNumericUpDown.Value = Properties.Settings.Default.editorTabWidth;
 
             SettingTab.SelectedIndex = Properties.Settings.Default.settingTabIndex;
@@ -152,7 +154,9 @@ namespace TeX2img {
             Properties.Settings.Default.editorDrawEOF = drawEOFCheckBox.Checked;
             Properties.Settings.Default.editorDrawEOL = drawEOLCheckBox.Checked;
             Properties.Settings.Default.editorDrawSpace = drawSpaceCheckBox.Checked;
+            Properties.Settings.Default.editorDrawFullWidthSpace = drawFullWidthSpaceCheckBox.Checked;
             Properties.Settings.Default.editorDrawTab = drawTabCheckBox.Checked;
+            Properties.Settings.Default.editorAcceptTab = acceptTabCheckBox.Checked;
             Properties.Settings.Default.editorTabWidth = (int) tabWidthNumericUpDown.Value;
 
             Properties.Settings.Default.Save();

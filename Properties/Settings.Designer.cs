@@ -766,5 +766,29 @@ namespace TeX2img.Properties {
                 this["setFileToClipBoard"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool editorDrawFullWidthSpace {
+            get {
+                return ((bool)(this["editorDrawFullWidthSpace"]));
+            }
+            set {
+                this["editorDrawFullWidthSpace"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool editorAcceptTab {
+            get {
+                return ((bool)(this["editorAcceptTab"]));
+            }
+            set {
+                this["editorAcceptTab"] = value;
+            }
+        }
     }
 }

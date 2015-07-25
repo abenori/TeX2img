@@ -80,15 +80,18 @@
             this.resolutionScaleUpDown = new System.Windows.Forms.NumericUpDown();
             this.label8 = new System.Windows.Forms.Label();
             this.AfterCompilingTab = new System.Windows.Forms.TabPage();
+            this.setFileToClipboardCheckBox = new System.Windows.Forms.CheckBox();
             this.embedTeXSourCecheckBox = new System.Windows.Forms.CheckBox();
             this.showOutputWindowCheckBox = new System.Windows.Forms.CheckBox();
             this.previewCheckBox = new System.Windows.Forms.CheckBox();
             this.openTmpFolderButton = new System.Windows.Forms.Button();
             this.deleteTmpFilesCheckBox = new System.Windows.Forms.CheckBox();
             this.EditorSettingTab = new System.Windows.Forms.TabPage();
+            this.acceptTabCheckBox = new System.Windows.Forms.CheckBox();
             this.tabWidthNumericUpDown = new System.Windows.Forms.NumericUpDown();
             this.label17 = new System.Windows.Forms.Label();
             this.showGroupBox = new System.Windows.Forms.GroupBox();
+            this.drawFullWidthSpaceCheckBox = new System.Windows.Forms.CheckBox();
             this.drawEOFCheckBox = new System.Windows.Forms.CheckBox();
             this.drawEOLCheckBox = new System.Windows.Forms.CheckBox();
             this.drawTabCheckBox = new System.Windows.Forms.CheckBox();
@@ -109,7 +112,6 @@
             this.platexOpenFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.dvipdfmxOpenFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.gsOpenFileDialog = new System.Windows.Forms.OpenFileDialog();
-            this.setFileToClipboardCheckBox = new System.Windows.Forms.CheckBox();
             this.SettingTab.SuspendLayout();
             this.BasicSettingTab.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.LaTeXCompileNumbernumUpDown)).BeginInit();
@@ -609,6 +611,16 @@
             this.AfterCompilingTab.Text = "コンパイル後処理";
             this.AfterCompilingTab.UseVisualStyleBackColor = true;
             // 
+            // setFileToClipboardCheckBox
+            // 
+            this.setFileToClipboardCheckBox.AutoSize = true;
+            this.setFileToClipboardCheckBox.Location = new System.Drawing.Point(25, 161);
+            this.setFileToClipboardCheckBox.Name = "setFileToClipboardCheckBox";
+            this.setFileToClipboardCheckBox.Size = new System.Drawing.Size(343, 22);
+            this.setFileToClipboardCheckBox.TabIndex = 5;
+            this.setFileToClipboardCheckBox.Text = "生成したファイルをクリップボードに保持する．";
+            this.setFileToClipboardCheckBox.UseVisualStyleBackColor = true;
+            // 
             // embedTeXSourCecheckBox
             // 
             this.embedTeXSourCecheckBox.AutoSize = true;
@@ -671,6 +683,7 @@
             // 
             // EditorSettingTab
             // 
+            this.EditorSettingTab.Controls.Add(this.acceptTabCheckBox);
             this.EditorSettingTab.Controls.Add(this.tabWidthNumericUpDown);
             this.EditorSettingTab.Controls.Add(this.label17);
             this.EditorSettingTab.Controls.Add(this.showGroupBox);
@@ -689,17 +702,27 @@
             this.EditorSettingTab.Text = "エディタの設定";
             this.EditorSettingTab.UseVisualStyleBackColor = true;
             // 
+            // acceptTabCheckBox
+            // 
+            this.acceptTabCheckBox.AutoSize = true;
+            this.acceptTabCheckBox.Location = new System.Drawing.Point(25, 390);
+            this.acceptTabCheckBox.Name = "acceptTabCheckBox";
+            this.acceptTabCheckBox.Size = new System.Drawing.Size(198, 22);
+            this.acceptTabCheckBox.TabIndex = 5;
+            this.acceptTabCheckBox.Text = "タブ入力を受けつける．";
+            this.acceptTabCheckBox.UseVisualStyleBackColor = true;
+            // 
             // tabWidthNumericUpDown
             // 
-            this.tabWidthNumericUpDown.Location = new System.Drawing.Point(93, 396);
+            this.tabWidthNumericUpDown.Location = new System.Drawing.Point(323, 389);
             this.tabWidthNumericUpDown.Name = "tabWidthNumericUpDown";
             this.tabWidthNumericUpDown.Size = new System.Drawing.Size(68, 25);
-            this.tabWidthNumericUpDown.TabIndex = 11;
+            this.tabWidthNumericUpDown.TabIndex = 6;
             // 
             // label17
             // 
             this.label17.AutoSize = true;
-            this.label17.Location = new System.Drawing.Point(20, 399);
+            this.label17.Location = new System.Drawing.Point(250, 392);
             this.label17.Name = "label17";
             this.label17.Size = new System.Drawing.Size(52, 18);
             this.label17.TabIndex = 10;
@@ -707,6 +730,7 @@
             // 
             // showGroupBox
             // 
+            this.showGroupBox.Controls.Add(this.drawFullWidthSpaceCheckBox);
             this.showGroupBox.Controls.Add(this.drawEOFCheckBox);
             this.showGroupBox.Controls.Add(this.drawEOLCheckBox);
             this.showGroupBox.Controls.Add(this.drawTabCheckBox);
@@ -714,14 +738,24 @@
             this.showGroupBox.Location = new System.Drawing.Point(23, 323);
             this.showGroupBox.Name = "showGroupBox";
             this.showGroupBox.Size = new System.Drawing.Size(616, 56);
-            this.showGroupBox.TabIndex = 9;
+            this.showGroupBox.TabIndex = 4;
             this.showGroupBox.TabStop = false;
             this.showGroupBox.Text = "表示";
+            // 
+            // drawFullWidthSpaceCheckBox
+            // 
+            this.drawFullWidthSpaceCheckBox.AutoSize = true;
+            this.drawFullWidthSpaceCheckBox.Location = new System.Drawing.Point(146, 26);
+            this.drawFullWidthSpaceCheckBox.Name = "drawFullWidthSpaceCheckBox";
+            this.drawFullWidthSpaceCheckBox.Size = new System.Drawing.Size(106, 22);
+            this.drawFullWidthSpaceCheckBox.TabIndex = 1;
+            this.drawFullWidthSpaceCheckBox.Text = "全角空白";
+            this.drawFullWidthSpaceCheckBox.UseVisualStyleBackColor = true;
             // 
             // drawEOFCheckBox
             // 
             this.drawEOFCheckBox.AutoSize = true;
-            this.drawEOFCheckBox.Location = new System.Drawing.Point(500, 26);
+            this.drawEOFCheckBox.Location = new System.Drawing.Point(503, 26);
             this.drawEOFCheckBox.Name = "drawEOFCheckBox";
             this.drawEOFCheckBox.Size = new System.Drawing.Size(67, 22);
             this.drawEOFCheckBox.TabIndex = 4;
@@ -731,7 +765,7 @@
             // drawEOLCheckBox
             // 
             this.drawEOLCheckBox.AutoSize = true;
-            this.drawEOLCheckBox.Location = new System.Drawing.Point(321, 26);
+            this.drawEOLCheckBox.Location = new System.Drawing.Point(392, 26);
             this.drawEOLCheckBox.Name = "drawEOLCheckBox";
             this.drawEOLCheckBox.Size = new System.Drawing.Size(70, 22);
             this.drawEOLCheckBox.TabIndex = 3;
@@ -741,7 +775,7 @@
             // drawTabCheckBox
             // 
             this.drawTabCheckBox.AutoSize = true;
-            this.drawTabCheckBox.Location = new System.Drawing.Point(170, 26);
+            this.drawTabCheckBox.Location = new System.Drawing.Point(286, 26);
             this.drawTabCheckBox.Name = "drawTabCheckBox";
             this.drawTabCheckBox.Size = new System.Drawing.Size(60, 22);
             this.drawTabCheckBox.TabIndex = 2;
@@ -753,9 +787,9 @@
             this.drawSpaceCheckBox.AutoSize = true;
             this.drawSpaceCheckBox.Location = new System.Drawing.Point(15, 26);
             this.drawSpaceCheckBox.Name = "drawSpaceCheckBox";
-            this.drawSpaceCheckBox.Size = new System.Drawing.Size(70, 22);
+            this.drawSpaceCheckBox.Size = new System.Drawing.Size(106, 22);
             this.drawSpaceCheckBox.TabIndex = 0;
-            this.drawSpaceCheckBox.Text = "空白";
+            this.drawSpaceCheckBox.Text = "半角空白";
             this.drawSpaceCheckBox.UseVisualStyleBackColor = true;
             // 
             // label15
@@ -787,7 +821,7 @@
             this.FontColorGroup.Location = new System.Drawing.Point(394, 85);
             this.FontColorGroup.Name = "FontColorGroup";
             this.FontColorGroup.Size = new System.Drawing.Size(245, 190);
-            this.FontColorGroup.TabIndex = 6;
+            this.FontColorGroup.TabIndex = 3;
             this.FontColorGroup.TabStop = false;
             // 
             // label14
@@ -813,7 +847,7 @@
             this.FontColorButton.Location = new System.Drawing.Point(152, 33);
             this.FontColorButton.Name = "FontColorButton";
             this.FontColorButton.Size = new System.Drawing.Size(76, 32);
-            this.FontColorButton.TabIndex = 4;
+            this.FontColorButton.TabIndex = 0;
             this.FontColorButton.UseVisualStyleBackColor = true;
             this.FontColorButton.Click += new System.EventHandler(this.FontColorButton_Click);
             // 
@@ -822,7 +856,7 @@
             this.BackColorButton.Location = new System.Drawing.Point(152, 83);
             this.BackColorButton.Name = "BackColorButton";
             this.BackColorButton.Size = new System.Drawing.Size(76, 30);
-            this.BackColorButton.TabIndex = 5;
+            this.BackColorButton.TabIndex = 1;
             this.BackColorButton.UseVisualStyleBackColor = true;
             this.BackColorButton.Click += new System.EventHandler(this.BackColorButton_Click);
             // 
@@ -843,7 +877,7 @@
             this.FontColorListView.MultiSelect = false;
             this.FontColorListView.Name = "FontColorListView";
             this.FontColorListView.Size = new System.Drawing.Size(219, 205);
-            this.FontColorListView.TabIndex = 3;
+            this.FontColorListView.TabIndex = 2;
             this.FontColorListView.UseCompatibleStateImageBehavior = false;
             this.FontColorListView.View = System.Windows.Forms.View.List;
             this.FontColorListView.SelectedIndexChanged += new System.EventHandler(this.FontColorListView_SelectedIndexChanged);
@@ -853,7 +887,7 @@
             this.ChangeFontButton.Location = new System.Drawing.Point(564, 23);
             this.ChangeFontButton.Name = "ChangeFontButton";
             this.ChangeFontButton.Size = new System.Drawing.Size(75, 30);
-            this.ChangeFontButton.TabIndex = 2;
+            this.ChangeFontButton.TabIndex = 1;
             this.ChangeFontButton.Text = "変更...";
             this.ChangeFontButton.UseVisualStyleBackColor = true;
             this.ChangeFontButton.Click += new System.EventHandler(this.ChangeFontButton_Click);
@@ -864,7 +898,7 @@
             this.FontDataText.Name = "FontDataText";
             this.FontDataText.ReadOnly = true;
             this.FontDataText.Size = new System.Drawing.Size(387, 25);
-            this.FontDataText.TabIndex = 1;
+            this.FontDataText.TabIndex = 0;
             this.FontDataText.TabStop = false;
             // 
             // label11
@@ -915,16 +949,6 @@
             // 
             this.gsOpenFileDialog.FileName = "gswin32c.exe";
             this.gsOpenFileDialog.Filter = "exe ファイル (*.exe)|*.exe|bat ファイル (*.bat)|*.bat|すべてのファイル (*.*)|*.*";
-            // 
-            // setFileToClipboardCheckBox
-            // 
-            this.setFileToClipboardCheckBox.AutoSize = true;
-            this.setFileToClipboardCheckBox.Location = new System.Drawing.Point(25, 161);
-            this.setFileToClipboardCheckBox.Name = "setFileToClipboardCheckBox";
-            this.setFileToClipboardCheckBox.Size = new System.Drawing.Size(343, 22);
-            this.setFileToClipboardCheckBox.TabIndex = 5;
-            this.setFileToClipboardCheckBox.Text = "生成したファイルをクリップボードに保持する．";
-            this.setFileToClipboardCheckBox.UseVisualStyleBackColor = true;
             // 
             // SettingForm
             // 
@@ -1045,5 +1069,7 @@
         private System.Windows.Forms.Label label17;
         private System.Windows.Forms.NumericUpDown tabWidthNumericUpDown;
         private System.Windows.Forms.CheckBox setFileToClipboardCheckBox;
+        private System.Windows.Forms.CheckBox drawFullWidthSpaceCheckBox;
+        private System.Windows.Forms.CheckBox acceptTabCheckBox;
     }
 }

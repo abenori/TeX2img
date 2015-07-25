@@ -390,9 +390,10 @@ namespace TeX2img {
             var x = Properties.Settings.Default.editorFontColor;
             textBox.DrawsEofMark = Properties.Settings.Default.editorDrawEOF;
             textBox.DrawsEolCode = Properties.Settings.Default.editorDrawEOL;
-            textBox.DrawsFullWidthSpace = Properties.Settings.Default.editorDrawSpace;
+            textBox.DrawsFullWidthSpace = Properties.Settings.Default.editorDrawFullWidthSpace;
             textBox.DrawsSpace = Properties.Settings.Default.editorDrawSpace;
             textBox.DrawsTab = Properties.Settings.Default.editorDrawTab;
+            textBox.AcceptsTab = Properties.Settings.Default.editorAcceptTab;
             textBox.TabWidth = Properties.Settings.Default.editorTabWidth;
             textBox.ColorScheme.ForeColor = Properties.Settings.Default.editorFontColor["テキスト"].Font;
             textBox.ColorScheme.SetColor(Sgry.Azuki.CharClass.Normal, Properties.Settings.Default.editorFontColor["テキスト"].Font, Properties.Settings.Default.editorFontColor["テキスト"].Back);
