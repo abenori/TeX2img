@@ -357,7 +357,15 @@ namespace TeX2img {
                     }
                     #endregion
 
-                    converter.Convert();
+                    if(converter.Convert()) {
+                        if(Properties.Settings.Default.setFileToClipBoard) {
+                            Invoke(new Action(() => {
+                                var flist = new System.Collections.Specialized.StringCollection();
+                                foreach(var f in converter.OutputFileNames) flist.Add(f);
+                                Clipboard.SetFileDropList(flist);
+                            }));
+                        }
+                    }
                 }
             }
             finally {

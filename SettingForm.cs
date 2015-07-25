@@ -78,6 +78,7 @@ namespace TeX2img {
             deleteTmpFilesCheckBox.Checked = Properties.Settings.Default.deleteTmpFileFlag;
             ignoreErrorCheckBox.Checked = Properties.Settings.Default.ignoreErrorFlag;
             embedTeXSourCecheckBox.Checked = Properties.Settings.Default.embedTeXSource;
+            setFileToClipboardCheckBox.Checked = Properties.Settings.Default.setFileToClipBoard;
 
             drawEOFCheckBox.Checked = Properties.Settings.Default.editorDrawEOF;
             drawEOLCheckBox.Checked = Properties.Settings.Default.editorDrawEOL;
@@ -142,6 +143,7 @@ namespace TeX2img {
             Properties.Settings.Default.deleteTmpFileFlag = deleteTmpFilesCheckBox.Checked;
             Properties.Settings.Default.ignoreErrorFlag = ignoreErrorCheckBox.Checked;
             Properties.Settings.Default.embedTeXSource = embedTeXSourCecheckBox.Checked;
+            Properties.Settings.Default.setFileToClipBoard = setFileToClipboardCheckBox.Checked;
 
             Properties.Settings.Default.settingTabIndex = SettingTab.SelectedIndex;
 

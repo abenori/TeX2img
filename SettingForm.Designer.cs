@@ -109,6 +109,7 @@
             this.platexOpenFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.dvipdfmxOpenFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.gsOpenFileDialog = new System.Windows.Forms.OpenFileDialog();
+            this.setFileToClipboardCheckBox = new System.Windows.Forms.CheckBox();
             this.SettingTab.SuspendLayout();
             this.BasicSettingTab.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.LaTeXCompileNumbernumUpDown)).BeginInit();
@@ -593,6 +594,7 @@
             // 
             // AfterCompilingTab
             // 
+            this.AfterCompilingTab.Controls.Add(this.setFileToClipboardCheckBox);
             this.AfterCompilingTab.Controls.Add(this.embedTeXSourCecheckBox);
             this.AfterCompilingTab.Controls.Add(this.showOutputWindowCheckBox);
             this.AfterCompilingTab.Controls.Add(this.previewCheckBox);
@@ -645,7 +647,7 @@
             // 
             // openTmpFolderButton
             // 
-            this.openTmpFolderButton.Location = new System.Drawing.Point(25, 162);
+            this.openTmpFolderButton.Location = new System.Drawing.Point(25, 194);
             this.openTmpFolderButton.Margin = new System.Windows.Forms.Padding(5, 4, 5, 4);
             this.openTmpFolderButton.Name = "openTmpFolderButton";
             this.openTmpFolderButton.Size = new System.Drawing.Size(260, 30);
@@ -914,6 +916,16 @@
             this.gsOpenFileDialog.FileName = "gswin32c.exe";
             this.gsOpenFileDialog.Filter = "exe ファイル (*.exe)|*.exe|bat ファイル (*.bat)|*.bat|すべてのファイル (*.*)|*.*";
             // 
+            // setFileToClipboardCheckBox
+            // 
+            this.setFileToClipboardCheckBox.AutoSize = true;
+            this.setFileToClipboardCheckBox.Location = new System.Drawing.Point(25, 161);
+            this.setFileToClipboardCheckBox.Name = "setFileToClipboardCheckBox";
+            this.setFileToClipboardCheckBox.Size = new System.Drawing.Size(343, 22);
+            this.setFileToClipboardCheckBox.TabIndex = 5;
+            this.setFileToClipboardCheckBox.Text = "生成したファイルをクリップボードに保持する．";
+            this.setFileToClipboardCheckBox.UseVisualStyleBackColor = true;
+            // 
             // SettingForm
             // 
             this.AcceptButton = this.OKButton;
@@ -1032,5 +1044,6 @@
         private System.Windows.Forms.CheckBox drawEOFCheckBox;
         private System.Windows.Forms.Label label17;
         private System.Windows.Forms.NumericUpDown tabWidthNumericUpDown;
+        private System.Windows.Forms.CheckBox setFileToClipboardCheckBox;
     }
 }

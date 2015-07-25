@@ -56,6 +56,8 @@ namespace TeX2img {
         int epsResolution_ = 20016;
         string workingDir;
         string InputFile, OutputFile;
+        List<string> outputFileNames;
+        public List<string> OutputFileNames { get { return outputFileNames; } }
         // フルパスを入れる
         public Converter(IOutputController controller, string inputTeXFilePath, string outputFilePath) {
             InputFile = inputTeXFilePath;
@@ -809,6 +811,7 @@ namespace TeX2img {
 
         bool generate(string inputTeXFilePath, string outputFilePath) {
             abort = false;
+            outputFileNames = new List<string>();
             string extension = Path.GetExtension(outputFilePath).ToLower();
             string tmpFileBaseName = Path.GetFileNameWithoutExtension(inputTeXFilePath);
             string inputextension = Path.GetExtension(inputTeXFilePath).ToLower();
@@ -896,7 +899,6 @@ namespace TeX2img {
             }
 
             // 出力ファイルをターゲットディレクトリにコピー
-            var outputFileNames = new List<string>();
             try {
                 if(page == 1) {
                     File.Copy(Path.Combine(workingDir, tmpFileBaseName + "-1" + extension), outputFilePath, true);
