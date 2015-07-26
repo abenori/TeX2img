@@ -76,6 +76,7 @@
             // 
             // menuStrip1
             // 
+            this.menuStrip1.ImageScalingSize = new System.Drawing.Size(24, 24);
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.FileToolStripMenuItem,
             this.表示VToolStripMenuItem,
@@ -259,6 +260,7 @@
             // 
             // sourceTextBoxMenu
             // 
+            this.sourceTextBoxMenu.ImageScalingSize = new System.Drawing.Size(24, 24);
             this.sourceTextBoxMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.Undo,
             this.Redo,
@@ -371,6 +373,7 @@
             this.InputFromFileRadioButton.TabIndex = 4;
             this.InputFromFileRadioButton.Text = "TeX ソースファイルを読み込む";
             this.InputFromFileRadioButton.UseVisualStyleBackColor = true;
+            this.InputFromFileRadioButton.Click += new System.EventHandler(this.setEnabled);
             // 
             // InputFromTextboxRadioButton
             // 

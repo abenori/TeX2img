@@ -128,6 +128,7 @@ namespace TeX2img {
             setEnabled();
         }
 
+        // enabled = falseだと全部disableになる．
         private void setEnabled(bool enabled = true) {
             menuStrip1.Enabled = enabled;
             groupBox1.Enabled = enabled;
@@ -141,6 +142,7 @@ namespace TeX2img {
                 sourceTextBox.BackColor = (InputFromTextboxRadioButton.Checked ? Properties.Settings.Default.editorFontColor["テキスト"].Back : System.Drawing.SystemColors.ButtonFace);
                 sourceTextBox.Enabled = InputFromTextboxRadioButton.Checked;
                 inputFileNameTextBox.Enabled = InputFileBrowseButton.Enabled = InputFromFileRadioButton.Checked;
+                色入力ToolStripMenuItem.Enabled = InputFromTextboxRadioButton.Checked;
             } else {
                 sourceTextBox.Enabled = false;
                 inputFileNameTextBox.Enabled = false;
