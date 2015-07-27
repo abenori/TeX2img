@@ -56,6 +56,7 @@ namespace TeX2img {
             {"no-delete","一時ファイルを削除しない[-]",val => {Properties.Settings.Default.deleteTmpFileFlag = !(val != null);}},
 			{"preview","生成されたファイルを開く",val => {preview = (val != null);}},
             {"no-embed-source","ソース情報を生成ファイルに保存しない[-]",val => {Properties.Settings.Default.embedTeXSource = !(val != null);}},
+            {"copy-to-clipboard","生成したファイルをクリップボードにコピー[-]",val =>  {Properties.Settings.Default.setFileToClipBoard = !(val != null);}},
 			{"savesettings","設定の保存を行う",val => {Properties.Settings.Default.SaveSettings = (val != null);}},
 			{"quiet","Quiet モード",val => {quiet = true;}},
             {"timeout=","タイムアウト時間を設定（秒）", (int val) => {Properties.Settings.Default.timeOut = val * 1000;}},
@@ -126,7 +127,7 @@ namespace TeX2img {
                     err += "ファイル " + files[2 * i] + " は見つかりませんでした．\n";
                 }
                 if(!(new Converter(null,null,files[2 * i + 1])).CheckFormat()) {
-                    err += "ファイル " + files[2 * i + 1] + " の拡張子は eps/png/jpg/pdf のいずれでもありません．\n";
+                    err += "ファイル " + files[2 * i + 1] + " の拡張子は " + String.Join("/", Converter.imageExtensions) + " のいずれでもありません．\n";
                 }
             }
             if(files.Count % 2 != 0) {
@@ -139,7 +140,7 @@ namespace TeX2img {
                 return -2;
             }
 
-            var chkfiles =new List<string>(){ "pdfiumdraw.exe", "mudraw.exe" };
+            var chkfiles = new List<string>(){ "pdfiumdraw.exe", "mudraw.exe" };
             if(!nogui) chkfiles.Add("Azuki.dll");
             string mydir = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
             chkfiles = chkfiles.Where(f => !File.Exists(Path.Combine(mydir, f))).ToList();
@@ -253,6 +254,7 @@ namespace TeX2img {
 
             int failnum = 0;
 
+            var outFiles = new System.Collections.Specialized.StringCollection();
             for(int i = 0 ; i < files.Count / 2 ; ++i) {
                 string file = Path.GetFullPath(files[2 * i]);
                 string tmpTeXFileName = Converter.GetTempFileName(Path.GetExtension(file));
@@ -269,7 +271,9 @@ namespace TeX2img {
                     using(var converter = new Converter(Output, tmpTeXFileName, files[2 * i + 1])) {
                         converter.AddInputPath(Path.GetDirectoryName(file));
                         if(!converter.Convert()) ++failnum;
+                        else outFiles.AddRange(converter.OutputFileNames.ToArray());
                     }
+                    if(Properties.Settings.Default.setFileToClipBoard) Clipboard.SetFileDropList(outFiles);
                 }
                 catch(Exception e) { Console.WriteLine(e.Message); }
             }

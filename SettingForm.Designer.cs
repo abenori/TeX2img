@@ -616,9 +616,9 @@
             this.setFileToClipboardCheckBox.AutoSize = true;
             this.setFileToClipboardCheckBox.Location = new System.Drawing.Point(25, 161);
             this.setFileToClipboardCheckBox.Name = "setFileToClipboardCheckBox";
-            this.setFileToClipboardCheckBox.Size = new System.Drawing.Size(310, 22);
+            this.setFileToClipboardCheckBox.Size = new System.Drawing.Size(347, 22);
             this.setFileToClipboardCheckBox.TabIndex = 5;
-            this.setFileToClipboardCheckBox.Text = "生成したファイルをクリップボードに送る．";
+            this.setFileToClipboardCheckBox.Text = "生成したファイルをクリップボードにコピーする．";
             this.setFileToClipboardCheckBox.UseVisualStyleBackColor = true;
             // 
             // embedTeXSourCecheckBox

@@ -73,6 +73,7 @@ TeX2img.exe input output
 /no-delete[-]            一時ファイルを削除しない
 /preview                 生成されたファイルを開く
 /no-embed-source[-]      ソース情報を生成ファイルに保存しない
+/copy-to-clipboard[-]    生成したファイルをクリップボードにコピー
 /savesettings            設定の保存を行う
 /quiet                   Quiet モード
 /timeout=<NUM>           タイムアウト時間を設定（秒）
@@ -227,3 +228,5 @@ https://code.google.com/p/pdfium/
     - エディタの設定項目を増やした．
     - 生成したファイルをクリップボードに転送できるようにした．
 
+* 1.5.6
+    - 生成したファイルのコピーを CUI モードでも可能とした．
