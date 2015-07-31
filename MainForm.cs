@@ -214,6 +214,10 @@ namespace TeX2img {
             MessageBox.Show("ImageMagick がインストールされていないため，画像変換ができませんでした。\nImageMagick を別途インストールしてください。\nインストールされている場合は，パスが通っているかどうか確認してください。", "失敗", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
         }
 
+        public void errorIgnoredWarning() {
+            MessageBox.Show("コンパイルエラーを無視して画像化を強行しました．\n結果は期待と異なる可能性があります．\nソースを修正しエラーを解決することを推奨します．", "警告", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        }
+
         delegate void scrollOutputTextBoxToEndDelegate();
         public void scrollOutputTextBoxToEnd() {
             TextBox output = myOutputForm.getOutputTextBox();
@@ -258,7 +262,7 @@ namespace TeX2img {
         }
 
         private void GenerateButton_Click(object sender, EventArgs arg) {
-            if(converter == null) {
+            if(!convertWorker.IsBusy) {
                 clearOutputTextBox();
                 if(Properties.Settings.Default.showOutputWindowFlag) showOutputWindow(true);
                 GenerateButton.Text = "中断";
@@ -271,7 +275,7 @@ namespace TeX2img {
                     MessageBox.Show("エラーが発生しました．しばらくしてからもう一度試してみてください．\n" + e.Message);
                 }
             } else {
-                converter.Abort();
+                if(converter != null) converter.Abort();
             }
         }
 

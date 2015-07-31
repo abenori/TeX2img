@@ -58,6 +58,9 @@ namespace TeX2img {
         string InputFile, OutputFile;
         List<string> outputFileNames;
         public List<string> OutputFileNames { get { return outputFileNames; } }
+
+        // 結果等々
+        bool error_ignored = false;
         // フルパスを入れる
         public Converter(IOutputController controller, string inputTeXFilePath, string outputFilePath) {
             InputFile = inputTeXFilePath;
@@ -229,6 +232,7 @@ namespace TeX2img {
             startinfo.StandardOutputEncoding = GetOutputEncoding();
 
             try {
+                error_ignored = false;
                 if(Properties.Settings.Default.guessLaTeXCompile) {
                     var analyzer = new AnalyzeLaTeXCompile(Path.Combine(workingDir, fileName));
                     analyzer.UseBibtex = analyzer.UseMakeIndex = false;
@@ -237,9 +241,13 @@ namespace TeX2img {
                         using(var proc = GetProcess()) {
                             proc.StartInfo = startinfo;
                             ReadOutputs(proc, "TeX ソースのコンパイル");
-                            if(!Properties.Settings.Default.ignoreErrorFlag && proc.ExitCode != 0) {
-                                controller_.showGenerateError();
-                                return false;
+                            if(proc.ExitCode != 0) {
+                                if(!Properties.Settings.Default.ignoreErrorFlag) {
+                                    controller_.showGenerateError();
+                                    return false;
+                                } else {
+                                    error_ignored = true;
+                                }
                             }
                             ++i;
                             if(i == Properties.Settings.Default.LaTeXCompileMaxNumber) break;
@@ -250,9 +258,13 @@ namespace TeX2img {
                         using(var proc = GetProcess()) {
                             proc.StartInfo = startinfo;
                             ReadOutputs(proc, "TeX ソースのコンパイル");
-                            if(!Properties.Settings.Default.ignoreErrorFlag && proc.ExitCode != 0) {
-                                controller_.showGenerateError();
-                                return false;
+                            if(proc.ExitCode != 0) {
+                                if(!Properties.Settings.Default.ignoreErrorFlag) {
+                                    controller_.showGenerateError();
+                                    return false;
+                                } else {
+                                    error_ignored = true;
+                                }
                             }
                         }
                     }
@@ -943,6 +955,7 @@ namespace TeX2img {
                 catch(IOException) { }
                 catch(NotImplementedException) { }
             }
+            if(error_ignored) controller_.errorIgnoredWarning();
             return true;
         }
 

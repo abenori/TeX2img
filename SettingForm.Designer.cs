@@ -256,9 +256,9 @@
             this.ignoreErrorCheckBox.Location = new System.Drawing.Point(11, 207);
             this.ignoreErrorCheckBox.Margin = new System.Windows.Forms.Padding(5, 4, 5, 4);
             this.ignoreErrorCheckBox.Name = "ignoreErrorCheckBox";
-            this.ignoreErrorCheckBox.Size = new System.Drawing.Size(405, 22);
+            this.ignoreErrorCheckBox.Size = new System.Drawing.Size(477, 22);
             this.ignoreErrorCheckBox.TabIndex = 9;
-            this.ignoreErrorCheckBox.Text = "少々のコンパイルエラーは無視して画像化を強行する";
+            this.ignoreErrorCheckBox.Text = "少々のコンパイルエラーは無視して画像化を強行する（非推奨）";
             this.ignoreErrorCheckBox.UseVisualStyleBackColor = true;
             // 
             // gsBrowseButton

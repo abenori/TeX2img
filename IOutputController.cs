@@ -17,5 +17,6 @@ namespace TeX2img
         void showIOError(string filePath);
 		bool askYesorNo(string msg);
         void showToolError(string tool);
+        void errorIgnoredWarning();
     }
 }

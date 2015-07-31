@@ -57,5 +57,9 @@ namespace TeX2img {
             var path = System.IO.Path.Combine(Converter.ShortToolPath, tool);
             Console.WriteLine(path + @" を起動することができませんでした。" + "\n付属の " + path + " フォルダを消さないでください。");
         }
+
+        public void errorIgnoredWarning() {
+            Console.WriteLine("コンパイルエラーを無視して画像化を強行しました．\n結果は期待と異なる可能性があります．\nソースを修正しエラーを解決することを推奨します．");
+        }
     }
 }
