@@ -365,11 +365,13 @@ namespace TeX2img {
 
                     if(converter.Convert()) {
                         if(Properties.Settings.Default.setFileToClipBoard) {
-                            Invoke(new Action(() => {
-                                var flist = new System.Collections.Specialized.StringCollection();
-                                foreach(var f in converter.OutputFileNames) flist.Add(f);
-                                Clipboard.SetFileDropList(flist);
-                            }));
+                            if(converter.OutputFileNames.Count > 0) {
+                                Invoke(new Action(() => {
+                                    var flist = new System.Collections.Specialized.StringCollection();
+                                    foreach(var f in converter.OutputFileNames) flist.Add(f);
+                                    Clipboard.SetFileDropList(flist);
+                                }));
+                            }
                         }
                     }
                 }
