@@ -10,6 +10,11 @@ using System.Text.RegularExpressions;
 
 namespace TeX2img {
     class Converter : IDisposable{
+        /* 空ページの扱い：
+         * 生成されるEPSファイルはBoundingBoxが0 0 0 0かもしれない．
+         * 変換に渡されるEPSファイルは必ず幅を持つようにする．
+         */ 
+
         // ADS名
         public const string ADSName = "TeX2img.source";
         public static readonly string[] bmpExtensions = new string[] { ".jpg", ".png", ".bmp", ".gif", ".tiff" };
@@ -366,7 +371,11 @@ namespace TeX2img {
         
 
         void enlargeBB(string inputEpsFileName) {
-            Func<BoundingBox, BoundingBox> func = bb => AddMargineToBoundingBox(bb,true);
+			enlargeBB(inputEpsFileName,true);
+		}
+
+        void enlargeBB(string inputEpsFileName, bool use_bp) {
+            Func<BoundingBox, BoundingBox> func = bb => AddMargineToBoundingBox(bb,use_bp);
             rewriteBB(inputEpsFileName, func, func);
         }
 
@@ -434,7 +443,7 @@ namespace TeX2img {
         }
 
         private BoundingBoxPair readBB(string inputEpsFileName) { 
-            Regex regex = new Regex(@"^\%\%(HiRes)?BoundingBox\: (\d+) (\d+) (\d+) (\d+)$");
+            Regex regex = new Regex(@"^\%\%(HiRes)?BoundingBox\: ([-\d]+) ([-\d]+) ([-\d]+) ([-\d]+)$");
             var bb = new BoundingBox();
             var hiresbb = new BoundingBox();
             bool bbread = false, hiresbbread = false;
@@ -680,46 +689,13 @@ namespace TeX2img {
             return true;
         }
 
-        private bool eps2img(string inputFileName, string outputFileName, BoundingBoxPair origbb) {
-            var bb = origbb != null ? origbb : readBB(InputFile);
+        private bool eps2img(string inputFileName, string outputFileName){
             string extension = Path.GetExtension(outputFileName).ToLower();
             string baseName = Path.GetFileNameWithoutExtension(inputFileName);
             string inputEpsFileName = baseName + ".eps";
             generatedImageFiles.Add(Path.Combine(workingDir, outputFileName));
-            string trimEpsFileName = baseName + "-trim.eps";
-            generatedImageFiles.Add(Path.Combine(workingDir, trimEpsFileName));
-
             // Ghostscript を使ったJPEG,PNG生成
             #region Ghostscript を利用して JPEG/PNG を生成
-            #region まずは生成したEPSファイルのバウンディングボックスを取得
-            decimal leftbottom_x = bb.bb.Left, leftbottom_y = bb.bb.Bottom, righttop_x = bb.bb.Right, righttop_y = bb.bb.Top;
-            int margindevide = Properties.Settings.Default.yohakuUnitBP ? 1 : Properties.Settings.Default.resolutionScale;
-            leftbottom_x -= Properties.Settings.Default.leftMargin / margindevide;
-            leftbottom_y -= Properties.Settings.Default.bottomMargin / margindevide;
-            righttop_x += Properties.Settings.Default.rightMargin / margindevide;
-            righttop_y += Properties.Settings.Default.topMargin / margindevide;
-            #endregion
-
-            #region 次にトリミングするためのEPSファイルを作成
-            using(StreamWriter sw = new StreamWriter(Path.Combine(workingDir, trimEpsFileName), false, Encoding.GetEncoding("shift_jis"))) {
-                try {
-                    sw.WriteLine("/NumbDict countdictstack def");
-                    sw.WriteLine("1 dict begin");
-                    sw.WriteLine("/showpage {} def");
-                    sw.WriteLine("userdict begin");
-                    if(!bb.bb.IsEmpty) sw.WriteLine("-{0}.000000 -{1}.000000 translate", (int) leftbottom_x, (int) leftbottom_y);
-                    sw.WriteLine("1.000000 1.000000 scale");
-                    sw.WriteLine("0.000000 0.000000 translate");
-                    if(!bb.bb.IsEmpty) sw.WriteLine("({0}) run", inputEpsFileName);
-                    sw.WriteLine("countdictstack NumbDict sub {end} repeat");
-                    sw.WriteLine("showpage");
-                }
-                finally {
-                    if(sw != null) sw.Close();
-                }
-            }
-            #endregion
-
             #region 最後に目的の画像形式に変換
             string device = "jpeg";
 
@@ -743,13 +719,14 @@ namespace TeX2img {
                 }
                 string antialias = Properties.Settings.Default.useMagickFlag ? "4" : "1";
                 proc.StartInfo.Arguments = arg;
+                var bbwithmargine = readBB(inputEpsFileName);
                 proc.StartInfo.Arguments += String.Format(
-                    "-q -sDEVICE={0} -sOutputFile={1} -dNOPAUSE -dBATCH -dPDFFitPage -dTextAlphaBits={2} -dGraphicsAlphaBits={2} -r{3} -g{4}x{5} {6}",
+                    "-q -sDEVICE={0} -sOutputFile={1} -dEPSCrop -dNOPAUSE -dBATCH -dPDFFitPage -dTextAlphaBits={2} -dGraphicsAlphaBits={2} -r{3} -g{4}x{5} {6}",
                     device, outputFileName, antialias, 
                     72 * Properties.Settings.Default.resolutionScale,
-                    (int) ((righttop_x - leftbottom_x) * Properties.Settings.Default.resolutionScale),
-                    (int) ((righttop_y - leftbottom_y) * Properties.Settings.Default.resolutionScale),
-                    trimEpsFileName);
+                    (int) ((bbwithmargine.bb.Right - bbwithmargine.bb.Left) * Properties.Settings.Default.resolutionScale),
+                    (int) ((bbwithmargine.bb.Top - bbwithmargine.bb.Bottom) * Properties.Settings.Default.resolutionScale),
+                    inputEpsFileName);
                 try {
                     ReadOutputs(proc, "Ghostscript の実行");
                 }
@@ -817,7 +794,7 @@ namespace TeX2img {
             }
         }
 
-        bool eps2pdf(string inputFileName, string outputFileName) {
+        bool eps2pdf(string inputFileName, string outputFileName, BoundingBoxPair origbb) {
             generatedImageFiles.Add(Path.Combine(workingDir, outputFileName));
             string arg;
             using(var proc = GetProcess()) {
@@ -826,7 +803,7 @@ namespace TeX2img {
                     controller_.showPathError("gswin32c.exe", "Ghostscript");
                     return false;
                 }
-                proc.StartInfo.Arguments = arg + "-q -sDEVICE=pdfwrite -dNOPAUSE -dBATCH -sOutputFile=\"" + outputFileName + "\" \"" + inputFileName + "\"";
+                proc.StartInfo.Arguments = arg + "-q -sDEVICE=pdfwrite -dNOPAUSE -dEPSCrop -dBATCH -sOutputFile=\"" + outputFileName + "\" \"" + inputFileName + "\"";
                 try {
                     ReadOutputs(proc, "Ghostscript の実行");
                 }
@@ -882,8 +859,10 @@ namespace TeX2img {
             for(int i = 1 ; i <= page ; ++i) {
                 // .svg，テキスト情報保持な pdf は PDF から作る
                 if(bbs[i - 1].bb.IsEmpty) {
-                    warnngs.Add(i.ToString() + " ページ目が空白だったため画像生成をスキップしました．");
-                    continue;
+                    if(Properties.Settings.Default.leftMargin + Properties.Settings.Default.rightMargin == 0 || Properties.Settings.Default.topMargin + Properties.Settings.Default.bottomMargin == 0) {
+                        warnngs.Add(i.ToString() + " ページ目が空白だったため画像生成をスキップしました．");
+                        continue;
+                    }
                 }
                 if(
                     extension == ".svg" ||
@@ -913,24 +892,26 @@ namespace TeX2img {
                     switch(extension) {
                     case ".pdf":
                         if(addMargin) enlargeBB(tmpFileBaseName + "-" + i + ".eps");
-                        if(!eps2pdf(tmpFileBaseName + "-" + i + ".eps", tmpFileBaseName + "-" + i + extension)) return false;
+                        if(!eps2pdf(tmpFileBaseName + "-" + i + ".eps", tmpFileBaseName + "-" + i + extension, bbs[i - 1])) return false;
                         break;
                     case ".eps":
                         if(addMargin) enlargeBB(tmpFileBaseName + "-" + i + ".eps");
                         break;
                     case ".emf":
                         if(addMargin) enlargeBB(tmpFileBaseName + "-" + i + ".eps");
-                        if(!eps2pdf(tmpFileBaseName + "-" + i + ".eps", tmpFileBaseName + "-" + i + ".pdf")) return false;
+                        if(!eps2pdf(tmpFileBaseName + "-" + i + ".eps", tmpFileBaseName + "-" + i + ".pdf", bbs[i - 1])) return false;
                         if(!pdf2img_pdfium(tmpFileBaseName + "-" + i + ".pdf", tmpFileBaseName + "-" + i + ".emf")) return false;
                         break;
                     case ".png":
                     case ".jpg":
                     case ".bmp":
-                        if(!eps2img(tmpFileBaseName + "-" + i + ".eps", tmpFileBaseName + "-" + i + extension, bbs[i - 1])) return false;
+                        if(addMargin) enlargeBB(tmpFileBaseName + "-" + i + ".eps", Properties.Settings.Default.yohakuUnitBP);
+                        if(!eps2img(tmpFileBaseName + "-" + i + ".eps", tmpFileBaseName + "-" + i + extension)) return false;
                         break;
                     case ".gif":
                     case ".tiff":
-                        if(!eps2img(tmpFileBaseName + "-" + i + ".eps", tmpFileBaseName + "-" + i + ".png", bbs[i - 1])) return false;
+                        if(addMargin) enlargeBB(tmpFileBaseName + "-" + i + ".eps", Properties.Settings.Default.yohakuUnitBP);
+                        if(!eps2img(tmpFileBaseName + "-" + i + ".eps", tmpFileBaseName + "-" + i + ".png")) return false;
                         if(!img2img_pdfium(tmpFileBaseName + "-" + i + ".png", tmpFileBaseName + "-" + i + extension)) return false;
                         break;
                     }

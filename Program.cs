@@ -178,7 +178,8 @@ namespace TeX2img {
             testExecute = true;
             if(testExecute) {
                 var testClass = new ConverterTEST();
-                testClass.eachTest();
+                //testClass.eachTest();
+                testClass.generateTest();
                 return;
             }
 #endif
