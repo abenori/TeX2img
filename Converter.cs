@@ -340,14 +340,14 @@ namespace TeX2img {
                     controller_.showGenerateError();
                     return false;
                 }
-                if(Properties.Settings.Default.gsDevice == "epswrite") {
+                //if(Properties.Settings.Default.gsDevice == "epswrite") {
                     BoundingBoxPair bb;
                     if(origbb == null) bb = readBBFromPDF(inputFileName, page);
                     else bb = origbb;
                     Func<BoundingBox, BoundingBox> bbfunc = (b) => bb.bb;
                     Func<BoundingBox, BoundingBox> hiresbbfunc = (b) => bb.hiresbb;
                     rewriteBB(outputFileName, bbfunc, hiresbbfunc);
-                }
+                //}
             }
             return true;
         }
@@ -363,15 +363,10 @@ namespace TeX2img {
             }
             public bool IsEmpty { get { return left >= right || bottom >= top; } }
         };
+        
 
         void enlargeBB(string inputEpsFileName) {
-            Func<BoundingBox, BoundingBox> func = bb => {
-                return new BoundingBox(
-                    bb.Left - Properties.Settings.Default.leftMargin,
-                    bb.Bottom - Properties.Settings.Default.bottomMargin,
-                    bb.Right + Properties.Settings.Default.rightMargin,
-                    bb.Top + Properties.Settings.Default.topMargin);
-            };
+            Func<BoundingBox, BoundingBox> func = bb => AddMargineToBoundingBox(bb,true);
             rewriteBB(inputEpsFileName, func, func);
         }
 
@@ -438,27 +433,31 @@ namespace TeX2img {
             }
         }
 
-        private void readBB(string inputEpsFileName, out decimal leftbottom_x, out decimal leftbottom_y, out decimal righttop_x, out decimal righttop_y) {
-            Regex regex = new Regex(@"^\%\%BoundingBox\: (\d+) (\d+) (\d+) (\d+)$");
-
-            leftbottom_x = 0;
-            leftbottom_y = 0;
-            righttop_x = 0;
-            righttop_y = 0;
-
+        private BoundingBoxPair readBB(string inputEpsFileName) { 
+            Regex regex = new Regex(@"^\%\%(HiRes)?BoundingBox\: (\d+) (\d+) (\d+) (\d+)$");
+            var bb = new BoundingBox();
+            var hiresbb = new BoundingBox();
+            bool bbread = false, hiresbbread = false;
             using(StreamReader sr = new StreamReader(Path.Combine(workingDir, inputEpsFileName), Encoding.GetEncoding("shift_jis"))) {
                 string line;
                 while((line = sr.ReadLine()) != null) {
                     Match match = regex.Match(line);
                     if(match.Success) {
-                        leftbottom_x = System.Convert.ToDecimal(match.Groups[1].Value);
-                        leftbottom_y = System.Convert.ToDecimal(match.Groups[2].Value);
-                        righttop_x = System.Convert.ToDecimal(match.Groups[3].Value);
-                        righttop_y = System.Convert.ToDecimal(match.Groups[4].Value);
-                        break;
+                        var cb = new BoundingBox(
+                            System.Convert.ToDecimal(match.Groups[2].Value),
+                            System.Convert.ToDecimal(match.Groups[3].Value),
+                            System.Convert.ToDecimal(match.Groups[4].Value),
+                            System.Convert.ToDecimal(match.Groups[5].Value));
+                        if(match.Groups[1].Value == "HiRes") {
+                            hiresbb = cb; hiresbbread = true;
+                        } else {
+                            bb = cb; bbread = true;
+                        }
+                        if(bbread && hiresbbread) break;
                     }
                 }
             }
+            return new BoundingBoxPair(bb, hiresbb);
         }
 
         int pdfpages(string file) {
@@ -616,6 +615,20 @@ namespace TeX2img {
                 bb = b; hiresbb = h;
             }
         }
+
+        BoundingBox AddMargineToBoundingBox(BoundingBox bb, bool use_bp) {
+            int margindevide = use_bp ? 1 : Properties.Settings.Default.resolutionScale;
+            return new BoundingBox(
+                bb.Left - Properties.Settings.Default.leftMargin / margindevide,
+                bb.Bottom - Properties.Settings.Default.bottomMargin / margindevide,
+                bb.Right + Properties.Settings.Default.rightMargin / margindevide,
+                bb.Top + Properties.Settings.Default.topMargin / margindevide);
+        }
+
+        BoundingBoxPair AddMargineToBoundingBox(BoundingBoxPair bb, bool use_bp) {
+            return new BoundingBoxPair(AddMargineToBoundingBox(bb.bb, use_bp), AddMargineToBoundingBox(bb.hiresbb, use_bp));
+        }
+
         bool pdfcrop(string inputFileName, string outputFileName, bool use_bp, List<int> pages, List<BoundingBoxPair> origbb) {
             System.Diagnostics.Debug.Assert(pages.Count == origbb.Count);
             var tmpfile = GetTempFileName(".tex");
@@ -625,7 +638,6 @@ namespace TeX2img {
 
             var gspath = setProcStartInfo(Properties.Settings.Default.gsPath);
             var bbBox = new List<BoundingBox>();
-            int margindevide = use_bp ? 1 : Properties.Settings.Default.resolutionScale;
             for(int i = 0 ; i < pages.Count ; ++i) {
                 BoundingBoxPair bb;
                 if(origbb[i] == null) {
@@ -633,12 +645,7 @@ namespace TeX2img {
                 } else {
                     bb = origbb[i];
                 }
-                BoundingBox rect = new BoundingBox(
-                    bb.bb.Left - Properties.Settings.Default.leftMargin / margindevide,
-                    bb.bb.Bottom - Properties.Settings.Default.bottomMargin / margindevide,
-                    bb.bb.Right + Properties.Settings.Default.rightMargin / margindevide,
-                    bb.bb.Top + Properties.Settings.Default.topMargin / margindevide
-                    );
+                var rect = AddMargineToBoundingBox(bb.bb, use_bp);
                 bbBox.Add(rect);
             }
             using(var fw = new StreamWriter(Path.Combine(workingDir,tmpfile))) {
@@ -673,7 +680,8 @@ namespace TeX2img {
             return true;
         }
 
-        private bool eps2img(string inputFileName, string outputFileName) {
+        private bool eps2img(string inputFileName, string outputFileName, BoundingBoxPair origbb) {
+            var bb = origbb != null ? origbb : readBB(InputFile);
             string extension = Path.GetExtension(outputFileName).ToLower();
             string baseName = Path.GetFileNameWithoutExtension(inputFileName);
             string inputEpsFileName = baseName + ".eps";
@@ -684,8 +692,7 @@ namespace TeX2img {
             // Ghostscript を使ったJPEG,PNG生成
             #region Ghostscript を利用して JPEG/PNG を生成
             #region まずは生成したEPSファイルのバウンディングボックスを取得
-            decimal leftbottom_x, leftbottom_y, righttop_x, righttop_y;
-            readBB(inputEpsFileName, out leftbottom_x, out leftbottom_y, out righttop_x, out righttop_y);
+            decimal leftbottom_x = bb.bb.Left, leftbottom_y = bb.bb.Bottom, righttop_x = bb.bb.Right, righttop_y = bb.bb.Top;
             int margindevide = Properties.Settings.Default.yohakuUnitBP ? 1 : Properties.Settings.Default.resolutionScale;
             leftbottom_x -= Properties.Settings.Default.leftMargin / margindevide;
             leftbottom_y -= Properties.Settings.Default.bottomMargin / margindevide;
@@ -700,10 +707,10 @@ namespace TeX2img {
                     sw.WriteLine("1 dict begin");
                     sw.WriteLine("/showpage {} def");
                     sw.WriteLine("userdict begin");
-                    sw.WriteLine("-{0}.000000 -{1}.000000 translate", (int) leftbottom_x, (int) leftbottom_y);
+                    if(!bb.bb.IsEmpty) sw.WriteLine("-{0}.000000 -{1}.000000 translate", (int) leftbottom_x, (int) leftbottom_y);
                     sw.WriteLine("1.000000 1.000000 scale");
                     sw.WriteLine("0.000000 0.000000 translate");
-                    sw.WriteLine("({0}) run", inputEpsFileName);
+                    if(!bb.bb.IsEmpty) sw.WriteLine("({0}) run", inputEpsFileName);
                     sw.WriteLine("countdictstack NumbDict sub {end} repeat");
                     sw.WriteLine("showpage");
                 }
@@ -819,7 +826,7 @@ namespace TeX2img {
                     controller_.showPathError("gswin32c.exe", "Ghostscript");
                     return false;
                 }
-                proc.StartInfo.Arguments = arg + "-q -sDEVICE=pdfwrite -dNOPAUSE -dBATCH -dEPSCrop -sOutputFile=\"" + outputFileName + "\" \"" + inputFileName + "\"";
+                proc.StartInfo.Arguments = arg + "-q -sDEVICE=pdfwrite -dNOPAUSE -dBATCH -sOutputFile=\"" + outputFileName + "\" \"" + inputFileName + "\"";
                 try {
                     ReadOutputs(proc, "Ghostscript の実行");
                 }
@@ -919,11 +926,11 @@ namespace TeX2img {
                     case ".png":
                     case ".jpg":
                     case ".bmp":
-                        if(!eps2img(tmpFileBaseName + "-" + i + ".eps", tmpFileBaseName + "-" + i + extension)) return false;
+                        if(!eps2img(tmpFileBaseName + "-" + i + ".eps", tmpFileBaseName + "-" + i + extension, bbs[i - 1])) return false;
                         break;
                     case ".gif":
                     case ".tiff":
-                        if(!eps2img(tmpFileBaseName + "-" + i + ".eps", tmpFileBaseName + "-" + i + ".png")) return false;
+                        if(!eps2img(tmpFileBaseName + "-" + i + ".eps", tmpFileBaseName + "-" + i + ".png", bbs[i - 1])) return false;
                         if(!img2img_pdfium(tmpFileBaseName + "-" + i + ".png", tmpFileBaseName + "-" + i + extension)) return false;
                         break;
                     }

@@ -174,7 +174,8 @@ namespace TeX2img {
         [STAThread]
         static void Main() {
 #if DEBUG
-            bool testExecute = true;
+            bool testExecute = false;
+            testExecute = true;
             if(testExecute) {
                 var testClass = new ConverterTEST();
                 testClass.eachTest();

@@ -8,36 +8,18 @@ using System.Diagnostics;
 
 namespace TeX2img {
     class ConverterTEST : IOutputController{
-        class NullArgument {
-            public Type type;
-            public NullArgument(Type t) { type = t; }
-            public NullArgument(string name) {
-                type = Type.GetType(name);
-            }
+        void doEachTest() {
+            tex2dvi_test(testfile + ".tex");
+            dvi2pdf_test(testfile + ".dvi");
+            pdfcrop_test(testfile + ".pdf");
+            pdf2eps_test(testfile + ".pdf", Properties.Settings.Default.resolutionScale * 72);
+            eps2pdf_test(testfile + ".eps");
+            pdfpages_test(testfile + ".pdf");
+            //pdf2img_pdfium_test(testfile + ".pdf");
+            eps2img_test(testfile + ".eps");
         }
 
-        //string BoundingBoxPairTypeName = "TeX2img.Converter+BoundingBoxPair, TeX2img, Version=1.5.5.0, Culture=neutral, PublicKeyToken=null";
-        string BoundingBoxPairTypeName = "TeX2img.Converter+BoundingBoxPair";
-        static object CallMethod(object obj, string func, params object[] args) {
-            if(args.Contains(null)) {
-                return obj.GetType().GetMethod(func, System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic).Invoke(obj, args);
-            } else {
-                var types = new Type[args.Length];
-                var modifilers = new System.Reflection.ParameterModifier[args.Length];
-                for(int i = 0 ; i < args.Length ; ++i) {
-                    var arg = args[i] as NullArgument;
-                    if(arg != null) {
-                        types[i] = arg.type;
-                        args[i] = null;
-                    } else types[i] = args[i].GetType();
-                    modifilers[i] = new System.Reflection.ParameterModifier();
-                }
-                return obj.GetType().GetMethod(func, System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic, null, types, modifilers).Invoke(obj, args);
-            }
-        }
-        static object GetMember(object obj, string name) {
-            return obj.GetType().GetField(name, System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic).GetValue(obj);
-        }
+        private IOutputController controller = new CUIOutput();
 
         private string WorkDir,OutputDir;
         private string testfile = "test";
@@ -71,20 +53,15 @@ namespace TeX2img {
             } else {
                 File.Copy(Path.Combine(WorkDir, testfile + ".tex"), Path.Combine(WorkDir, testfile + "-backup.tex"), true);
             }
-            using(converter = new Converter(new CUIOutput(), Path.Combine(WorkDir, testfile + ".tex"), Path.Combine(OutputDir, testfile + ".pdf"))) {
-                tex2dvitest(testfile + ".tex");
-                dvi2pdftest(testfile + ".dvi");
-                pdfcroptest(testfile + ".pdf");
-                pdf2epstest(testfile + ".pdf", Properties.Settings.Default.resolutionScale * 72);
-                eps2pdftest(testfile + ".eps");
-                pdfpagestest(testfile + ".pdf");
-                pdf2img_pdfiumtest(testfile + ".pdf");
+            using(converter = new Converter(controller, Path.Combine(WorkDir, testfile + ".tex"), Path.Combine(OutputDir, testfile + ".pdf"))) {
+                doEachTest();
             }
             if(!existed) File.Delete(Path.Combine(WorkDir, testfile + ".tex"));
             else File.Move(Path.Combine(WorkDir, testfile + "-backup.tex"), Path.Combine(WorkDir, testfile + ".tex"));
         }
 
-        void tex2dvitest(string file) {
+        void tex2dvi_test(string file) {
+            Debug.WriteLine("TEST: tex2dvi");
             Properties.Settings.Default.guessLaTeXCompile = false;
             string dvi = Path.ChangeExtension(file,".dvi");
             File.Delete(Path.Combine(WorkDir, dvi));
@@ -98,7 +75,8 @@ namespace TeX2img {
             File.Copy(Path.Combine(WorkDir, dvi), Path.Combine(OutputDir, "tex2dvi-guess.dvi"), true);
        }
 
-        void dvi2pdftest(string file) {
+        void dvi2pdf_test(string file) {
+            Debug.WriteLine("TEST: dvi2pdf");
             string pdf = Path.ChangeExtension(file, ".pdf");
             File.Delete(Path.Combine(WorkDir, pdf));
             CallMethod(converter, "dvi2pdf", file);
@@ -106,7 +84,8 @@ namespace TeX2img {
             File.Copy(Path.Combine(WorkDir, pdf), Path.Combine(OutputDir, "dvi2pdf.pdf"), true);
         }
 
-        void pdf2epstest(string file, int resolution) {
+        void pdf2eps_test(string file, int resolution) {
+            Debug.WriteLine("TEST: pdf2eps");
             string eps = Path.ChangeExtension(file, ".eps");
             File.Delete(Path.Combine(WorkDir, eps));
             CallMethod(converter, "pdf2eps", file, Path.ChangeExtension(file, ".eps"), resolution, 1, null);
@@ -114,7 +93,8 @@ namespace TeX2img {
             File.Copy(Path.Combine(WorkDir, Path.ChangeExtension(file, ".eps")), Path.Combine(OutputDir, "pdf2eps.eps"), true);
         }
 
-        void pdfpagestest(string file) {
+        void pdfpages_test(string file) {
+            Debug.WriteLine("TEST: pdfpages");
             int page = (int) CallMethod(converter, "pdfpages", file);
             System.Diagnostics.Debug.WriteLine("pdfpages: " + page.ToString());
             using(var fs = new StreamWriter(Path.Combine(OutputDir, "pdfpages.txt"))) {
@@ -122,7 +102,8 @@ namespace TeX2img {
             }
         }
 
-        void pdfcroptest(string file) {
+        void pdfcrop_test(string file) {
+            Debug.WriteLine("TEST: pdfcrop");
             string cropped = Path.GetFileNameWithoutExtension(file) + "-crop.pdf";
             File.Delete(Path.Combine(WorkDir, cropped));
             CallMethod(converter, "pdfcrop", file, cropped, true, 1, new NullArgument(BoundingBoxPairTypeName));
@@ -134,7 +115,8 @@ namespace TeX2img {
             File.Copy(Path.Combine(WorkDir, cropped), Path.Combine(OutputDir, "pdfcrop-nonusebp.pdf"), true);
         }
 
-        void pdf2img_pdfiumtest(string file) {
+        void pdf2img_pdfium_test(string file) {
+            Debug.WriteLine("TEST: pdf2img_pdfium");
             foreach(var extension in Converter.bmpExtensions) {
                 Properties.Settings.Default.transparentPngFlag = true;
                 string img = Path.ChangeExtension(file, extension);
@@ -150,7 +132,26 @@ namespace TeX2img {
             }
         }
 
-        void eps2pdftest(string file) {
+        void eps2img_test(string file) {
+            Debug.WriteLine("TEST: eps2img");
+            foreach(var extension in Converter.bmpExtensions) {
+                Properties.Settings.Default.transparentPngFlag = true;
+                string img = Path.ChangeExtension(file, extension);
+                File.Delete(Path.Combine(WorkDir, img));
+                CallMethod(converter, "eps2img", file, img, new NullArgument(BoundingBoxPairTypeName));
+                Debug.Assert(File.Exists(Path.Combine(WorkDir, img)));
+                File.Copy(Path.Combine(WorkDir, Path.ChangeExtension(file, extension)), Path.Combine(OutputDir, "eps2img-transparent" + extension), true);
+                Properties.Settings.Default.transparentPngFlag = false;
+                File.Delete(Path.Combine(WorkDir, img));
+                CallMethod(converter, "eps2img", file, img, new NullArgument(BoundingBoxPairTypeName));
+                Debug.Assert(File.Exists(Path.Combine(WorkDir, img)));
+                File.Copy(Path.Combine(WorkDir, Path.ChangeExtension(file, extension)), Path.Combine(OutputDir, "eps2img-notransparent" + extension), true);
+            }
+        }
+
+
+        void eps2pdf_test(string file) {
+            Debug.WriteLine("TEST: eps2pdf");
             string pdf = Path.ChangeExtension(file, ".pdf");
             File.Delete(Path.Combine(WorkDir, pdf));
             CallMethod(converter, "eps2pdf", file, pdf);
@@ -172,7 +173,38 @@ namespace TeX2img {
             Debug.WriteLine("askYesorNo: msg = \n" + msg);
             return true;
         }
-        
+
+        class NullArgument {
+            public Type type;
+            public NullArgument(Type t) { type = t; }
+            public NullArgument(string name) {
+                type = Type.GetType(name);
+            }
+        }
+
+        //string BoundingBoxPairTypeName = "TeX2img.Converter+BoundingBoxPair, TeX2img, Version=1.5.5.0, Culture=neutral, PublicKeyToken=null";
+        string BoundingBoxPairTypeName = "TeX2img.Converter+BoundingBoxPair";
+        static object CallMethod(object obj, string func, params object[] args) {
+            if(args.Contains(null)) {
+                return obj.GetType().GetMethod(func, System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic).Invoke(obj, args);
+            } else {
+                var types = new Type[args.Length];
+                var modifilers = new System.Reflection.ParameterModifier[args.Length];
+                for(int i = 0 ; i < args.Length ; ++i) {
+                    var arg = args[i] as NullArgument;
+                    if(arg != null) {
+                        types[i] = arg.type;
+                        args[i] = null;
+                    } else types[i] = args[i].GetType();
+                    modifilers[i] = new System.Reflection.ParameterModifier();
+                }
+                return obj.GetType().GetMethod(func, System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic, null, types, modifilers).Invoke(obj, args);
+            }
+        }
+        static object GetMember(object obj, string name) {
+            return obj.GetType().GetField(name, System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic).GetValue(obj);
+        }
+
     }
 }
 #endif
