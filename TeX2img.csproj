@@ -80,7 +80,6 @@
     <Compile Include="AlternativeDataStream.cs" />
     <Compile Include="AnalyzeLaTeXCompile.cs" />
     <Compile Include="Converter.cs" />
-    <Compile Include="ConverterTEST.cs" />
     <Compile Include="CUIOutput.cs" />
     <Compile Include="InputComboDialog.cs">
       <SubType>Form</SubType>

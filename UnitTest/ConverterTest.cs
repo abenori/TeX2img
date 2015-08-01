@@ -1,83 +1,90 @@
-﻿#if DEBUG
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Linq;
-using System.Text;
 using System.IO;
 using System.Diagnostics;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using TeX2img;
+using TeX2img.Properties;
 
-namespace TeX2img {
-    class ConverterTEST : IOutputController{
+namespace UnitTest {
+    [TestClass]
+    public class ConverterTest {
         void doEachTest() {
             tex2dvi_test(testfile + ".tex");
             dvi2pdf_test(testfile + ".dvi");
             pdfcrop_test(testfile + ".pdf");
-            pdf2eps_test(testfile + ".pdf", Properties.Settings.Default.resolutionScale * 72);
+            pdf2eps_test(testfile + ".pdf", Settings.Default.resolutionScale * 72);
             CallMethod(converter, "enlargeBB", testfile + ".eps");
             eps2img_test(testfile + ".eps");
             eps2pdf_test(testfile + ".eps");
             pdfpages_test(testfile + ".pdf");
             pdf2img_pdfium_test(testfile + ".pdf");
         }
+        [TestMethod]
         public void generateTest() {
+            SetOutputDir("generate");
             PrepareTest();
-            Properties.Settings.Default.outlinedText = true;
-            Properties.Settings.Default.transparentPngFlag = false;
-            Properties.Settings.Default.useLowResolution = false;
-            Properties.Settings.Default.useMagickFlag = true;
-            doGenerateTest("default");
-            Properties.Settings.Default.outlinedText = false;
-            Properties.Settings.Default.transparentPngFlag = false;
-            Properties.Settings.Default.useLowResolution = false;
-            Properties.Settings.Default.useMagickFlag = true;
+            Settings.Default.outlinedText = false;
+            Settings.Default.transparentPngFlag = false;
+            Settings.Default.useLowResolution = false;
+            Settings.Default.useMagickFlag = true;
             doGenerateTest("with-text");
-            Properties.Settings.Default.transparentPngFlag = true;
-            Properties.Settings.Default.useLowResolution = false;
-            Properties.Settings.Default.useMagickFlag = true;
+            Settings.Default.outlinedText = true;
+            Settings.Default.transparentPngFlag = false;
+            Settings.Default.useLowResolution = false;
+            Settings.Default.useMagickFlag = true;
+            doGenerateTest("default");
+            Settings.Default.transparentPngFlag = true;
+            Settings.Default.useLowResolution = false;
+            Settings.Default.useMagickFlag = true;
             doGenerateTest("transparent");
-            Properties.Settings.Default.transparentPngFlag = false;
-            Properties.Settings.Default.useLowResolution = true;
-            Properties.Settings.Default.useMagickFlag = true;
+            Settings.Default.transparentPngFlag = false;
+            Settings.Default.useLowResolution = true;
+            Settings.Default.useMagickFlag = true;
             doGenerateTest("low-resolution");
-            Properties.Settings.Default.transparentPngFlag = false;
-            Properties.Settings.Default.useLowResolution = false;
-            Properties.Settings.Default.useMagickFlag = false;
+            Settings.Default.transparentPngFlag = false;
+            Settings.Default.useLowResolution = false;
+            Settings.Default.useMagickFlag = false;
             doGenerateTest("no-antialias");
         }
 
         void PrepareTest() {
-            Properties.Settings.Default.leftMargin = 10;
-            Properties.Settings.Default.rightMargin = 0;
-            Properties.Settings.Default.topMargin = 10;
-            Properties.Settings.Default.bottomMargin = 0;
-            Properties.Settings.Default.yohakuUnitBP = false;
-            Properties.Settings.Default.deleteTmpFileFlag = true;
-            Properties.Settings.Default.previewFlag = false;
-            Properties.Settings.Default.setFileToClipBoard = false;
+            Settings.Default.leftMargin = 10;
+            Settings.Default.rightMargin = 0;
+            Settings.Default.topMargin = 10;
+            Settings.Default.bottomMargin = 0;
+            Settings.Default.yohakuUnitBP = false;
+            Settings.Default.deleteTmpFileFlag = true;
+            Settings.Default.previewFlag = false;
+            Settings.Default.setFileToClipBoard = false;
 
-            //Properties.Settings.Default.platexPath = Properties.Settings.Default.GuessPlatexPath();
-            Debug.WriteLine("platex = " + Properties.Settings.Default.platexPath);
-            //Properties.Settings.Default.dvipdfmxPath = Properties.Settings.Default.GuessDvipdfmxPath();
-            Debug.WriteLine("dvipdfmx = " + Properties.Settings.Default.dvipdfmxPath);
-            //Properties.Settings.Default.gsPath = Properties.Settings.Default.GuessGsPath();
-            Debug.WriteLine("gspath = " + Properties.Settings.Default.gsPath);
-            //Properties.Settings.Default.gsDevice = Properties.Settings.Default.GuessGsdevice();
+            Settings.Default.platexPath = Settings.Default.GuessPlatexPath();
+            Debug.WriteLine("platex = " + Settings.Default.platexPath);
+            Settings.Default.dvipdfmxPath = Settings.Default.GuessDvipdfmxPath();
+            Debug.WriteLine("dvipdfmx = " + Settings.Default.dvipdfmxPath);
+            Settings.Default.gsPath = Settings.Default.GuessGsPath();
+            Debug.WriteLine("gspath = " + Settings.Default.gsPath);
+            Settings.Default.gsDevice = Settings.Default.GuessGsdevice();
         }
 
         private IOutputController controller = new CUIOutput();
 
-        private string WorkDir,OutputDir;
+        private string WorkDir, OutputDir;
         private string testfile = "test";
         Converter converter;
-        public ConverterTEST() {
-            WorkDir = Path.Combine(System.Environment.CurrentDirectory, "test");
-            Directory.CreateDirectory(WorkDir);
-            OutputDir = Path.Combine(WorkDir,"output");
+        void SetOutputDir(string d) {
+            OutputDir = Path.Combine(WorkDir, d);
             Directory.CreateDirectory(OutputDir);
             foreach(var f in Directory.GetFiles(OutputDir)) File.Delete(f);
         }
+        public ConverterTest() {
+            WorkDir = Path.Combine(System.Environment.CurrentDirectory, "test");
+            Directory.CreateDirectory(WorkDir);
+        }
 
+        [TestMethod]
         public void eachTest() {
+            SetOutputDir("each");
             PrepareTest();
             BeforeTest();
             using(converter = new Converter(controller, Path.Combine(WorkDir, testfile + ".tex"), Path.Combine(OutputDir, testfile + ".pdf"))) {
@@ -120,16 +127,16 @@ namespace TeX2img {
 
         void tex2dvi_test(string file) {
             Debug.WriteLine("TEST: tex2dvi");
-            Properties.Settings.Default.guessLaTeXCompile = false;
+            Settings.Default.guessLaTeXCompile = false;
             string dvi = Path.ChangeExtension(file,".dvi");
             File.Delete(Path.Combine(WorkDir, dvi));
             CallMethod(converter, "tex2dvi", file);
-            Debug.Assert(File.Exists(Path.Combine(WorkDir, dvi)));
+            Assert.IsTrue(File.Exists(Path.Combine(WorkDir, dvi)));
             File.Copy(Path.Combine(WorkDir, dvi), Path.Combine(OutputDir, "tex2dvi-noguess.dvi"), true);
-            Properties.Settings.Default.guessLaTeXCompile = true;
+            Settings.Default.guessLaTeXCompile = true;
             File.Delete(Path.Combine(WorkDir, dvi));
             CallMethod(converter, "tex2dvi", file);
-            Debug.Assert(File.Exists(Path.Combine(WorkDir, dvi)));
+            Assert.IsTrue(File.Exists(Path.Combine(WorkDir, dvi)));
             File.Copy(Path.Combine(WorkDir, dvi), Path.Combine(OutputDir, "tex2dvi-guess.dvi"), true);
        }
 
@@ -138,7 +145,7 @@ namespace TeX2img {
             string pdf = Path.ChangeExtension(file, ".pdf");
             File.Delete(Path.Combine(WorkDir, pdf));
             CallMethod(converter, "dvi2pdf", file);
-            Debug.Assert(File.Exists(Path.Combine(WorkDir, pdf)));
+            Assert.IsTrue(File.Exists(Path.Combine(WorkDir, pdf)));
             File.Copy(Path.Combine(WorkDir, pdf), Path.Combine(OutputDir, "dvi2pdf.pdf"), true);
         }
 
@@ -147,7 +154,7 @@ namespace TeX2img {
             string eps = Path.ChangeExtension(file, ".eps");
             File.Delete(Path.Combine(WorkDir, eps));
             CallMethod(converter, "pdf2eps", file, Path.ChangeExtension(file, ".eps"), resolution, 1, null);
-            Debug.Assert(File.Exists(Path.Combine(WorkDir, eps)));
+            Assert.IsTrue(File.Exists(Path.Combine(WorkDir, eps)));
             File.Copy(Path.Combine(WorkDir, Path.ChangeExtension(file, ".eps")), Path.Combine(OutputDir, "pdf2eps.eps"), true);
         }
 
@@ -165,27 +172,27 @@ namespace TeX2img {
             string cropped = Path.GetFileNameWithoutExtension(file) + "-crop.pdf";
             File.Delete(Path.Combine(WorkDir, cropped));
             CallMethod(converter, "pdfcrop", file, cropped, true, 1, new NullArgument(BoundingBoxPairTypeName));
-            Debug.Assert(File.Exists(Path.Combine(WorkDir, cropped)));
+            Assert.IsTrue(File.Exists(Path.Combine(WorkDir, cropped)));
             File.Copy(Path.Combine(WorkDir, cropped), Path.Combine(OutputDir, "pdfcrop-usebp.pdf"), true);
             File.Delete(Path.Combine(WorkDir, cropped));
             CallMethod(converter, "pdfcrop", file, cropped, false, 1, new NullArgument(BoundingBoxPairTypeName));
-            Debug.Assert(File.Exists(Path.Combine(WorkDir, cropped)));
+            Assert.IsTrue(File.Exists(Path.Combine(WorkDir, cropped)));
             File.Copy(Path.Combine(WorkDir, cropped), Path.Combine(OutputDir, "pdfcrop-nonusebp.pdf"), true);
         }
 
         void pdf2img_pdfium_test(string file) {
             Debug.WriteLine("TEST: pdf2img_pdfium");
             foreach(var extension in Converter.bmpExtensions) {
-                Properties.Settings.Default.transparentPngFlag = true;
+                Settings.Default.transparentPngFlag = true;
                 string img = Path.ChangeExtension(file, extension);
                 File.Delete(Path.Combine(WorkDir, img));
                 CallMethod(converter, "pdf2img_pdfium", file, img, 0);
-                Debug.Assert(File.Exists(Path.Combine(WorkDir, img)));
+                Assert.IsTrue(File.Exists(Path.Combine(WorkDir, img)));
                 File.Copy(Path.Combine(WorkDir, Path.ChangeExtension(file, extension)), Path.Combine(OutputDir, "pdf2img_pdfium-transparent" + extension), true);
-                Properties.Settings.Default.transparentPngFlag = false;
+                Settings.Default.transparentPngFlag = false;
                 File.Delete(Path.Combine(WorkDir, img));
                 CallMethod(converter, "pdf2img_pdfium", file, img, 0);
-                Debug.Assert(File.Exists(Path.Combine(WorkDir, img)));
+                Assert.IsTrue(File.Exists(Path.Combine(WorkDir, img)));
                 File.Copy(Path.Combine(WorkDir, Path.ChangeExtension(file, extension)), Path.Combine(OutputDir, "pdf2img_pdfium-notransparent" + extension), true);
             }
         }
@@ -193,16 +200,16 @@ namespace TeX2img {
         void eps2img_test(string file) {
             Debug.WriteLine("TEST: eps2img");
             foreach(var extension in Converter.bmpExtensions) {
-                Properties.Settings.Default.transparentPngFlag = true;
+                Settings.Default.transparentPngFlag = true;
                 string img = Path.ChangeExtension(file, extension);
                 File.Delete(Path.Combine(WorkDir, img));
                 CallMethod(converter, "eps2img", file, img);
-                Debug.Assert(File.Exists(Path.Combine(WorkDir, img)));
+                Assert.IsTrue(File.Exists(Path.Combine(WorkDir, img)));
                 File.Copy(Path.Combine(WorkDir, Path.ChangeExtension(file, extension)), Path.Combine(OutputDir, "eps2img-transparent" + extension), true);
-                Properties.Settings.Default.transparentPngFlag = false;
+                Settings.Default.transparentPngFlag = false;
                 File.Delete(Path.Combine(WorkDir, img));
                 CallMethod(converter, "eps2img", file, img);
-                Debug.Assert(File.Exists(Path.Combine(WorkDir, img)));
+                Assert.IsTrue(File.Exists(Path.Combine(WorkDir, img)));
                 File.Copy(Path.Combine(WorkDir, Path.ChangeExtension(file, extension)), Path.Combine(OutputDir, "eps2img-notransparent" + extension), true);
             }
         }
@@ -212,7 +219,7 @@ namespace TeX2img {
             string pdf = Path.ChangeExtension(file, ".pdf");
             File.Delete(Path.Combine(WorkDir, pdf));
             CallMethod(converter, "eps2pdf", file, pdf, new NullArgument(BoundingBoxPairTypeName));
-            Debug.Assert(File.Exists(Path.Combine(WorkDir, pdf)));
+            Assert.IsTrue(File.Exists(Path.Combine(WorkDir, pdf)));
             File.Copy(Path.Combine(WorkDir, pdf), Path.Combine(OutputDir, "eps2pdf.pdf"), true);
         }
 
@@ -240,7 +247,7 @@ namespace TeX2img {
         }
 
         //string BoundingBoxPairTypeName = "TeX2img.Converter+BoundingBoxPair, TeX2img, Version=1.5.5.0, Culture=neutral, PublicKeyToken=null";
-        string BoundingBoxPairTypeName = "TeX2img.Converter+BoundingBoxPair";
+        string BoundingBoxPairTypeName = "TeX2img.Converter+BoundingBoxPair, TeX2img";
         static object CallMethod(object obj, string func, params object[] args) {
             if(args.Contains(null)) {
                 return obj.GetType().GetMethod(func, System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic).Invoke(obj, args);
@@ -264,4 +271,3 @@ namespace TeX2img {
 
     }
 }
-#endif
