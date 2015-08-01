@@ -432,7 +432,7 @@ int ConvertIMG(Data &d) {
 	ComPtr<IWICImagingFactory> factory;
 	if(!SUCCEEDED(hr = ::CoCreateInstance(CLSID_WICImagingFactory, nullptr, CLSCTX_INPROC_SERVER, IID_PPV_ARGS(&factory))))throw runtime_error("failed to initialize WIC (" + to_string(hr) + ")");
 	ComPtr<IStream> instream;
-	if(!SUCCEEDED(hr = SHCreateStreamOnFile(d.input.c_str(), STGM_READ, &instream)))throw runtime_error("failed t create stream (" + to_string(hr) + ")");
+	if(!SUCCEEDED(hr = SHCreateStreamOnFile(d.input.c_str(), STGM_READ, &instream)))throw runtime_error("failed to create stream (" + to_string(hr) + ")");
 	ComPtr<IWICBitmapDecoder> decoder;
 	if(!SUCCEEDED(hr = factory->CreateDecoderFromStream(instream, nullptr, WICDecodeMetadataCacheOnDemand, &decoder)))throw runtime_error("failed to create decoder (" + to_string(hr) + ")");
 	ComPtr<IWICBitmapFrameDecode> inframe;

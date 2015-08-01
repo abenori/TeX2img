@@ -345,14 +345,13 @@ namespace TeX2img {
                     controller_.showGenerateError();
                     return false;
                 }
-                //if(Properties.Settings.Default.gsDevice == "epswrite") {
-                    BoundingBoxPair bb;
-                    if(origbb == null) bb = readBBFromPDF(inputFileName, page);
-                    else bb = origbb;
-                    Func<BoundingBox, BoundingBox> bbfunc = (b) => bb.bb;
-                    Func<BoundingBox, BoundingBox> hiresbbfunc = (b) => bb.hiresbb;
-                    rewriteBB(outputFileName, bbfunc, hiresbbfunc);
-                //}
+                // BoundingBoxをあらかじめ計測した物に取り替える．
+                BoundingBoxPair bb;
+                if(origbb == null) bb = readBBFromPDF(inputFileName, page);
+                else bb = origbb;
+                Func<BoundingBox, BoundingBox> bbfunc = (b) => bb.bb;
+                Func<BoundingBox, BoundingBox> hiresbbfunc = (b) => bb.hiresbb;
+                rewriteBB(outputFileName, bbfunc, hiresbbfunc);
             }
             return true;
         }
@@ -443,7 +442,7 @@ namespace TeX2img {
         }
 
         private BoundingBoxPair readBB(string inputEpsFileName) { 
-            Regex regex = new Regex(@"^\%\%(HiRes)?BoundingBox\: ([-\d]+) ([-\d]+) ([-\d]+) ([-\d]+)$");
+            Regex regex = new Regex(@"^\%\%(HiRes)?BoundingBox\: ([-\d\.]+) ([-\d\.]+) ([-\d\.]+) ([-\d\.]+)$");
             var bb = new BoundingBox();
             var hiresbb = new BoundingBox();
             bool bbread = false, hiresbbread = false;
@@ -584,7 +583,7 @@ namespace TeX2img {
                 proc.StartInfo.Arguments = "-dBATCH -dNOPAUSE -q -sDEVICE=bbox -dFirstPage=" + page.ToString() + " -dLastPage=" + page.ToString() + " \"" + inputPDFFileName + "\"";
                 proc.OutputDataReceived += ((s, e) => { System.Diagnostics.Debug.WriteLine("Std: " + e.Data); });
 
-                Regex regexBB = new Regex(@"^\%\%(HiRes)?BoundingBox\: ([\d\.]+) ([\d\.]+) ([\d\.]+) ([\d\.]+)$");
+                Regex regexBB = new Regex(@"^\%\%(HiRes)?BoundingBox\: ([-\d\.]+) ([-\d\.]+) ([-\d\.]+) ([-\d\.]+)$");
                 bb = new BoundingBox();
                 hiresbb = new BoundingBox();
                 try {
@@ -654,7 +653,7 @@ namespace TeX2img {
                 } else {
                     bb = origbb[i];
                 }
-                var rect = AddMargineToBoundingBox(bb.bb, use_bp);
+                var rect = AddMargineToBoundingBox(bb.hiresbb, use_bp);
                 bbBox.Add(rect);
             }
             using(var fw = new StreamWriter(Path.Combine(workingDir,tmpfile))) {
@@ -719,13 +718,16 @@ namespace TeX2img {
                 }
                 string antialias = Properties.Settings.Default.useMagickFlag ? "4" : "1";
                 proc.StartInfo.Arguments = arg;
-                var bbwithmargine = readBB(inputEpsFileName);
+                var bbpair = readBB(inputEpsFileName);
+                BoundingBox bb;
+                if(bbpair.hiresbb.IsEmpty) bb = bbpair.bb;
+                else bb = bbpair.hiresbb;
                 proc.StartInfo.Arguments += String.Format(
                     "-q -sDEVICE={0} -sOutputFile={1} -dEPSCrop -dNOPAUSE -dBATCH -dPDFFitPage -dTextAlphaBits={2} -dGraphicsAlphaBits={2} -r{3} -g{4}x{5} {6}",
                     device, outputFileName, antialias, 
                     72 * Properties.Settings.Default.resolutionScale,
-                    (int) ((bbwithmargine.bb.Right - bbwithmargine.bb.Left) * Properties.Settings.Default.resolutionScale),
-                    (int) ((bbwithmargine.bb.Top - bbwithmargine.bb.Bottom) * Properties.Settings.Default.resolutionScale),
+                    (int) ((bb.Right - bb.Left) * Properties.Settings.Default.resolutionScale),
+                    (int) ((bb.Top - bb.Bottom) * Properties.Settings.Default.resolutionScale),
                     inputEpsFileName);
                 try {
                     ReadOutputs(proc, "Ghostscript の実行");
@@ -803,7 +805,7 @@ namespace TeX2img {
                     controller_.showPathError("gswin32c.exe", "Ghostscript");
                     return false;
                 }
-                proc.StartInfo.Arguments = arg + "-q -sDEVICE=pdfwrite -dNOPAUSE -dEPSCrop -dBATCH -sOutputFile=\"" + outputFileName + "\" \"" + inputFileName + "\"";
+                proc.StartInfo.Arguments = arg + "-q -sDEVICE=pdfwrite -dNOPAUSE -dBATCH -dEPSCrop -sOutputFile=\"" + outputFileName + "\" \"" + inputFileName + "\"";
                 try {
                     ReadOutputs(proc, "Ghostscript の実行");
                 }
@@ -860,8 +862,10 @@ namespace TeX2img {
                 // .svg，テキスト情報保持な pdf は PDF から作る
                 if(bbs[i - 1].bb.IsEmpty) {
                     if(Properties.Settings.Default.leftMargin + Properties.Settings.Default.rightMargin == 0 || Properties.Settings.Default.topMargin + Properties.Settings.Default.bottomMargin == 0) {
-                        warnngs.Add(i.ToString() + " ページ目が空白だったため画像生成をスキップしました．");
+                        warnngs.Add(i.ToString() + " ページ目が空ページだったため画像生成をスキップしました．");
                         continue;
+                    } else {
+                        warnngs.Add(i.ToString() + " ページ目が空ページでした．");
                     }
                 }
                 if(

@@ -21,11 +21,16 @@ namespace TeX2img {
         }
         public void generateTest() {
             PrepareTest();
+            Properties.Settings.Default.outlinedText = true;
             Properties.Settings.Default.transparentPngFlag = false;
             Properties.Settings.Default.useLowResolution = false;
             Properties.Settings.Default.useMagickFlag = true;
             doGenerateTest("default");
-
+            Properties.Settings.Default.outlinedText = false;
+            Properties.Settings.Default.transparentPngFlag = false;
+            Properties.Settings.Default.useLowResolution = false;
+            Properties.Settings.Default.useMagickFlag = true;
+            doGenerateTest("with-text");
             Properties.Settings.Default.transparentPngFlag = true;
             Properties.Settings.Default.useLowResolution = false;
             Properties.Settings.Default.useMagickFlag = true;
@@ -42,21 +47,21 @@ namespace TeX2img {
 
         void PrepareTest() {
             Properties.Settings.Default.leftMargin = 10;
-            Properties.Settings.Default.rightMargin = 20;
+            Properties.Settings.Default.rightMargin = 0;
             Properties.Settings.Default.topMargin = 10;
-            Properties.Settings.Default.bottomMargin = 20;
+            Properties.Settings.Default.bottomMargin = 0;
             Properties.Settings.Default.yohakuUnitBP = false;
             Properties.Settings.Default.deleteTmpFileFlag = true;
             Properties.Settings.Default.previewFlag = false;
             Properties.Settings.Default.setFileToClipBoard = false;
 
-            Properties.Settings.Default.platexPath = Properties.Settings.Default.GuessPlatexPath();
+            //Properties.Settings.Default.platexPath = Properties.Settings.Default.GuessPlatexPath();
             Debug.WriteLine("platex = " + Properties.Settings.Default.platexPath);
-            Properties.Settings.Default.dvipdfmxPath = Properties.Settings.Default.GuessDvipdfmxPath();
+            //Properties.Settings.Default.dvipdfmxPath = Properties.Settings.Default.GuessDvipdfmxPath();
             Debug.WriteLine("dvipdfmx = " + Properties.Settings.Default.dvipdfmxPath);
-            Properties.Settings.Default.gsPath = Properties.Settings.Default.GuessGsPath();
+            //Properties.Settings.Default.gsPath = Properties.Settings.Default.GuessGsPath();
             Debug.WriteLine("gspath = " + Properties.Settings.Default.gsPath);
-            Properties.Settings.Default.gsDevice = Properties.Settings.Default.GuessGsdevice();
+            //Properties.Settings.Default.gsDevice = Properties.Settings.Default.GuessGsdevice();
         }
 
         private IOutputController controller = new CUIOutput();
