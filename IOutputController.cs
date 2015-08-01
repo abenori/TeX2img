@@ -11,7 +11,7 @@ namespace TeX2img
         void showPathError(string exeName, string necessary);
         void appendOutput(string log);
         void showGenerateError();
-        void showImageMagickError();
+        //void showImageMagickError();
         void scrollOutputTextBoxToEnd();
         void showUnauthorizedError(string filePath);
         void showIOError(string filePath);

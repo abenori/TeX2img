@@ -173,6 +173,14 @@ namespace TeX2img {
 
         [STAThread]
         static void Main() {
+#if DEBUG
+            bool testExecute = true;
+            if(testExecute) {
+                var testClass = new ConverterTEST();
+                testClass.eachTest();
+                return;
+            }
+#endif
             // アップデートしていたら前バージョンの設定を読み込む
             if(!Properties.Settings.Default.IsUpgraded) {
                 Properties.Settings.Default.Upgrade();
