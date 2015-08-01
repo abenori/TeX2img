@@ -572,9 +572,6 @@ namespace TeX2img {
             xml.Save(fullpath);
         }
 
-        bool pdfcrop(string inputFileName, string outputFileName, bool use_bp,int page = 1, BoundingBoxPair origbb = null) {
-            return pdfcrop(inputFileName, outputFileName, use_bp, new List<int>() { page }, new List<BoundingBoxPair>() { origbb });
-        }
         BoundingBoxPair readBBFromPDF(string inputPDFFileName,int page){
             BoundingBox bb,hiresbb;
             var gspath = setProcStartInfo(Properties.Settings.Default.gsPath);
@@ -635,6 +632,10 @@ namespace TeX2img {
 
         BoundingBoxPair AddMargineToBoundingBox(BoundingBoxPair bb, bool use_bp) {
             return new BoundingBoxPair(AddMargineToBoundingBox(bb.bb, use_bp), AddMargineToBoundingBox(bb.hiresbb, use_bp));
+        }
+
+        bool pdfcrop(string inputFileName, string outputFileName, bool use_bp, int page = 1, BoundingBoxPair origbb = null) {
+            return pdfcrop(inputFileName, outputFileName, use_bp, new List<int>() { page }, new List<BoundingBoxPair>() { origbb });
         }
 
         bool pdfcrop(string inputFileName, string outputFileName, bool use_bp, List<int> pages, List<BoundingBoxPair> origbb) {
@@ -880,7 +881,7 @@ namespace TeX2img {
                             DeleteHeightAndWidthFromSVGFile(tmpFileBaseName + "-" + i + extension);
                         }
                     } else {
-                        if(!pdfcrop(tmpFileBaseName + ".pdf", tmpFileBaseName + "-" + i + ".pdf", Properties.Settings.Default.yohakuUnitBP, i, bbs[i - 1])) return false;
+                        if(!pdfcrop(tmpFileBaseName + ".pdf", tmpFileBaseName + "-" + i + ".pdf", extension == ".pdf" ? true : Properties.Settings.Default.yohakuUnitBP, i, bbs[i - 1])) return false;
                         if(extension != ".pdf") {
                             if(!pdf2img_pdfium(tmpFileBaseName + "-" + i + ".pdf", tmpFileBaseName + "-" + i + extension)) return false;
                         }
