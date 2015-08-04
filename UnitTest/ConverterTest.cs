@@ -8,51 +8,55 @@ using TeX2img.Properties;
 
 namespace UnitTest {
     [TestClass]
-    public class ConverterTest {
+    public class ConverterTest : IOutputController{
         void doEachTest() {
             tex2dvi_test(testfile + ".tex");
             dvi2pdf_test(testfile + ".dvi");
             pdfcrop_test(testfile + ".pdf");
             pdf2eps_test(testfile + ".pdf", Settings.Default.resolutionScale * 72);
-            CallMethod(converter, "enlargeBB", testfile + ".eps");
             eps2img_test(testfile + ".eps");
+            CallMethod(converter, "enlargeBB", testfile + ".eps", true);
             eps2pdf_test(testfile + ".eps");
             pdfpages_test(testfile + ".pdf");
             pdf2img_pdfium_test(testfile + ".pdf");
         }
         [TestMethod]
         public void generateTest() {
+            var vecExts = Converter.vectorExtensions;
+            var bmpExts = new string[] { ".png", ".jpg" };
+            var allExts = vecExts.Concat(bmpExts).ToArray();
             SetOutputDir("generate");
             PrepareTest();
-            Settings.Default.outlinedText = false;
-            Settings.Default.transparentPngFlag = false;
-            Settings.Default.useLowResolution = false;
-            Settings.Default.useMagickFlag = true;
-            doGenerateTest("with-text");
             Settings.Default.outlinedText = true;
             Settings.Default.transparentPngFlag = false;
             Settings.Default.useLowResolution = false;
             Settings.Default.useMagickFlag = true;
-            doGenerateTest("default");
+            doGenerateTest("default", allExts);
+            Settings.Default.outlinedText = false;
+            Settings.Default.transparentPngFlag = false;
+            Settings.Default.useLowResolution = false;
+            Settings.Default.useMagickFlag = true;
+            doGenerateTest("with-text", new string[] { ".pdf" });
             Settings.Default.transparentPngFlag = true;
             Settings.Default.useLowResolution = false;
             Settings.Default.useMagickFlag = true;
-            doGenerateTest("transparent");
+            doGenerateTest("transparent", new string[] { ".png", ".emf" });
             Settings.Default.transparentPngFlag = false;
             Settings.Default.useLowResolution = true;
             Settings.Default.useMagickFlag = true;
-            doGenerateTest("low-resolution");
+            doGenerateTest("low-resolution", bmpExts);
             Settings.Default.transparentPngFlag = false;
             Settings.Default.useLowResolution = false;
             Settings.Default.useMagickFlag = false;
             doGenerateTest("no-antialias");
+
         }
 
         void PrepareTest() {
-            Settings.Default.leftMargin = 10;
-            Settings.Default.rightMargin = 0;
-            Settings.Default.topMargin = 10;
-            Settings.Default.bottomMargin = 0;
+            Settings.Default.leftMargin = 5;
+            Settings.Default.rightMargin = 5;
+            Settings.Default.topMargin = 5;
+            Settings.Default.bottomMargin = 5;
             Settings.Default.yohakuUnitBP = false;
             Settings.Default.deleteTmpFileFlag = true;
             Settings.Default.previewFlag = false;
@@ -67,8 +71,8 @@ namespace UnitTest {
             Settings.Default.gsDevice = Settings.Default.GuessGsdevice();
         }
 
-        private IOutputController controller = new CUIOutput();
-
+        private IOutputController controller;
+        
         private string WorkDir, OutputDir;
         private string testfile = "test";
         Converter converter;
@@ -78,6 +82,8 @@ namespace UnitTest {
             foreach(var f in Directory.GetFiles(OutputDir)) File.Delete(f);
         }
         public ConverterTest() {
+            //controller = new CUIOutput();
+            controller = this;
             WorkDir = Path.Combine(System.Environment.CurrentDirectory, "test");
             Directory.CreateDirectory(WorkDir);
         }
@@ -94,10 +100,15 @@ namespace UnitTest {
         }
 
         void doGenerateTest(string output) {
-            foreach(var ext in Converter.imageExtensions) {
+            doGenerateTest(output, Converter.imageExtensions);
+        }
+
+        void doGenerateTest(string output, string[] exts) {
+            foreach(var ext in exts) {
                 BeforeTest();
                 using(converter = new Converter(controller, Path.Combine(WorkDir, testfile + ".tex"), Path.Combine(OutputDir, testfile + "-" + output + ext))) {
                     converter.Convert();
+                    Assert.IsTrue(File.Exists(Path.Combine(OutputDir, testfile + "-" + output + ext)));
                 }
                 AfterTest();
             }
@@ -203,12 +214,12 @@ namespace UnitTest {
                 Settings.Default.transparentPngFlag = true;
                 string img = Path.ChangeExtension(file, extension);
                 File.Delete(Path.Combine(WorkDir, img));
-                CallMethod(converter, "eps2img", file, img);
+                CallMethod(converter, "eps2img", file, img, new NullArgument(BoundingBoxPairTypeName));
                 Assert.IsTrue(File.Exists(Path.Combine(WorkDir, img)));
                 File.Copy(Path.Combine(WorkDir, Path.ChangeExtension(file, extension)), Path.Combine(OutputDir, "eps2img-transparent" + extension), true);
                 Settings.Default.transparentPngFlag = false;
                 File.Delete(Path.Combine(WorkDir, img));
-                CallMethod(converter, "eps2img", file, img);
+                CallMethod(converter, "eps2img", file, img, new NullArgument(BoundingBoxPairTypeName));
                 Assert.IsTrue(File.Exists(Path.Combine(WorkDir, img)));
                 File.Copy(Path.Combine(WorkDir, Path.ChangeExtension(file, extension)), Path.Combine(OutputDir, "eps2img-notransparent" + extension), true);
             }
@@ -218,7 +229,7 @@ namespace UnitTest {
             Debug.WriteLine("TEST: eps2pdf");
             string pdf = Path.ChangeExtension(file, ".pdf");
             File.Delete(Path.Combine(WorkDir, pdf));
-            CallMethod(converter, "eps2pdf", file, pdf, new NullArgument(BoundingBoxPairTypeName));
+            CallMethod(converter, "eps2pdf", file, pdf);
             Assert.IsTrue(File.Exists(Path.Combine(WorkDir, pdf)));
             File.Copy(Path.Combine(WorkDir, pdf), Path.Combine(OutputDir, "eps2pdf.pdf"), true);
         }
