@@ -17,44 +17,11 @@ namespace TeX2img {
 
         // ADS名
         public const string ADSName = "TeX2img.source";
+        // 拡張子たち
         public static readonly string[] bmpExtensions = new string[] { ".jpg", ".png", ".bmp", ".gif", ".tiff" };
         public static readonly string[] vectorExtensions = new string[] { ".eps", ".pdf", ".emf", ".svg" };
         public static string[] imageExtensions {
             get { return bmpExtensions.Concat(vectorExtensions).ToArray(); }
-        }
-
-        public static string which(string basename) {
-            string separator, fullPath;
-            string[] extensions = { "", ".exe", ".bat", ".cmd", ".vbs", ".js", ".wsf" };
-
-            foreach(string path in Environment.GetEnvironmentVariable("PATH").Split(';')) {
-                if(path.Length > 0 && path[path.Length - 1] != '\\') {
-                    separator = "\\";
-                } else {
-                    separator = "";
-                }
-
-                foreach(string extension in extensions) {
-                    fullPath = path + separator + basename + extension;
-                    if(File.Exists(fullPath)) {
-                        return fullPath;
-                    }
-                }
-            }
-            return string.Empty;
-        }
-        public static string GetTempFileName(string ext = ".tex") {
-            return GetTempFileName(ext, Path.GetTempPath());
-        }
-
-        public static string GetTempFileName(string ext, string dir) {
-            for(int i = 0 ; i < 1000 ; ++i) {
-                var random = Path.ChangeExtension(Path.GetRandomFileName(), ext);
-                if(!File.Exists(Path.Combine(dir, random))) {
-                    return random;
-                }
-            }
-            return null;
         }
 
         IOutputController controller_;
@@ -103,85 +70,10 @@ namespace TeX2img {
             generatedImageFiles.Clear();
         }
 
-        ProcessStartInfo GetProcessStartInfo() {
-            var rv = new ProcessStartInfo() {
-                UseShellExecute = false,
-                CreateNoWindow = true,
-                RedirectStandardOutput = true,
-                RedirectStandardError = true,
-                WorkingDirectory = workingDir,
-            };
-            foreach(var e in Environments) {
-                try { rv.EnvironmentVariables.Add(e.Key, e.Value); }
-                catch(ArgumentException) { }
-            }
-            return rv;
-        }
-        Process GetProcess() {
-            return new Process() { StartInfo = GetProcessStartInfo() };
-        }
-
-        public bool CheckFormat() {
-            string extension = Path.GetExtension(OutputFile).ToLower();
-            if(!imageExtensions.Contains(extension)) {
-                if(controller_ != null) controller_.showExtensionError(OutputFile);
-                return false;
-            }
-            return true;
-        }
-
-        // pTeX or upTeX
-        static bool IspTeX(string latex) {
-            var l = Path.GetFileNameWithoutExtension(latex);
-            return (l == "platex" || l == "uplatex" || l == "ptex" || l == "uptex");
-        }
-        static bool IsupTeX(string latex) {
-            var l = Path.GetFileNameWithoutExtension(latex);
-            return (l == "uplatex" || l == "uptex");
-        }
-
-        public static Encoding GetInputEncoding() {
-            switch(Properties.Settings.Default.encode) {
-            case "_sjis":
-            case "sjis": return Encoding.GetEncoding("shift_jis");
-            case "euc": return Encoding.GetEncoding("euc-jp");
-            case "jis": return Encoding.GetEncoding("iso-2022-jp");
-            default: // "utf8" "_utf8"
-                return Encoding.UTF8;
-            }
-        }
-        public static Encoding GetOutputEncoding() {
-            string arg;
-            string latex = setProcStartInfo(Properties.Settings.Default.platexPath, out arg);
-            return GetOutputEncoding(latex, arg);
-        }
-        public static Encoding GetOutputEncoding(string latex, string arg) {
-            if(IspTeX(latex)) {
-                if(arg.Contains("-sjis-terminal")) return Encoding.GetEncoding("shift_jis");
-                switch(Properties.Settings.Default.encode) {
-                case "sjis": return Encoding.GetEncoding("shift_jis");
-                case "utf8": return Encoding.UTF8;
-                case "jis": return Encoding.GetEncoding("iso-2022-jp");
-                case "euc": return Encoding.GetEncoding("euc-jp");
-                case "_utf8":
-                    if(!IsupTeX(latex) && !arg.Contains("-kanji")) return Encoding.GetEncoding("shift_jis");
-                    else return Encoding.UTF8;
-                case "_sjis":
-                default:
-                    if(IsupTeX(latex) && arg.Contains("-kanji")) return Encoding.GetEncoding("shift_jis");
-                    else return Encoding.UTF8;
-                }
-            } else return Encoding.UTF8;
-        }
-
-        volatile bool abort = false;
-        public void Abort() {
-            abort = true;
-        }
-
         List<string> generatedImageFiles = new List<string>();
         List<string> generatedTeXFilesWithoutExtension = new List<string>();
 
+        // 変換
         public bool Convert() {
             if(GetInputEncoding().CodePage == Encoding.UTF8.CodePage) {
                 Environments["command_line_encoding"] = "utf8";
@@ -191,35 +83,181 @@ namespace TeX2img {
 
             return rv;
         }
-
-        public static string setProcStartInfo(String path) {
-            string dummy;
-            return setProcStartInfo(path, out dummy);
-        }
-        // path に指定されたオプション引数を解釈する
-        // 戻り値 = FileName
-        public static string setProcStartInfo(String path, out string Arguments) {
-            // "がないならばFileName = path
-            string FileName = path;
-            Arguments = "";
-            if(path.IndexOf("\"") != -1) {
-                // そうでなければ
-                // **"***"**(SPACE)という並びを探す 
-                var m = Regex.Match(path, "^([^\" ]*(\"[^\"]*\")*[^\" ]*) (.*)$");
-                if(m.Success) {
-                    FileName = m.Groups[1].Value;
-                    Arguments = m.Groups[3].Value;
-                    if(Arguments != "") Arguments += " ";
-                }
-                FileName = FileName.Replace("\"", "");
+        
+        #region BoundingBox関連
+        struct BoundingBox{
+            private decimal left, right, bottom, top;
+            public decimal Left { get { return left; } }
+            public decimal Right { get { return right; } }
+            public decimal Bottom { get { return bottom; } }
+            public decimal Top { get { return top; } }
+            public BoundingBox(decimal l, decimal b, decimal r, decimal t) {
+                left = l; right = r; bottom = b; top = t;
             }
-            return FileName;
+            public bool IsEmpty { get { return left >= right || bottom >= top; } }
+        };
+        
+        class BoundingBoxPair {
+            public BoundingBox bb, hiresbb;
+            public BoundingBoxPair(BoundingBox b, BoundingBox h) {
+                bb = b; hiresbb = h;
+            }
         }
 
-        private void printCommandLine(Process proc) {
-            controller_.appendOutput(proc.StartInfo.WorkingDirectory + ">\"" + proc.StartInfo.FileName + "\" " + proc.StartInfo.Arguments + "\r\n");
+        void enlargeBB(string inputEpsFileName, bool use_bp = true) {
+            Func<BoundingBox, BoundingBox> func = bb => AddMargineToBoundingBox(bb,use_bp);
+            rewriteBB(inputEpsFileName, func, func);
         }
 
+        void rewriteBB(string inputEpsFileName,Func<BoundingBox,BoundingBox> bb,Func<BoundingBox,BoundingBox> hiresbb) {
+            Regex regexBB = new Regex(@"^\%\%(HiRes|)BoundingBox\: ([-\d\.]+) ([-\d\.]+) ([-\d\.]+) ([-\d\.]+)$");
+            byte[] inbuf;
+            using(var fs = new FileStream(Path.Combine(workingDir, inputEpsFileName), FileMode.Open, FileAccess.Read)) {
+                if(!fs.CanRead) return;
+                inbuf = new byte[fs.Length];
+                fs.Read(inbuf, 0, (int) fs.Length);
+            }
+            byte[] outbuf = new byte[inbuf.Length + 200];
+            byte[] tmpbuf;
+
+            // 現在読んでいるinufの「行」の先頭
+            int inp = 0;
+            // inbufの現在読んでいる場所
+            int q = 0;
+            // outbufに書き込んだ量
+            int outp = 0;
+            bool bbfound = false, hiresbbfound = false;
+            while(q < inbuf.Length) {
+                if(q == inbuf.Length - 1 || inbuf[q] == '\r' || inbuf[q] == '\n') {
+                    string line = System.Text.Encoding.ASCII.GetString(inbuf, inp, q - inp);
+                    Match match = regexBB.Match(line);
+                    if(match.Success) {
+                        BoundingBox bbinfile = new BoundingBox(
+                            System.Convert.ToDecimal(match.Groups[2].Value),
+                            System.Convert.ToDecimal(match.Groups[3].Value),
+                            System.Convert.ToDecimal(match.Groups[4].Value),
+                            System.Convert.ToDecimal(match.Groups[5].Value));
+                        string HiRes = match.Groups[1].Value;
+                        if(HiRes == "") {
+                            bbfound = true;
+                            var newbb = bb(bbinfile);
+                            line = String.Format("%%BoundingBox: {0} {1} {2} {3}", (int) newbb.Left, (int) newbb.Bottom, (int) newbb.Right, (int) newbb.Top);
+                        } else {
+                            hiresbbfound = true;
+                            var newbb = hiresbb(bbinfile);
+                            line = String.Format("%%HiResBoundingBox: {0} {1} {2} {3}", newbb.Left, newbb.Bottom, newbb.Right, newbb.Top);
+                        }
+                        tmpbuf = System.Text.Encoding.ASCII.GetBytes(line);
+                        System.Array.Copy(tmpbuf, 0, outbuf, outp, tmpbuf.Length);
+                        outp += tmpbuf.Length;
+                        if(bbfound && hiresbbfound) {
+                            System.Array.Copy(inbuf, q, outbuf, outp, inbuf.Length - q);
+                            outp += inbuf.Length - q;
+                            break;
+                        }
+                    } else {
+                        System.Array.Copy(inbuf, inp, outbuf, outp, q - inp);
+                        outp += q - inp;
+                    }
+                    inp = q;
+                    while(q < inbuf.Length - 1 && (inbuf[q] == '\r' || inbuf[q] == '\n')) ++q;
+                    System.Array.Copy(inbuf, inp, outbuf, outp, q - inp);
+                    outp += q - inp;
+                    inp = q;
+                    if(q == inbuf.Length - 1) break;
+                } else ++q;
+            }
+            using(FileStream wfs = new System.IO.FileStream(Path.Combine(workingDir, inputEpsFileName), FileMode.Open, FileAccess.Write)) {
+                wfs.Write(outbuf, 0, outp);
+            }
+        }
+
+        private BoundingBoxPair readBB(string inputEpsFileName) { 
+            Regex regex = new Regex(@"^\%\%(HiRes)?BoundingBox\: ([-\d\.]+) ([-\d\.]+) ([-\d\.]+) ([-\d\.]+)$");
+            var bb = new BoundingBox();
+            var hiresbb = new BoundingBox();
+            bool bbread = false, hiresbbread = false;
+            using(StreamReader sr = new StreamReader(Path.Combine(workingDir, inputEpsFileName), Encoding.GetEncoding("shift_jis"))) {
+                string line;
+                while((line = sr.ReadLine()) != null) {
+                    Match match = regex.Match(line);
+                    if(match.Success) {
+                        var cb = new BoundingBox(
+                            System.Convert.ToDecimal(match.Groups[2].Value),
+                            System.Convert.ToDecimal(match.Groups[3].Value),
+                            System.Convert.ToDecimal(match.Groups[4].Value),
+                            System.Convert.ToDecimal(match.Groups[5].Value));
+                        if(match.Groups[1].Value == "HiRes") {
+                            hiresbb = cb; hiresbbread = true;
+                        } else {
+                            bb = cb; bbread = true;
+                        }
+                        if(bbread && hiresbbread) break;
+                    }
+                }
+            }
+            return new BoundingBoxPair(bb, hiresbb);
+        }
+
+        BoundingBoxPair readBBFromPDF(string inputPDFFileName,int page){
+            BoundingBox bb,hiresbb;
+            var gspath = setProcStartInfo(Properties.Settings.Default.gsPath);
+            using(var proc = GetProcess()) {
+                proc.StartInfo.FileName = gspath;
+                proc.StartInfo.Arguments = "-dBATCH -dNOPAUSE -q -sDEVICE=bbox -dFirstPage=" + page.ToString() + " -dLastPage=" + page.ToString() + " \"" + inputPDFFileName + "\"";
+                proc.OutputDataReceived += ((s, e) => { System.Diagnostics.Debug.WriteLine("Std: " + e.Data); });
+
+                Regex regexBB = new Regex(@"^\%\%(HiRes)?BoundingBox\: ([-\d\.]+) ([-\d\.]+) ([-\d\.]+) ([-\d\.]+)$");
+                bb = new BoundingBox();
+                hiresbb = new BoundingBox();
+                try {
+                    printCommandLine(proc);
+                    proc.Start();
+                    proc.BeginOutputReadLine();
+                    while(!proc.StandardError.EndOfStream) {
+                        var line = proc.StandardError.ReadLine();
+                        controller_.appendOutput(line + "\n");
+                        var match = regexBB.Match(line);
+                        if(match.Success) {
+                            var currentbb = new BoundingBox(
+                                System.Convert.ToDecimal(match.Groups[2].Value),
+                                System.Convert.ToDecimal(match.Groups[3].Value),
+                                System.Convert.ToDecimal(match.Groups[4].Value),
+                                System.Convert.ToDecimal(match.Groups[5].Value));
+                            if(match.Groups[1].Value == "HiRes") {
+                                hiresbb = currentbb;
+                            } else {
+                                bb = currentbb;
+                            }
+                        }
+                    }
+                    proc.WaitForExit();
+                    controller_.appendOutput("\n");
+                    return new BoundingBoxPair(bb, hiresbb);
+                }
+                catch(Win32Exception) {
+                    controller_.showPathError(gspath, "Ghostscript");
+                    return null;
+                }
+            }
+        }
+
+        BoundingBox AddMargineToBoundingBox(BoundingBox bb, bool use_bp) {
+            decimal margindevide = use_bp ? 1 : Properties.Settings.Default.resolutionScale;
+            return new BoundingBox(
+                bb.Left - Properties.Settings.Default.leftMargin / margindevide,
+                bb.Bottom - Properties.Settings.Default.bottomMargin / margindevide,
+                bb.Right + Properties.Settings.Default.rightMargin / margindevide,
+                bb.Top + Properties.Settings.Default.topMargin / margindevide);
+        }
+
+        BoundingBoxPair AddMargineToBoundingBox(BoundingBoxPair bb, bool use_bp) {
+            return new BoundingBoxPair(AddMargineToBoundingBox(bb.bb, use_bp), AddMargineToBoundingBox(bb.hiresbb, use_bp));
+        }
+        #endregion
+
+
+        #region 変換用関数たち
         private bool tex2dvi(string fileName) {
             string baseName = Path.GetFileNameWithoutExtension(fileName);
             string arg;
@@ -357,114 +395,6 @@ namespace TeX2img {
             return true;
         }
 
-        struct BoundingBox{
-            private decimal left, right, bottom, top;
-            public decimal Left { get { return left; } }
-            public decimal Right { get { return right; } }
-            public decimal Bottom { get { return bottom; } }
-            public decimal Top { get { return top; } }
-            public BoundingBox(decimal l, decimal b, decimal r, decimal t) {
-                left = l; right = r; bottom = b; top = t;
-            }
-            public bool IsEmpty { get { return left >= right || bottom >= top; } }
-        };
-        
-
-        void enlargeBB(string inputEpsFileName, bool use_bp = true) {
-            Func<BoundingBox, BoundingBox> func = bb => AddMargineToBoundingBox(bb,use_bp);
-            rewriteBB(inputEpsFileName, func, func);
-        }
-
-        void rewriteBB(string inputEpsFileName,Func<BoundingBox,BoundingBox> bb,Func<BoundingBox,BoundingBox> hiresbb) {
-            Regex regexBB = new Regex(@"^\%\%(HiRes|)BoundingBox\: ([\d\.]+) ([\d\.]+) ([\d\.]+) ([\d\.]+)$");
-            byte[] inbuf;
-            using(var fs = new FileStream(Path.Combine(workingDir, inputEpsFileName), FileMode.Open, FileAccess.Read)) {
-                if(!fs.CanRead) return;
-                inbuf = new byte[fs.Length];
-                fs.Read(inbuf, 0, (int) fs.Length);
-            }
-            byte[] outbuf = new byte[inbuf.Length + 200];
-            byte[] tmpbuf;
-
-            // 現在読んでいるinufの「行」の先頭
-            int inp = 0;
-            // inbufの現在読んでいる場所
-            int q = 0;
-            // outbufに書き込んだ量
-            int outp = 0;
-            bool bbfound = false, hiresbbfound = false;
-            while(q < inbuf.Length) {
-                if(q == inbuf.Length - 1 || inbuf[q] == '\r' || inbuf[q] == '\n') {
-                    string line = System.Text.Encoding.ASCII.GetString(inbuf, inp, q - inp);
-                    Match match = regexBB.Match(line);
-                    if(match.Success) {
-                        BoundingBox bbinfile = new BoundingBox(
-                            System.Convert.ToDecimal(match.Groups[2].Value),
-                            System.Convert.ToDecimal(match.Groups[3].Value),
-                            System.Convert.ToDecimal(match.Groups[4].Value),
-                            System.Convert.ToDecimal(match.Groups[5].Value));
-                        string HiRes = match.Groups[1].Value;
-                        if(HiRes == "") {
-                            bbfound = true;
-                            var newbb = bb(bbinfile);
-                            line = String.Format("%%BoundingBox: {0} {1} {2} {3}", (int) newbb.Left, (int) newbb.Bottom, (int) newbb.Right, (int) newbb.Top);
-                        } else {
-                            hiresbbfound = true;
-                            var newbb = hiresbb(bbinfile);
-                            line = String.Format("%%HiResBoundingBox: {0} {1} {2} {3}", newbb.Left, newbb.Bottom, newbb.Right, newbb.Top);
-                        }
-                        tmpbuf = System.Text.Encoding.ASCII.GetBytes(line);
-                        System.Array.Copy(tmpbuf, 0, outbuf, outp, tmpbuf.Length);
-                        outp += tmpbuf.Length;
-                        if(bbfound && hiresbbfound) {
-                            System.Array.Copy(inbuf, q, outbuf, outp, inbuf.Length - q);
-                            outp += inbuf.Length - q;
-                            break;
-                        }
-                    } else {
-                        System.Array.Copy(inbuf, inp, outbuf, outp, q - inp);
-                        outp += q - inp;
-                    }
-                    inp = q;
-                    while(q < inbuf.Length - 1 && (inbuf[q] == '\r' || inbuf[q] == '\n')) ++q;
-                    System.Array.Copy(inbuf, inp, outbuf, outp, q - inp);
-                    outp += q - inp;
-                    inp = q;
-                    if(q == inbuf.Length - 1) break;
-                } else ++q;
-            }
-            using(FileStream wfs = new System.IO.FileStream(Path.Combine(workingDir, inputEpsFileName), FileMode.Open, FileAccess.Write)) {
-                wfs.Write(outbuf, 0, outp);
-            }
-        }
-
-        private BoundingBoxPair readBB(string inputEpsFileName) { 
-            Regex regex = new Regex(@"^\%\%(HiRes)?BoundingBox\: ([-\d\.]+) ([-\d\.]+) ([-\d\.]+) ([-\d\.]+)$");
-            var bb = new BoundingBox();
-            var hiresbb = new BoundingBox();
-            bool bbread = false, hiresbbread = false;
-            using(StreamReader sr = new StreamReader(Path.Combine(workingDir, inputEpsFileName), Encoding.GetEncoding("shift_jis"))) {
-                string line;
-                while((line = sr.ReadLine()) != null) {
-                    Match match = regex.Match(line);
-                    if(match.Success) {
-                        var cb = new BoundingBox(
-                            System.Convert.ToDecimal(match.Groups[2].Value),
-                            System.Convert.ToDecimal(match.Groups[3].Value),
-                            System.Convert.ToDecimal(match.Groups[4].Value),
-                            System.Convert.ToDecimal(match.Groups[5].Value));
-                        if(match.Groups[1].Value == "HiRes") {
-                            hiresbb = cb; hiresbbread = true;
-                        } else {
-                            bb = cb; bbread = true;
-                        }
-                        if(bbread && hiresbbread) break;
-                    }
-                }
-            }
-            return new BoundingBoxPair(bb, hiresbb);
-        }
-
         int pdfpages(string file) {
             using(var proc = GetProcess()) {
                 proc.StartInfo.FileName = Path.Combine(GetToolsPath(), "pdfiumdraw.exe");
@@ -570,67 +500,6 @@ namespace TeX2img {
             xml.Save(fullpath);
         }
 
-        BoundingBoxPair readBBFromPDF(string inputPDFFileName,int page){
-            BoundingBox bb,hiresbb;
-            var gspath = setProcStartInfo(Properties.Settings.Default.gsPath);
-            using(var proc = GetProcess()) {
-                proc.StartInfo.FileName = gspath;
-                proc.StartInfo.Arguments = "-dBATCH -dNOPAUSE -q -sDEVICE=bbox -dFirstPage=" + page.ToString() + " -dLastPage=" + page.ToString() + " \"" + inputPDFFileName + "\"";
-                proc.OutputDataReceived += ((s, e) => { System.Diagnostics.Debug.WriteLine("Std: " + e.Data); });
-
-                Regex regexBB = new Regex(@"^\%\%(HiRes)?BoundingBox\: ([-\d\.]+) ([-\d\.]+) ([-\d\.]+) ([-\d\.]+)$");
-                bb = new BoundingBox();
-                hiresbb = new BoundingBox();
-                try {
-                    printCommandLine(proc);
-                    proc.Start();
-                    proc.BeginOutputReadLine();
-                    while(!proc.StandardError.EndOfStream) {
-                        var line = proc.StandardError.ReadLine();
-                        controller_.appendOutput(line + "\n");
-                        var match = regexBB.Match(line);
-                        if(match.Success) {
-                            var currentbb = new BoundingBox(
-                                System.Convert.ToDecimal(match.Groups[2].Value),
-                                System.Convert.ToDecimal(match.Groups[3].Value),
-                                System.Convert.ToDecimal(match.Groups[4].Value),
-                                System.Convert.ToDecimal(match.Groups[5].Value));
-                            if(match.Groups[1].Value == "HiRes") {
-                                hiresbb = currentbb;
-                            } else {
-                                bb = currentbb;
-                            }
-                        }
-                    }
-                    proc.WaitForExit();
-                    controller_.appendOutput("\n");
-                    return new BoundingBoxPair(bb, hiresbb);
-                }
-                catch(Win32Exception) {
-                    controller_.showPathError(gspath, "Ghostscript");
-                    return null;
-                }
-            }
-        }
-        class BoundingBoxPair {
-            public BoundingBox bb, hiresbb;
-            public BoundingBoxPair(BoundingBox b, BoundingBox h) {
-                bb = b; hiresbb = h;
-            }
-        }
-
-        BoundingBox AddMargineToBoundingBox(BoundingBox bb, bool use_bp) {
-            decimal margindevide = use_bp ? 1 : Properties.Settings.Default.resolutionScale;
-            return new BoundingBox(
-                bb.Left - Properties.Settings.Default.leftMargin / margindevide,
-                bb.Bottom - Properties.Settings.Default.bottomMargin / margindevide,
-                bb.Right + Properties.Settings.Default.rightMargin / margindevide,
-                bb.Top + Properties.Settings.Default.topMargin / margindevide);
-        }
-
-        BoundingBoxPair AddMargineToBoundingBox(BoundingBoxPair bb, bool use_bp) {
-            return new BoundingBoxPair(AddMargineToBoundingBox(bb.bb, use_bp), AddMargineToBoundingBox(bb.hiresbb, use_bp));
-        }
 
         bool pdfcrop(string inputFileName, string outputFileName, bool use_bp, int page = 1, BoundingBoxPair origbb = null) {
             return pdfcrop(inputFileName, outputFileName, use_bp, new List<int>() { page }, new List<BoundingBoxPair>() { origbb });
@@ -833,7 +702,9 @@ namespace TeX2img {
                 }
             }
         }
+        #endregion
 
+        // 変換の実体
         bool generate(string inputTeXFilePath, string outputFilePath) {
             abort = false;
             outputFileNames = new List<string>();
@@ -943,9 +814,6 @@ namespace TeX2img {
                     if(File.Exists(generatedFile)) {
                         File.Copy(generatedFile, outputFilePath, true);
                         outputFileNames.Add(outputFilePath);
-                        if(Properties.Settings.Default.previewFlag) {
-                            if(File.Exists(outputFilePath)) Process.Start(outputFilePath);
-                        }
                     }
                 } else {
                     string outputFilePathBaseName = Path.Combine(Path.GetDirectoryName(outputFilePath), Path.GetFileNameWithoutExtension(outputFilePath));
@@ -956,15 +824,9 @@ namespace TeX2img {
                             outputFileNames.Add(outputFilePathBaseName + "-" + i + extension);
                         }
                     }
-                    if(Properties.Settings.Default.previewFlag) {
-                        for(int i = 1 ; i <= page ; ++i) {
-                            outputFilePath = outputFilePathBaseName + "-" + i.ToString() + extension;
-                            if(File.Exists(outputFilePath)) {
-                                Process.Start(outputFilePath);
-                                break;
-                            }
-                        }
-                    }
+                }
+                if(Properties.Settings.Default.previewFlag) {
+                    if(outputFileNames.Count > 0) Process.Start(outputFileNames[0]);
                 }
             }
             catch(UnauthorizedAccessException) {
@@ -1008,6 +870,147 @@ namespace TeX2img {
         // 非同期だと全部読み込んだかわからない気がしたので，スレッドを作成することにした．
         //
         // 結局どっちもスレッドを回すことにしてみた……．
+        #region ユーティリティー的な
+        public static string which(string basename) {
+            string separator, fullPath;
+            string[] extensions = { "", ".exe", ".bat", ".cmd", ".vbs", ".js", ".wsf" };
+
+            foreach(string path in Environment.GetEnvironmentVariable("PATH").Split(';')) {
+                if(path.Length > 0 && path[path.Length - 1] != '\\') {
+                    separator = "\\";
+                } else {
+                    separator = "";
+                }
+
+                foreach(string extension in extensions) {
+                    fullPath = path + separator + basename + extension;
+                    if(File.Exists(fullPath)) {
+                        return fullPath;
+                    }
+                }
+            }
+            return string.Empty;
+        }
+        public static string GetTempFileName(string ext = ".tex") {
+            return GetTempFileName(ext, Path.GetTempPath());
+        }
+
+        public static string GetTempFileName(string ext, string dir) {
+            for(int i = 0 ; i < 1000 ; ++i) {
+                var random = Path.ChangeExtension(Path.GetRandomFileName(), ext);
+                if(!File.Exists(Path.Combine(dir, random))) {
+                    return random;
+                }
+            }
+            return null;
+        }
+
+        ProcessStartInfo GetProcessStartInfo() {
+            var rv = new ProcessStartInfo() {
+                UseShellExecute = false,
+                CreateNoWindow = true,
+                RedirectStandardOutput = true,
+                RedirectStandardError = true,
+                WorkingDirectory = workingDir,
+            };
+            foreach(var e in Environments) {
+                try { rv.EnvironmentVariables.Add(e.Key, e.Value); }
+                catch(ArgumentException) { }
+            }
+            return rv;
+        }
+        Process GetProcess() {
+            return new Process() { StartInfo = GetProcessStartInfo() };
+        }
+
+        public bool CheckFormat() {
+            string extension = Path.GetExtension(OutputFile).ToLower();
+            if(!imageExtensions.Contains(extension)) {
+                if(controller_ != null) controller_.showExtensionError(OutputFile);
+                return false;
+            }
+            return true;
+        }
+
+        // pTeX or upTeX
+        static bool IspTeX(string latex) {
+            var l = Path.GetFileNameWithoutExtension(latex).ToLower();
+            return (l == "platex" || l == "uplatex" || l == "ptex" || l == "uptex");
+        }
+        static bool IsupTeX(string latex) {
+            var l = Path.GetFileNameWithoutExtension(latex).ToLower();
+            return (l == "uplatex" || l == "uptex");
+        }
+
+        public static Encoding GetInputEncoding() {
+            switch(Properties.Settings.Default.encode) {
+            case "_sjis":
+            case "sjis": return Encoding.GetEncoding("shift_jis");
+            case "euc": return Encoding.GetEncoding("euc-jp");
+            case "jis": return Encoding.GetEncoding("iso-2022-jp");
+            default: // "utf8" "_utf8"
+                return Encoding.UTF8;
+            }
+        }
+        
+        public static Encoding GetOutputEncoding() {
+            string arg;
+            string latex = setProcStartInfo(Properties.Settings.Default.platexPath, out arg);
+            return GetOutputEncoding(latex, arg);
+        }
+        
+        public static Encoding GetOutputEncoding(string latex, string arg) {
+            if(IspTeX(latex)) {
+                if(arg.Contains("-sjis-terminal")) return Encoding.GetEncoding("shift_jis");
+                switch(Properties.Settings.Default.encode) {
+                case "sjis": return Encoding.GetEncoding("shift_jis");
+                case "utf8": return Encoding.UTF8;
+                case "jis": return Encoding.GetEncoding("iso-2022-jp");
+                case "euc": return Encoding.GetEncoding("euc-jp");
+                case "_utf8":
+                    if(!IsupTeX(latex) && !arg.Contains("-kanji")) return Encoding.GetEncoding("shift_jis");
+                    else return Encoding.UTF8;
+                case "_sjis":
+                default:
+                    if(IsupTeX(latex) && arg.Contains("-kanji")) return Encoding.GetEncoding("shift_jis");
+                    else return Encoding.UTF8;
+                }
+            } else return Encoding.UTF8;
+        }
+        
+        public static string setProcStartInfo(String path) {
+            string dummy;
+            return setProcStartInfo(path, out dummy);
+        }
+        // path に指定されたオプション引数を解釈する
+        // 戻り値 = FileName
+        public static string setProcStartInfo(String path, out string Arguments) {
+            // "がないならばFileName = path
+            string FileName = path;
+            Arguments = "";
+            if(path.IndexOf("\"") != -1) {
+                // そうでなければ
+                // **"***"**(SPACE)という並びを探す 
+                var m = Regex.Match(path, "^([^\" ]*(\"[^\"]*\")*[^\" ]*) (.*)$");
+                if(m.Success) {
+                    FileName = m.Groups[1].Value;
+                    Arguments = m.Groups[3].Value;
+                    if(Arguments != "") Arguments += " ";
+                }
+                FileName = FileName.Replace("\"", "");
+            }
+            return FileName;
+        }
+
+        volatile bool abort = false;
+        public void Abort() {
+            abort = true;
+        }
+        
+        private void printCommandLine(Process proc) {
+            controller_.appendOutput(proc.StartInfo.WorkingDirectory + ">\"" + proc.StartInfo.FileName + "\" " + proc.StartInfo.Arguments + "\r\n");
+        }
+        
         void ReadOutputs(Process proc, string freezemsg) {
             printCommandLine(proc);
             proc.Start();
@@ -1088,6 +1091,7 @@ namespace TeX2img {
                 catch(Win32Exception) { proc.Kill(); }
             }
         }
+        #endregion
 
         public void AddInputPath(string path) {
             if(!Environments.ContainsKey("TEXINPUTS")) {
