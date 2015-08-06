@@ -16,6 +16,7 @@ namespace TeX2img {
         static bool quiet = false;
         static bool? preview = null;
         static bool nogui = false;
+        static bool show_settings = false;
         static bool version = false;
         static bool help = false;
 
@@ -68,6 +69,8 @@ namespace TeX2img {
                 }
             }},
 			{"exit","設定の保存のみを行い終了する", val => {exit = true;}},
+            //{"show-settings","現在の設定を表示する", val => {show_settings = true;}},
+            {"ignore-settings","現在の設定をデフォルトに戻す",val => {if(val != null)Properties.Settings.Default.ReloadDefaults();}},
 			{"help","このメッセージを表示する",val => {help = true;}},
 			{"version","バージョン情報を表示する",val => {version = true;}}
         };
@@ -79,16 +82,6 @@ namespace TeX2img {
 
         static int TeX2imgMain(List<string> cmds) {
             Properties.Settings.Default.SaveSettings = !nogui;
-            // 各種バイナリのパスが設定されていなかったら推測する．
-            // "/exit"が指定されている場合はメッセージ表示をしない．
-            setPath(cmds.Contains("/exit") || cmds.Contains("-exit") || cmds.Contains("--exit"));
-            // CUIモードの引数なしはエラー
-            if(nogui && cmds.Count == 0) {
-                Console.WriteLine("引数がありません．\n");
-                ShowHelp();
-                return -1;
-            }
-
             // オプション解析
             List<string> files;
             try { files = options.Parse(cmds); }
@@ -103,12 +96,25 @@ namespace TeX2img {
                 }
                 return -1;
             }
+            // 各種バイナリのパスが設定されていなかったら推測する．
+            // "/exit"が指定されている場合はメッセージ表示をしない．
+            setPath(exit);
+            // CUIモードの引数なしはエラー
+            if(nogui && files.Count == 0) {
+                Console.WriteLine("引数がありません．\n");
+                ShowHelp();
+                return -1;
+            }
             if(help) {
                 ShowHelp();
                 return 0;
             }
             if(version) {
                 ShowVersion();
+                return 0;
+            }
+            if(show_settings) {
+                ShowSettings();
                 return 0;
             }
 
@@ -185,7 +191,7 @@ namespace TeX2img {
 
             // コマンドライン解析
             var cmds = new List<string>(Environment.GetCommandLineArgs());
-            //var cmds = new List<string> { "TeX2img.exe", "/nogui", "/help" };
+            //cmds = new List<string> { "TeX2img.exe", "/nogui", "/ignore-settings", "test.tex","test.pdf" };
             // 一つ目がTeX2img本体ならば削除
             // abtlinstからCreateProcessで呼び出すとTeX2img本体にならなかったので，一応確認をする．
             if(cmds.Count > 0) {
@@ -293,6 +299,9 @@ namespace TeX2img {
             //if(msg.EndsWith("\n")) msg = msg.Remove(msg.Length - 1);
             if(nogui) Console.WriteLine(msg);
             else MessageBox.Show(msg, "TeX2img");
+        }
+
+        static void ShowSettings() {
         }
         
         public class OptionSet : NDesk.Options.OptionSet {

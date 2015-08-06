@@ -25,7 +25,7 @@ namespace TeX2img.Properties {
             // SettingsSaving イベントを処理するコードをここに追加してください。
         }
 
-        protected override void OnSettingsLoaded(object sender, System.Configuration.SettingsLoadedEventArgs e) {
+        void SetValues() {
             editorFontColor["テキスト"] = new FontColor(editorNormalColorFont, editorNormalColorBack);
             editorFontColor["選択範囲"] = new FontColor(editorSelectedColorFont, editorSelectedColorBack);
             editorFontColor["コントロールシークエンス"] = new FontColor(editorCommandColorFont, editorCommandColorBack);
@@ -39,6 +39,10 @@ namespace TeX2img.Properties {
                 preambleTemplates = GetDefaultTemplate();
                 preambleTemplateCollection = DictionaryToStringCollection(preambleTemplates);
             } else preambleTemplates = StringCollectionToDictionary(preambleTemplateCollection);
+        }
+
+        protected override void OnSettingsLoaded(object sender, System.Configuration.SettingsLoadedEventArgs e) {
+            SetValues();
             base.OnSettingsLoaded(sender, e);
         }
 
@@ -65,6 +69,29 @@ namespace TeX2img.Properties {
 
         public override void Save() {
             if(SaveSettings) base.Save();
+        }
+
+        public void ReloadDefaults() {
+            var me = this.GetType();
+            var properties = me.GetProperties();
+            foreach(var property in properties) {
+                var defaults = System.Attribute.GetCustomAttributes(property, typeof(System.Configuration.DefaultSettingValueAttribute));
+                foreach(var def in defaults) {
+                    var valattr = def as System.Configuration.DefaultSettingValueAttribute;
+                    var val = System.ComponentModel.TypeDescriptor.GetConverter(property.PropertyType).ConvertFrom(valattr.Value);
+                    property.SetValue(this, val, null);
+                }
+            }
+            preambleTemplateCollection = null;
+            SetValues();
+            //SaveSettings = true;
+            batchMode = BatchMode.Default;
+            timeOut = 0;
+            ColorDialogCustomColors = new int[16]{
+                0xFFFFFF,0xFFFFFF,0xFFFFFF,0xFFFFFF,
+                0xFFFFFF,0xFFFFFF,0xFFFFFF,0xFFFFFF,
+                0xFFFFFF,0xFFFFFF,0xFFFFFF,0xFFFFFF,
+                0xFFFFFF,0xFFFFFF,0xFFFFFF,0xFFFFFF};
         }
 
         #region TeX関連パスの推定
