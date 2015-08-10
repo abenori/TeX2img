@@ -16,68 +16,67 @@ namespace TeX2img {
         static bool quiet = false;
         static bool? preview = null;
         static bool nogui = false;
-        static bool show_settings = false;
         static bool version = false;
         static bool help = false;
 
         static OptionSet options = new OptionSet(){
-			{"platex=","platex のパス", val => {Properties.Settings.Default.platexPath=val;}},
-			{"dvipdfmx=","dvipdfmx のパス",val =>{Properties.Settings.Default.dvipdfmxPath=val;}},
-			{"gs=","Ghostscript のパス",val => {Properties.Settings.Default.gsPath = val;}},
+			{"platex=","platex のパス", val => Properties.Settings.Default.platexPath=val,()=>Properties.Settings.Default.platexPath},
+			{"dvipdfmx=","dvipdfmx のパス",val =>Properties.Settings.Default.dvipdfmxPath=val,()=>Properties.Settings.Default.dvipdfmxPath},
+			{"gs=","Ghostscript のパス",val => Properties.Settings.Default.gsPath = val,()=>Properties.Settings.Default.gsPath},
 			{"gsdevice=",
-				"Ghostscript の device の値（epswrite/eps2write）",
-				val => {Properties.Settings.Default.gsDevice = GetStringsFromArray("gsdevice",val,new string[]{"epswrite","eps2write"});}
+				"Ghostscript の device（epswrite/eps2write）",
+				val => {Properties.Settings.Default.gsDevice = GetStringsFromArray("gsdevice",val,new string[]{"epswrite","eps2write"});},
+                ()=>Properties.Settings.Default.gsDevice
 			},
 			{"kanji=","文字コード（utf8/sjis/jis/euc/no)",val => {
 				string v = GetStringsFromArray("kanji", val, new string[] { "utf8", "sjis", "jis", "euc", "no" });
 				if(v == "no"){
 					if(Properties.Settings.Default.encode != "_sjis") Properties.Settings.Default.encode = "_utf8";
 				}else Properties.Settings.Default.encode = val;
-			}},
-			{"guess-compile","LaTeX ソースコンパイル回数を推定[-]",val => {Properties.Settings.Default.guessLaTeXCompile = (val != null);}},
-			{"num=","LaTeX ソースコンパイルの（最大）回数",(int val) => {Properties.Settings.Default.LaTeXCompileMaxNumber = val;}},
-			{"resolution=","解像度レベル",(int val) => {Properties.Settings.Default.resolutionScale = val;}},
-            {"left-margin=","左余白",(int val) => {Properties.Settings.Default.leftMargin = val;}},
-			{"right-margin=","右余白",(int val) => {Properties.Settings.Default.rightMargin = val;}},
-			{"top-margin=","上余白",(int val) => {Properties.Settings.Default.topMargin = val;}},
-			{"bottom-margin=","下余白",(int val) => {Properties.Settings.Default.bottomMargin = val;}},
+			},()=>Properties.Settings.Default.encode.StartsWith("_") ? "no" : Properties.Settings.Default.encode},
+			{"guess-compile","LaTeX ソースコンパイル回数を推定[-]",val => Properties.Settings.Default.guessLaTeXCompile = (val != null),()=>Properties.Settings.Default.guessLaTeXCompile},
+			{"num=","LaTeX ソースコンパイルの（最大）回数",(int val) => {Properties.Settings.Default.LaTeXCompileMaxNumber = val;},()=>Properties.Settings.Default.LaTeXCompileMaxNumber},
+			{"resolution=","解像度レベル",(int val) => Properties.Settings.Default.resolutionScale = val,()=>Properties.Settings.Default.resolutionScale},
+            {"left-margin=","左余白",(int val) => Properties.Settings.Default.leftMargin = val,()=>Properties.Settings.Default.leftMargin},
+			{"right-margin=","右余白",(int val) => Properties.Settings.Default.rightMargin = val,()=>Properties.Settings.Default.rightMargin},
+			{"top-margin=","上余白",(int val) => Properties.Settings.Default.topMargin = val,()=>Properties.Settings.Default.topMargin},
+			{"bottom-margin=","下余白",(int val) => Properties.Settings.Default.bottomMargin = val,()=>Properties.Settings.Default.bottomMargin},
 			{"unit=","余白の単位（bp/px）",val => {
 			    switch(val){
 			    case "bp": Properties.Settings.Default.yohakuUnitBP = true; return;
 			    case "px": Properties.Settings.Default.yohakuUnitBP = false; return;
 			    default: throw new NDesk.Options.OptionException("bp, px のいずれかを指定してください．", "unit");
 			    }
-            }},
-			{"transparent","透過 PNG[-]",val => {Properties.Settings.Default.transparentPngFlag = (val != null);}},
-            {"with-text","PDF のテキスト情報を保持[-]",val =>{Properties.Settings.Default.outlinedText = !(val != null);}},
-            {"delete-display-size","SVG の表示寸法を削除[-]",val => {Properties.Settings.Default.deleteDisplaySize = (val != null);}},
-			{"antialias","アンチエイリアス処理[-]",val => {Properties.Settings.Default.useMagickFlag = (val != null);}},
-			{"low-resolution","低解像度で処理[-]",val => {Properties.Settings.Default.useLowResolution = (val!= null);}},
-			{"ignore-errors","少々のエラーは無視[-]",val => {Properties.Settings.Default.ignoreErrorFlag = (val != null);}},
-            {"no-delete","一時ファイルを削除しない[-]",val => {Properties.Settings.Default.deleteTmpFileFlag = !(val != null);}},
-			{"preview","生成されたファイルを開く",val => {preview = (val != null);}},
-            {"no-embed-source","ソース情報を生成ファイルに保存しない[-]",val => {Properties.Settings.Default.embedTeXSource = !(val != null);}},
-            {"copy-to-clipboard","生成したファイルをクリップボードにコピー[-]",val =>  {Properties.Settings.Default.setFileToClipBoard = !(val != null);}},
-			{"savesettings","設定の保存を行う",val => {Properties.Settings.Default.SaveSettings = (val != null);}},
-			{"quiet","Quiet モード",val => {quiet = true;}},
-            {"timeout=","タイムアウト時間を設定（秒）", (int val) => {Properties.Settings.Default.timeOut = val * 1000;}},
+            },()=>Properties.Settings.Default.yohakuUnitBP ? "bp" : "px"},
+			{"transparent","透過 PNG[-]",val => Properties.Settings.Default.transparentPngFlag = (val != null),()=>Properties.Settings.Default.transparentPngFlag},
+            {"with-text","PDF のテキスト情報を保持[-]",val =>Properties.Settings.Default.outlinedText = !(val != null),()=>Properties.Settings.Default.outlinedText},
+            {"delete-display-size","SVG の表示寸法を削除[-]",val => Properties.Settings.Default.deleteDisplaySize = (val != null),()=>Properties.Settings.Default.deleteDisplaySize},
+			{"antialias","アンチエイリアス処理[-]",val => Properties.Settings.Default.useMagickFlag = (val != null),()=>Properties.Settings.Default.useMagickFlag},
+			{"low-resolution","低解像度で処理[-]",val => Properties.Settings.Default.useLowResolution = (val!= null),()=>Properties.Settings.Default.useLowResolution},
+			{"ignore-errors","少々のエラーは無視[-]",val => Properties.Settings.Default.ignoreErrorFlag = (val != null),()=>Properties.Settings.Default.ignoreErrorFlag},
+            {"no-delete-tempfiles","一時ファイルを削除しない[-]",val => Properties.Settings.Default.deleteTmpFileFlag = !(val != null),()=>Properties.Settings.Default.deleteTmpFileFlag},
+			{"preview","生成されたファイルを開く[-]",val => preview = (val != null),()=>preview==null?false:preview},
+            {"no-embed-source","ソース情報を生成ファイルに保存しない[-]",val => Properties.Settings.Default.embedTeXSource = !(val != null),()=>Properties.Settings.Default.embedTeXSource},
+            {"copy-to-clipboard","生成したファイルをクリップボードにコピー[-]",val =>  Properties.Settings.Default.setFileToClipBoard = !(val != null),()=>Properties.Settings.Default.setFileToClipBoard},
+			{"savesettings","設定の保存を行う[-]",val => Properties.Settings.Default.SaveSettings = (val != null),()=>Properties.Settings.Default.SaveSettings},
+			{"quiet","Quiet モード[-]",val => quiet = (val != null),()=>quiet},
+            {"timeout=","タイムアウト時間を設定（秒）", (int val) => {Properties.Settings.Default.timeOut = val * 1000;},()=>Properties.Settings.Default.timeOut},
             {"batch=","Batch モード（stop/nonstop）", val => {
                 switch(val) {
                 case "nonstop": Properties.Settings.Default.batchMode = Properties.Settings.BatchMode.NonStop; break;
                 case "stop": Properties.Settings.Default.batchMode = Properties.Settings.BatchMode.Stop; break;
                 default: throw new NDesk.Options.OptionException("stop, nonstop のいずれかを指定してください．", "batch");
                 }
-            }},
+            },()=>Properties.Settings.Default.batchMode==Properties.Settings.BatchMode.NonStop ? "nonstop" : "stop"},
 			{"exit","設定の保存のみを行い終了する", val => {exit = true;}},
-            //{"show-settings","現在の設定を表示する", val => {show_settings = true;}},
-            {"ignore-settings","現在の設定をデフォルトに戻す",val => {if(val != null)Properties.Settings.Default.ReloadDefaults();}},
+            {"load-default-settings","現在の設定をデフォルトに戻す",val => {if(val != null)Properties.Settings.Default.ReloadDefaults();}},
 			{"help","このメッセージを表示する",val => {help = true;}},
 			{"version","バージョン情報を表示する",val => {version = true;}}
         };
 
         static string GetStringsFromArray(string optionname, string val, string[] possibleargs) {
             if(possibleargs.Contains(val)) return val;
-            throw new NDesk.Options.OptionException(String.Join(", ",possibleargs) + " のいずれかを指定してください．", optionname);
+            throw new NDesk.Options.OptionException(String.Join(", ", possibleargs) + " のいずれかを指定してください．", optionname);
         }
 
         static int TeX2imgMain(List<string> cmds) {
@@ -99,12 +98,6 @@ namespace TeX2img {
             // 各種バイナリのパスが設定されていなかったら推測する．
             // "/exit"が指定されている場合はメッセージ表示をしない．
             setPath(exit);
-            // CUIモードの引数なしはエラー
-            if(nogui && files.Count == 0) {
-                Console.WriteLine("引数がありません．\n");
-                ShowHelp();
-                return -1;
-            }
             if(help) {
                 ShowHelp();
                 return 0;
@@ -113,9 +106,11 @@ namespace TeX2img {
                 ShowVersion();
                 return 0;
             }
-            if(show_settings) {
-                ShowSettings();
-                return 0;
+            // CUIモードの引数なしはエラー
+            if(nogui && files.Count == 0) {
+                Console.WriteLine("引数がありません．\n");
+                ShowHelp();
+                return -1;
             }
 
             if(preview != null) Properties.Settings.Default.previewFlag = (bool) preview;
@@ -132,7 +127,7 @@ namespace TeX2img {
                 if(!File.Exists(files[2 * i])) {
                     err += "ファイル " + files[2 * i] + " は見つかりませんでした．\n";
                 }
-                if(!(new Converter(null,null,files[2 * i + 1])).CheckFormat()) {
+                if(!(new Converter(null, null, files[2 * i + 1])).CheckFormat()) {
                     err += "ファイル " + files[2 * i + 1] + " の拡張子は " + String.Join("/", Converter.imageExtensions) + " のいずれでもありません．\n";
                 }
             }
@@ -146,7 +141,7 @@ namespace TeX2img {
                 return -2;
             }
 
-            var chkfiles = new List<string>(){ "pdfiumdraw.exe", "mudraw.exe" };
+            var chkfiles = new List<string>() { "pdfiumdraw.exe", "mudraw.exe" };
             if(!nogui) chkfiles.Add("Azuki.dll");
             string mydir = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
             chkfiles = chkfiles.Where(f => !File.Exists(Path.Combine(mydir, f))).ToList();
@@ -155,7 +150,7 @@ namespace TeX2img {
                 chkfile_errmsg = "以下のファイルが見つからないため，起動することができませんでした．\n" + String.Join("\n", chkfiles.ToArray());
             }
             if(nogui) {
-                if(chkfile_errmsg != null){
+                if(chkfile_errmsg != null) {
                     Console.WriteLine(chkfile_errmsg);
                     return -3;
                 }
@@ -168,7 +163,7 @@ namespace TeX2img {
                 Properties.Settings.Default.previewFlag = (bool) preview;
                 return r;
             } else {
-                if(chkfile_errmsg != null){
+                if(chkfile_errmsg != null) {
                     MessageBox.Show(chkfile_errmsg, "TeX2img");
                     return -3;
                 }
@@ -299,70 +294,6 @@ namespace TeX2img {
             //if(msg.EndsWith("\n")) msg = msg.Remove(msg.Length - 1);
             if(nogui) Console.WriteLine(msg);
             else MessageBox.Show(msg, "TeX2img");
-        }
-
-        static void ShowSettings() {
-        }
-        
-        public class OptionSet : NDesk.Options.OptionSet {
-            // 次でエラーを出すようにする
-            // "option"の指定の時に--option=abc
-            // "option="の指定の時に--option-
-            protected override bool Parse(string argument, NDesk.Options.OptionContext c) {
-                if(c.Option == null) {
-                    string f, n, s, v;
-                    if(!GetOptionParts(argument, out f, out n, out s, out v)) return false;
-                    if(Contains(n)) {
-                        var p = this[n];
-                        if(v != null && p.OptionValueType == NDesk.Options.OptionValueType.None) {
-                            // メッセージはさぼり
-                            throw new NDesk.Options.OptionException(c.OptionSet.MessageLocalizer(""), f + n);
-                        }
-                    } else {
-                        string rn;
-                        if(n.Length >= 1 && (n[n.Length - 1] == '-' || n[n.Length - 1] == '+') && Contains((rn = n.Substring(0, n.Length - 1)))) {
-                            var p = this[rn];
-                            if(p.OptionValueType == NDesk.Options.OptionValueType.Required) {
-                                throw new NDesk.Options.OptionException(c.OptionSet.MessageLocalizer("An argument is required for the option '" + f + rn + "'"), f + rn);
-                            }
-                        }
-                    }
-                }
-                return base.Parse(argument, c);
-            }
-
-            // OptionSet.WriteOptionDescriptionsがちょっと気にくわないので独自に
-            // GetNames().Count == 1と仮定してある．
-            public new void WriteOptionDescriptions(TextWriter output) {
-                int maxlength = 0;
-                foreach(var oh in this) {
-                    if(oh.Description != null) {
-                        int length = oh.GetNames()[0].Length;
-                        if(oh.Description.EndsWith("[-]")) length += 3;
-                        else if(oh.OptionValueType == NDesk.Options.OptionValueType.Optional) length += 7;
-                        else if(oh.OptionValueType == NDesk.Options.OptionValueType.Required) length += 5;
-                        maxlength = Math.Max(maxlength, length);
-                    }
-                }
-                // オプション名に[-]が加わる可能性があるのでその分増やしておく．
-                maxlength += 3;
-                foreach(var oh in this) {
-                    if(oh.Description != null) {
-                        string valtype = "VAL";
-                        if(oh.GetType().ToString().EndsWith("[System.Int32]")) valtype = "NUM";
-                        string opstr = "/" + oh.GetNames()[0];
-                        string desc = oh.Description.Replace("\n", "\n" + new string(' ', maxlength + 1));
-                        if(oh.OptionValueType == NDesk.Options.OptionValueType.Optional) opstr += "[=<" + valtype + ">]";
-                        else if(oh.OptionValueType == NDesk.Options.OptionValueType.Required) opstr += "=<" + valtype + ">";
-                        else if(desc.EndsWith("[-]")) {
-                            // 説明文の最後が[-]なものは，否定が可能なオプション．/helpではオプション名の最後に表示する．
-                            opstr += "[-]";
-                            desc = desc.Substring(0, desc.Length - 3);
-                        }
-                        output.WriteLine("  " + opstr + new string(' ', maxlength - opstr.Length) + desc);
-                    }
-                }
-            }
         }
     }
 }

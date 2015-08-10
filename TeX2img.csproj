@@ -102,6 +102,7 @@
       <DependentUpon>ManageTemplateDialog.cs</DependentUpon>
     </Compile>
     <Compile Include="Options.cs" />
+    <Compile Include="OptionSet.cs" />
     <Compile Include="OutputForm.cs">
       <SubType>Form</SubType>
     </Compile>
