@@ -10,6 +10,14 @@ namespace TeX2img {
         public OptionSet Add<T>(string prototype, string description, Action<T> action, T defval) {
             return Add(prototype, description, action, new Func<T>(() => defval));
         }
+        public OptionSet Add<T>(string prototype, string description, Action<T> action, Func<bool> defval) {
+            default_values[prototype] = new Func<string>(() => defval().ToString().ToLower());
+            return (OptionSet) base.Add(prototype, description, action);
+        }
+        public OptionSet Add(string prototype, string description, Action<string> action, Func<bool> defval) {
+            default_values[prototype] = new Func<string>(() => defval().ToString().ToLower());
+            return (OptionSet) base.Add(prototype, description, action);
+        }
         public OptionSet Add<T, S>(string prototype, string description, Action<T> action, Func<S> defval) {
             default_values[prototype] = new Func<string>(() => defval().ToString());
             return (OptionSet) base.Add(prototype, description, action);

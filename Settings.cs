@@ -87,11 +87,6 @@ namespace TeX2img.Properties {
             //SaveSettings = true;
             batchMode = BatchMode.Default;
             timeOut = 0;
-            ColorDialogCustomColors = new int[16]{
-                0xFFFFFF,0xFFFFFF,0xFFFFFF,0xFFFFFF,
-                0xFFFFFF,0xFFFFFF,0xFFFFFF,0xFFFFFF,
-                0xFFFFFF,0xFFFFFF,0xFFFFFF,0xFFFFFF,
-                0xFFFFFF,0xFFFFFF,0xFFFFFF,0xFFFFFF};
         }
 
         #region TeX関連パスの推定

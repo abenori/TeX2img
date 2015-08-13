@@ -30,7 +30,7 @@ namespace TeX2imgc {
                 var reg = new System.Text.RegularExpressions.Regex("^[^\" ]*(\"[^\"]*\")*[^\" ]* +");
                 var m = reg.Match(Environment.CommandLine);
                 if(m.Success) proc.StartInfo.Arguments += Environment.CommandLine.Substring(m.Length);
-                else proc.StartInfo.Arguments += Environment.CommandLine;
+                //else proc.StartInfo.Arguments += Environment.CommandLine;
                 proc.StartInfo.RedirectStandardOutput = true;
                 proc.StartInfo.RedirectStandardInput = true;
                 proc.StartInfo.CreateNoWindow = true;

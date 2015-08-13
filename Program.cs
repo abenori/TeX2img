@@ -48,19 +48,19 @@ namespace TeX2img {
 			    default: throw new NDesk.Options.OptionException("bp, px のいずれかを指定してください．", "unit");
 			    }
             },()=>Properties.Settings.Default.yohakuUnitBP ? "bp" : "px"},
-			{"transparent","透過 PNG[-]",val => Properties.Settings.Default.transparentPngFlag = (val != null),()=>Properties.Settings.Default.transparentPngFlag},
-            {"with-text","PDF のテキスト情報を保持[-]",val =>Properties.Settings.Default.outlinedText = !(val != null),()=>Properties.Settings.Default.outlinedText},
+			{"transparent","透過 PNG / TIFF / EMF[-]",val => Properties.Settings.Default.transparentPngFlag = (val != null),()=>Properties.Settings.Default.transparentPngFlag},
+            {"with-text","PDF のテキスト情報を保持[-]",val =>Properties.Settings.Default.outlinedText = !(val != null),()=>!Properties.Settings.Default.outlinedText},
             {"delete-display-size","SVG の表示寸法を削除[-]",val => Properties.Settings.Default.deleteDisplaySize = (val != null),()=>Properties.Settings.Default.deleteDisplaySize},
 			{"antialias","アンチエイリアス処理[-]",val => Properties.Settings.Default.useMagickFlag = (val != null),()=>Properties.Settings.Default.useMagickFlag},
 			{"low-resolution","低解像度で処理[-]",val => Properties.Settings.Default.useLowResolution = (val!= null),()=>Properties.Settings.Default.useLowResolution},
 			{"ignore-errors","少々のエラーは無視[-]",val => Properties.Settings.Default.ignoreErrorFlag = (val != null),()=>Properties.Settings.Default.ignoreErrorFlag},
-            {"no-delete-tempfiles","一時ファイルを削除しない[-]",val => Properties.Settings.Default.deleteTmpFileFlag = !(val != null),()=>Properties.Settings.Default.deleteTmpFileFlag},
-			{"preview","生成されたファイルを開く[-]",val => preview = (val != null),()=>preview==null?false:preview},
-            {"no-embed-source","ソース情報を生成ファイルに保存しない[-]",val => Properties.Settings.Default.embedTeXSource = !(val != null),()=>Properties.Settings.Default.embedTeXSource},
-            {"copy-to-clipboard","生成したファイルをクリップボードにコピー[-]",val =>  Properties.Settings.Default.setFileToClipBoard = !(val != null),()=>Properties.Settings.Default.setFileToClipBoard},
+            {"delete-tmpfiles","一時ファイルを削除[-]",val => Properties.Settings.Default.deleteTmpFileFlag = (val != null),()=>Properties.Settings.Default.deleteTmpFileFlag},
+			{"preview","生成されたファイルを開く[-]",val => preview = (val != null),()=>preview==null?false:preview.Value},
+            {"embed-source","ソース情報を生成ファイルに保存[-]",val => Properties.Settings.Default.embedTeXSource = (val != null),()=>Properties.Settings.Default.embedTeXSource},
+            {"copy-to-clipboard","生成したファイルをクリップボードにコピー[-]",val =>  Properties.Settings.Default.setFileToClipBoard = (val != null),()=>Properties.Settings.Default.setFileToClipBoard},
 			{"savesettings","設定の保存を行う[-]",val => Properties.Settings.Default.SaveSettings = (val != null),()=>Properties.Settings.Default.SaveSettings},
 			{"quiet","Quiet モード[-]",val => quiet = (val != null),()=>quiet},
-            {"timeout=","タイムアウト時間を設定（秒）", (int val) => {Properties.Settings.Default.timeOut = val * 1000;},()=>Properties.Settings.Default.timeOut},
+            {"timeout=","タイムアウト時間を設定（秒）", (int val) => {Properties.Settings.Default.timeOut = val * 1000;},()=>Properties.Settings.Default.timeOut/1000},
             {"batch=","Batch モード（stop/nonstop）", val => {
                 switch(val) {
                 case "nonstop": Properties.Settings.Default.batchMode = Properties.Settings.BatchMode.NonStop; break;
@@ -69,7 +69,7 @@ namespace TeX2img {
                 }
             },()=>Properties.Settings.Default.batchMode==Properties.Settings.BatchMode.NonStop ? "nonstop" : "stop"},
 			{"exit","設定の保存のみを行い終了する", val => {exit = true;}},
-            {"load-default-settings","現在の設定をデフォルトに戻す",val => {if(val != null)Properties.Settings.Default.ReloadDefaults();}},
+            {"load-defaults","現在の設定をデフォルトに戻す",val => {if(val != null)Properties.Settings.Default.ReloadDefaults();}},
 			{"help","このメッセージを表示する",val => {help = true;}},
 			{"version","バージョン情報を表示する",val => {version = true;}}
         };
@@ -125,7 +125,9 @@ namespace TeX2img {
             string err = "";
             for(int i = 0 ; i < files.Count / 2 ; ++i) {
                 if(!File.Exists(files[2 * i])) {
-                    err += "ファイル " + files[2 * i] + " は見つかりませんでした．\n";
+                    err += "ファイル " + files[2 * i] + " は見つかりませんでした．";
+                    if(files[2 * i].StartsWith("-") || files[2 * i].StartsWith("/")) err += "オプション名のミスの可能性もあります．";
+                    err += "\n";
                 }
                 if(!(new Converter(null, null, files[2 * i + 1])).CheckFormat()) {
                     err += "ファイル " + files[2 * i + 1] + " の拡張子は " + String.Join("/", Converter.imageExtensions) + " のいずれでもありません．\n";
@@ -198,6 +200,7 @@ namespace TeX2img {
 #endif
                 if(filecmds0 == me || filecmds0 + ".exe" == me) cmds.RemoveAt(0);
             }
+            
             // 二つ目でCUIモードか判定する．
             if(cmds.Count > 0 && (cmds[0] == "/nogui" || cmds[0] == "-nogui" || cmds[0] == "--nogui")) {
                 nogui = true;

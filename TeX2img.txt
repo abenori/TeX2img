@@ -22,14 +22,14 @@
 * .NET Framework 3.5 以降．
 * 適切な TeX ディストリビューション（W32TeX か TeX Live を推奨）がインストールされており，platex 及び dvipdfmx，更に以下が使えること．
     - pdftex
-* Ghostscript がインストールされ，使えること．（TeX Live 内のものでも大丈夫です．）
+* Ghostscript がインストールされ，使えること．（TeX Live 内のものでも利用可能です．）
 
 
 ## インストール
 解凍後出てくる TeX2img.exe をダブルクリックすれば起動します．初回に platex.exe などの場所を推定しますが，推定に失敗した場合は，メニューの「ツール(T)」→「オプション... (O) Ctrl+E」から設定をしてください．
 TeX2imgc.exe は CUI モードで動かすためのラッパです．TeX2img.exe と同じフォルダに置いてください．使い方は
- > TeX2imgc.exe [Options] Input Output (Input Output...)
-です．
+ > TeX2imgc.exe [Options] Input Output [Input Output...]
+です．各種設定項目は TeX2img のそれを受け継ぎますが，変換後のプレビューのみ必ず行わないようになります．行いたい場合はオプション /preview を指定してください．
 
 ## Tips
 * 文字コードの設定には「指定しない（入力 UTF-8 ）」というものがあります．この「入力 UTF-8」とは，「TeX コードを直接入力」の欄に入力されたソースを UTF-8 で扱うことを意味します．デフォルトでは「指定しない（入力 Shift_JIS）」となっていますが，UTF-8 に対応した pLaTeX を使っている場合，「指定しない（入力 UTF-8）」が最もトラブルが少ないと思われますので，そちらを推奨します．
@@ -54,7 +54,7 @@ TeX2img.exe input output
 /platex=<VAL>            platex のパス
 /dvipdfmx=<VAL>          dvipdfmx のパス
 /gs=<VAL>                Ghostscript のパス
-/gsdevice=<VAL>          Ghostscript の device の値（epswrite/eps2write）
+/gsdevice=<VAL>          Ghostscript の device（epswrite/eps2write）
 /kanji=<VAL>             文字コード（utf8/sjis/jis/euc/no)
 /guess-compile[-]        LaTeX ソースコンパイル回数を推定
 /num=<NUM>               LaTeX ソースコンパイルの（最大）回数
@@ -64,25 +64,29 @@ TeX2img.exe input output
 /top-margin=<NUM>        上余白
 /bottom-margin=<NUM>     下余白
 /unit=<VAL>              余白の単位（bp/px）
-/transparent[-]          透過 PNG
+/transparent[-]          透過 PNG / TIFF / EMF
 /with-text[-]            PDF のテキスト情報を保持
 /delete-display-size[-]  SVG の表示寸法を削除
 /antialias[-]            アンチエイリアス処理
 /low-resolution[-]       低解像度で処理
 /ignore-errors[-]        少々のエラーは無視
-/no-delete[-]            一時ファイルを削除しない
-/preview                 生成されたファイルを開く
-/no-embed-source[-]      ソース情報を生成ファイルに保存しない
+/delete-tmpfiles[-]      一時ファイルを削除
+/preview[-]              生成されたファイルを開く
+/embed-source[-]         ソース情報を生成ファイルに保存
 /copy-to-clipboard[-]    生成したファイルをクリップボードにコピー
-/savesettings            設定の保存を行う
-/quiet                   Quiet モード
+/savesettings[-]         設定の保存を行う
+/quiet[-]                Quiet モード
 /timeout=<NUM>           タイムアウト時間を設定（秒）
 /batch=<VAL>             Batch モード（stop/nonstop）
 /exit                    設定の保存のみを行い終了する
+/load-defaults           現在の設定をデフォルトに戻す
 /help                    このメッセージを表示する
 /version                 バージョン情報を表示する
 
-[-] はオプションの否定を意味します．たとえば /guess-compile- と指定すると，コンパイル回数の推定を行わなくなります．
+[-] はオプションの否定を意味します．たとえば /guess-compile- と指定すると，コンパイル回数の推定を行わなくなります．複数回指定された場合は最後のものが優先されます．
+各種オプションは後に指定されたものが優先されます．例えば
+  tex2imgc /transparent- /ransparent a.tex a.png
+とすると透過 png が作成されます．特に /load-defaults は全ての設定を既定に戻すので，それ以前のオプションがほぼ全て無効になります．このオプションは最初につけるとよいでしょう．
 
 
 ## 参考
@@ -228,11 +232,14 @@ https://code.google.com/p/pdfium/
     - エディタの設定項目を増やした．
     - 生成したファイルをクリップボードに転送できるようにした．
 
-* 1.5.6
+* 1.5.6（2015/08/13）
     - 生成したファイルのコピーを CUI モードでも可能とした．
     - 空のページが検出された場合，余白があれば余白のみをつけたページを出力し，そうでなければスキップすることにした．
     - 空のページが検出された場合，警告を出すことにした．
     - PDF 出力 + テキストを保持する + 余白の単位が px のときに，余白が px で扱われていたのを修正．
     - eps から画像（jpg/bmp/png）を生成する際に一時的に作る eps ファイルのファイル名を他の一時ファイルの名前と同じ方法で生成することにした．
     - 画像出力における余白の付き方を改善．
-    - /ignore-settings オプションを追加．
+    - /load-defaults オプションを追加．
+    - /no-delete → /delete-tmpfiles とし，意味を逆にした．
+    - /no- となっていたオプションから no- を外し，意味を逆にした．
+    - /help で現在の設定を表示するようにした．
