@@ -334,7 +334,8 @@ namespace TeX2img {
                     controller_.showPathError("dvipdfmx.exe", "TeX ディストリビューション（dvipdfmx）");
                     return false;
                 }
-                proc.StartInfo.Arguments = arg + "-vv -o " + baseName + ".pdf " + baseName + ".dvi";
+                //proc.StartInfo.Arguments = arg + " -vv -o " + baseName + ".pdf " + baseName + ".dvi";
+                proc.StartInfo.Arguments = arg + " " + baseName + ".dvi";
 
                 try {
                     // 出力は何故か標準エラー出力から出てくる
@@ -347,12 +348,40 @@ namespace TeX2img {
                 catch(TimeoutException) {
                     return false;
                 }
-                if(proc.ExitCode != 0 || !File.Exists(Path.Combine(workingDir, baseName + ".pdf"))) {
+                if(proc.ExitCode != 0/* || !File.Exists(Path.Combine(workingDir, baseName + ".pdf"))*/) {
                     controller_.showGenerateError();
                     return false;
                 }
             }
             return true;
+        }
+
+        bool ps2pdf(string filename) {
+            var outputFileName = Path.ChangeExtension(filename, ".pdf");
+            using(var proc = GetProcess()) {
+                string arg;
+                proc.StartInfo.FileName = setProcStartInfo(Properties.Settings.Default.gsPath, out arg);
+                if(proc.StartInfo.FileName == "") {
+                    controller_.showPathError("gswin32c.exe", "Ghostscript");
+                    return false;
+                }
+                proc.StartInfo.Arguments = arg + "-dSAFER -dNOPAUSE -dBATCH -sDEVICE=pdfwrite -sOutputFile=\"" + outputFileName + "\" -c .setpdfwrite -f\"" + filename + "\"";
+                try {
+                    ReadOutputs(proc, "PS から PDF への変換");
+                }
+                catch(Win32Exception) {
+                    controller_.showPathError(Properties.Settings.Default.gsPath, "Ghostscript ");
+                    return false;
+                }
+                catch(TimeoutException) {
+                    return false;
+                }
+                if(proc.ExitCode != 0 || !File.Exists(Path.Combine(workingDir, outputFileName))) {
+                    controller_.showGenerateError();
+                    return false;
+                }
+                return true;
+            }
         }
 
         // origbbには，GhostscriptのsDevice=bboxで得られた値を入れておく．（nullならばここで取得する．）
@@ -704,6 +733,23 @@ namespace TeX2img {
         }
         #endregion
 
+        // 1 file1が生成，-1 file2が生成，0 生成に失敗
+
+        static int IsGenerated(string file1, string file2) {
+            if(!File.Exists(file1)) {
+                if(!File.Exists(file2)) {
+                    return 0;
+                } else {
+                    return -1;
+                }
+            } else {
+                if(File.Exists(file2) && System.IO.File.GetLastWriteTime(file2) > System.IO.File.GetLastWriteTime(file1)) {
+                    return -1;
+                }
+            }
+            return 1;
+        }
+
         // 変換の実体
         bool generate(string inputTeXFilePath, string outputFilePath) {
             abort = false;
@@ -712,23 +758,23 @@ namespace TeX2img {
             string tmpFileBaseName = Path.GetFileNameWithoutExtension(inputTeXFilePath);
             string inputextension = Path.GetExtension(inputTeXFilePath).ToLower();
             // とりあえずPDFを作る
+            int generated;
             if(inputextension == ".tex") {
                 if(!tex2dvi(tmpFileBaseName + ".tex")) return false;
-                string outdvi = Path.Combine(workingDir, tmpFileBaseName + ".dvi");
-                string outpdf = Path.Combine(workingDir, tmpFileBaseName + ".pdf");
-                if(!File.Exists(outpdf)) {
-                    if(!File.Exists(outdvi)) {
-                        controller_.showGenerateError();
-                        return false;
-                    } else {
-                        if(!dvi2pdf(tmpFileBaseName + ".dvi")) return false;
-                    }
-                } else {
-                    if(File.Exists(outdvi) && System.IO.File.GetLastWriteTime(outdvi) > System.IO.File.GetLastWriteTime(outpdf)) {
-                        if(!dvi2pdf(tmpFileBaseName + ".dvi")) return false;
-                    }
+                generated = IsGenerated(Path.Combine(workingDir, tmpFileBaseName + ".pdf"), Path.Combine(workingDir, tmpFileBaseName + ".dvi"));
+                if(generated == 0) {
+                    controller_.showGenerateError();
+                    return false;
+                }
+                if(generated == -1) {
+                    if(!dvi2pdf(tmpFileBaseName + ".dvi")) return false;
                 }
             }
+            generated = IsGenerated(Path.Combine(workingDir, tmpFileBaseName + ".pdf"), Path.Combine(workingDir, tmpFileBaseName + ".ps"));
+            if(inputextension == ".ps" || generated == -1) {
+                if(!ps2pdf(tmpFileBaseName + ".ps")) return false;
+            }
+
             var bbs = new List<BoundingBoxPair>();
 
             // ページ数を取得
@@ -863,6 +909,7 @@ namespace TeX2img {
             return true;
         }
 
+        #region ユーティリティー的な
         // Error -> 同期，Output -> 非同期
         // でとりあえずデッドロックしなくなったのでこれでよしとする．
         // 両方非同期で駄目な理由がわかりません……．
@@ -870,7 +917,6 @@ namespace TeX2img {
         // 非同期だと全部読み込んだかわからない気がしたので，スレッドを作成することにした．
         //
         // 結局どっちもスレッドを回すことにしてみた……．
-        #region ユーティリティー的な
         public static string which(string basename) {
             string separator, fullPath;
             string[] extensions = { "", ".exe", ".bat", ".cmd", ".vbs", ".js", ".wsf" };

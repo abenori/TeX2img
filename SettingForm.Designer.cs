@@ -318,12 +318,12 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(25, 63);
+            this.label2.Location = new System.Drawing.Point(33, 63);
             this.label2.Margin = new System.Windows.Forms.Padding(5, 0, 5, 0);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(88, 18);
+            this.label2.Size = new System.Drawing.Size(80, 18);
             this.label2.TabIndex = 16;
-            this.label2.Text = "dvipdfmx ：";
+            this.label2.Text = "dviware ：";
             // 
             // platexBrowseButton
             // 
@@ -350,12 +350,12 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(46, 26);
+            this.label1.Location = new System.Drawing.Point(55, 26);
             this.label1.Margin = new System.Windows.Forms.Padding(5, 0, 5, 0);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(67, 18);
+            this.label1.Size = new System.Drawing.Size(58, 18);
             this.label1.TabIndex = 10;
-            this.label1.Text = "platex ：";
+            this.label1.Text = "latex ：";
             // 
             // OutputImgSettingTab
             // 

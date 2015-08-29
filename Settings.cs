@@ -209,7 +209,7 @@ namespace TeX2img.Properties {
             var rv = new System.Collections.Generic.Dictionary<string, string>();
             rv["pLaTeX"] = "%compiler: platex\n\\documentclass[fleqn,papersize,dvipdfmx]{jsarticle}\n\\usepackage{amsmath,amssymb}\n\\usepackage{color}\n\\pagestyle{empty}\n";
             rv["upLaTeX"] = "%compiler: uplatex\n\\documentclass[fleqn,papersize,uplatex,dvipdfmx]{jsarticle}\n\\usepackage{amsmath,amssymb}\n\\usepackage{color}\n\\pagestyle{empty}\n";
-            rv["LaTeX"] = "%compiler: latex (etc...)\n\\documentclass[fleqn]{article}\n\\usepackage{amsmath,amssymb}\n\\usepackage{color}\n\\pagestyle{empty}\n";
+            rv["pdfLaTeX"] = "%compiler: pdflatex\n\\documentclass[fleqn]{article}\n\\usepackage{amsmath,amssymb}\n\\usepackage{color}\n\\pagestyle{empty}\n";
             rv["XeLaTeX（和文）"] = "%compiler: xelatex\n\\documentclass[fleqn]{bxjsarticle}\n\\usepackage{zxjatype}\n\\usepackage{amsmath,amssymb}\n\\usepackage{color}\n\\pagestyle{empty}\n";
             rv["LuaLaTeX（和文）"] = "%compiler: lualatex\n\\documentclass[fleqn]{ltjsarticle}\n\\usepackage{amsmath,amssymb}\n\\usepackage{color}\n\\pagestyle{empty}\n";
             return rv;

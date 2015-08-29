@@ -40,7 +40,7 @@ namespace UnitTest {
             Settings.Default.transparentPngFlag = true;
             Settings.Default.useLowResolution = false;
             Settings.Default.useMagickFlag = true;
-            doGenerateTest("transparent", new string[] { ".png", ".emf" });
+            doGenerateTest("transparent", new string[] { ".png", ".tiff", ".emf" });
             Settings.Default.transparentPngFlag = false;
             Settings.Default.useLowResolution = true;
             Settings.Default.useMagickFlag = true;
@@ -82,8 +82,8 @@ namespace UnitTest {
             foreach(var f in Directory.GetFiles(OutputDir)) File.Delete(f);
         }
         public ConverterTest() {
-            //controller = new CUIOutput();
-            controller = this;
+            controller = new CUIOutput();
+            //controller = this;
             WorkDir = Path.Combine(System.Environment.CurrentDirectory, "test");
             Directory.CreateDirectory(WorkDir);
         }
