@@ -178,9 +178,9 @@
             // 
             // GuessPathButton
             // 
-            this.GuessPathButton.Location = new System.Drawing.Point(461, 131);
+            this.GuessPathButton.Location = new System.Drawing.Point(487, 131);
             this.GuessPathButton.Name = "GuessPathButton";
-            this.GuessPathButton.Size = new System.Drawing.Size(190, 32);
+            this.GuessPathButton.Size = new System.Drawing.Size(164, 32);
             this.GuessPathButton.TabIndex = 6;
             this.GuessPathButton.Text = "各種パスの推定";
             this.GuessPathButton.UseVisualStyleBackColor = true;
@@ -192,7 +192,7 @@
             this.label16.Location = new System.Drawing.Point(17, 175);
             this.label16.Name = "label16";
             this.label16.Size = new System.Drawing.Size(236, 18);
-            this.label16.TabIndex = 25;
+            this.label16.TabIndex = 8;
             this.label16.Text = "LaTeX コンパイルの（最大）回数";
             // 
             // LaTeXCompileNumbernumUpDown
@@ -200,7 +200,7 @@
             this.LaTeXCompileNumbernumUpDown.Location = new System.Drawing.Point(288, 170);
             this.LaTeXCompileNumbernumUpDown.Name = "LaTeXCompileNumbernumUpDown";
             this.LaTeXCompileNumbernumUpDown.Size = new System.Drawing.Size(81, 25);
-            this.LaTeXCompileNumbernumUpDown.TabIndex = 7;
+            this.LaTeXCompileNumbernumUpDown.TabIndex = 9;
             // 
             // GuessLaTeXCompileCheckBox
             // 
@@ -208,7 +208,7 @@
             this.GuessLaTeXCompileCheckBox.Location = new System.Drawing.Point(404, 173);
             this.GuessLaTeXCompileCheckBox.Name = "GuessLaTeXCompileCheckBox";
             this.GuessLaTeXCompileCheckBox.Size = new System.Drawing.Size(149, 22);
-            this.GuessLaTeXCompileCheckBox.TabIndex = 8;
+            this.GuessLaTeXCompileCheckBox.TabIndex = 10;
             this.GuessLaTeXCompileCheckBox.Text = "回数を推定する";
             this.GuessLaTeXCompileCheckBox.UseVisualStyleBackColor = true;
             // 
@@ -218,7 +218,7 @@
             this.UseLowResolutionCheckBox.Location = new System.Drawing.Point(11, 264);
             this.UseLowResolutionCheckBox.Name = "UseLowResolutionCheckBox";
             this.UseLowResolutionCheckBox.Size = new System.Drawing.Size(215, 22);
-            this.UseLowResolutionCheckBox.TabIndex = 11;
+            this.UseLowResolutionCheckBox.TabIndex = 13;
             this.UseLowResolutionCheckBox.Text = "低解像度での処理を行う";
             this.UseLowResolutionCheckBox.UseVisualStyleBackColor = true;
             // 
@@ -228,7 +228,7 @@
             this.GSUseepswriteCheckButton.Location = new System.Drawing.Point(11, 236);
             this.GSUseepswriteCheckButton.Name = "GSUseepswriteCheckButton";
             this.GSUseepswriteCheckButton.Size = new System.Drawing.Size(390, 22);
-            this.GSUseepswriteCheckButton.TabIndex = 10;
+            this.GSUseepswriteCheckButton.TabIndex = 12;
             this.GSUseepswriteCheckButton.Text = "Ghostscript の DEVICE には epswrite を指定する";
             this.GSUseepswriteCheckButton.UseVisualStyleBackColor = true;
             // 
@@ -239,7 +239,7 @@
             this.encodeComboBox.Location = new System.Drawing.Point(114, 302);
             this.encodeComboBox.Name = "encodeComboBox";
             this.encodeComboBox.Size = new System.Drawing.Size(419, 26);
-            this.encodeComboBox.TabIndex = 12;
+            this.encodeComboBox.TabIndex = 15;
             // 
             // label10
             // 
@@ -247,7 +247,7 @@
             this.label10.Location = new System.Drawing.Point(8, 307);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(84, 18);
-            this.label10.TabIndex = 19;
+            this.label10.TabIndex = 14;
             this.label10.Text = "文字コード";
             // 
             // ignoreErrorCheckBox
@@ -257,7 +257,7 @@
             this.ignoreErrorCheckBox.Margin = new System.Windows.Forms.Padding(5, 4, 5, 4);
             this.ignoreErrorCheckBox.Name = "ignoreErrorCheckBox";
             this.ignoreErrorCheckBox.Size = new System.Drawing.Size(477, 22);
-            this.ignoreErrorCheckBox.TabIndex = 9;
+            this.ignoreErrorCheckBox.TabIndex = 11;
             this.ignoreErrorCheckBox.Text = "少々のコンパイルエラーは無視して画像化を強行する（非推奨）";
             this.ignoreErrorCheckBox.UseVisualStyleBackColor = true;
             // 

@@ -56,6 +56,7 @@ namespace TeX2img {
                         File.Delete(f + ".aux");
                         File.Delete(f + ".tmp");
                         File.Delete(f + ".out");
+                        File.Delete(f + ".ps");
                         File.Delete(f + ".pdf");
                     }
                     foreach(var d in generatedImageFiles) {
@@ -771,7 +772,9 @@ namespace TeX2img {
                 }
             }
             generated = IsGenerated(Path.Combine(workingDir, tmpFileBaseName + ".pdf"), Path.Combine(workingDir, tmpFileBaseName + ".ps"));
-            if(inputextension == ".ps" || generated == -1) {
+            if(inputextension == ".ps" || inputextension == ".eps") {
+                if(!ps2pdf(tmpFileBaseName + inputextension)) return false;
+            } else if(generated == -1) {
                 if(!ps2pdf(tmpFileBaseName + ".ps")) return false;
             }
 
@@ -910,27 +913,27 @@ namespace TeX2img {
         }
 
         #region ユーティリティー的な
-        // Error -> 同期，Output -> 非同期
-        // でとりあえずデッドロックしなくなったのでこれでよしとする．
-        // 両方非同期で駄目な理由がわかりません……．
-        //
-        // 非同期だと全部読み込んだかわからない気がしたので，スレッドを作成することにした．
-        //
-        // 結局どっちもスレッドを回すことにしてみた……．
-        public static string which(string basename) {
+        public static string which(string name) {
             string separator, fullPath;
-            string[] extensions = { "", ".exe", ".bat", ".cmd", ".vbs", ".js", ".wsf" };
+            var extensions = new List<string> { "" };
+            var pathext = Environment.GetEnvironmentVariable("PATHEXT");
+            if(pathext == null) return "";
+            var pathexts = pathext.Split(';').Select(s => s.ToLower()).ToList();
+            extensions.AddRange(pathexts);
+            var pathenv = Environment.GetEnvironmentVariable("PATH");
+            var extname = Path.GetExtension(name);
 
-            foreach(string path in Environment.GetEnvironmentVariable("PATH").Split(';')) {
+            if(pathenv == null) return "";
+            if(extensions == null)return "";
+            foreach(string path in pathenv.Split(';')) {
                 if(path.Length > 0 && path[path.Length - 1] != '\\') {
                     separator = "\\";
                 } else {
                     separator = "";
                 }
-
-                foreach(string extension in extensions) {
-                    fullPath = path + separator + basename + extension;
-                    if(File.Exists(fullPath)) {
+                foreach(var extension in extensions) {
+                    fullPath = path + separator + name + extension;
+                    if(File.Exists(fullPath) && pathexts.Contains(Path.GetExtension(fullPath).ToLower())) {
                         return fullPath;
                     }
                 }
@@ -1056,7 +1059,14 @@ namespace TeX2img {
         private void printCommandLine(Process proc) {
             controller_.appendOutput(proc.StartInfo.WorkingDirectory + ">\"" + proc.StartInfo.FileName + "\" " + proc.StartInfo.Arguments + "\r\n");
         }
-        
+
+        // Error -> 同期，Output -> 非同期
+        // でとりあえずデッドロックしなくなったのでこれでよしとする．
+        // 両方非同期で駄目な理由がわかりません……．
+        //
+        // 非同期だと全部読み込んだかわからない気がしたので，スレッドを作成することにした．
+        //
+        // 結局どっちもスレッドを回すことにしてみた……．
         void ReadOutputs(Process proc, string freezemsg) {
             printCommandLine(proc);
             proc.Start();

@@ -90,11 +90,27 @@ namespace TeX2img.Properties {
         }
 
         #region TeX関連パスの推定
+        static string FindPathWithHint(string hint, string preamble, string def) {
+            var m = (new System.Text.RegularExpressions.Regex("%.*?(" + hint + "):(.*)$", System.Text.RegularExpressions.RegexOptions.Multiline | System.Text.RegularExpressions.RegexOptions.IgnoreCase)).Match(preamble);
+            string name;
+            if(m.Success) name = m.Groups[2].Value.Trim();
+            else name = "";
+            if(name == "") name = def;
+            var r = name.IndexOf(" ");
+            if(r == -1) return Converter.which(name);
+            else return "\"" + Converter.which(name.Substring(0, r)) + "\"" + name.Substring(r);
+        }
+        public string GuessPlatexPath(string hint,string def = "platex") {
+            return FindPathWithHint("compiler|latex", hint, def);
+        }
         public string GuessPlatexPath() {
-            return Converter.which("platex");
+            return FindPathWithHint("compiler|latex", preamble, "platex");
+        }
+        public string GuessDvipdfmxPath(string hint,string def = "dvipdfmx") {
+            return FindPathWithHint("dviware", hint, def);
         }
         public string GuessDvipdfmxPath() {
-            return Converter.which("dvipdfmx");
+            return FindPathWithHint("dviware", preamble, "dvipdfmx");
         }
         public string GuessGsPath() {
             return GuessGsPath(platexPath);
@@ -153,6 +169,7 @@ namespace TeX2img.Properties {
                         else gsdevice = "epswrite";
                     }
                 }
+                catch(System.InvalidOperationException) { }
                 catch(System.FormatException) { }
                 catch(System.ComponentModel.Win32Exception) { }
             }
@@ -207,11 +224,11 @@ namespace TeX2img.Properties {
         }
         public static System.Collections.Generic.Dictionary<string, string> GetDefaultTemplate() {
             var rv = new System.Collections.Generic.Dictionary<string, string>();
-            rv["pLaTeX"] = "%compiler: platex\n\\documentclass[fleqn,papersize,dvipdfmx]{jsarticle}\n\\usepackage{amsmath,amssymb}\n\\usepackage{color}\n\\pagestyle{empty}\n";
-            rv["upLaTeX"] = "%compiler: uplatex\n\\documentclass[fleqn,papersize,uplatex,dvipdfmx]{jsarticle}\n\\usepackage{amsmath,amssymb}\n\\usepackage{color}\n\\pagestyle{empty}\n";
-            rv["pdfLaTeX"] = "%compiler: pdflatex\n\\documentclass[fleqn]{article}\n\\usepackage{amsmath,amssymb}\n\\usepackage{color}\n\\pagestyle{empty}\n";
-            rv["XeLaTeX（和文）"] = "%compiler: xelatex\n\\documentclass[fleqn]{bxjsarticle}\n\\usepackage{zxjatype}\n\\usepackage{amsmath,amssymb}\n\\usepackage{color}\n\\pagestyle{empty}\n";
-            rv["LuaLaTeX（和文）"] = "%compiler: lualatex\n\\documentclass[fleqn]{ltjsarticle}\n\\usepackage{amsmath,amssymb}\n\\usepackage{color}\n\\pagestyle{empty}\n";
+            rv["pLaTeX"] = "%latex: platex\n%dviware: dvipdfmx\n\\documentclass[fleqn,papersize,dvipdfmx]{jsarticle}\n\\usepackage{amsmath,amssymb}\n\\usepackage{color}\n\\pagestyle{empty}\n";
+            rv["upLaTeX"] = "%latex: uplatex\n%dviware: dvipdfmx\n\\documentclass[fleqn,papersize,uplatex,dvipdfmx]{jsarticle}\n\\usepackage{amsmath,amssymb}\n\\usepackage{color}\n\\pagestyle{empty}\n";
+            rv["pdfLaTeX"] = "%latex: pdflatex\n\\documentclass[fleqn]{article}\n\\usepackage{amsmath,amssymb}\n\\usepackage{color}\n\\pagestyle{empty}\n";
+            rv["XeLaTeX（和文）"] = "%latex: xelatex\n\\documentclass[fleqn]{bxjsarticle}\n\\usepackage{zxjatype}\n\\usepackage{amsmath,amssymb}\n\\usepackage{color}\n\\pagestyle{empty}\n";
+            rv["LuaLaTeX（和文）"] = "%latex: lualatex\n\\documentclass[fleqn]{ltjsarticle}\n\\usepackage{amsmath,amssymb}\n\\usepackage{color}\n\\pagestyle{empty}\n";
             return rv;
         }
     }

@@ -5,6 +5,7 @@ using System.Data;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
+using System.Linq;
 using System.IO;
 using System.Diagnostics;
 
@@ -237,11 +238,38 @@ namespace TeX2img {
         private void GuessPathButton_Click(object sender, EventArgs e) {
             string platex = Properties.Settings.Default.GuessPlatexPath();
             platexTextBox.Text = platex;
-            dvipdfmxTextBox.Text = Properties.Settings.Default.GuessDvipdfmxPath();
+            var dvipdfmx = Properties.Settings.Default.GuessDvipdfmxPath();
+            dvipdfmxTextBox.Text = dvipdfmx;
             string gs = Properties.Settings.Default.GuessGsPath(platex);
             gsTextBox.Text = gs;
             string gsdevice = Properties.Settings.Default.GuessGsdevice(gs);
             if(gsdevice != "") GSUseepswriteCheckButton.Checked = (gsdevice == "epswrite");
+            var errs = new List<string>();
+            if(platex == "") errs.Add("latex");
+            if(dvipdfmx == "") errs.Add("dviware");
+            if(gs == "") errs.Add("Ghostscript");
+            var err = String.Join(", ", errs.ToArray());
+            if(err != "") MessageBox.Show(err + " の推定に失敗しました．", "TeX2img");
+        }
+
+        private void AdvancedGuess_Click(object sender, EventArgs e) {
+            var menu = new ContextMenuStrip();
+            foreach(var d in Properties.Settings.Default.preambleTemplates) {
+                menu.Items.Add(new ToolStripMenuItem(d.Key) { Tag = d.Key });
+            }
+            menu.ItemClicked += ((ss, ee) => {
+                var tag = (string) ee.ClickedItem.Tag;
+                var preamble = Properties.Settings.Default.preambleTemplates[tag];
+                string platex = Properties.Settings.Default.GuessPlatexPath(preamble);
+                platexTextBox.Text = platex;
+                dvipdfmxTextBox.Text = Properties.Settings.Default.GuessDvipdfmxPath(preamble);
+                string gs = Properties.Settings.Default.GuessGsPath(platex);
+                gsTextBox.Text = gs;
+                string gsdevice = Properties.Settings.Default.GuessGsdevice(gs);
+                if(gsdevice != "") GSUseepswriteCheckButton.Checked = (gsdevice == "epswrite");
+            });
+            var btn = (Button) sender;
+            menu.Show(btn, new Point(btn.Width, 0));
         }
     }
 }

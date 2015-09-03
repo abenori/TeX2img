@@ -160,7 +160,7 @@ namespace TeX2img {
         public void showPreambleWindow(bool show) {
             showPreambleWindowToolStripMenuItem.Checked = show;
             if(show) {
-                myPreambleForm.setLocation(Left - myPreambleForm.Width, Top);
+                myPreambleForm.setLocation(Math.Max(0, Left - myPreambleForm.Width), Top);
                 myPreambleForm.Show();
             } else {
                 myPreambleForm.Hide();
@@ -172,6 +172,7 @@ namespace TeX2img {
         }
 
         private void SettingToolStripMenuItem_Click(object sender, EventArgs e) {
+            Properties.Settings.Default.preamble = myPreambleForm.PreambleTextBox.Text;
             (new SettingForm()).ShowDialog();
             ChangeSetting();
         }

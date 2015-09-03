@@ -20,8 +20,10 @@ namespace TeX2img {
         static bool help = false;
 
         static OptionSet options = new OptionSet(){
-			{"platex=","platex のパス", val => Properties.Settings.Default.platexPath=val,()=>Properties.Settings.Default.platexPath},
-			{"dvipdfmx=","dvipdfmx のパス",val =>Properties.Settings.Default.dvipdfmxPath=val,()=>Properties.Settings.Default.dvipdfmxPath},
+			{"latex=","latex のパス", val => Properties.Settings.Default.platexPath=val,()=>Properties.Settings.Default.platexPath},
+			{"platex=","/latex と同じ（oboslete）", val => Properties.Settings.Default.platexPath=val},
+			{"dviware=","dviware のパス",val =>Properties.Settings.Default.dvipdfmxPath=val,()=>Properties.Settings.Default.dvipdfmxPath},
+			{"dvipdfmx=","/dviware と同じ（obsolete）",val =>Properties.Settings.Default.dvipdfmxPath=val},
 			{"gs=","Ghostscript のパス",val => Properties.Settings.Default.gsPath = val,()=>Properties.Settings.Default.gsPath},
 			{"gsdevice=",
 				"Ghostscript の device（epswrite/eps2write）",
@@ -192,8 +194,8 @@ namespace TeX2img {
             // 一つ目がTeX2img本体ならば削除
             // abtlinstからCreateProcessで呼び出すとTeX2img本体にならなかったので，一応確認をする．
             if(cmds.Count > 0) {
-                string filecmds0 = Path.GetFullPath(cmds[0]).ToLower();
-                string me = Path.GetFullPath(System.Reflection.Assembly.GetExecutingAssembly().Location).ToLower();
+                string filecmds0 = Path.GetFileName(cmds[0]).ToLower();
+                string me = Path.GetFileName(System.Reflection.Assembly.GetExecutingAssembly().Location).ToLower();
 #if DEBUG
                 string vshost = Path.Combine(Path.GetDirectoryName(me), Path.GetFileNameWithoutExtension(me) + ".vshost.exe").ToLower();
                 if(vshost == filecmds0 || vshost == filecmds0 + ".exe") filecmds0 = me;

@@ -243,3 +243,8 @@ https://code.google.com/p/pdfium/
     - /no-delete → /delete-tmpfiles とし，意味を逆にした．
     - /no- となっていたオプションから no- を外し，意味を逆にした．
     - /help で現在の設定を表示するようにした．
+
+* 
+    - ps ファイルが作成された場合，Ghostscript を使って pdf への変換を試みるようにした．
+    - プリアンブルのテンプレートに %latex: や %dviware: から始まる行があれば，それに応じてパス設定を変更するようにした．
+

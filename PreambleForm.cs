@@ -108,6 +108,18 @@ namespace TeX2img {
                         if(text != null) {
                             if(MessageBox.Show("現在のプリアンブルを以下の内容に変更します．よろしいですか？\n" + text, "TeX2img", MessageBoxButtons.YesNo) == System.Windows.Forms.DialogResult.Yes) {
                                 preambleTextBox.Text = ChangeReturnCode(text);
+
+                                var latex = Properties.Settings.Default.GuessPlatexPath(text, "");
+                                var dvipdfmx = Properties.Settings.Default.GuessDvipdfmxPath(text, "");
+                                string str = "";
+                                if(latex != "") str += "\nlatex: " + latex;
+                                if(dvipdfmx != "") str += "\ndviware: " + dvipdfmx;
+                                if(str != "") {
+                                    if(MessageBox.Show("テンプレートの内容に合った実行パスとして以下が検出されました．現在の設定を変更しますか？" + str, "TeX2img", MessageBoxButtons.YesNo) == System.Windows.Forms.DialogResult.Yes) {
+                                        if(latex != "") Properties.Settings.Default.platexPath = latex;
+                                        if(dvipdfmx != "") Properties.Settings.Default.dvipdfmxPath = dvipdfmx;
+                                    }
+                                }
                             }
                         }
                     }
