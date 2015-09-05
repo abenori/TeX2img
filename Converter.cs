@@ -1034,12 +1034,10 @@ namespace TeX2img {
         // path に指定されたオプション引数を解釈する
         // 戻り値 = FileName
         public static string setProcStartInfo(String path, out string Arguments) {
-            // "がないならばFileName = path
             string FileName = path;
             Arguments = "";
             if(path.IndexOf("\"") != -1) {
-                // そうでなければ
-                // **"***"**(SPACE)という並びを探す 
+                // "がないならば**"***"**(SPACE)という並びを探す 
                 var m = Regex.Match(path, "^([^\" ]*(\"[^\"]*\")*[^\" ]*) (.*)$");
                 if(m.Success) {
                     FileName = m.Groups[1].Value;
@@ -1047,6 +1045,18 @@ namespace TeX2img {
                     if(Arguments != "") Arguments += " ";
                 }
                 FileName = FileName.Replace("\"", "");
+            } else {
+                // そうでなければスペースで切って後ろから解析．
+                var splitted = path.Split(new char[] { ' ' });
+                Arguments = "";
+                for(int i = splitted.Count() ; i >= 0 ; --i) {
+                    var file = String.Join(" ", splitted, 0, i);
+                    if(File.Exists(file)) {
+                        FileName = file;
+                        Arguments = String.Join(" ", splitted, i, splitted.Count() - i);
+                        break;
+                    }
+                }
             }
             return FileName;
         }
