@@ -224,11 +224,70 @@ namespace TeX2img.Properties {
         }
         public static System.Collections.Generic.Dictionary<string, string> GetDefaultTemplate() {
             var rv = new System.Collections.Generic.Dictionary<string, string>();
-            rv["pLaTeX"] = "%latex: platex\n%dviware: dvipdfmx\n\\documentclass[fleqn,papersize,dvipdfmx]{jsarticle}\n\\usepackage{amsmath,amssymb}\n\\usepackage{color}\n\\pagestyle{empty}\n";
-            rv["upLaTeX"] = "%latex: uplatex\n%dviware: dvipdfmx\n\\documentclass[fleqn,papersize,uplatex,dvipdfmx]{jsarticle}\n\\usepackage{amsmath,amssymb}\n\\usepackage{color}\n\\pagestyle{empty}\n";
-            rv["pdfLaTeX"] = "%latex: pdflatex\n\\documentclass[fleqn]{article}\n\\usepackage{amsmath,amssymb}\n\\usepackage{color}\n\\pagestyle{empty}\n";
-            rv["XeLaTeX（和文）"] = "%latex: xelatex\n\\documentclass[fleqn]{bxjsarticle}\n\\usepackage{zxjatype}\n\\usepackage{amsmath,amssymb}\n\\usepackage{color}\n\\pagestyle{empty}\n";
-            rv["LuaLaTeX（和文）"] = "%latex: lualatex\n\\documentclass[fleqn]{ltjsarticle}\n\\usepackage{amsmath,amssymb}\n\\usepackage{color}\n\\pagestyle{empty}\n";
+
+            #region デフォルトテンプレート
+rv["pLaTeX"] = @"%latex: platex
+%dviware: dvipdfmx
+\documentclass[fleqn,papersize,dvipdfmx]{jsarticle}
+\usepackage{amsmath,amssymb}
+\usepackage{color}
+\pagestyle{empty}
+";
+
+rv["upLaTeX"] = @"%latex: uplatex
+%dviware: dvipdfmx
+\documentclass[fleqn,papersize,uplatex,dvipdfmx]{jsarticle}
+\usepackage{amsmath,amssymb}
+\usepackage{color}
+\pagestyle{empty}
+";
+
+rv["pdfLaTeX"] = @"%latex: pdflatex
+\documentclass[fleqn]{article}
+\usepackage{amsmath,amssymb}
+\usepackage{color}
+\pagestyle{empty}
+";
+
+rv["XeLaTeX（和文）"] = @"%latex: xelatex
+\documentclass[fleqn]{bxjsarticle}
+\usepackage{zxjatype}
+\usepackage{amsmath,amssymb}
+\usepackage{color}
+\pagestyle{empty}
+";
+
+rv["LuaLaTeX（和文）"] = @"%latex: lualatex
+\documentclass[fleqn]{ltjsarticle}
+\usepackage{amsmath,amssymb}
+\usepackage{color}
+\pagestyle{empty}
+";
+
+rv["LaTeX + dvips"] = @"%latex: latex
+%dviware: dvips
+\documentclass[fleqn,dvips]{article}
+\usepackage{amsmath,amssymb}
+\usepackage{graphicx,color}
+\pagestyle{empty}
+";
+
+rv["pLaTeX + dvips"] = @"%latex: platex
+%dviware: dvips
+\documentclass[fleqn,papersize,dvips]{jsarticle}
+\usepackage{amsmath,amssymb}
+\usepackage{graphicx,color}
+\pagestyle{empty}
+";
+
+rv["upLaTeX + dvips"] = @"%latex: uplatex
+%dviware: dvips
+\documentclass[fleqn,papersize,uplatex,dvips]{jsarticle}
+\usepackage{amsmath,amssymb}
+\usepackage{graphicx,color}
+\pagestyle{empty}
+";
+            #endregion
             return rv;
         }
     }
