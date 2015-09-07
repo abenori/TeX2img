@@ -79,7 +79,7 @@ namespace TeX2img {
             if(GetInputEncoding().CodePage == Encoding.UTF8.CodePage) {
                 Environments["command_line_encoding"] = "utf8";
             }
-
+            generatedTeXFilesWithoutExtension.Add(Path.Combine(workingDir, Path.GetFileNameWithoutExtension(InputFile)));
             bool rv = generate(InputFile, OutputFile);
 
             return rv;
@@ -262,7 +262,6 @@ namespace TeX2img {
         private bool tex2dvi(string fileName) {
             string baseName = Path.GetFileNameWithoutExtension(fileName);
             string arg;
-            generatedTeXFilesWithoutExtension.Add(Path.Combine(workingDir, baseName));
             ProcessStartInfo startinfo = GetProcessStartInfo();
             startinfo.FileName = setProcStartInfo(Properties.Settings.Default.platexPath, out arg);
             if(Properties.Settings.Default.platexPath == "") {
@@ -366,7 +365,7 @@ namespace TeX2img {
                     controller_.showPathError("gswin32c.exe", "Ghostscript");
                     return false;
                 }
-                proc.StartInfo.Arguments = arg + "-dSAFER -dNOPAUSE -dBATCH -sDEVICE=pdfwrite -sOutputFile=\"" + outputFileName + "\" -c .setpdfwrite -f\"" + filename + "\"";
+                proc.StartInfo.Arguments = arg + "-dSAFER -dNOPAUSE -dBATCH -sDEVICE=pdfwrite -dAutoRotatePages=/None -sOutputFile=\"" + outputFileName + "\" -c .setpdfwrite -f\"" + filename + "\"";
                 try {
                     ReadOutputs(proc, "PS から PDF への変換");
                 }
@@ -1051,9 +1050,11 @@ namespace TeX2img {
                 Arguments = "";
                 for(int i = splitted.Count() ; i >= 0 ; --i) {
                     var file = String.Join(" ", splitted, 0, i);
-                    if(File.Exists(file)) {
+                    if(file.EndsWith(" ")) continue;// File.Existsは末尾の空白を削除してから存在チェックをする
+                    if(File.Exists(file) || File.Exists(file + ".exe") || (Path.GetDirectoryName(file) == "" && which(file) != "")) {
                         FileName = file;
                         Arguments = String.Join(" ", splitted, i, splitted.Count() - i);
+                        if(Arguments != "") Arguments += " ";
                         break;
                     }
                 }

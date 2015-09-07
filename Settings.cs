@@ -107,10 +107,10 @@ namespace TeX2img.Properties {
             return FindPathWithHint("compiler|latex", preamble, "platex");
         }
         public string GuessDvipdfmxPath(string hint,string def = "dvipdfmx") {
-            return FindPathWithHint("dvidriver", hint, def);
+            return FindPathWithHint("dvi *driver", hint, def);
         }
         public string GuessDvipdfmxPath() {
-            return FindPathWithHint("dvidriver", preamble, "dvipdfmx");
+            return FindPathWithHint("dvi *driver", preamble, "dvipdfmx");
         }
         public string GuessGsPath() {
             return GuessGsPath(platexPath);
