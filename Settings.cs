@@ -107,10 +107,10 @@ namespace TeX2img.Properties {
             return FindPathWithHint("compiler|latex", preamble, "platex");
         }
         public string GuessDvipdfmxPath(string hint,string def = "dvipdfmx") {
-            return FindPathWithHint("dviware", hint, def);
+            return FindPathWithHint("dvidriver", hint, def);
         }
         public string GuessDvipdfmxPath() {
-            return FindPathWithHint("dviware", preamble, "dvipdfmx");
+            return FindPathWithHint("dvidriver", preamble, "dvipdfmx");
         }
         public string GuessGsPath() {
             return GuessGsPath(platexPath);
@@ -227,7 +227,7 @@ namespace TeX2img.Properties {
 
             #region デフォルトテンプレート
 rv["pLaTeX"] = @"%latex: platex
-%dviware: dvipdfmx
+%dvidriver: dvipdfmx
 \documentclass[fleqn,papersize,dvipdfmx]{jsarticle}
 \usepackage{amsmath,amssymb}
 \usepackage{color}
@@ -235,7 +235,7 @@ rv["pLaTeX"] = @"%latex: platex
 ";
 
 rv["upLaTeX"] = @"%latex: uplatex
-%dviware: dvipdfmx
+%dvidriver: dvipdfmx
 \documentclass[fleqn,papersize,uplatex,dvipdfmx]{jsarticle}
 \usepackage{amsmath,amssymb}
 \usepackage{color}
@@ -265,7 +265,7 @@ rv["LuaLaTeX（和文）"] = @"%latex: lualatex
 ";
 
 rv["LaTeX + dvips"] = @"%latex: latex
-%dviware: dvips
+%dvidriver: dvips
 \documentclass[fleqn,dvips]{article}
 \usepackage{amsmath,amssymb}
 \usepackage{graphicx,color}
@@ -273,7 +273,7 @@ rv["LaTeX + dvips"] = @"%latex: latex
 ";
 
 rv["pLaTeX + dvips"] = @"%latex: platex
-%dviware: dvips
+%dvidriver: dvips
 \documentclass[fleqn,papersize,dvips]{jsarticle}
 \usepackage{amsmath,amssymb}
 \usepackage{graphicx,color}
@@ -281,7 +281,7 @@ rv["pLaTeX + dvips"] = @"%latex: platex
 ";
 
 rv["upLaTeX + dvips"] = @"%latex: uplatex
-%dviware: dvips
+%dvidriver: dvips
 \documentclass[fleqn,papersize,uplatex,dvips]{jsarticle}
 \usepackage{amsmath,amssymb}
 \usepackage{graphicx,color}

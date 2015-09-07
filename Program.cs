@@ -22,8 +22,8 @@ namespace TeX2img {
         static OptionSet options = new OptionSet(){
 			{"latex=","latex のパス", val => Properties.Settings.Default.platexPath=val,()=>Properties.Settings.Default.platexPath},
 			{"platex=","/latex と同じ（oboslete）", val => Properties.Settings.Default.platexPath=val},
-			{"dviware=","dviware のパス",val =>Properties.Settings.Default.dvipdfmxPath=val,()=>Properties.Settings.Default.dvipdfmxPath},
-			{"dvipdfmx=","/dviware と同じ（obsolete）",val =>Properties.Settings.Default.dvipdfmxPath=val},
+			{"dvidriver=","DVI driver のパス",val =>Properties.Settings.Default.dvipdfmxPath=val,()=>Properties.Settings.Default.dvipdfmxPath},
+			{"dvipdfmx=","/dvidriver と同じ（obsolete）",val =>Properties.Settings.Default.dvipdfmxPath=val},
 			{"gs=","Ghostscript のパス",val => Properties.Settings.Default.gsPath = val,()=>Properties.Settings.Default.gsPath},
 			{"gsdevice=",
 				"Ghostscript の device（epswrite/eps2write）",
@@ -221,7 +221,7 @@ namespace TeX2img {
                 if(Properties.Settings.Default.gsPath == "") Properties.Settings.Default.gsPath = Properties.Settings.Default.GuessGsPath();
                 if(Properties.Settings.Default.platexPath == "" || Properties.Settings.Default.dvipdfmxPath == "" || Properties.Settings.Default.gsPath == "") {
                     if(!nomsg) {
-                        var msg = "platex / dvipdfmx / gs のパス設定に失敗しました。\n環境設定画面で手動で設定してください。";
+                        var msg = "latex / dvipdfmx / gs のパス設定に失敗しました。\n環境設定画面で手動で設定してください。";
                         if(nogui) Console.WriteLine(msg + "\n");
                         else MessageBox.Show(msg, "TeX2img");
                         (new SettingForm()).ShowDialog();

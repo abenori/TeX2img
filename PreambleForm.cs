@@ -113,7 +113,7 @@ namespace TeX2img {
                                 var dvipdfmx = Properties.Settings.Default.GuessDvipdfmxPath(text, "");
                                 string str = "";
                                 if(latex != "") str += "\nlatex: " + latex;
-                                if(dvipdfmx != "") str += "\ndviware: " + dvipdfmx;
+                                if(dvipdfmx != "") str += "\nDVI driver: " + dvipdfmx;
                                 if(str != "") {
                                     if(MessageBox.Show("テンプレートの内容に合った実行パスとして以下が検出されました．現在の設定を変更しますか？" + str, "TeX2img", MessageBoxButtons.YesNo) == System.Windows.Forms.DialogResult.Yes) {
                                         if(latex != "") Properties.Settings.Default.platexPath = latex;

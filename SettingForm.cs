@@ -246,7 +246,7 @@ namespace TeX2img {
             if(gsdevice != "") GSUseepswriteCheckButton.Checked = (gsdevice == "epswrite");
             var errs = new List<string>();
             if(platex == "") errs.Add("latex");
-            if(dvipdfmx == "") errs.Add("dviware");
+            if(dvipdfmx == "") errs.Add("DVI driver");
             if(gs == "") errs.Add("Ghostscript");
             var err = String.Join(", ", errs.ToArray());
             if(err != "") MessageBox.Show(err + " の推定に失敗しました．", "TeX2img");
