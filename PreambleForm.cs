@@ -91,7 +91,7 @@ namespace TeX2img {
                         Properties.Settings.Default.preambleTemplates.Select(d => d.Key).ToList());
                     input.OKButtonClicked += ((sss, eee) => {
                         if(eee.InputedText == manageItemStr || eee.InputedText == addItemStr || eee.InputedText == "") {
-                            MessageBox.Show("[" + eee.InputedText + "] はテンプレート名には使えません．", "TeX2img");
+                            MessageBox.Show("[" + eee.InputedText + "] はテンプレート名には使えません。", "TeX2img");
                             eee.Cancel = true;
                         } else if(Properties.Settings.Default.preambleTemplates.ContainsKey(eee.InputedText)) {
                             if(MessageBox.Show(eee.InputedText + " に上書きしますか？", "TeX2img", MessageBoxButtons.YesNo) != System.Windows.Forms.DialogResult.Yes) {
@@ -106,7 +106,7 @@ namespace TeX2img {
                     try {
                         var text = Properties.Settings.Default.preambleTemplates[tag];
                         if(text != null) {
-                            if(MessageBox.Show("現在のプリアンブルを以下の内容に変更します．よろしいですか？\n" + text, "TeX2img", MessageBoxButtons.YesNo) == System.Windows.Forms.DialogResult.Yes) {
+                            if(MessageBox.Show("現在のプリアンブルを以下の内容に変更します。よろしいですか？\n" + text, "TeX2img", MessageBoxButtons.YesNo) == System.Windows.Forms.DialogResult.Yes) {
                                 preambleTextBox.Text = ChangeReturnCode(text);
 
                                 var latex = Properties.Settings.Default.GuessPlatexPath(text, "");
@@ -115,7 +115,7 @@ namespace TeX2img {
                                 if(latex != "") str += "\nlatex: " + latex;
                                 if(dvipdfmx != "") str += "\nDVI driver: " + dvipdfmx;
                                 if(str != "") {
-                                    if(MessageBox.Show("テンプレートの内容に合った実行パスとして以下が検出されました．現在の設定を変更しますか？" + str, "TeX2img", MessageBoxButtons.YesNo) == System.Windows.Forms.DialogResult.Yes) {
+                                    if(MessageBox.Show("テンプレートの内容に合った実行パスとして以下が検出されました。現在の設定を変更しますか？" + str, "TeX2img", MessageBoxButtons.YesNo) == System.Windows.Forms.DialogResult.Yes) {
                                         if(latex != "") Properties.Settings.Default.platexPath = latex;
                                         if(dvipdfmx != "") Properties.Settings.Default.dvipdfmxPath = dvipdfmx;
                                     }

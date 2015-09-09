@@ -128,7 +128,7 @@ namespace TeX2img {
             setEnabled();
         }
 
-        // enabled = falseだと全部disableになる．
+        // enabled = falseだと全部disableになる。
         private void setEnabled(bool enabled = true) {
             menuStrip1.Enabled = enabled;
             groupBox1.Enabled = enabled;
@@ -195,7 +195,8 @@ namespace TeX2img {
         }
 
         public void showExtensionError(string file) {
-            MessageBox.Show("出力ファイルの拡張子は "+ String.Join("/",Converter.imageExtensions.Select(d=>d.Substring(1)).ToArray()) + " のいずれかにしてください。", "ファイル形式エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            //MessageBox.Show("出力ファイルの拡張子は "+ String.Join("/",Converter.imageExtensions.Select(d=>d.Substring(1)).ToArray()) + " のいずれかにしてください。", "ファイル形式エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            MessageBox.Show(file + "\nの拡張子が不正です。", "ファイル形式エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
 
         delegate void appendOutputDelegate(string log);
@@ -216,7 +217,7 @@ namespace TeX2img {
         }
 
         public void errorIgnoredWarning() {
-            MessageBox.Show("コンパイルエラーを無視して画像化を強行しました．\n結果は期待と異なる可能性があります．\nソースを修正しエラーを解決することを推奨します．", "警告", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            MessageBox.Show("コンパイルエラーを無視して画像化を強行しました。\n結果は期待と異なる可能性があります。\nソースを修正しエラーを解決することを推奨します。", "警告", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
 
         delegate void scrollOutputTextBoxToEndDelegate();
@@ -273,7 +274,7 @@ namespace TeX2img {
                 this.Activate();
                 try { convertWorker.RunWorkerAsync(100); }
                 catch(InvalidOperationException e){
-                    MessageBox.Show("エラーが発生しました．しばらくしてからもう一度試してみてください．\n" + e.Message);
+                    MessageBox.Show("エラーが発生しました。しばらくしてからもう一度試してみてください。\n" + e.Message);
                 }
             } else {
                 if(converter != null) converter.Abort();
@@ -286,7 +287,7 @@ namespace TeX2img {
                 Directory.CreateDirectory(Path.GetTempPath());
             }
             catch(Exception) {
-                MessageBox.Show("一時フォルダ\n" + Path.GetTempPath() + "の作成に失敗しました．環境変数 TMP 及び TEMP を確認してください．");
+                MessageBox.Show("一時フォルダ\n" + Path.GetTempPath() + "の作成に失敗しました。環境変数 TMP 及び TEMP を確認してください。");
                 return;
             }
 
@@ -302,7 +303,7 @@ namespace TeX2img {
                         File.Copy(file, tmptexfn, true);
                     }
                     catch(Exception) {
-                        MessageBox.Show(file + "\nに対する一時ファイルの生成に失敗しました．");
+                        MessageBox.Show(file + "\nに対する一時ファイルの生成に失敗しました。");
                         continue;
                     }
                     converter = new Converter(this, tmptexfn, FirstFiles[2 * i + 1]);
@@ -333,7 +334,7 @@ namespace TeX2img {
                 }
 
                 if(tmpTeXFileName == null) {
-                    MessageBox.Show("一時ファイル名の決定に失敗しました．作業フォルダ：\n" + Path.GetTempPath() + "\nを確認してください．");
+                    MessageBox.Show("一時ファイル名の決定に失敗しました。作業フォルダ：\n" + Path.GetTempPath() + "\nを確認してください。");
                     return;
                 }
                 string tmpFileBaseName = Path.GetFileNameWithoutExtension(tmpTeXFileName);
@@ -341,6 +342,7 @@ namespace TeX2img {
 
                 using(converter = new Converter(this, Path.Combine(tmpDir, tmpTeXFileName), outputFileNameTextBox.Text)) {
                     if(!converter.CheckFormat()) return;
+                    if(!converter.CheckInputFormat()) return;
 
                     #region TeX ソースファイルの準備
                     // 外部ファイルから入力する場合はテンポラリディレクトリにコピー
@@ -348,7 +350,7 @@ namespace TeX2img {
                         string inputTeXFilePath = inputFileNameTextBox.Text;
                         string tmpfile = Path.Combine(tmpDir, tmpTeXFileName);
                         File.Copy(inputTeXFilePath, tmpfile, true);
-                        // 読み取り専用の場合解除しておく（後でFile.Deleteに失敗するため）．
+                        // 読み取り専用の場合解除しておく（後でFile.Deleteに失敗するため）。
                         (new FileInfo(tmpfile)).Attributes = FileAttributes.Normal;
                         converter.AddInputPath(Path.GetDirectoryName(inputTeXFilePath));
                     }
@@ -467,12 +469,12 @@ namespace TeX2img {
                 String.Join(";", Converter.imageExtensions.Select(d => "*" + d).ToArray()) + "|全てのファイル (*.*)|*.*";
             if(ofd.ShowDialog() == DialogResult.OK) {
                 try {
-                    if(MessageBox.Show("ファイルをインポートします．\n現在のプリアンブル及び編集中のソースは破棄されます．\nよろしいですか？", "TeX2img", MessageBoxButtons.YesNo) == System.Windows.Forms.DialogResult.Yes) {
+                    if(MessageBox.Show("ファイルをインポートします。\n現在のプリアンブル及び編集中のソースは破棄されます。\nよろしいですか？", "TeX2img", MessageBoxButtons.YesNo) == System.Windows.Forms.DialogResult.Yes) {
                         ImportFile(ofd.FileName);
                     }
                 }
                 catch(FileNotFoundException) {
-                    MessageBox.Show(ofd.FileName + " は存在しません．");
+                    MessageBox.Show(ofd.FileName + " は存在しません。");
                 }
             }
         }
@@ -489,7 +491,7 @@ namespace TeX2img {
                     }
                 }
                 catch(UnauthorizedAccessException){
-                    MessageBox.Show("ファイルの書き込みに失敗しました．\n他のアプリケーションで開いていないかを確認してください．");
+                    MessageBox.Show("ファイルの書き込みに失敗しました。\n他のアプリケーションで開いていないかを確認してください。");
                 }
             }
         }
@@ -514,19 +516,19 @@ namespace TeX2img {
                 using(var fs = AlternativeDataStream.ReadAlternativeDataStream(path, Converter.ADSName))
                 using(var sr = new StreamReader(fs,Encoding.UTF8)){
                     if(!ParseTeXSourceFile(sr, out preamble, out body)) {
-                        MessageBox.Show("TeX ソースファイルの解析に失敗しました．\n\\begin{document} や \\end{document} 等が正しく入力されているか確認してください．", "TeX2img");
+                        MessageBox.Show("TeX ソースファイルの解析に失敗しました。\n\\begin{document} や \\end{document} 等が正しく入力されているか確認してください。", "TeX2img");
                     }
                 }
             }
             catch(IOException) {
                 if(File.Exists(path)) {
-                    MessageBox.Show(path + "\nにはソース情報がないようです．", "TeX2img");
+                    MessageBox.Show(path + "\nにはソース情報がないようです。", "TeX2img");
                 } else {
-                    MessageBox.Show(path + "\nは開けませんでした．", "TeX2img");
+                    MessageBox.Show(path + "\nは開けませんでした。", "TeX2img");
                 }
             }
             catch(NotImplementedException) {
-                MessageBox.Show("NTFS ファイルシステム以外ではソースファイルの埋め込みはサポートされていません．");
+                MessageBox.Show("NTFS ファイルシステム以外ではソースファイルの埋め込みはサポートされていません。");
             }
         }
 
@@ -566,13 +568,13 @@ namespace TeX2img {
                 break;
             }
             if(encoding.CodePage != GuessedEncoding.CodePage) {
-                if(bom || MessageBox.Show("設定されている文字コードは\n" + encoding.EncodingName + "\nですが，読み込まれるファイルは\n" + GuessedEncoding.EncodingName + "\nと推定されました．推定の\n" + GuessedEncoding.EncodingName + "\nを用いてもよろしいですか？", "TeX2img", MessageBoxButtons.YesNo) == System.Windows.Forms.DialogResult.Yes) {
+                if(bom || MessageBox.Show("設定されている文字コードは\n" + encoding.EncodingName + "\nですが，読み込まれるファイルは\n" + GuessedEncoding.EncodingName + "\nと推定されました。推定の\n" + GuessedEncoding.EncodingName + "\nを用いてもよろしいですか？", "TeX2img", MessageBoxButtons.YesNo) == System.Windows.Forms.DialogResult.Yes) {
                     encoding = GuessedEncoding;
                 }
             }
             using(var sr = new StringReader(encoding.GetString(buf))) {
                 if(!ParseTeXSourceFile(sr, out preamble,out body)) {
-                   MessageBox.Show("TeX ソースファイルの解析に失敗しました．\n\\begin{document} や \\end{document} 等が正しく入力されているか確認してください．","TeX2img");
+                   MessageBox.Show("TeX ソースファイルの解析に失敗しました。\n\\begin{document} や \\end{document} 等が正しく入力されているか確認してください。","TeX2img");
                 }
             }
         }
@@ -615,7 +617,7 @@ namespace TeX2img {
             if(e.Data.GetDataPresent(DataFormats.FileDrop)) {
                 string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
                 if(files.Length == 0)return;
-                if(MessageBox.Show("ファイルをインポートします．\n現在のプリアンブル及び編集中のソースは破棄されます．\nよろしいですか？", "TeX2img", MessageBoxButtons.YesNo) == System.Windows.Forms.DialogResult.No) return;
+                if(MessageBox.Show("ファイルをインポートします。\n現在のプリアンブル及び編集中のソースは破棄されます。\nよろしいですか？", "TeX2img", MessageBoxButtons.YesNo) == System.Windows.Forms.DialogResult.No) return;
                 ImportFile(files[0]);
             }
         }
@@ -636,7 +638,7 @@ namespace TeX2img {
 
         private void ColorInputHelperToolStripMenuItem_Click(object sender, EventArgs e) {
             if(!InputFromTextboxRadioButton.Checked) {
-                MessageBox.Show("TeX コード直接入力時のみ利用可能です．","TeX2img");
+                MessageBox.Show("TeX コード直接入力時のみ利用可能です。","TeX2img");
                 return;
             }
             Func<Color, string> GetColorString = (c) => {

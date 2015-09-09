@@ -198,9 +198,10 @@ namespace TeX2img.Properties {
 
         public FontColorCollection editorFontColor = new FontColorCollection();
         public bool SaveSettings = true;
+        // Default：問い合わせて終了，NonStop：停まらない，Stop：強制終了
         public enum BatchMode { Default, NonStop, Stop };
         public BatchMode batchMode = BatchMode.Default;
-        public int timeOut = 0;//ミリ秒，負なら無限大
+        public int timeOut = 10000;//ミリ秒，0以下なら無限大
         public int[] ColorDialogCustomColors = new int[16]{
             0xFFFFFF,0xFFFFFF,0xFFFFFF,0xFFFFFF,
             0xFFFFFF,0xFFFFFF,0xFFFFFF,0xFFFFFF,

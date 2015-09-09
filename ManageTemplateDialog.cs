@@ -27,9 +27,9 @@ namespace TeX2img {
         private void DeleteButton_Click(object sender, EventArgs e) {
             var temp = (string) TemplateListBox.SelectedItem;
             if(temp == null || !Templates.ContainsKey(temp)) {
-                MessageBox.Show("削除するテンプレートを選択してください．");
+                MessageBox.Show("削除するテンプレートを選択してください。");
             } else {
-                if(MessageBox.Show(temp + " を削除します．よろしいですか？", "TeX2img", MessageBoxButtons.YesNo) == System.Windows.Forms.DialogResult.Yes) {
+                if(MessageBox.Show(temp + " を削除します。よろしいですか？", "TeX2img", MessageBoxButtons.YesNo) == System.Windows.Forms.DialogResult.Yes) {
                     TemplateListBox.Items.Remove(TemplateListBox.SelectedItem);
                     Templates.Remove(temp);
                 }
@@ -39,9 +39,9 @@ namespace TeX2img {
         private void ShowButton_Click(object sender, EventArgs e) {
             var temp = (string) TemplateListBox.SelectedItem;
             if(temp == null || !Templates.ContainsKey(temp)) {
-                MessageBox.Show("表示するテンプレートを選択してください．");
+                MessageBox.Show("表示するテンプレートを選択してください。");
             } else {
-                MessageBox.Show(temp + " の中身は次の通りです．\n\n" + Templates[temp], "TeX2img");
+                MessageBox.Show(temp + " の中身は次の通りです。\n\n" + Templates[temp], "TeX2img");
             }
         }
 
@@ -59,7 +59,7 @@ namespace TeX2img {
             var menu = new ContextMenuStrip();
             var setdefault = new ToolStripMenuItem("初期テンプレート内容を復元");
             setdefault.Click += ((ss, ee) => {
-                if(MessageBox.Show(tempnames + "\nの中身を元に戻します．よろしいですか？", "TeX2img", MessageBoxButtons.YesNo) == System.Windows.Forms.DialogResult.Yes) {
+                if(MessageBox.Show(tempnames + "\nの中身を元に戻します。よろしいですか？", "TeX2img", MessageBoxButtons.YesNo) == System.Windows.Forms.DialogResult.Yes) {
                     foreach(var d in temp) {
                         Templates[d.Key] = d.Value;
                     }
@@ -72,7 +72,7 @@ namespace TeX2img {
             menu.Items.Add(setdefault);
             var setdefaultdelothers = new ToolStripMenuItem("一覧の初期化");
             setdefaultdelothers.Click += ((ss, ee) => {
-                if(MessageBox.Show(tempnames + "\nの中身を元に戻し，それ以外を削除します．よろしいですか？", "TeX2img", MessageBoxButtons.YesNo) == System.Windows.Forms.DialogResult.Yes) {
+                if(MessageBox.Show(tempnames + "\nの中身を元に戻し，それ以外を削除します。よろしいですか？", "TeX2img", MessageBoxButtons.YesNo) == System.Windows.Forms.DialogResult.Yes) {
                     Templates = temp;
                     TemplateListBox.Items.Clear();
                     foreach(var d in Templates) {
@@ -113,7 +113,7 @@ namespace TeX2img {
             fromFile.Click += ((ss, ee) => {
                 var ofd = new OpenFileDialog();
                 ofd.Filter = "TeXソースファイル (*.tex)|*.tex|全てのファイル (*.*)|*.*";
-                ofd.Title = "読み込むソースファイルを指定してください．";
+                ofd.Title = "読み込むソースファイルを指定してください。";
                 if(ofd.ShowDialog() == System.Windows.Forms.DialogResult.Cancel) return;
                 string preamble = null, body = null;
                 MainForm.ImportFile(ofd.FileName, out preamble, out body);
@@ -134,13 +134,13 @@ namespace TeX2img {
         }
 
         string GetNewTemplateName() {
-            var input = new InputComboDialog("TeX2img", "テンプレート名を入力してください．", null);
+            var input = new InputComboDialog("TeX2img", "テンプレート名を入力してください。", null);
             input.OKButtonClicked += ((sss, eee) => {
                 if(invalidTemplateNames.Contains(eee.InputedText)) {
-                    MessageBox.Show("[" + eee.InputedText + "] はテンプレート名には使えません．", "TeX2img");
+                    MessageBox.Show("[" + eee.InputedText + "] はテンプレート名には使えません。", "TeX2img");
                     eee.Cancel = true;
                 } else if(Templates.ContainsKey(eee.InputedText)) {
-                    if(MessageBox.Show(eee.InputedText + " は既に存在します．上書きしてもよいですか？", "TeX2img", MessageBoxButtons.YesNo) == System.Windows.Forms.DialogResult.No) {
+                    if(MessageBox.Show(eee.InputedText + " は既に存在します。上書きしてもよいですか？", "TeX2img", MessageBoxButtons.YesNo) == System.Windows.Forms.DialogResult.No) {
                         eee.Cancel = true;
                     }
                 }
@@ -152,9 +152,9 @@ namespace TeX2img {
 
         string GetSelectedTemplateName() {
             if(TemplateListBox.SelectedItem == null) {
-                MessageBox.Show("テンプレート名を選択してください．", "TeX2img");
+                MessageBox.Show("テンプレート名を選択してください。", "TeX2img");
             } else {
-                if(MessageBox.Show((string) TemplateListBox.SelectedItem + " に現在のプリアンブルを上書きします．よろしいですか？", "TeX2img", MessageBoxButtons.YesNo) == System.Windows.Forms.DialogResult.Yes) {
+                if(MessageBox.Show((string) TemplateListBox.SelectedItem + " に現在のプリアンブルを上書きします。よろしいですか？", "TeX2img", MessageBoxButtons.YesNo) == System.Windows.Forms.DialogResult.Yes) {
                     return (string) TemplateListBox.SelectedItem;
                 }
             }

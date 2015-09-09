@@ -11,8 +11,8 @@ using System.Text.RegularExpressions;
 namespace TeX2img {
     class Converter : IDisposable{
         /* 空ページの扱い：
-         * 生成されるEPSファイルはBoundingBoxが0 0 0 0かもしれない．
-         * 変換に渡されるEPSファイルのBoundingBoxは必ず幅を持つようにする．
+         * 生成されるEPSファイルはBoundingBoxが0 0 0 0かもしれない。
+         * 変換に渡されるEPSファイルのBoundingBoxは必ず幅を持つようにする。
          */ 
 
         // ADS名
@@ -56,15 +56,15 @@ namespace TeX2img {
                         File.Delete(f + ".aux");
                         File.Delete(f + ".tmp");
                         File.Delete(f + ".out");
-                        File.Delete(f + ".ps");
                         File.Delete(f + ".pdf");
+                        File.Delete(f + ".ps");
                     }
                     foreach(var d in generatedImageFiles) {
                         File.Delete(d);
                     }
                 }
                 catch(UnauthorizedAccessException) {
-                    controller_.appendOutput("一部の一時ファイルの削除に失敗しました．\r\n");
+                    controller_.appendOutput("一部の一時ファイルの削除に失敗しました。\r\n");
                 }
             }
             generatedTeXFilesWithoutExtension.Clear();
@@ -80,6 +80,9 @@ namespace TeX2img {
                 Environments["command_line_encoding"] = "utf8";
             }
             generatedTeXFilesWithoutExtension.Add(Path.Combine(workingDir, Path.GetFileNameWithoutExtension(InputFile)));
+            if(Path.GetExtension(InputFile).ToLower() != ".tex") {
+                generatedImageFiles.Add(Path.Combine(workingDir, InputFile));
+            }
             bool rv = generate(InputFile, OutputFile);
 
             return rv;
@@ -384,7 +387,7 @@ namespace TeX2img {
             }
         }
 
-        // origbbには，GhostscriptのsDevice=bboxで得られた値を入れておく．（nullならばここで取得する．）
+        // origbbには，GhostscriptのsDevice=bboxで得られた値を入れておく。（nullならばここで取得する。）
         private bool pdf2eps(string inputFileName, string outputFileName, int resolution, int page, BoundingBoxPair origbb = null) {
             string arg;
             generatedImageFiles.Add(Path.Combine(workingDir, outputFileName));
@@ -413,7 +416,7 @@ namespace TeX2img {
                     controller_.showGenerateError();
                     return false;
                 }
-                // BoundingBoxをあらかじめ計測した物に取り替える．
+                // BoundingBoxをあらかじめ計測した物に取り替える。
                 BoundingBoxPair bb;
                 if(origbb == null) bb = readBBFromPDF(inputFileName, page);
                 else bb = origbb;
@@ -534,7 +537,7 @@ namespace TeX2img {
             return pdfcrop(inputFileName, outputFileName, use_bp, new List<int>() { page }, new List<BoundingBoxPair>() { origbb });
         }
 
-        // origbbには，GhostscriptのsDevice=bboxで得られた値を入れておく．（nullならばここで取得する．）
+        // origbbには，GhostscriptのsDevice=bboxで得られた値を入れておく。（nullならばここで取得する。）
         bool pdfcrop(string inputFileName, string outputFileName, bool use_bp, List<int> pages, List<BoundingBoxPair> origbb) {
             System.Diagnostics.Debug.Assert(pages.Count == origbb.Count);
             var tmpfile = GetTempFileName(".tex");
@@ -586,12 +589,12 @@ namespace TeX2img {
             return true;
         }
 
-        // 余白の付加も行う．
+        // 余白の付加も行う。
         private bool eps2img(string inputFileName, string outputFileName, BoundingBoxPair origbb = null){
             string extension = Path.GetExtension(outputFileName).ToLower();
             string baseName = Path.GetFileNameWithoutExtension(inputFileName);
             generatedImageFiles.Add(Path.Combine(workingDir, outputFileName));
-            // ターゲットのepsを「含む」epsを作成．
+            // ターゲットのepsを「含む」epsを作成。
             string trimEpsFileName = GetTempFileName(".eps");
             generatedImageFiles.Add(Path.Combine(workingDir, trimEpsFileName));
             if(origbb == null) origbb = readBB(inputFileName);
@@ -792,10 +795,10 @@ namespace TeX2img {
             for(int i = 1 ; i <= page ; ++i) {
                 if(bbs[i - 1].bb.IsEmpty) {
                     if(Properties.Settings.Default.leftMargin + Properties.Settings.Default.rightMargin == 0 || Properties.Settings.Default.topMargin + Properties.Settings.Default.bottomMargin == 0) {
-                        warnngs.Add(i.ToString() + " ページ目が空ページだったため画像生成をスキップしました．");
+                        warnngs.Add(i.ToString() + " ページ目が空ページだったため画像生成をスキップしました。");
                         continue;
                     } else {
-                        warnngs.Add(i.ToString() + " ページ目が空ページでした．");
+                        warnngs.Add(i.ToString() + " ページ目が空ページでした。");
                     }
                 }
                 // .svg，テキスト情報保持な pdf は PDF から作る
@@ -817,7 +820,7 @@ namespace TeX2img {
                         }
                     }
                 } else {
-                    // それ以外はEPSを経由する．
+                    // それ以外はEPSを経由する。
                     int resolution;
                     if(Properties.Settings.Default.useLowResolution) epsResolution_ = 72 * Properties.Settings.Default.resolutionScale;
                     else epsResolution_ = 20016;
@@ -980,6 +983,15 @@ namespace TeX2img {
             return true;
         }
 
+        public bool CheckInputFormat() {
+            string extension = Path.GetExtension(InputFile).ToLower();
+            if(!new string[] { ".tex", ".pdf", ".ps", ".eps" }.Contains(extension)) { 
+                if(controller_ != null) controller_.showExtensionError(InputFile);
+                return false;
+            }
+            return true;
+        }
+
         // pTeX or upTeX
         static bool IspTeX(string latex) {
             var l = Path.GetFileNameWithoutExtension(latex).ToLower();
@@ -1045,7 +1057,7 @@ namespace TeX2img {
                 }
                 FileName = FileName.Replace("\"", "");
             } else {
-                // そうでなければスペースで切って後ろから解析．
+                // そうでなければスペースで切って後ろから解析。
                 var splitted = path.Split(new char[] { ' ' });
                 Arguments = "";
                 for(int i = splitted.Count() ; i >= 0 ; --i) {
@@ -1072,12 +1084,12 @@ namespace TeX2img {
         }
 
         // Error -> 同期，Output -> 非同期
-        // でとりあえずデッドロックしなくなったのでこれでよしとする．
-        // 両方非同期で駄目な理由がわかりません……．
+        // でとりあえずデッドロックしなくなったのでこれでよしとする。
+        // 両方非同期で駄目な理由がわかりません……。
         //
-        // 非同期だと全部読み込んだかわからない気がしたので，スレッドを作成することにした．
+        // 非同期だと全部読み込んだかわからない気がしたので，スレッドを作成することにした。
         //
-        // 結局どっちもスレッドを回すことにしてみた……．
+        // 結局どっちもスレッドを回すことにしてみた……。
         void ReadOutputs(Process proc, string freezemsg) {
             printCommandLine(proc);
             proc.Start();
@@ -1106,13 +1118,13 @@ namespace TeX2img {
                     bool kill = false;
                     if(Properties.Settings.Default.timeOut > 0) {
                         if(Properties.Settings.Default.batchMode == Properties.Settings.BatchMode.Default) {
-                            // プロセスからの読み取りを一時中断するためのlock．
-                            // でないと特にCUI時にメッセージが混ざってわけがわからなくなる．
+                            // プロセスからの読み取りを一時中断するためのlock。
+                            // でないと特にCUI時にメッセージが混ざってわけがわからなくなる。
                             lock(syncObj) {
                                 kill = !controller_.askYesorNo(
-                                    freezemsg + "に時間がかかっているようです．\n" +
+                                    freezemsg + "に時間がかかっているようです。\n" +
                                     "フリーズしている可能性もありますが，このまま実行を続けますか？\n" +
-                                    "続けない場合は，現在実行中のプログラムを強制終了します．");
+                                    "続けない場合は，現在実行中のプログラムを強制終了します。");
                             }
                         } else kill = (Properties.Settings.Default.batchMode == Properties.Settings.BatchMode.Stop);
                     }
@@ -1123,14 +1135,14 @@ namespace TeX2img {
                             System.Threading.Thread.Sleep(500);
                             abort = true;
                         }
-                        controller_.appendOutput("処理を中断しました．\r\n");
+                        controller_.appendOutput("処理を中断しました。\r\n");
                         readThread.EndInvoke(ReadStdOutThread);
                         readThread.EndInvoke(ReadStdErrThread);
                         throw new System.TimeoutException();
                     } else continue;
                 }
             }
-            // 残っているかもしれないのを読む．
+            // 残っているかもしれないのを読む。
             while(!ReadStdOutThread.IsCompleted || !ReadStdErrThread.IsCompleted) {
                 System.Threading.Thread.Sleep(300);
             }
@@ -1141,7 +1153,7 @@ namespace TeX2img {
         }
 
         public static void KillChildProcesses(Process proc) {
-            // taskkillを起動するのが早そう．
+            // taskkillを起動するのが早そう。
             using(var p = new Process()) {
                 try {
                     p.StartInfo.FileName = "taskkill.exe";

@@ -285,13 +285,15 @@
             // 
             // label3
             // 
+            this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(5, 99);
+            this.label3.Location = new System.Drawing.Point(14, 99);
             this.label3.Margin = new System.Windows.Forms.Padding(5, 0, 5, 0);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(108, 18);
             this.label3.TabIndex = 17;
             this.label3.Text = "Ghostscript ：";
+            this.label3.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // dvipdfmxBrowseButton
             // 
@@ -317,13 +319,15 @@
             // 
             // label2
             // 
+            this.label2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(16, 63);
+            this.label2.Location = new System.Drawing.Point(25, 63);
             this.label2.Margin = new System.Windows.Forms.Padding(5, 0, 5, 0);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(97, 18);
             this.label2.TabIndex = 16;
             this.label2.Text = "DVI driver ：";
+            this.label2.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // platexBrowseButton
             // 
@@ -349,13 +353,15 @@
             // 
             // label1
             // 
+            this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(55, 26);
+            this.label1.Location = new System.Drawing.Point(56, 28);
             this.label1.Margin = new System.Windows.Forms.Padding(5, 0, 5, 0);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(58, 18);
+            this.label1.Size = new System.Drawing.Size(72, 18);
             this.label1.TabIndex = 10;
-            this.label1.Text = "latex ：";
+            this.label1.Text = "LaTeX ：";
+            this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // OutputImgSettingTab
             // 

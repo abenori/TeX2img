@@ -13,7 +13,7 @@ namespace TeX2img {
         }
 
         public void showExtensionError(string file) {
-            Console.WriteLine(file + ": 出力ファイルの拡張子は eps/png/jpg/pdf のいずれかにしてください。");
+            Console.WriteLine(file + ": ファイルの拡張子が不正です。");
         }
 
         public void appendOutput(string log) {
@@ -47,7 +47,7 @@ namespace TeX2img {
                 case "y": return true;
                 case "n": return false;
                 default:
-                    Console.WriteLine("y または n を入力してください．");
+                    Console.WriteLine("y または n を入力してください。");
                     break;
                 }
             }
@@ -59,7 +59,7 @@ namespace TeX2img {
         }
 
         public void errorIgnoredWarning() {
-            Console.WriteLine("コンパイルエラーを無視して画像化を強行しました．\n結果は期待と異なる可能性があります．\nソースを修正しエラーを解決することを推奨します．");
+            Console.WriteLine("コンパイルエラーを無視して画像化を強行しました。\n結果は期待と異なる可能性があります。\nソースを修正しエラーを解決することを推奨します。");
         }
     }
 }
