@@ -43,6 +43,7 @@ namespace TeX2img {
             if(FirstFiles != null) {
                 clearOutputTextBox();
                 if(Properties.Settings.Default.showOutputWindowFlag) showOutputWindow(true);
+                GenerateButton.Text = "中断";
                 setEnabled(false);
                 convertWorker.RunWorkerAsync(100);
             }

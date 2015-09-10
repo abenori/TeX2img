@@ -86,7 +86,7 @@ namespace TeX2img.Properties {
             SetValues();
             //SaveSettings = true;
             batchMode = BatchMode.Default;
-            timeOut = 0;
+            timeOut = 10;
         }
 
         #region TeX関連パスの推定
@@ -104,13 +104,13 @@ namespace TeX2img.Properties {
             return FindPathWithHint("compiler|latex", hint, def);
         }
         public string GuessPlatexPath() {
-            return FindPathWithHint("compiler|latex", preamble, "platex");
+			return GuessPlatexPath(preamble);
         }
         public string GuessDvipdfmxPath(string hint,string def = "dvipdfmx") {
-            return FindPathWithHint("dvi *driver", hint, def);
+            return FindPathWithHint("dvi *driver|dviware", hint, def);
         }
         public string GuessDvipdfmxPath() {
-            return FindPathWithHint("dvi *driver", preamble, "dvipdfmx");
+			return GuessDvipdfmxPath(preamble);
         }
         public string GuessGsPath() {
             return GuessGsPath(platexPath);

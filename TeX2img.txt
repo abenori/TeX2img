@@ -35,14 +35,14 @@ TeX2imgc.exe は CUI モードで動かすためのラッパです．TeX2img.exe
 
 * Ghostscript の Version 9.14 あたりで，device が epswrite から eps2write に変更になったようです．画像生成時にエラーが出る場合は，「ツール」→「オプション」→「パスの設定」の「Ghostscript の device には epswrite を設定する」のチェックをつけて/外してみてください．
 
-* latex / dvi driver / Ghostscript のパスにオプションを混ぜて設定することで，画像変換時にオプションをつけたまま起動を行うことができます．ファイル名とオプションとの区切りは自動で認識されますが，確実にするためには実行ファイル名を""でくくってください．
+* LaTeX / DVI driver / Ghostscript のパスにオプションを混ぜて設定することで，画像変換時にオプションをつけたまま起動を行うことができます．ファイル名とオプションとの区切りは自動で認識されますが，確実にするためには実行ファイル名を""でくくってください．
 例："C:\w32tex\bin\platex.exe" --guess-input-enc
 
 * 内部文字コードは Unicode です．従って，platex の設定として uplatex を用いることで，Shift_JIS にない文字なども直接出力をすることができます．ただし，設定→パスの設定の文字コードにおいて，「UTF-8」または「指定しない（入力 UTF-8 ）」を選ぶ必要があります．
 
 * 「latex」で指定されたプログラムが pdf を生成したと判断した場合，TeX2img は dvipdfmx の実行をスキップします．これを利用して，pdflatex や lualatex などを指定することができます．なお，この場合は文字コードの設定を「指定しない（入力 UTF-8）」としておくとよいでしょう．
 
-* 「DVI driver」で指定されたプログラムが ps を生成したと阪大した場合，TeX2img は生成されたと判断した ps ファイルを Ghostscript により pdf ファイルへと変換し，処理を続行します．これを利用して，dvips を指定することができます．
+* 「DVI driver」で指定されたプログラムが ps を生成したと判断した場合，TeX2img は生成されたと判断した ps ファイルを Ghostscript により pdf ファイルへと変換し，処理を続行します．これを利用して，dvips を指定することができます．
 
 * 生成された画像を TeX2img にドラッグアンドドロップ（またはメニューから「ファイル(F)」→「インポート(O)」）とすると生成した際のソースが復元されます．（ファイルシステムが NTFS の時のみ．オプションで無効化可能．）
 
@@ -52,8 +52,10 @@ TeX2img.exe または TeX2imgc.exe が受けつけるオプションです．な
 TeX2img.exe input output
 とすると起動直後に変換が行われます．
 
-/platex=<VAL>            platex のパス
-/dvipdfmx=<VAL>          dvipdfmx のパス
+/latex=<VAL>             LaTeX のパス
+/platex=<VAL>            /latex と同じ（obsolete）
+/dvidriver=<VAL>         DVI driver のパス
+/dvipdfmx=<VAL>          /dvidriver と同じ（obsolete）
 /gs=<VAL>                Ghostscript のパス
 /gsdevice=<VAL>          Ghostscript の device（epswrite/eps2write）
 /kanji=<VAL>             文字コード（utf8/sjis/jis/euc/no)
@@ -94,6 +96,7 @@ TeX2img.exe input output
 * 元々の作者である寺田さんによる TeX2img 配布ページ
 http://island.geocities.jp/loveinequality/
 には，TeX2img を活用するための情報があります．参考にしてみてください．
+
 
 ## 謝辞
 * もともとの TeX2img は寺田侑祐さんによるものです．
@@ -245,11 +248,12 @@ https://code.google.com/p/pdfium/
     - /no- となっていたオプションから no- を外し，意味を逆にした．
     - /help で現在の設定を表示するようにした．
 
-* 
+* 1.6.0（2015/09/11）
     - ps ファイルが作成された場合，Ghostscript を使って pdf への変換を試みるようにした．
     - プリアンブルのテンプレートに %latex: や %dvidriver: から始まる行があれば，それに応じてパス推定を変更するようにした．
     - dvips を使うテンプレートを追加．
     - プリアンブル編集ウィンドウが画面外に出ないように調整することにした．
     - パス名とオプション名の分割をある程度柔軟にするようにした．
     - オプション名を /platex --> /latex ， /dvipdfmx --> /dvidevice と変更．（古いものも残してある．）
+    - /timeout のデフォルトを 10 秒とした．更に 0 以下の値を受けつけないようにした．
 

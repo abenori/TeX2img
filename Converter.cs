@@ -66,6 +66,9 @@ namespace TeX2img {
                 catch(UnauthorizedAccessException) {
                     controller_.appendOutput("一部の一時ファイルの削除に失敗しました。\r\n");
                 }
+                catch(IOException) {
+                    controller_.appendOutput("一部の一時ファイルの削除に失敗しました。\r\n");
+                }
             }
             generatedTeXFilesWithoutExtension.Clear();
             generatedImageFiles.Clear();
@@ -1059,7 +1062,6 @@ namespace TeX2img {
             } else {
                 // そうでなければスペースで切って後ろから解析。
                 var splitted = path.Split(new char[] { ' ' });
-                Arguments = "";
                 for(int i = splitted.Count() ; i >= 0 ; --i) {
                     var file = String.Join(" ", splitted, 0, i);
                     if(file.EndsWith(" ")) continue;// File.Existsは末尾の空白を削除してから存在チェックをする

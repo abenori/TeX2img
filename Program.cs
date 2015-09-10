@@ -21,7 +21,7 @@ namespace TeX2img {
 
         static OptionSet options = new OptionSet(){
 			{"latex=","LaTeX のパス", val => Properties.Settings.Default.platexPath=val,()=>Properties.Settings.Default.platexPath},
-			{"platex=","/latex と同じ（oboslete）", val => Properties.Settings.Default.platexPath=val},
+			{"platex=","/latex と同じ（obsolete）", val => Properties.Settings.Default.platexPath=val},
 			{"dvidriver=","DVI driver のパス",val =>Properties.Settings.Default.dvipdfmxPath=val,()=>Properties.Settings.Default.dvipdfmxPath},
 			{"dvipdfmx=","/dvidriver と同じ（obsolete）",val =>Properties.Settings.Default.dvipdfmxPath=val},
 			{"gs=","Ghostscript のパス",val => Properties.Settings.Default.gsPath = val,()=>Properties.Settings.Default.gsPath},
@@ -62,14 +62,23 @@ namespace TeX2img {
             {"copy-to-clipboard","生成したファイルをクリップボードにコピー[-]",val =>  Properties.Settings.Default.setFileToClipBoard = (val != null),()=>Properties.Settings.Default.setFileToClipBoard},
 			{"savesettings","設定の保存を行う[-]",val => Properties.Settings.Default.SaveSettings = (val != null),()=>Properties.Settings.Default.SaveSettings},
 			{"quiet","Quiet モード[-]",val => quiet = (val != null),()=>quiet},
-            {"timeout=","タイムアウト時間を設定（秒）", (int val) => {Properties.Settings.Default.timeOut = val * 1000;},()=>Properties.Settings.Default.timeOut/1000},
+            {"timeout=","タイムアウト時間を設定（秒）", (int val) => {
+                if(val <= 0) throw new NDesk.Options.OptionException("タイムアウト時間は 0 より大きい値を指定してください。", "timeout");
+                Properties.Settings.Default.timeOut = val * 1000;
+            },()=>Properties.Settings.Default.timeOut/1000 + " 秒"},
+            // TODO: defaultに対応するオプションがあった方がよい？
             {"batch=","Batch モード（stop/nonstop）", val => {
                 switch(val) {
                 case "nonstop": Properties.Settings.Default.batchMode = Properties.Settings.BatchMode.NonStop; break;
                 case "stop": Properties.Settings.Default.batchMode = Properties.Settings.BatchMode.Stop; break;
                 default: throw new NDesk.Options.OptionException("stop, nonstop のいずれかを指定してください。", "batch");
                 }
-            },()=>Properties.Settings.Default.batchMode==Properties.Settings.BatchMode.NonStop ? "nonstop" : "stop"},
+            },()=>{
+                switch(Properties.Settings.Default.batchMode){
+                case Properties.Settings.BatchMode.NonStop: return"nonstop";
+                case Properties.Settings.BatchMode.Stop: return "stop";
+                default: return "deafult";
+            }}},
 			{"exit","設定の保存のみを行い終了する", val => {exit = true;}},
             {"load-defaults","現在の設定をデフォルトに戻す",val => {if(val != null)Properties.Settings.Default.ReloadDefaults();}},
 			{"help","このメッセージを表示する",val => {help = true;}},
@@ -194,7 +203,7 @@ namespace TeX2img {
 
             // コマンドライン解析
             var cmds = new List<string>(Environment.GetCommandLineArgs());
-            //cmds = new List<string> { "TeX2img.exe", "/nogui", "/ignore-settings", "test.tex","test.pdf" };
+            //cmds = new List<string> { "TeX2img.exe", "/nogui", "test.tex","test.pdf" };
             // 一つ目がTeX2img本体ならば削除
             // abtlinstからCreateProcessで呼び出すとTeX2img本体にならなかったので，一応確認をする。
             if(cmds.Count > 0) {
@@ -211,6 +220,11 @@ namespace TeX2img {
             if(cmds.Count > 0 && (cmds[0] == "/nogui" || cmds[0] == "-nogui" || cmds[0] == "--nogui")) {
                 nogui = true;
                 cmds.RemoveAt(0);
+            }
+            // GUIか否かで設定の変更をする
+            if(!nogui) {
+                //Properties.Settings.Default.batchMode = Properties.Settings.BatchMode.NonStop;
+                Properties.Settings.Default.timeOut = 0;
             }
             // メイン
             var exitcode = TeX2imgMain(cmds);
