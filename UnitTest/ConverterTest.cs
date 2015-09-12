@@ -19,6 +19,10 @@ namespace UnitTest {
             eps2pdf_test(testfile + ".eps");
             pdfpages_test(testfile + ".pdf");
             pdf2img_pdfium_test(testfile + ".pdf");
+            Settings.Default.dvipdfmxPath = "dvips";
+            dvi2ps_test(testfile + ".dvi");
+            ps2pdf_test(testfile + ".ps");
+
         }
         [TestMethod]
         public void generateTest() {
@@ -49,7 +53,11 @@ namespace UnitTest {
             Settings.Default.useLowResolution = false;
             Settings.Default.useMagickFlag = false;
             doGenerateTest("no-antialias");
-
+            Settings.Default.transparentPngFlag = false;
+            Settings.Default.useLowResolution = false;
+            Settings.Default.useMagickFlag = true;
+            Settings.Default.keepPageSize = true;
+            doGenerateTest("keep-pagesize");
         }
 
         void PrepareTest() {
@@ -83,7 +91,7 @@ namespace UnitTest {
         }
         public ConverterTest() {
             controller = new CUIOutput();
-            //controller = this;
+            controller = this;
             WorkDir = Path.Combine(System.Environment.CurrentDirectory, "test");
             Directory.CreateDirectory(WorkDir);
         }
@@ -158,6 +166,24 @@ namespace UnitTest {
             CallMethod(converter, "dvi2pdf", file);
             Assert.IsTrue(File.Exists(Path.Combine(WorkDir, pdf)));
             File.Copy(Path.Combine(WorkDir, pdf), Path.Combine(OutputDir, "dvi2pdf.pdf"), true);
+        }
+
+        void dvi2ps_test(string file) {
+            Debug.WriteLine("TEST: dvi2pdf");
+            string ps = Path.ChangeExtension(file, ".ps");
+            File.Delete(Path.Combine(WorkDir, ps));
+            CallMethod(converter, "dvi2pdf", file);
+            Assert.IsTrue(File.Exists(Path.Combine(WorkDir, ps)));
+            File.Copy(Path.Combine(WorkDir, ps), Path.Combine(OutputDir, "dvi2ps.ps"), true);
+        }
+
+        void ps2pdf_test(string file) {
+            Debug.WriteLine("TEST: ps2pdf");
+            string pdf = Path.ChangeExtension(file, ".pdf");
+            File.Delete(Path.Combine(WorkDir, pdf));
+            CallMethod(converter, "ps2pdf", file);
+            Assert.IsTrue(File.Exists(Path.Combine(WorkDir, pdf)));
+            File.Copy(Path.Combine(WorkDir, pdf), Path.Combine(OutputDir, "ps2pdf.pdf"), true);
         }
 
         void pdf2eps_test(string file, int resolution) {

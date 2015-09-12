@@ -84,7 +84,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>Shlwapi.lib;gdiplus.lib;winmm.lib;Release\lib\fdrm.lib;Release\lib\fpdfdoc.lib;Release\lib\fpdfapi.lib;Release\lib\fpdftext.lib;Release\lib\formfiller.lib;Release\lib\fxcodec.lib;Release\lib\fxcrt.lib;Release\lib\fxedit.lib;Release\lib\fxge.lib;Release\lib\javascript.lib;Release\lib\v8_libbase.lib;Release\lib\v8_libplatform.lib;Release\lib\icui18n.lib;Release\lib\icuuc.lib;Release\lib\v8_snapshot.lib;Release\lib\jsapi.lib;Release\lib\pdfwindow.lib;Release\lib\freetype.lib;Release\lib\pdfium.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Shlwapi.lib;gdiplus.lib;winmm.lib;Release\lib\bigint.lib;Release\lib\fdrm.lib;Release\lib\formfiller.lib;Release\lib\fpdfapi.lib;Release\lib\fpdfdoc.lib;Release\lib\fpdftext.lib;Release\lib\fxcodec.lib;Release\lib\fxcrt.lib;Release\lib\fxedit.lib;Release\lib\fxge.lib;Release\lib\fx_agg.lib;Release\lib\fx_freetype.lib;Release\lib\fx_lcms2.lib;Release\lib\fx_libjpeg.lib;Release\lib\fx_libopenjpeg.lib;Release\lib\fx_lpng.lib;Release\lib\fx_zlib.lib;Release\lib\gmock.lib;Release\lib\gtest.lib;Release\lib\gtest_main.lib;Release\lib\icui18n.lib;Release\lib\icuuc.lib;Release\lib\javascript.lib;Release\lib\jsapi.lib;Release\lib\pdfium.lib;Release\lib\pdfwindow.lib;Release\lib\v8_base_0.lib;Release\lib\v8_base_1.lib;Release\lib\v8_base_2.lib;Release\lib\v8_base_3.lib;Release\lib\v8_libbase.lib;Release\lib\v8_libplatform.lib;Release\lib\v8_nosnapshot.lib;Release\lib\v8_snapshot.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>

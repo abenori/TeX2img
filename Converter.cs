@@ -884,17 +884,13 @@ namespace TeX2img {
                     (extension == ".gif" && Properties.Settings.Default.transparentPngFlag)
                     ) {
                     if(extension == ".svg") {
-                        if(!Properties.Settings.Default.keepPageSize) {
-                            if(!pdfcrop(tmpFileBaseName + ".pdf", tmpFileBaseName + "-" + i + ".pdf", true, i, bbs[i - 1])) return false;
-                        }
+                        if(!pdfcrop(tmpFileBaseName + ".pdf", tmpFileBaseName + "-" + i + ".pdf", true, i, bbs[i - 1])) return false;
                         if(!pdf2img_mudraw(tmpFileBaseName + "-" + i + ".pdf", tmpFileBaseName + "-" + i + ".svg")) return false;
                         if(Properties.Settings.Default.deleteDisplaySize) {
                             DeleteHeightAndWidthFromSVGFile(tmpFileBaseName + "-" + i + extension);
                         }
                     } else {
-                        if(!Properties.Settings.Default.keepPageSize) {
-                            if(!pdfcrop(tmpFileBaseName + ".pdf", tmpFileBaseName + "-" + i + ".pdf", extension == ".pdf" ? true : Properties.Settings.Default.yohakuUnitBP, i, bbs[i - 1])) return false;
-                        }
+                        if(!pdfcrop(tmpFileBaseName + ".pdf", tmpFileBaseName + "-" + i + ".pdf", extension == ".pdf" ? true : Properties.Settings.Default.yohakuUnitBP, i, bbs[i - 1])) return false;
                         if(extension != ".pdf") {
                             if(!pdf2img_pdfium(tmpFileBaseName + "-" + i + ".pdf", tmpFileBaseName + "-" + i + extension)) return false;
                         }
