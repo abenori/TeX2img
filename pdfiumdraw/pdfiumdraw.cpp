@@ -129,7 +129,7 @@ class PDFPage {
 public:
 	PDFPage(const PDFDoc &doc, int pageNum) {
 		auto p = ::FPDF_LoadPage(doc.doc, pageNum);
-		if(p == nullptr)throw runtime_error("failt to open page + " + to_string(pageNum));
+		if(p == nullptr)throw runtime_error("faild to open page " + to_string(pageNum + 1));
 		page = p;
 	}
 	~PDFPage() { ::FPDF_ClosePage(page); }
@@ -452,6 +452,34 @@ int ConvertIMG(Data &d) {
 	return 0;
 }
 
+void OutputBox(string boxname, Data &d) {
+	try {
+		PDFDoc doc(d.input);
+		int pagenum;
+		if(d.pages.empty())pagenum = 0;
+		else pagenum = d.pages[0];
+		PDFPage page(doc, pagenum);
+		float left, bottom, right, top;
+		FPDF_BOOL result;
+		if(boxname == "cropbox") {
+			result = ::FPDFPage_GetCropBox(page.page, &left, &bottom, &right, &top);
+			if(!result) boxname = "mediabox";
+		}
+		if(boxname == "mediabox") result = ::FPDFPage_GetMediaBox(page.page, &left, &bottom, &right, &top);
+		if(result) {
+			int ileft = (int) left;
+			int itop = (int) top;
+			int ibottom = (int) bottom; if((float) ibottom != bottom)++ibottom;
+			int iright = (int) right; if((float) iright != right)++iright;
+			cout << "%%BoundingBox: " << ileft << " " << itop << " " << iright << " " << ibottom << endl;
+			cout << "%%HiResBoundingBox: " << left << " " << top << " " << right << " " << bottom << endl;
+		} else {
+			cout << "Failed to get box size" << endl;
+		}
+	}
+	catch(runtime_error e) { cout << e.what() << endl; }
+}
+
 std::vector<std::string> split(const std::string &str, char sep) {
 	std::vector<std::string> v;
 	std::stringstream ss(str);
@@ -485,6 +513,7 @@ int main(int argc, char *argv[]) {
 	{
 		Data current_data;
 		bool output_page = false;
+		string box = "";
 		for(int i = 1; i < argc; ++i) {
 			std::string arg = argv[i];
 			if(arg == "--use-gdi")current_data.use_gdi = true;
@@ -508,15 +537,16 @@ int main(int argc, char *argv[]) {
 			else if(arg.find("--scale=") == 0)current_data.scale = std::atoi(arg.substr(string("--scale=").length()).c_str());
 			else if(arg.find("--extent=") == 0)current_data.extent = std::atoi(arg.substr(string("--extent=").length()).c_str());
 			else if(arg.find("--output=") == 0) current_data.output = arg.substr(string("--output=").length());
+			else if(arg.find("--box=") == 0) box = arg.substr(string("--box=").length());
 			else if(arg.find("--viewport=") == 0) {
-				auto viewport = split(arg.substr(string("--viewport=").length()),',');
+				auto viewport = split(arg.substr(string("--viewport=").length()), ',');
 				if(viewport.size() == 4) {
 					current_data.viewport.left = atoi(viewport[0].c_str());
 					current_data.viewport.top = atoi(viewport[1].c_str());
 					current_data.viewport.right = atoi(viewport[2].c_str());
 					current_data.viewport.bottom = atoi(viewport[3].c_str());
 				}
-			}else if(arg == "--help") {
+			} else if(arg == "--help") {
 				ShowUsage();
 				return 0;
 			} else {
@@ -531,7 +561,12 @@ int main(int argc, char *argv[]) {
 					Data d = current_data;
 					d.input = GetFullName(arg);
 					d.output = GetFullName(current_data.output);
-					files.push_back(d);
+					if(box != "") {
+						OutputBox(box, d);
+						box = "";
+					} else {
+						files.push_back(d);
+					}
 					current_data.output = "";
 					current_data.pages.clear();
 					current_data.viewport = RECT{0, 0, 0, 0};

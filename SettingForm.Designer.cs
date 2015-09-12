@@ -60,11 +60,13 @@
             this.label1 = new System.Windows.Forms.Label();
             this.OutputImgSettingTab = new System.Windows.Forms.TabPage();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.MergeOutputFilesCheckBox = new System.Windows.Forms.CheckBox();
             this.deleteDisplaySizeCheckBox = new System.Windows.Forms.CheckBox();
             this.useMagickCheckBox = new System.Windows.Forms.CheckBox();
             this.notOutllinedTextCheckBox = new System.Windows.Forms.CheckBox();
             this.transparentPngCheckBox = new System.Windows.Forms.CheckBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.KeepPageSizeCheckBox = new System.Windows.Forms.CheckBox();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.label9 = new System.Windows.Forms.Label();
             this.radioButtonbp = new System.Windows.Forms.RadioButton();
@@ -378,16 +380,27 @@
             // 
             // groupBox2
             // 
+            this.groupBox2.Controls.Add(this.MergeOutputFilesCheckBox);
             this.groupBox2.Controls.Add(this.deleteDisplaySizeCheckBox);
             this.groupBox2.Controls.Add(this.useMagickCheckBox);
             this.groupBox2.Controls.Add(this.notOutllinedTextCheckBox);
             this.groupBox2.Controls.Add(this.transparentPngCheckBox);
-            this.groupBox2.Location = new System.Drawing.Point(25, 286);
+            this.groupBox2.Location = new System.Drawing.Point(25, 267);
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.Size = new System.Drawing.Size(612, 143);
             this.groupBox2.TabIndex = 2;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "画像形式ごとの設定";
+            // 
+            // MergeOutputFilesCheckBox
+            // 
+            this.MergeOutputFilesCheckBox.AutoSize = true;
+            this.MergeOutputFilesCheckBox.Location = new System.Drawing.Point(289, 94);
+            this.MergeOutputFilesCheckBox.Name = "MergeOutputFilesCheckBox";
+            this.MergeOutputFilesCheckBox.Size = new System.Drawing.Size(274, 22);
+            this.MergeOutputFilesCheckBox.TabIndex = 3;
+            this.MergeOutputFilesCheckBox.Text = "単一ファイルで出力 (TIFF / PDF)";
+            this.MergeOutputFilesCheckBox.UseVisualStyleBackColor = true;
             // 
             // deleteDisplaySizeCheckBox
             // 
@@ -437,6 +450,7 @@
             // 
             this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox1.Controls.Add(this.KeepPageSizeCheckBox);
             this.groupBox1.Controls.Add(this.groupBox3);
             this.groupBox1.Controls.Add(this.label4);
             this.groupBox1.Controls.Add(this.bottomMarginUpDown);
@@ -452,17 +466,27 @@
             this.groupBox1.Margin = new System.Windows.Forms.Padding(5, 4, 5, 4);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Padding = new System.Windows.Forms.Padding(5, 4, 5, 4);
-            this.groupBox1.Size = new System.Drawing.Size(612, 255);
+            this.groupBox1.Size = new System.Drawing.Size(612, 243);
             this.groupBox1.TabIndex = 0;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "共通設定";
+            // 
+            // KeepPageSizeCheckBox
+            // 
+            this.KeepPageSizeCheckBox.AutoSize = true;
+            this.KeepPageSizeCheckBox.Location = new System.Drawing.Point(13, 205);
+            this.KeepPageSizeCheckBox.Name = "KeepPageSizeCheckBox";
+            this.KeepPageSizeCheckBox.Size = new System.Drawing.Size(201, 22);
+            this.KeepPageSizeCheckBox.TabIndex = 10;
+            this.KeepPageSizeCheckBox.Text = "ページサイズを維持する";
+            this.KeepPageSizeCheckBox.UseVisualStyleBackColor = true;
             // 
             // groupBox3
             // 
             this.groupBox3.Controls.Add(this.label9);
             this.groupBox3.Controls.Add(this.radioButtonbp);
             this.groupBox3.Controls.Add(this.radioButtonpx);
-            this.groupBox3.Location = new System.Drawing.Point(13, 190);
+            this.groupBox3.Location = new System.Drawing.Point(13, 141);
             this.groupBox3.Name = "groupBox3";
             this.groupBox3.Size = new System.Drawing.Size(577, 58);
             this.groupBox3.TabIndex = 7;
@@ -503,7 +527,7 @@
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(422, 128);
+            this.label4.Location = new System.Drawing.Point(422, 85);
             this.label4.Margin = new System.Windows.Forms.Padding(5, 0, 5, 0);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(35, 18);
@@ -512,7 +536,7 @@
             // 
             // bottomMarginUpDown
             // 
-            this.bottomMarginUpDown.Location = new System.Drawing.Point(308, 158);
+            this.bottomMarginUpDown.Location = new System.Drawing.Point(308, 105);
             this.bottomMarginUpDown.Margin = new System.Windows.Forms.Padding(5, 4, 5, 4);
             this.bottomMarginUpDown.Name = "bottomMarginUpDown";
             this.bottomMarginUpDown.Size = new System.Drawing.Size(93, 25);
@@ -520,7 +544,7 @@
             // 
             // rightMarginUpDown
             // 
-            this.rightMarginUpDown.Location = new System.Drawing.Point(470, 124);
+            this.rightMarginUpDown.Location = new System.Drawing.Point(470, 81);
             this.rightMarginUpDown.Margin = new System.Windows.Forms.Padding(5, 4, 5, 4);
             this.rightMarginUpDown.Name = "rightMarginUpDown";
             this.rightMarginUpDown.Size = new System.Drawing.Size(93, 25);
@@ -529,7 +553,7 @@
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(260, 160);
+            this.label5.Location = new System.Drawing.Point(260, 107);
             this.label5.Margin = new System.Windows.Forms.Padding(5, 0, 5, 0);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(35, 18);
@@ -539,7 +563,7 @@
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(260, 93);
+            this.label6.Location = new System.Drawing.Point(260, 61);
             this.label6.Margin = new System.Windows.Forms.Padding(5, 0, 5, 0);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(35, 18);
@@ -548,7 +572,7 @@
             // 
             // leftMarginUpDown
             // 
-            this.leftMarginUpDown.Location = new System.Drawing.Point(147, 123);
+            this.leftMarginUpDown.Location = new System.Drawing.Point(147, 80);
             this.leftMarginUpDown.Margin = new System.Windows.Forms.Padding(5, 4, 5, 4);
             this.leftMarginUpDown.Name = "leftMarginUpDown";
             this.leftMarginUpDown.Size = new System.Drawing.Size(93, 25);
@@ -556,7 +580,7 @@
             // 
             // topMarginUpDown
             // 
-            this.topMarginUpDown.Location = new System.Drawing.Point(308, 90);
+            this.topMarginUpDown.Location = new System.Drawing.Point(308, 58);
             this.topMarginUpDown.Margin = new System.Windows.Forms.Padding(5, 4, 5, 4);
             this.topMarginUpDown.Name = "topMarginUpDown";
             this.topMarginUpDown.Size = new System.Drawing.Size(93, 25);
@@ -565,7 +589,7 @@
             // label7
             // 
             this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(10, 126);
+            this.label7.Location = new System.Drawing.Point(10, 83);
             this.label7.Margin = new System.Windows.Forms.Padding(5, 0, 5, 0);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(115, 18);
@@ -574,7 +598,7 @@
             // 
             // resolutionScaleUpDown
             // 
-            this.resolutionScaleUpDown.Location = new System.Drawing.Point(226, 34);
+            this.resolutionScaleUpDown.Location = new System.Drawing.Point(226, 23);
             this.resolutionScaleUpDown.Margin = new System.Windows.Forms.Padding(5, 4, 5, 4);
             this.resolutionScaleUpDown.Minimum = new decimal(new int[] {
             1,
@@ -593,7 +617,7 @@
             // label8
             // 
             this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(10, 38);
+            this.label8.Location = new System.Drawing.Point(10, 27);
             this.label8.Margin = new System.Windows.Forms.Padding(5, 0, 5, 0);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(187, 18);
@@ -1077,5 +1101,7 @@
         private System.Windows.Forms.CheckBox setFileToClipboardCheckBox;
         private System.Windows.Forms.CheckBox drawFullWidthSpaceCheckBox;
         private System.Windows.Forms.CheckBox acceptTabCheckBox;
+        private System.Windows.Forms.CheckBox KeepPageSizeCheckBox;
+        private System.Windows.Forms.CheckBox MergeOutputFilesCheckBox;
     }
 }

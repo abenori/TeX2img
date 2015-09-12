@@ -64,7 +64,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>gdiplus.lib;winmm.lib;Shlwapi.lib;Debug\lib\fdrm.lib;Debug\lib\fpdfdoc.lib;Debug\lib\fpdfapi.lib;Debug\lib\fpdftext.lib;Debug\lib\formfiller.lib;Debug\lib\fxcodec.lib;Debug\lib\fxcrt.lib;Debug\lib\fxedit.lib;Debug\lib\fxge.lib;Debug\lib\javascript.lib;Debug\lib\v8_libbase.lib;Debug\lib\v8_libplatform.lib;Debug\lib\icui18n.lib;Debug\lib\icuuc.lib;Debug\lib\v8_snapshot.lib;Debug\lib\jsapi.lib;Debug\lib\pdfwindow.lib;Debug\lib\freetype.lib;Debug\lib\pdfium.lib;Debug\lib\fx_lpng.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>gdiplus.lib;winmm.lib;Shlwapi.lib;Debug\lib\bigint.lib;Debug\lib\fdrm.lib;Debug\lib\formfiller.lib;Debug\lib\fpdfapi.lib;Debug\lib\fpdfdoc.lib;Debug\lib\fpdftext.lib;Debug\lib\fxcodec.lib;Debug\lib\fxcrt.lib;Debug\lib\fxedit.lib;Debug\lib\fxge.lib;Debug\lib\fx_agg.lib;Debug\lib\fx_freetype.lib;Debug\lib\fx_lcms2.lib;Debug\lib\fx_libjpeg.lib;Debug\lib\fx_libopenjpeg.lib;Debug\lib\fx_lpng.lib;Debug\lib\fx_zlib.lib;Debug\lib\gmock.lib;Debug\lib\gtest.lib;Debug\lib\gtest_main.lib;Debug\lib\icui18n.lib;Debug\lib\icuuc.lib;Debug\lib\javascript.lib;Debug\lib\jsapi.lib;Debug\lib\pdfium.lib;Debug\lib\pdfwindow.lib;Debug\lib\v8_base_0.lib;Debug\lib\v8_base_1.lib;Debug\lib\v8_base_2.lib;Debug\lib\v8_base_3.lib;Debug\lib\v8_libbase.lib;Debug\lib\v8_libplatform.lib;Debug\lib\v8_nosnapshot.lib;Debug\lib\v8_snapshot.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">

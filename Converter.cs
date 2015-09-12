@@ -102,6 +102,12 @@ namespace TeX2img {
                 left = l; right = r; bottom = b; top = t;
             }
             public bool IsEmpty { get { return left >= right || bottom >= top; } }
+            public BoundingBox HiresBBToBB() {
+                int ileft = (int)left, iright = (int)right, ibottom = (int)bottom, itop = (int)top;
+                if((decimal) ibottom != bottom) ++ibottom;
+                if((decimal) iright != iright) ++iright;
+                return new BoundingBox(ileft, ibottom, iright, itop);
+            }
         };
         
         class BoundingBoxPair {
@@ -206,7 +212,66 @@ namespace TeX2img {
             return new BoundingBoxPair(bb, hiresbb);
         }
 
-        BoundingBoxPair readBBFromPDF(string inputPDFFileName,int page){
+        List<BoundingBoxPair> readPDFBox(string inputPDFFileName, List<int> pages) {
+            var rv = new List<BoundingBoxPair>();
+            var tmpfile = GetTempFileName(".tex",workingDir);
+            generatedTeXFilesWithoutExtension.Add(Path.Combine(workingDir, Path.GetFileNameWithoutExtension(tmpfile)));
+            using(var fw = new StreamWriter(Path.Combine(workingDir, tmpfile))) {
+                fw.WriteLine(@"\pdfpagebox=0");
+                fw.WriteLine(@"\newdimen\tempdimen\tempdimen=1bp\relax\message{^^J1bp=\the\tempdimen^^J}");
+                fw.WriteLine(@"\catcode`\%=12");
+                fw.WriteLine(@"\def\space{ }");
+                foreach(var p in pages) {
+                    fw.WriteLine(@"\pdfximage page " + p.ToString() + "{" + inputPDFFileName + "}");
+                    fw.WriteLine(@"\message{^^J%%BoundingBox: \pdfximagebbox\pdflastximage1 \space\pdfximagebbox\pdflastximage2 \space\pdfximagebbox\pdflastximage3 \space\pdfximagebbox\pdflastximage4^^J}");
+                }
+                fw.WriteLine(@"\bye");
+            }
+            Regex regexBB = new Regex(@"^\%\%(HiRes)?BoundingBox\: ([-\d\.]+)pt ([-\d\.]+)pt ([-\d\.]+)pt ([-\d\.]+)pt$");
+            Regex readbppt = new Regex(@"^1bp=([-\d\.]+)pt");
+            using(var proc = GetProcess()) {
+                proc.StartInfo.FileName = GetpdftexPath();
+                proc.StartInfo.Arguments = "-no-shell-escape -interaction=nonstopmode \"" + tmpfile + "\"";
+                proc.ErrorDataReceived += ((s, e) => { System.Diagnostics.Debug.WriteLine(e.Data); });
+                try {
+                    printCommandLine(proc);
+                    proc.Start();
+                    proc.BeginErrorReadLine();
+                    decimal bp = (decimal)72.27/72;
+                    while(!proc.HasExited || !proc.StandardOutput.EndOfStream){
+                        var line = proc.StandardOutput.ReadLine();
+                        if(line == null) {
+                            proc.WaitForExit(100);
+                            continue;
+                        }
+                        System.Diagnostics.Debug.WriteLine(line);
+                        controller_.appendOutput(line + "\n");
+                        var match = readbppt.Match(line);
+                        if(match.Success){
+                            bp = System.Convert.ToDecimal(match.Groups[1].Value);
+                        }else{
+                            match = regexBB.Match(line);
+                            if(match.Success) {
+                                var hiresbb = new BoundingBox(
+                                    System.Convert.ToDecimal(match.Groups[2].Value)/bp,
+                                    System.Convert.ToDecimal(match.Groups[3].Value)/bp,
+                                    System.Convert.ToDecimal(match.Groups[4].Value)/bp,
+                                    System.Convert.ToDecimal(match.Groups[5].Value)/bp);
+                                rv.Add(new BoundingBoxPair(hiresbb.HiresBBToBB(), hiresbb));
+                            }
+                        }
+                    }
+                }
+                catch(Win32Exception) {
+                    controller_.showPathError("pdftex.exe", "TeX ディストリビューション");
+                    return null;
+                }
+            }
+            if(rv.Count != pages.Count) return null;
+            else return rv;
+        }
+
+        BoundingBoxPair readPDFBB(string inputPDFFileName,int page){
             BoundingBox bb,hiresbb;
             var gspath = setProcStartInfo(Properties.Settings.Default.gsPath);
             using(var proc = GetProcess()) {
@@ -402,8 +467,7 @@ namespace TeX2img {
                 }
                 proc.StartInfo.Arguments = arg + "-q -sDEVICE=" + Properties.Settings.Default.gsDevice + " -dFirstPage=" + page + " -dLastPage=" + page;
                 if(Properties.Settings.Default.gsDevice == "eps2write") proc.StartInfo.Arguments += " -dNoOutputFonts";
-                else proc.StartInfo.Arguments += " -dNOCACHE";
-                proc.StartInfo.Arguments += " -sOutputFile=\"" + outputFileName + "\" -dNOPAUSE -dBATCH -r" + resolution + " \"" + inputFileName + "\"";
+                proc.StartInfo.Arguments += " -dNOCACHE -dEPSCrop -sOutputFile=\"" + outputFileName + "\" -dNOPAUSE -dBATCH -r" + resolution + " \"" + inputFileName + "\"";
 
                 try {
                     ReadOutputs(proc, "PDF から EPS への変換");
@@ -420,12 +484,14 @@ namespace TeX2img {
                     return false;
                 }
                 // BoundingBoxをあらかじめ計測した物に取り替える。
-                BoundingBoxPair bb;
-                if(origbb == null) bb = readBBFromPDF(inputFileName, page);
-                else bb = origbb;
-                Func<BoundingBox, BoundingBox> bbfunc = (b) => bb.bb;
-                Func<BoundingBox, BoundingBox> hiresbbfunc = (b) => bb.hiresbb;
-                rewriteBB(outputFileName, bbfunc, hiresbbfunc);
+                if(Properties.Settings.Default.keepPageSize) {
+                    BoundingBoxPair bb;
+                    if(origbb == null) bb = readPDFBB(inputFileName, page);
+                    else bb = origbb;
+                    Func<BoundingBox, BoundingBox> bbfunc = (b) => bb.bb;
+                    Func<BoundingBox, BoundingBox> hiresbbfunc = (b) => bb.hiresbb;
+                    rewriteBB(outputFileName, bbfunc, hiresbbfunc);
+                }
             }
             return true;
         }
@@ -553,7 +619,7 @@ namespace TeX2img {
             for(int i = 0 ; i < pages.Count ; ++i) {
                 BoundingBoxPair bb;
                 if(origbb[i] == null) {
-                    bb = readBBFromPDF(inputFileName, pages[i]);
+                    bb = readPDFBB(inputFileName, pages[i]);
                 } else {
                     bb = origbb[i];
                 }
@@ -576,7 +642,7 @@ namespace TeX2img {
                 fw.WriteLine(@"\bye");
             }
             using(var proc = GetProcess()) {
-                proc.StartInfo.FileName = Path.Combine(Path.GetDirectoryName(setProcStartInfo(Properties.Settings.Default.platexPath)), "pdftex.exe");
+                proc.StartInfo.FileName = GetpdftexPath();
                 proc.StartInfo.Arguments = "-no-shell-escape -interaction=batchmode \"" + tmpfile + "\"";
                 try {
                     ReadOutputs(proc, "pdftex の実行 ");
@@ -789,9 +855,16 @@ namespace TeX2img {
             int page = pdfpages(Path.Combine(workingDir, tmpFileBaseName + ".pdf"));
 
             // boundingBoxを取得
-            for(int i = 1 ; i <= page ; ++i) {
-                bbs.Add(readBBFromPDF(Path.Combine(workingDir, tmpFileBaseName + ".pdf"), i));
+            if(Properties.Settings.Default.keepPageSize) {
+                var pagecountList = new List<int>();
+                for(int i = 1 ; i <= page ; ++i) pagecountList.Add(i);
+                bbs = readPDFBox(tmpFileBaseName + ".pdf", pagecountList);
+            } else {
+                for(int i = 1 ; i <= page ; ++i) {
+                    bbs.Add(readPDFBB(Path.Combine(workingDir, tmpFileBaseName + ".pdf"), i));
+                }
             }
+            if(bbs == null) return false;
 
             bool addMargin = ((Properties.Settings.Default.leftMargin + Properties.Settings.Default.rightMargin + Properties.Settings.Default.topMargin + Properties.Settings.Default.bottomMargin) > 0);
 
@@ -811,13 +884,17 @@ namespace TeX2img {
                     (extension == ".gif" && Properties.Settings.Default.transparentPngFlag)
                     ) {
                     if(extension == ".svg") {
-                        if(!pdfcrop(tmpFileBaseName + ".pdf", tmpFileBaseName + "-" + i + ".pdf", true, i, bbs[i - 1])) return false;
+                        if(!Properties.Settings.Default.keepPageSize) {
+                            if(!pdfcrop(tmpFileBaseName + ".pdf", tmpFileBaseName + "-" + i + ".pdf", true, i, bbs[i - 1])) return false;
+                        }
                         if(!pdf2img_mudraw(tmpFileBaseName + "-" + i + ".pdf", tmpFileBaseName + "-" + i + ".svg")) return false;
                         if(Properties.Settings.Default.deleteDisplaySize) {
                             DeleteHeightAndWidthFromSVGFile(tmpFileBaseName + "-" + i + extension);
                         }
                     } else {
-                        if(!pdfcrop(tmpFileBaseName + ".pdf", tmpFileBaseName + "-" + i + ".pdf", extension == ".pdf" ? true : Properties.Settings.Default.yohakuUnitBP, i, bbs[i - 1])) return false;
+                        if(!Properties.Settings.Default.keepPageSize) {
+                            if(!pdfcrop(tmpFileBaseName + ".pdf", tmpFileBaseName + "-" + i + ".pdf", extension == ".pdf" ? true : Properties.Settings.Default.yohakuUnitBP, i, bbs[i - 1])) return false;
+                        }
                         if(extension != ".pdf") {
                             if(!pdf2img_pdfium(tmpFileBaseName + "-" + i + ".pdf", tmpFileBaseName + "-" + i + extension)) return false;
                         }
@@ -945,6 +1022,13 @@ namespace TeX2img {
             }
             return string.Empty;
         }
+
+        string GetpdftexPath() {
+            var f = Path.Combine(Path.GetDirectoryName(setProcStartInfo(Properties.Settings.Default.platexPath)), "pdftex.exe");
+            if(File.Exists(f)) return f;
+            return which("pdftex");
+        }
+
         public static string GetTempFileName(string ext = ".tex") {
             return GetTempFileName(ext, Path.GetTempPath());
         }

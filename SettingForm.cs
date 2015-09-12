@@ -73,6 +73,8 @@ namespace TeX2img {
             transparentPngCheckBox.Checked = Properties.Settings.Default.transparentPngFlag;
             notOutllinedTextCheckBox.Checked = !Properties.Settings.Default.outlinedText;
             deleteDisplaySizeCheckBox.Checked = Properties.Settings.Default.deleteDisplaySize;
+            KeepPageSizeCheckBox.Checked = Properties.Settings.Default.keepPageSize;
+            MergeOutputFilesCheckBox.Checked = Properties.Settings.Default.mergeOutputFiles;
 
             showOutputWindowCheckBox.Checked = Properties.Settings.Default.showOutputWindowFlag;
             previewCheckBox.Checked = Properties.Settings.Default.previewFlag;
@@ -140,6 +142,8 @@ namespace TeX2img {
             Properties.Settings.Default.transparentPngFlag = transparentPngCheckBox.Checked;
             Properties.Settings.Default.outlinedText = !notOutllinedTextCheckBox.Checked;
             Properties.Settings.Default.deleteDisplaySize = deleteDisplaySizeCheckBox.Checked;
+            Properties.Settings.Default.keepPageSize = KeepPageSizeCheckBox.Checked;
+            Properties.Settings.Default.mergeOutputFiles = MergeOutputFilesCheckBox.Checked;
 
             Properties.Settings.Default.showOutputWindowFlag = showOutputWindowCheckBox.Checked;
             Properties.Settings.Default.previewFlag = previewCheckBox.Checked;

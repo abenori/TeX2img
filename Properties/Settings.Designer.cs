@@ -790,5 +790,29 @@ namespace TeX2img.Properties {
                 this["editorAcceptTab"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool keepPageSize {
+            get {
+                return ((bool)(this["keepPageSize"]));
+            }
+            set {
+                this["keepPageSize"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool mergeOutputFiles {
+            get {
+                return ((bool)(this["mergeOutputFiles"]));
+            }
+            set {
+                this["mergeOutputFiles"] = value;
+            }
+        }
     }
 }
