@@ -219,12 +219,12 @@ namespace TeX2img {
                 fw.WriteLine(@"\catcode`\%=12\relax");
                 fw.WriteLine(@"\def\space{ }");
                 foreach(var p in pages) {
-                    fw.WriteLine(@"\pdfximage page " + p.ToString() + " mediabox{" + inputPDFFileName + "}");
+                    fw.WriteLine(@"\pdfximage page " + p.ToString() + "{" + inputPDFFileName + "}");
                     fw.WriteLine(@"\dimleft=\pdfximagebbox\pdflastximage1\relax");
                     fw.WriteLine(@"\dimbottom=\pdfximagebbox\pdflastximage2\relax");
                     fw.WriteLine(@"\dimright=\pdfximagebbox\pdflastximage3\relax");
                     fw.WriteLine(@"\dimtop=\pdfximagebbox\pdflastximage4\relax");
-                    fw.WriteLine(@"\pdfximage page " + p.ToString() + "{" + inputPDFFileName + "}");
+                    fw.WriteLine(@"\pdfximage page " + p.ToString() + " mediabox{" + inputPDFFileName + "}");
                     fw.WriteLine(@"\advance\dimleft by -\pdfximagebbox\pdflastximage1\relax");
                     fw.WriteLine(@"\advance\dimbottom by -\pdfximagebbox\pdflastximage2\relax");
                     fw.WriteLine(@"\advance\dimright by -\pdfximagebbox\pdflastximage1\relax");
