@@ -471,8 +471,8 @@ void OutputBox(string boxname, Data &d) {
 			int itop = (int) top;
 			int ibottom = (int) bottom; if((float) ibottom != bottom)++ibottom;
 			int iright = (int) right; if((float) iright != right)++iright;
-			cout << "%%BoundingBox: " << ileft << " " << itop << " " << iright << " " << ibottom << endl;
-			cout << "%%HiResBoundingBox: " << left << " " << top << " " << right << " " << bottom << endl;
+			cout << "%%BoundingBox: " << ileft << " " << ibottom << " " << iright << " " << itop << endl;
+			cout << "%%HiResBoundingBox: " << left << " " << bottom << " " << right << " " << top << endl;
 		} else {
 			cout << "Failed to get box size" << endl;
 		}

@@ -210,7 +210,7 @@ namespace TeX2img {
 		// boxは\pdfpageboxと同じ
         List<BoundingBoxPair> readPDFBox(string inputPDFFileName, List<int> pages, int box = 0) {
             var rv = new List<BoundingBoxPair>();
-            var tmpfile = GetTempFileName(".tex",workingDir);
+            var tmpfile = GetTempFileName(".tex", workingDir);
             generatedTeXFilesWithoutExtension.Add(Path.Combine(workingDir, Path.GetFileNameWithoutExtension(tmpfile)));
             using(var fw = new StreamWriter(Path.Combine(workingDir, tmpfile))) {
                 fw.WriteLine(@"\pdfpagebox=" + box.ToString() + @"\relax");
@@ -219,7 +219,7 @@ namespace TeX2img {
                 fw.WriteLine(@"\catcode`\%=12\relax");
                 fw.WriteLine(@"\def\space{ }");
                 foreach(var p in pages) {
-                    fw.WriteLine(@"\pdfximage page " + p.ToString() + " mediabox {" + inputPDFFileName + "}");
+                    fw.WriteLine(@"\pdfximage page " + p.ToString() + " mediabox{" + inputPDFFileName + "}");
                     fw.WriteLine(@"\dimleft=\pdfximagebbox\pdflastximage1\relax");
                     fw.WriteLine(@"\dimbottom=\pdfximagebbox\pdflastximage2\relax");
                     fw.WriteLine(@"\dimright=\pdfximagebbox\pdflastximage3\relax");
@@ -627,7 +627,7 @@ namespace TeX2img {
         // origbbには，GhostscriptのsDevice=bboxで得られた値を入れておく。（nullならばここで取得する。）
         bool pdfcrop(string inputFileName, string outputFileName, bool use_bp, List<int> pages, List<BoundingBoxPair> origbb) {
             System.Diagnostics.Debug.Assert(pages.Count == origbb.Count);
-            var tmpfile = GetTempFileName(".tex");
+            var tmpfile = GetTempFileName(".tex", workingDir);
             if(tmpfile == null) return false;
             generatedTeXFilesWithoutExtension.Add(Path.Combine(workingDir, Path.GetFileNameWithoutExtension(tmpfile)));
             generatedImageFiles.Add(Path.Combine(workingDir, outputFileName));
@@ -652,7 +652,7 @@ namespace TeX2img {
                     fw.WriteLine(@"\pdfvorigin=" + box.Bottom.ToString() + @"bp\relax");
                     fw.WriteLine(@"\pdfpagewidth=" + (box.Right - box.Left).ToString() + @"bp\relax");
                     fw.WriteLine(@"\pdfpageheight=" + (box.Top - box.Bottom).ToString() + @"bp\relax");
-                    fw.WriteLine(@"\setbox0=\hbox{\pdfximage page " + page.ToString() + " mediabox {" + inputFileName + @"}\pdfrefximage\pdflastximage}\relax");
+                    fw.WriteLine(@"\setbox0=\hbox{\pdfximage page " + page.ToString() + " mediabox{" + inputFileName + @"}\pdfrefximage\pdflastximage}\relax");
                     fw.WriteLine(@"\ht0=\pdfpageheight\relax");
                     fw.WriteLine(@"\shipout\box0\relax");
                 }
@@ -681,7 +681,7 @@ namespace TeX2img {
             string baseName = Path.GetFileNameWithoutExtension(inputFileName);
             generatedImageFiles.Add(Path.Combine(workingDir, outputFileName));
             // ターゲットのepsを「含む」epsを作成。
-            string trimEpsFileName = GetTempFileName(".eps");
+            string trimEpsFileName = GetTempFileName(".eps", workingDir);
             generatedImageFiles.Add(Path.Combine(workingDir, trimEpsFileName));
             if(origbb == null) origbb = readBB(inputFileName);
             decimal devicedevide = Properties.Settings.Default.yohakuUnitBP ? 1 : Properties.Settings.Default.resolutionScale;
@@ -828,6 +828,8 @@ namespace TeX2img {
                 fw.WriteLine(@"\pdfoutput=1\relax");
                 fw.WriteLine(@"\pdfpagebox=" + boxnumber.ToString() + @"\relax");
                 fw.WriteLine(@"\newcount\pagecount\newcount\tempcount\newdimen\tempdimen");
+                fw.WriteLine(@"\pdfhorigin=0bp\relax");
+                fw.WriteLine(@"\pdfvorigin=0bp\relax");
                 foreach(var f in files){
                     fw.WriteLine(@"\pdfximage{" + f + @"}\relax");
                     fw.WriteLine(@"\pagecount=\pdflastximagepages");
@@ -836,8 +838,6 @@ namespace TeX2img {
                     fw.WriteLine(@"\advance\tempcount by 1\relax");
                     fw.WriteLine(@"\pdfximage page \the\tempcount{" + f + @"}\relax");
                     fw.WriteLine(@"\setbox0=\hbox{\pdfrefximage\pdflastximage}\relax");
-                    fw.WriteLine(@"\pdfhorigin=\pdfximagebbox\pdflastximage1\relax");
-                    fw.WriteLine(@"\pdfvorigin=\pdfximagebbox\pdflastximage2\relax");
                     fw.WriteLine(@"\pdfpagewidth=\wd0\relax");
                     fw.WriteLine(@"\pdfpageheight=\ht0\relax");
                     fw.WriteLine(@"\shipout\box0\relax");
@@ -960,11 +960,11 @@ namespace TeX2img {
             // boundingBoxを取得
             int pdfboxnumber = 0;
             switch(Properties.Settings.Default.pagebox) {
-            case "mediabox": pdfboxnumber = 1; break;
-            case "cropbox": pdfboxnumber = 2; break;
-            case "bleedbox": pdfboxnumber = 3; break;
-            case "trimbox": pdfboxnumber = 4; break;
-            case "artbox": pdfboxnumber = 5; break;
+            case "media": pdfboxnumber = 1; break;
+            case "crop": pdfboxnumber = 2; break;
+            case "bleed": pdfboxnumber = 3; break;
+            case "trim": pdfboxnumber = 4; break;
+            case "art": pdfboxnumber = 5; break;
             default: pdfboxnumber = 0; break;
             }
             if(Properties.Settings.Default.keepPageSize) {

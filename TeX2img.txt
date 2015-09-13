@@ -12,9 +12,9 @@
 * TIFF ファイル（透過・非透過）
 * PNG ファイル（透過・非透過）
 * BMP ファイル
-* EMF ファイル
+* EMF ファイル（透過・非透過）
 
-出力した EPS / JPEG / PNG / PDF / EMF / SVG / BMP ファイルは Word / Excel / PowerPoint や，Illustrator / InDesign 等に貼り付けて利用することができます．
+出力した画像ファイルは Word / Excel / PowerPoint や，Illustrator / InDesign 等に貼り付けて利用することができます．
 
 もともとの作者は寺田侑祐さんです．Version 1.2 以降開発を引き継ぎました．
 
@@ -67,6 +67,8 @@ TeX2img.exe input output
 /top-margin=<NUM>        上余白
 /bottom-margin=<NUM>     下余白
 /unit=<VAL>              余白の単位（bp/px）
+/keep-page-size[-]       ページサイズを維持
+/merge-output-files[-]   PDF / TIFF ファイルを単一ファイルにまとめる
 /transparent[-]          透過 PNG / TIFF / EMF
 /with-text[-]            PDF のテキスト情報を保持
 /delete-display-size[-]  SVG の表示寸法を削除
@@ -260,4 +262,5 @@ https://code.google.com/p/pdfium/
 * 1.6.1
     - 「ページサイズを維持する」オプションを追加．
     - PDF 出力で有効な「単一ファイルで出力」オプションを追加．
-    
+    - Ghostsript による BoundingBox の取得を一回で済ませるようにした．
+    - PDFium を最新のものにした．
