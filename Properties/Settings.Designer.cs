@@ -793,10 +793,10 @@ namespace TeX2img.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool keepPageSize {
+        [global::System.Configuration.DefaultSettingValueAttribute("bbox")]
+        public string keepPageSize {
             get {
-                return ((bool)(this["keepPageSize"]));
+                return ((string)(this["keepPageSize"]));
             }
             set {
                 this["keepPageSize"] = value;

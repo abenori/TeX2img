@@ -212,13 +212,23 @@ namespace TeX2img {
             var tmpfile = GetTempFileName(".tex",workingDir);
             generatedTeXFilesWithoutExtension.Add(Path.Combine(workingDir, Path.GetFileNameWithoutExtension(tmpfile)));
             using(var fw = new StreamWriter(Path.Combine(workingDir, tmpfile))) {
-                fw.WriteLine(@"\pdfpagebox=" + box.ToString());
+                fw.WriteLine(@"\pdfpagebox=" + box.ToString() + @"\relax");
                 fw.WriteLine(@"\newdimen\tempdimen\tempdimen=1bp\relax\message{^^J1bp=\the\tempdimen^^J}");
-                fw.WriteLine(@"\catcode`\%=12");
+                fw.WriteLine(@"\newdimen\dimtop\newdimen\dimleft\newdimen\dimbottom\newdimen\dimright");
+                fw.WriteLine(@"\catcode`\%=12\relax");
                 fw.WriteLine(@"\def\space{ }");
                 foreach(var p in pages) {
+                    fw.WriteLine(@"\pdfximage page " + p.ToString() + " mediabox {" + inputPDFFileName + "}");
+                    fw.WriteLine(@"\dimleft=\pdfximagebbox\pdflastximage1\relax");
+                    fw.WriteLine(@"\dimbottom=\pdfximagebbox\pdflastximage2\relax");
+                    fw.WriteLine(@"\dimright=\pdfximagebbox\pdflastximage3\relax");
+                    fw.WriteLine(@"\dimtop=\pdfximagebbox\pdflastximage4\relax");
                     fw.WriteLine(@"\pdfximage page " + p.ToString() + "{" + inputPDFFileName + "}");
-                    fw.WriteLine(@"\message{^^J%%BoundingBox: \pdfximagebbox\pdflastximage1 \space\pdfximagebbox\pdflastximage2 \space\pdfximagebbox\pdflastximage3 \space\pdfximagebbox\pdflastximage4^^J}");
+                    fw.WriteLine(@"\advance\dimleft by -\pdfximagebbox\pdflastximage1\relax");
+                    fw.WriteLine(@"\advance\dimbottom by -\pdfximagebbox\pdflastximage2\relax");
+                    fw.WriteLine(@"\advance\dimright by -\pdfximagebbox\pdflastximage1\relax");
+                    fw.WriteLine(@"\advance\dimtop by -\pdfximagebbox\pdflastximage2\relax");
+                    fw.WriteLine(@"\message{^^J%%BoundingBox: \the\dimleft \space\the\dimbottom \space\the\dimright \space\the\dimtop^^J}");
                 }
                 fw.WriteLine(@"\bye");
             }
@@ -402,7 +412,7 @@ namespace TeX2img {
                     return false;
                 }
                 //proc.StartInfo.Arguments = arg + " -vv -o " + baseName + ".pdf " + baseName + ".dvi";
-                proc.StartInfo.Arguments = arg + " " + baseName + ".dvi";
+                proc.StartInfo.Arguments = arg + baseName + ".dvi";
 
                 try {
                     // 出力は何故か標準エラー出力から出てくる
@@ -480,14 +490,12 @@ namespace TeX2img {
                     return false;
                 }
                 // BoundingBoxをあらかじめ計測した物に取り替える。
-                if(Properties.Settings.Default.keepPageSize) {
-                    BoundingBoxPair bb;
-                    if(origbb == null) bb = readPDFBB(inputFileName, page);
-                    else bb = origbb;
-                    Func<BoundingBox, BoundingBox> bbfunc = (b) => bb.bb;
-                    Func<BoundingBox, BoundingBox> hiresbbfunc = (b) => bb.hiresbb;
-                    rewriteBB(outputFileName, bbfunc, hiresbbfunc);
-                }
+                BoundingBoxPair bb;
+                if(origbb == null) bb = readPDFBB(inputFileName, page);
+                else bb = origbb;
+                Func<BoundingBox, BoundingBox> bbfunc = (b) => bb.bb;
+                Func<BoundingBox, BoundingBox> hiresbbfunc = (b) => bb.hiresbb;
+                rewriteBB(outputFileName, bbfunc, hiresbbfunc);
             }
             return true;
         }
@@ -937,10 +945,19 @@ namespace TeX2img {
             int page = pdfpages(Path.Combine(workingDir, tmpFileBaseName + ".pdf"));
 
             // boundingBoxを取得
-            if(Properties.Settings.Default.keepPageSize) {
+            if(Properties.Settings.Default.keepPageSize != "bbox") {
                 var pagecountList = new List<int>();
                 for(int i = 1 ; i <= page ; ++i) pagecountList.Add(i);
-                bbs = readPDFBox(tmpFileBaseName + ".pdf", pagecountList);
+                int boxnumber = 0;
+                switch(Properties.Settings.Default.keepPageSize) {
+                case "mediabox": boxnumber = 1; break;
+                case "cropbox": boxnumber = 2; break;
+                case "bleedbox": boxnumber = 3; break;
+                case "trimbox": boxnumber = 4; break;
+                case "artbox": boxnumber = 5; break;
+                default: boxnumber = 0; break;
+                }
+                bbs = readPDFBox(tmpFileBaseName + ".pdf", pagecountList,boxnumber);
             } else {
                 for(int i = 1 ; i <= page ; ++i) {
                     bbs.Add(readPDFBB(Path.Combine(workingDir, tmpFileBaseName + ".pdf"), i));

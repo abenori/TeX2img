@@ -198,8 +198,8 @@
     <Setting Name="editorAcceptTab" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
-    <Setting Name="keepPageSize" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">False</Value>
+    <Setting Name="keepPageSize" Type="System.String" Scope="User">
+      <Value Profile="(Default)">bbox</Value>
     </Setting>
     <Setting Name="mergeOutputFiles" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
