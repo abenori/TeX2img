@@ -259,7 +259,7 @@ https://code.google.com/p/pdfium/
     - オプション名を /platex --> /latex ， /dvipdfmx --> /dvidevice と変更．（古いものも残してある．）
     - /timeout のデフォルトを 10 秒とした（tex2imgc のみ）．更に 0 以下の値を受けつけないようにした．
 
-* 1.6.1
+* 1.6.1（2015/09/14）
     - 「ページサイズを維持する」オプションを追加．
     - PDF 出力で有効な「単一ファイルで出力」オプションを追加．
     - Ghostsript による BoundingBox の取得を一回で済ませるようにした．
