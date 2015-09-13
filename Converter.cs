@@ -106,6 +106,7 @@ namespace TeX2img {
         
         class BoundingBoxPair {
             public BoundingBox bb, hiresbb;
+            public BoundingBoxPair() { }
             public BoundingBoxPair(BoundingBox b, BoundingBox h) {
                 bb = b; hiresbb = h;
             }
@@ -276,17 +277,25 @@ namespace TeX2img {
             else return rv;
         }
 
-        BoundingBoxPair readPDFBB(string inputPDFFileName,int page){
-            BoundingBox bb,hiresbb;
-            var gspath = setProcStartInfo(Properties.Settings.Default.gsPath);
+        BoundingBoxPair readPDFBB(string inputPDFFileName, int page) {
+            var bbs = readPDFBB(inputPDFFileName, page, page);
+            if(bbs != null) return bbs[0];
+            else return new BoundingBoxPair();
+        }
+
+        List<BoundingBoxPair> readPDFBB(string inputPDFFileName,int firstpage, int lastpage){
+            System.Diagnostics.Debug.Assert(lastpage >= firstpage);
+            string arg;
+            var gspath = setProcStartInfo(Properties.Settings.Default.gsPath,out arg);
             using(var proc = GetProcess()) {
                 proc.StartInfo.FileName = gspath;
-                proc.StartInfo.Arguments = "-dBATCH -dNOPAUSE -q -sDEVICE=bbox -dFirstPage=" + page.ToString() + " -dLastPage=" + page.ToString() + " \"" + inputPDFFileName + "\"";
+                proc.StartInfo.Arguments = arg + "-q -dBATCH -dNOPAUSE -sDEVICE=bbox -dFirstPage=" + firstpage.ToString() + " -dLastPage=" + lastpage.ToString() + " \"" + inputPDFFileName + "\"";
                 proc.OutputDataReceived += ((s, e) => { System.Diagnostics.Debug.WriteLine("Std: " + e.Data); });
 
                 Regex regexBB = new Regex(@"^\%\%(HiRes)?BoundingBox\: ([-\d\.]+) ([-\d\.]+) ([-\d\.]+) ([-\d\.]+)$");
-                bb = new BoundingBox();
-                hiresbb = new BoundingBox();
+                BoundingBox? bb = null;
+                BoundingBox? hiresbb = null;
+                var rv = new List<BoundingBoxPair>();
                 try {
                     printCommandLine(proc);
                     proc.Start();
@@ -306,11 +315,16 @@ namespace TeX2img {
                             } else {
                                 bb = currentbb;
                             }
+                            if(bb != null && hiresbb != null) {
+                                rv.Add(new BoundingBoxPair(bb.Value, hiresbb.Value));
+                                bb = null; hiresbb = null;
+                            }
                         }
                     }
                     proc.WaitForExit();
                     if(controller_ != null) controller_.appendOutput("\n");
-                    return new BoundingBoxPair(bb, hiresbb);
+                    if(rv.Count != lastpage - firstpage + 1) return null;
+                    else return rv;
                 }
                 catch(Win32Exception) {
                     if(controller_ != null) controller_.showPathError(gspath, "Ghostscript");
@@ -618,7 +632,6 @@ namespace TeX2img {
             generatedTeXFilesWithoutExtension.Add(Path.Combine(workingDir, Path.GetFileNameWithoutExtension(tmpfile)));
             generatedImageFiles.Add(Path.Combine(workingDir, outputFileName));
 
-            var gspath = setProcStartInfo(Properties.Settings.Default.gsPath);
             var bbBox = new List<BoundingBox>();
             for(int i = 0 ; i < pages.Count ; ++i) {
                 BoundingBoxPair bb;
@@ -810,7 +823,7 @@ namespace TeX2img {
 
         bool pdfconcat(List<string> files, string output, int boxnumber = 0) {
             var tempfile = GetTempFileName(".tex", workingDir);
-            generatedTeXFilesWithoutExtension.Add(tempfile);
+            generatedTeXFilesWithoutExtension.Add(Path.Combine(workingDir, Path.GetFileNameWithoutExtension(tempfile)));
             using(var fw = new StreamWriter(Path.Combine(workingDir, tempfile))) {
                 fw.WriteLine(@"\pdfoutput=1\relax");
                 fw.WriteLine(@"\pdfpagebox=" + boxnumber.ToString() + @"\relax");
@@ -959,9 +972,7 @@ namespace TeX2img {
                 for(int i = 1 ; i <= page ; ++i) pagecountList.Add(i);
                 bbs = readPDFBox(tmpFileBaseName + ".pdf", pagecountList, pdfboxnumber);
             } else {
-                for(int i = 1 ; i <= page ; ++i) {
-                    bbs.Add(readPDFBB(Path.Combine(workingDir, tmpFileBaseName + ".pdf"), i));
-                }
+                bbs = readPDFBB(tmpFileBaseName + ".pdf", 1, page);
             }
             if(bbs == null) return false;
 
