@@ -2,6 +2,7 @@
 using System.Linq;
 using System.IO;
 using System.Diagnostics;
+using System.Collections.Generic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TeX2img;
 using TeX2img.Properties;
@@ -58,6 +59,40 @@ namespace UnitTest {
             Settings.Default.useMagickFlag = true;
             Settings.Default.keepPageSize = true;
             doGenerateTest("keep-pagesize");
+        }
+
+        [TestMethod]
+        public void sizeTest() {
+            SetOutputDir("size");
+            PrepareTest();
+            using(converter = new Converter(controller, Path.Combine(WorkDir, testfile + ".tex"), Path.Combine(OutputDir, testfile + ".pdf"))) {
+                BeforeTest();
+                tex2dvi_test(testfile + ".tex");
+                dvi2pdf_test(testfile + ".dvi");
+                AfterTest();
+                var orighiresbb = GetPDFBB("dvi2pdf.pdf", 1);
+                var origbb = GetPDFBB("dvi2pdf.pdf", 1, false);
+                var orighiresbox = GetPDFBox("dvi2pdf.pdf", 1);
+                var origbox = GetPDFBox("dvi2pdf.pdf", 1, false);
+                Settings.Default.keepPageSize = false;
+                var exts = new string[] { ".pdf", ".eps", ".jpg", ".png" };
+                foreach(var ext in exts){
+                    doGenerateTest("dvi2pdf.pdf", testfile + "-not-keep" + ext);
+                }
+                Assert.IsTrue(CheckVerctorImageSize(orighiresbb, GetPDFBox(testfile + "-not-keep.pdf", 1)));
+                Assert.IsTrue(CheckVerctorImageSize(orighiresbb, GetEPSBB(testfile + "-not-keep.eps")));
+                Assert.IsTrue(CheckBitmapImageSize(origbb, GetBitmapSize(testfile + "-not-keep.png")));
+                Assert.IsTrue(CheckBitmapImageSize(origbb, GetBitmapSize(testfile + "-not-keep.jpg")));
+
+                Settings.Default.keepPageSize = true;
+                foreach(var ext in exts) {
+                    doGenerateTest("dvi2pdf.pdf", testfile + "-keep" + ext);
+                }
+                Assert.IsTrue(CheckVerctorImageSize(orighiresbox, GetPDFBox(testfile + "-keep.pdf", 1)));
+                Assert.IsTrue(CheckVerctorImageSize(orighiresbox, GetEPSBB(testfile + "-keep.eps")));
+                Assert.IsTrue(CheckBitmapImageSize(origbox, GetBitmapSize(testfile + "-keep.png")));
+                Assert.IsTrue(CheckBitmapImageSize(origbox, GetBitmapSize(testfile + "-keep.jpg")));
+            }
         }
 
         void PrepareTest() {
@@ -120,6 +155,19 @@ namespace UnitTest {
                 }
                 AfterTest();
             }
+        }
+
+        void doGenerateTest(string inputfile, string outputfile){
+            BeforeTest();
+            if(!Path.IsPathRooted(inputfile))inputfile = Path.Combine(OutputDir,inputfile);
+            string tempfile = Path.Combine(WorkDir, Path.GetFileName(inputfile));
+            File.Copy(inputfile, tempfile, true);
+            if(!Path.IsPathRooted(outputfile))outputfile = Path.Combine(OutputDir,outputfile);
+            using(converter = new Converter(controller, tempfile, outputfile)) {
+                converter.Convert();
+                Assert.IsTrue(File.Exists(outputfile));
+            }
+            AfterTest();
         }
 
         bool sourceFileExisted = false;
@@ -260,6 +308,81 @@ namespace UnitTest {
             File.Copy(Path.Combine(WorkDir, pdf), Path.Combine(OutputDir, "eps2pdf.pdf"), true);
         }
 
+        struct Size { public decimal width, height;}
+        Size GetPDFBox(string file,int page,bool hires = true){
+            var dir = Path.GetDirectoryName(file);
+            if(dir == "") dir = OutputDir;
+            else file = Path.GetFileName(file);
+            using(var conv = new Converter(null, Path.Combine(dir, "dummy.tex"), file)) {
+                var bb = CallMethod(conv, "readPDFBox", Path.GetFileName(file), new List<int>() { page }, 0);
+                return BBToSize(GetIndexer(bb, 0), hires);
+            }
+        }
+
+        Size GetPDFBB(string file, int page, bool hires = true) {
+            var dir = Path.GetDirectoryName(file);
+            if(dir == "") dir = OutputDir;
+            else file = Path.GetFileName(file);
+            using(var conv = new Converter(null, Path.Combine(dir, "dummy.tex"), file)) {
+                var bb = CallMethod(conv, "readPDFBB", Path.GetFileName(file), page);
+                return BBToSize(bb, hires);
+            }
+        }
+
+        Size GetEPSBB(string file,bool hires = true){
+            var dir = Path.GetDirectoryName(file);
+            if(dir == "") dir = OutputDir;
+            else file = Path.GetFileName(file);
+            using(var conv = new Converter(null, Path.Combine(dir, "dummy.tex"), file)) {
+                var bb = CallMethod(conv, "readBB", Path.GetFileName(file));
+                return BBToSize(bb, hires);
+            }
+        }
+
+        static Size BBToSize(object bb, bool hires){
+            var hiresbb = GetField(bb, hires ? "hiresbb" : "bb");
+            var size = new Size();
+            size.width = (decimal) GetProperty(hiresbb, "Right") - (decimal) GetProperty(hiresbb, "Left");
+            size.height = (decimal) GetProperty(hiresbb, "Top") - (decimal) GetProperty(hiresbb, "Bottom");
+            return size;
+        }
+
+        Size GetBitmapSize(string file) {
+            if(!Path.IsPathRooted(file)) file = Path.Combine(OutputDir, file);
+            using(var bitmap = new System.Drawing.Bitmap(file)) {
+                var size = new Size();
+                size.width = bitmap.Size.Width;
+                size.height = bitmap.Size.Height;
+                return size;
+            }
+        }
+
+        bool SameValue(decimal a, decimal b) {
+            return Math.Abs(a - b) < 1;
+        }
+
+        bool CheckVerctorImageSize(Size original, Size gend) {
+            bool bw = SameValue(original.width + Settings.Default.leftMargin + Settings.Default.rightMargin,gend.width);
+            bool bh = SameValue(original.height + Settings.Default.topMargin + Settings.Default.bottomMargin, gend.height);
+            return bw && bh;
+        }
+
+        bool CheckBitmapImageSize(Size original, Size gend) {
+            original.width *= Settings.Default.resolutionScale;
+            original.height *= Settings.Default.resolutionScale;
+            var addwidth = Settings.Default.leftMargin + Settings.Default.rightMargin;
+            var addheight = Settings.Default.topMargin + Settings.Default.bottomMargin;
+            if(Settings.Default.yohakuUnitBP){
+                addwidth *= Settings.Default.resolutionScale;
+                addheight *= Settings.Default.resolutionScale;
+            }
+            bool bw = SameValue(original.width + addwidth, gend.width);
+            bool bh = SameValue(original.height + addheight, gend.height);
+            return bw && bh;
+        }
+
+
+
 
         public void showExtensionError(string file) { Debug.WriteLine("showExtensionError: \nfile = " + file); }
         public void showPathError(string exeName, string necessary) { Debug.WriteLine("showPathError:\n exeName = " + exeName + "\nnecessary = " + necessary); }
@@ -302,9 +425,23 @@ namespace UnitTest {
                 return obj.GetType().GetMethod(func, System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic, null, types, modifilers).Invoke(obj, args);
             }
         }
-        static object GetMember(object obj, string name) {
-            return obj.GetType().GetField(name, System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic).GetValue(obj);
+
+        static object GetField(object obj, string name) {
+            var t = obj.GetType();
+            var f = t.GetField(name, System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.NonPublic);
+            return f.GetValue(obj);
         }
 
+        static object GetProperty(object obj, string name) {
+            var t = obj.GetType();
+            var p = t.GetProperty(name, System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.NonPublic);
+            return p.GetValue(obj);
+            //return obj.GetType().GetProperty(name, System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic).GetValue(obj);
+        }
+
+        static object GetIndexer(object obj, object index) {
+            var t = obj.GetType();
+            return t.InvokeMember("Item", System.Reflection.BindingFlags.GetProperty, null, obj, new object[] { index });
+        }
     }
 }

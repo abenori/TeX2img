@@ -397,9 +397,9 @@
             this.MergeOutputFilesCheckBox.AutoSize = true;
             this.MergeOutputFilesCheckBox.Location = new System.Drawing.Point(289, 94);
             this.MergeOutputFilesCheckBox.Name = "MergeOutputFilesCheckBox";
-            this.MergeOutputFilesCheckBox.Size = new System.Drawing.Size(274, 22);
+            this.MergeOutputFilesCheckBox.Size = new System.Drawing.Size(220, 22);
             this.MergeOutputFilesCheckBox.TabIndex = 3;
-            this.MergeOutputFilesCheckBox.Text = "単一ファイルで出力 (TIFF / PDF)";
+            this.MergeOutputFilesCheckBox.Text = "単一ファイルで出力 (PDF)";
             this.MergeOutputFilesCheckBox.UseVisualStyleBackColor = true;
             // 
             // deleteDisplaySizeCheckBox
