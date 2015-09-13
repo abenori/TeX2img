@@ -198,11 +198,14 @@
     <Setting Name="editorAcceptTab" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
-    <Setting Name="keepPageSize" Type="System.String" Scope="User">
-      <Value Profile="(Default)">bbox</Value>
+    <Setting Name="keepPageSize" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
     </Setting>
     <Setting Name="mergeOutputFiles" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="pagebox" Type="System.String" Scope="User">
+      <Value Profile="(Default)">crop</Value>
     </Setting>
   </Settings>
 </SettingsFile>

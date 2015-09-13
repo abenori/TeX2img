@@ -793,10 +793,10 @@ namespace TeX2img.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("bbox")]
-        public string keepPageSize {
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool keepPageSize {
             get {
-                return ((string)(this["keepPageSize"]));
+                return ((bool)(this["keepPageSize"]));
             }
             set {
                 this["keepPageSize"] = value;
@@ -812,6 +812,18 @@ namespace TeX2img.Properties {
             }
             set {
                 this["mergeOutputFiles"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("crop")]
+        public string pagebox {
+            get {
+                return ((string)(this["pagebox"]));
+            }
+            set {
+                this["pagebox"] = value;
             }
         }
     }

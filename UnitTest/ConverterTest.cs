@@ -57,7 +57,7 @@ namespace UnitTest {
             Settings.Default.transparentPngFlag = false;
             Settings.Default.useLowResolution = false;
             Settings.Default.useMagickFlag = true;
-            Settings.Default.keepPageSize = "cropbox";
+            Settings.Default.keepPageSize = true;
             doGenerateTest("keep-pagesize");
         }
 
@@ -74,7 +74,7 @@ namespace UnitTest {
                 var origbb = GetPDFBB("dvi2pdf.pdf", 1, false);
                 var orighiresbox = GetPDFBox("dvi2pdf.pdf", 1);
                 var origbox = GetPDFBox("dvi2pdf.pdf", 1, false);
-                Settings.Default.keepPageSize = "bbox";
+                Settings.Default.keepPageSize = false;
                 var exts = new string[] { ".pdf", ".eps", ".jpg", ".png" };
                 foreach(var ext in exts){
                     doGenerateTest("dvi2pdf.pdf", testfile + "-not-keep" + ext);
@@ -84,7 +84,7 @@ namespace UnitTest {
                 Assert.IsTrue(CheckBitmapImageSize(origbb, GetBitmapSize(testfile + "-not-keep.png")));
                 Assert.IsTrue(CheckBitmapImageSize(origbb, GetBitmapSize(testfile + "-not-keep.jpg")));
 
-                Settings.Default.keepPageSize = "cropbox";
+                Settings.Default.keepPageSize = true;
                 foreach(var ext in exts) {
                     doGenerateTest("dvi2pdf.pdf", testfile + "-keep" + ext);
                 }

@@ -98,7 +98,7 @@ namespace TeX2img {
             public bool IsEmpty { get { return left >= right || bottom >= top; } }
             public BoundingBox HiresBBToBB() {
                 int ileft = (int)left, iright = (int)right, ibottom = (int)bottom, itop = (int)top;
-                if((decimal) ibottom != bottom) ++ibottom;
+                if((decimal) itop != top) ++itop;
                 if((decimal) iright != iright) ++iright;
                 return new BoundingBox(ileft, ibottom, iright, itop);
             }
@@ -808,12 +808,12 @@ namespace TeX2img {
             }
         }
 
-        bool pdfconcat(List<string> files, string output) {
+        bool pdfconcat(List<string> files, string output, int boxnumber = 0) {
             var tempfile = GetTempFileName(".tex", workingDir);
             generatedTeXFilesWithoutExtension.Add(tempfile);
             using(var fw = new StreamWriter(Path.Combine(workingDir, tempfile))) {
                 fw.WriteLine(@"\pdfoutput=1\relax");
-                fw.WriteLine(@"\pdfpagebox=0\relax");
+                fw.WriteLine(@"\pdfpagebox=" + boxnumber.ToString() + @"\relax");
                 fw.WriteLine(@"\newcount\pagecount\newcount\tempcount\newdimen\tempdimen");
                 foreach(var f in files){
                     fw.WriteLine(@"\pdfximage{" + f + @"}\relax");
@@ -945,19 +945,19 @@ namespace TeX2img {
             int page = pdfpages(Path.Combine(workingDir, tmpFileBaseName + ".pdf"));
 
             // boundingBoxを取得
-            if(Properties.Settings.Default.keepPageSize != "bbox") {
+            int pdfboxnumber = 0;
+            switch(Properties.Settings.Default.pagebox) {
+            case "mediabox": pdfboxnumber = 1; break;
+            case "cropbox": pdfboxnumber = 2; break;
+            case "bleedbox": pdfboxnumber = 3; break;
+            case "trimbox": pdfboxnumber = 4; break;
+            case "artbox": pdfboxnumber = 5; break;
+            default: pdfboxnumber = 0; break;
+            }
+            if(Properties.Settings.Default.keepPageSize) {
                 var pagecountList = new List<int>();
                 for(int i = 1 ; i <= page ; ++i) pagecountList.Add(i);
-                int boxnumber = 0;
-                switch(Properties.Settings.Default.keepPageSize) {
-                case "mediabox": boxnumber = 1; break;
-                case "cropbox": boxnumber = 2; break;
-                case "bleedbox": boxnumber = 3; break;
-                case "trimbox": boxnumber = 4; break;
-                case "artbox": boxnumber = 5; break;
-                default: boxnumber = 0; break;
-                }
-                bbs = readPDFBox(tmpFileBaseName + ".pdf", pagecountList,boxnumber);
+                bbs = readPDFBox(tmpFileBaseName + ".pdf", pagecountList, pdfboxnumber);
             } else {
                 for(int i = 1 ; i <= page ; ++i) {
                     bbs.Add(readPDFBB(Path.Combine(workingDir, tmpFileBaseName + ".pdf"), i));
@@ -1043,7 +1043,7 @@ namespace TeX2img {
                         if(File.Exists(Path.Combine(workingDir, generatedFile))) files.Add(generatedFile);
                     }
                     switch(extension) {
-                    case ".pdf": if(!pdfconcat(files, tempfile)) return false; break;
+                    case ".pdf": if(!pdfconcat(files, tempfile, pdfboxnumber)) return false; break;
                     case ".tiff": if(!tiffconcat(files, tempfile)) return false; break;
                     default: break;// ないけど……
                     }

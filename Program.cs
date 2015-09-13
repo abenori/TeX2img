@@ -50,7 +50,8 @@ namespace TeX2img {
 			    default: throw new NDesk.Options.OptionException("bp, px のいずれかを指定してください。", "unit");
 			    }
             },()=>Properties.Settings.Default.yohakuUnitBP ? "bp" : "px"},
-            {"keep-page-size","ページサイズを維持[-]",val=>Properties.Settings.Default.keepPageSize=(val != null ? "cropbox" : "bbox"),()=>Properties.Settings.Default.keepPageSize!="bbox"},
+            {"keep-page-size","ページサイズを維持[-]",val=>Properties.Settings.Default.keepPageSize=(val != null),()=>Properties.Settings.Default.keepPageSize},
+            {"pagebox=",val=>Properties.Settings.Default.pagebox = GetStringsFromArray("pagebox",val,new string[]{"media","crop","bleed","trim","art"})},// 隠しオプション
             {"merge-output-files","単一ファイルにまとめる[-]",val=>Properties.Settings.Default.mergeOutputFiles = (val != null),()=>Properties.Settings.Default.mergeOutputFiles},
 			{"transparent","透過 PNG / TIFF / EMF[-]",val => Properties.Settings.Default.transparentPngFlag = (val != null),()=>Properties.Settings.Default.transparentPngFlag},
             {"with-text","PDF のテキスト情報を保持[-]",val =>Properties.Settings.Default.outlinedText = !(val != null),()=>!Properties.Settings.Default.outlinedText},
