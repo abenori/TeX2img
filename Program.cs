@@ -161,19 +161,7 @@ namespace TeX2img {
                 return -2;
             }
 
-            var chkfiles = new List<string>() { "pdfiumdraw.exe", "mudraw.exe" };
-            if(!nogui) chkfiles.Add("Azuki.dll");
-            string mydir = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
-            chkfiles = chkfiles.Where(f => !File.Exists(Path.Combine(mydir, f))).ToList();
-            string chkfile_errmsg = null;
-            if(chkfiles.Count != 0) {
-                chkfile_errmsg = "以下のファイルが見つからないため，起動することができませんでした。\n" + String.Join("\n", chkfiles.ToArray());
-            }
             if(nogui) {
-                if(chkfile_errmsg != null) {
-                    Console.WriteLine(chkfile_errmsg);
-                    return -3;
-                }
                 // CUIでオプション指定がないときは，設定によらずプレビューをしないようにする。
                 if(preview == null) {
                     preview = Properties.Settings.Default.previewFlag;
@@ -183,10 +171,6 @@ namespace TeX2img {
                 Properties.Settings.Default.previewFlag = (bool) preview;
                 return r;
             } else {
-                if(chkfile_errmsg != null) {
-                    MessageBox.Show(chkfile_errmsg, "TeX2img");
-                    return -3;
-                }
                 Application.Run(new MainForm(files));
                 return 0;
             }
@@ -224,6 +208,21 @@ namespace TeX2img {
                 nogui = true;
                 cmds.RemoveAt(0);
             }
+            var chkfiles = new List<string>() { "pdfiumdraw.exe", "mudraw.exe" };
+            if(!nogui) chkfiles.Add("Azuki.dll");
+            string mydir = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
+            chkfiles = chkfiles.Where(f => !File.Exists(Path.Combine(mydir, f))).ToList();
+            string chkfile_errmsg = null;
+            if(chkfiles.Count != 0) {
+                chkfile_errmsg = "以下のファイルが見つからないため，起動することができませんでした。\n" + String.Join("\n", chkfiles.ToArray());
+            }
+            if(chkfile_errmsg != null) {
+                if(nogui) Console.WriteLine(chkfile_errmsg);
+                else MessageBox.Show(chkfile_errmsg, "TeX2img");
+                Environment.ExitCode = - 3;
+                return;
+            }
+
             // GUIか否かで設定の変更をする
             if(!nogui) {
                 //Properties.Settings.Default.batchMode = Properties.Settings.BatchMode.NonStop;

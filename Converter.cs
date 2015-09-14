@@ -216,7 +216,7 @@ namespace TeX2img {
                 fw.WriteLine(@"\pdfpagebox=" + box.ToString() + @"\relax");
                 fw.WriteLine(@"\newdimen\tempdimen\tempdimen=1bp\relax\message{^^J1bp=\the\tempdimen^^J}");
                 fw.WriteLine(@"\newdimen\dimtop\newdimen\dimleft\newdimen\dimbottom\newdimen\dimright");
-                fw.WriteLine(@"\catcode`\%=12\relax");
+                fw.WriteLine(@"\catcode37=12\relax");
                 fw.WriteLine(@"\def\space{ }");
                 foreach(var p in pages) {
                     fw.WriteLine(@"\pdfximage page " + p.ToString() + "{" + inputPDFFileName + "}");
@@ -233,40 +233,33 @@ namespace TeX2img {
                 }
                 fw.WriteLine(@"\bye");
             }
-            Regex regexBB = new Regex(@"^\%\%(HiRes)?BoundingBox\: ([-\d\.]+)pt ([-\d\.]+)pt ([-\d\.]+)pt ([-\d\.]+)pt$");
-            Regex readbppt = new Regex(@"^1bp=([-\d\.]+)pt");
             using(var proc = GetProcess()) {
                 proc.StartInfo.FileName = GetpdftexPath();
                 proc.StartInfo.Arguments = "-no-shell-escape -interaction=nonstopmode \"" + tmpfile + "\"";
-                proc.ErrorDataReceived += ((s, e) => { System.Diagnostics.Debug.WriteLine(e.Data); });
-                try {
-                    printCommandLine(proc);
-                    proc.Start();
-                    proc.BeginErrorReadLine();
-                    decimal bp = (decimal)72.27/72;
-                    while(!proc.HasExited || !proc.StandardOutput.EndOfStream){
-                        var line = proc.StandardOutput.ReadLine();
-                        if(line == null) {
-                            proc.WaitForExit(100);
-                            continue;
-                        }
-                        System.Diagnostics.Debug.WriteLine(line);
-                        if(controller_ != null) controller_.appendOutput(line + "\n");
-                        var match = readbppt.Match(line);
-                        if(match.Success){
-                            bp = System.Convert.ToDecimal(match.Groups[1].Value);
-                        }else{
-                            match = regexBB.Match(line);
-                            if(match.Success) {
-                                var hiresbb = new BoundingBox(
-                                    System.Convert.ToDecimal(match.Groups[2].Value)/bp,
-                                    System.Convert.ToDecimal(match.Groups[3].Value)/bp,
-                                    System.Convert.ToDecimal(match.Groups[4].Value)/bp,
-                                    System.Convert.ToDecimal(match.Groups[5].Value)/bp);
-                                rv.Add(new BoundingBoxPair(hiresbb.HiresBBToBB(), hiresbb));
-                            }
+                Action<string> err_read = s => System.Diagnostics.Debug.WriteLine(s);
+                decimal bp = (decimal) 72.27 / 72;
+                Regex regexBB = new Regex(@"^\%\%(HiRes)?BoundingBox\: ([-\d\.]+)pt ([-\d\.]+)pt ([-\d\.]+)pt ([-\d\.]+)pt$");
+                Regex readbppt = new Regex(@"^1bp=([-\d\.]+)pt");
+                Action<string> std_read = line => {
+                    if(controller_ != null) controller_.appendOutput(line + "\n");
+                    var match = readbppt.Match(line);
+                    if(match.Success) {
+                        bp = System.Convert.ToDecimal(match.Groups[1].Value);
+                    } else {
+                        match = regexBB.Match(line);
+                        if(match.Success) {
+                            var hiresbb = new BoundingBox(
+                                System.Convert.ToDecimal(match.Groups[2].Value) / bp,
+                                System.Convert.ToDecimal(match.Groups[3].Value) / bp,
+                                System.Convert.ToDecimal(match.Groups[4].Value) / bp,
+                                System.Convert.ToDecimal(match.Groups[5].Value) / bp);
+                            rv.Add(new BoundingBoxPair(hiresbb.HiresBBToBB(), hiresbb));
                         }
                     }
+                };
+                try {
+                    printCommandLine(proc);
+                    ReadOutputs(proc, "BoundingBox の取得", std_read, err_read);
                 }
                 catch(Win32Exception) {
                     if(controller_ != null) controller_.showPathError("pdftex.exe", "TeX ディストリビューション");
@@ -289,39 +282,41 @@ namespace TeX2img {
             var gspath = setProcStartInfo(Properties.Settings.Default.gsPath,out arg);
             using(var proc = GetProcess()) {
                 proc.StartInfo.FileName = gspath;
-                proc.StartInfo.Arguments = arg + "-q -dBATCH -dNOPAUSE -sDEVICE=bbox -dFirstPage=" + firstpage.ToString() + " -dLastPage=" + lastpage.ToString() + " \"" + inputPDFFileName + "\"";
-                proc.OutputDataReceived += ((s, e) => { System.Diagnostics.Debug.WriteLine("Std: " + e.Data); });
-
+                proc.StartInfo.Arguments = arg + "-q -dBATCH -dNOPAUSE -sDEVICE=bbox ";
+                /*
+                if(Properties.Settings.Default.pagebox != "media") {
+                    var box = Properties.Settings.Default.pagebox;
+                    proc.StartInfo.Arguments += "-dUse" + Char.ToUpper(box[0]) + box.Substring(1) + "Box ";
+                }*/
+                proc.StartInfo.Arguments += "-dFirstPage=" + firstpage.ToString() + " -dLastPage=" + lastpage.ToString() + " \"" + inputPDFFileName + "\"";
+                var rv = new List<BoundingBoxPair>();
                 Regex regexBB = new Regex(@"^\%\%(HiRes)?BoundingBox\: ([-\d\.]+) ([-\d\.]+) ([-\d\.]+) ([-\d\.]+)$");
                 BoundingBox? bb = null;
                 BoundingBox? hiresbb = null;
-                var rv = new List<BoundingBoxPair>();
-                try {
-                    printCommandLine(proc);
-                    proc.Start();
-                    proc.BeginOutputReadLine();
-                    while(!proc.StandardError.EndOfStream) {
-                        var line = proc.StandardError.ReadLine();
-                        if(controller_ != null) controller_.appendOutput(line + "\n");
-                        var match = regexBB.Match(line);
-                        if(match.Success) {
-                            var currentbb = new BoundingBox(
-                                System.Convert.ToDecimal(match.Groups[2].Value),
-                                System.Convert.ToDecimal(match.Groups[3].Value),
-                                System.Convert.ToDecimal(match.Groups[4].Value),
-                                System.Convert.ToDecimal(match.Groups[5].Value));
-                            if(match.Groups[1].Value == "HiRes") {
-                                hiresbb = currentbb;
-                            } else {
-                                bb = currentbb;
-                            }
-                            if(bb != null && hiresbb != null) {
-                                rv.Add(new BoundingBoxPair(bb.Value, hiresbb.Value));
-                                bb = null; hiresbb = null;
-                            }
+                Action<string> err_read = line => {
+                    if(controller_ != null) controller_.appendOutput(line + "\n");
+                    var match = regexBB.Match(line);
+                    if(match.Success) {
+                        var currentbb = new BoundingBox(
+                            System.Convert.ToDecimal(match.Groups[2].Value),
+                            System.Convert.ToDecimal(match.Groups[3].Value),
+                            System.Convert.ToDecimal(match.Groups[4].Value),
+                            System.Convert.ToDecimal(match.Groups[5].Value));
+                        if(match.Groups[1].Value == "HiRes") {
+                            hiresbb = currentbb;
+                        } else {
+                            bb = currentbb;
+                        }
+                        if(bb != null && hiresbb != null) {
+                            rv.Add(new BoundingBoxPair(bb.Value, hiresbb.Value));
+                            bb = null; hiresbb = null;
                         }
                     }
-                    proc.WaitForExit();
+                };
+
+                try {
+                    printCommandLine(proc);
+                    ReadOutputs(proc, "PageBox の取得l", s => { System.Diagnostics.Debug.WriteLine(s); }, err_read);
                     if(controller_ != null) controller_.appendOutput("\n");
                     if(rv.Count != lastpage - firstpage + 1) return null;
                     else return rv;
@@ -375,6 +370,7 @@ namespace TeX2img {
                     while(analyzer.Check() != AnalyzeLaTeXCompile.Program.Done) {
                         using(var proc = GetProcess()) {
                             proc.StartInfo = startinfo;
+                            printCommandLine(proc);
                             ReadOutputs(proc, "TeX ソースのコンパイル");
                             if(proc.ExitCode != 0) {
                                 if(!Properties.Settings.Default.ignoreErrorFlag) {
@@ -392,6 +388,7 @@ namespace TeX2img {
                     for(int i = 0 ; i < Properties.Settings.Default.LaTeXCompileMaxNumber ; ++i) {
                         using(var proc = GetProcess()) {
                             proc.StartInfo = startinfo;
+                            printCommandLine(proc);
                             ReadOutputs(proc, "TeX ソースのコンパイル");
                             if(proc.ExitCode != 0) {
                                 if(!Properties.Settings.Default.ignoreErrorFlag) {
@@ -430,6 +427,7 @@ namespace TeX2img {
 
                 try {
                     // 出力は何故か標準エラー出力から出てくる
+                    printCommandLine(proc);
                     ReadOutputs(proc, "DVI から PDF への変換");
                 }
                 catch(Win32Exception) {
@@ -458,6 +456,7 @@ namespace TeX2img {
                 }
                 proc.StartInfo.Arguments = arg + "-dSAFER -dNOPAUSE -dBATCH -sDEVICE=pdfwrite -dAutoRotatePages=/None -sOutputFile=\"" + outputFileName + "\" -c .setpdfwrite -f\"" + filename + "\"";
                 try {
+                    printCommandLine(proc);
                     ReadOutputs(proc, "PS から PDF への変換");
                 }
                 catch(Win32Exception) {
@@ -490,6 +489,7 @@ namespace TeX2img {
                 proc.StartInfo.Arguments += " -dNOCACHE -dEPSCrop -sOutputFile=\"" + outputFileName + "\" -dNOPAUSE -dBATCH -r" + resolution + " \"" + inputFileName + "\"";
 
                 try {
+                    printCommandLine(proc);
                     ReadOutputs(proc, "PDF から EPS への変換");
                 }
                 catch(Win32Exception) {
@@ -520,12 +520,8 @@ namespace TeX2img {
                 proc.StartInfo.Arguments = "--output-page \"" + file + "\"";
                 try {
                     proc.ErrorDataReceived += ((s, e) => { });
-                    proc.Start();
                     string output = "";
-                    while(!proc.StandardOutput.EndOfStream) {
-                        output += proc.StandardOutput.ReadToEnd();
-                    }
-                    System.Diagnostics.Debug.WriteLine("pdfpages: " + output);
+                    ReadOutputs(proc, "PDF ページ数の取得", (line) => output += line, (l) => { });
                     output = output.Replace("\r", "").Replace("\n", "");
                     output.Trim();
                     try {
@@ -539,7 +535,6 @@ namespace TeX2img {
                     if(controller_ != null) controller_.showToolError("pdfiumdraw.exe");
                     return -1;
                 }
-
             }
         }
 
@@ -591,6 +586,7 @@ namespace TeX2img {
                 proc.StartInfo.FileName = Path.Combine(GetToolsPath(), "mudraw.exe");
                 proc.StartInfo.Arguments = "-l -o \"" + outputFileName + "\" \"" + inputFileName + "\" " + page.ToString();
                 try {
+                    printCommandLine(proc);
                     ReadOutputs(proc, "mudraw の実行");
                 }
                 catch(Win32Exception) {
@@ -662,6 +658,7 @@ namespace TeX2img {
                 proc.StartInfo.FileName = GetpdftexPath();
                 proc.StartInfo.Arguments = "-no-shell-escape -interaction=nonstopmode \"" + tmpfile + "\"";
                 try {
+                    printCommandLine(proc);
                     ReadOutputs(proc, "pdftex の実行 ");
                 }
                 catch(Win32Exception) {
@@ -731,6 +728,7 @@ namespace TeX2img {
                     72 * Properties.Settings.Default.resolutionScale,
                     width, height, trimEpsFileName);
                 try {
+                    printCommandLine(proc);
                     ReadOutputs(proc, "Ghostscript の実行");
                 }
                 catch(Win32Exception) {
@@ -755,6 +753,7 @@ namespace TeX2img {
                     (pages > 0 ? "--pages=" + pages.ToString() + " " : "") + 
                     "--output=\"" + outputFileName + "\" \"" + inputFilename + "\"";
                 try {
+                    printCommandLine(proc);
                     ReadOutputs(proc, "pdfiumdraw の実行");
                 }
                 catch(Win32Exception) {
@@ -780,6 +779,7 @@ namespace TeX2img {
                     "--" + type + " --input-format=" + inputtype + 
                     " --output=\"" + outputFileName + "\" \"" + inputFileName + "\"";
                 try {
+                    printCommandLine(proc);
                     ReadOutputs(proc, "pdfiumdraw の実行");
                 }
                 catch(Win32Exception) {
@@ -806,6 +806,7 @@ namespace TeX2img {
                 }
                 proc.StartInfo.Arguments = arg + "-q -sDEVICE=pdfwrite -dNOPAUSE -dBATCH -dEPSCrop -sOutputFile=\"" + outputFileName + "\" \"" + inputFileName + "\"";
                 try {
+                    printCommandLine(proc);
                     ReadOutputs(proc, "Ghostscript の実行");
                 }
                 catch(Win32Exception) {
@@ -849,6 +850,7 @@ namespace TeX2img {
                 proc.StartInfo.FileName = GetpdftexPath();
                 proc.StartInfo.Arguments = "-no-shell-escape -interaction=nonstopmode " + tempfile;
                 try {
+                    printCommandLine(proc);
                     ReadOutputs(proc, "pdftex の実行 ");
                 }
                 catch(Win32Exception) {
@@ -1058,17 +1060,33 @@ namespace TeX2img {
                     case ".tiff": if(!tiffconcat(files, tempfile)) return false; break;
                     default: break;// ないけど……
                     }
-                    File.Delete(Path.Combine(workingDir,tmpFileBaseName + "-1" + extension));
-                    File.Move(Path.Combine(workingDir,tempfile),Path.Combine(workingDir,tmpFileBaseName + "-1" + extension));
+                    try {
+                        File.Delete(Path.Combine(workingDir, tmpFileBaseName + "-1" + extension));
+                        File.Move(Path.Combine(workingDir, tempfile), Path.Combine(workingDir, tmpFileBaseName + "-1" + extension));
+                    }
+                    catch(UnauthorizedAccessException) {
+                        if(controller_ != null) controller_.showUnauthorizedError(outputFilePath);
+                        return false;
+                    }
+                    catch(IOException) {
+                        if(controller_ != null) controller_.showIOError(outputFilePath);
+                        return false;
+                    }
                     page = 1;
                 }
             }
             // 出力ファイルをターゲットディレクトリにコピー
-            try {
                 if(page == 1) {
                     string generatedFile = Path.Combine(workingDir, tmpFileBaseName + "-1" + extension);
                     if(File.Exists(generatedFile)) {
-                        File.Copy(generatedFile, outputFilePath, true);
+                        try { File.Copy(generatedFile, outputFilePath, true); }
+                        catch(UnauthorizedAccessException) {
+                            if(controller_ != null) controller_.showUnauthorizedError(outputFilePath);
+                        }
+                        catch(IOException) {
+                            if(controller_ != null) controller_.showIOError(outputFilePath);
+                        }
+
                         outputFileNames.Add(outputFilePath);
                     }
                 } else {
@@ -1076,7 +1094,13 @@ namespace TeX2img {
                     for(int i = 1 ; i <= page ; ++i) {
                         string generatedFile = Path.Combine(workingDir, tmpFileBaseName + "-" + i + extension);
                         if(File.Exists(generatedFile)) {
-                            File.Copy(generatedFile, outputFilePathBaseName + "-" + i + extension, true);
+                            try { File.Copy(generatedFile, outputFilePathBaseName + "-" + i + extension, true); }
+                            catch(UnauthorizedAccessException) {
+                                if(controller_ != null) controller_.showUnauthorizedError(outputFilePath);
+                            }
+                            catch(IOException) {
+                                if(controller_ != null) controller_.showIOError(outputFilePath);
+                            }
                             outputFileNames.Add(outputFilePathBaseName + "-" + i + extension);
                         }
                     }
@@ -1084,15 +1108,8 @@ namespace TeX2img {
                 if(Properties.Settings.Default.previewFlag) {
                     if(outputFileNames.Count > 0) Process.Start(outputFileNames[0]);
                 }
-            }
-            catch(UnauthorizedAccessException) {
-                if(controller_ != null) controller_.showUnauthorizedError(outputFilePath);
-            }
-            catch(IOException) {
-                if(controller_ != null) controller_.showIOError(outputFilePath);
-            }
 
-            if(Properties.Settings.Default.embedTeXSource) {
+            if(Properties.Settings.Default.embedTeXSource && inputextension == ".tex") {
                 // Alternative Data Streamにソースを書き込む
                 try {
                     using(var source = new FileStream(inputTeXFilePath, FileMode.Open, FileAccess.Read)) {
@@ -1303,26 +1320,30 @@ namespace TeX2img {
         // 非同期だと全部読み込んだかわからない気がしたので，スレッドを作成することにした。
         //
         // 結局どっちもスレッドを回すことにしてみた……。
-        void ReadOutputs(Process proc, string freezemsg) {
-            printCommandLine(proc);
+        void ReadOutputs(Process proc, string freezemsg){
+            Action<string> read_func = (s)=>{if(controller_ != null)controller_.appendOutput(s + "\n");};
+            ReadOutputs(proc, freezemsg, read_func, read_func);
+        }
+
+        void ReadOutputs(Process proc, string freezemsg, Action<string> stdOutRead,Action<string> stdErrRead) {
             proc.Start();
             object syncObj = new object();
-            var readThread = new Action<StreamReader>((sr) => {
+            var readThread = new Action<StreamReader,Action<string>>((sr,action) => {
                 try {
                     while(!sr.EndOfStream) {
                         if(abort) return;
                         var str = sr.ReadLine();
                         if(str != null) {
                             lock(syncObj) {
-                                if(controller_ != null) controller_.appendOutput(str + "\n");
+                                action(str);
                             }
                         }
                     }
                 }
                 catch(System.Threading.ThreadAbortException) { return; }
             });
-            var ReadStdOutThread = readThread.BeginInvoke(proc.StandardOutput, null, null);
-            var ReadStdErrThread = readThread.BeginInvoke(proc.StandardError, null, null);
+            var ReadStdOutThread = readThread.BeginInvoke(proc.StandardOutput, stdOutRead, null, null);
+            var ReadStdErrThread = readThread.BeginInvoke(proc.StandardError, stdErrRead, null, null);
             while(true) {
                 proc.WaitForExit(Properties.Settings.Default.timeOut <= 0 ? 100 : Properties.Settings.Default.timeOut);
                 if(proc.HasExited) {
