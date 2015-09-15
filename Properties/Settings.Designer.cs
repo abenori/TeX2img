@@ -826,5 +826,29 @@ namespace TeX2img.Properties {
                 this["pagebox"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("100")]
+        public uint animationDelay {
+            get {
+                return ((uint)(this["animationDelay"]));
+            }
+            set {
+                this["animationDelay"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("1")]
+        public uint animationLoop {
+            get {
+                return ((uint)(this["animationLoop"]));
+            }
+            set {
+                this["animationLoop"] = value;
+            }
+        }
     }
 }

@@ -90,7 +90,7 @@ TeX2img.exe input output
 
 [-] はオプションの否定を意味します．たとえば /guess-compile- と指定すると，コンパイル回数の推定を行わなくなります．複数回指定された場合は最後のものが優先されます．
 各種オプションは後に指定されたものが優先されます．例えば
-  tex2imgc /transparent- /ransparent a.tex a.png
+  tex2imgc /transparent- /transparent a.tex a.png
 とすると透過 png が作成されます．特に /load-defaults は全ての設定を既定に戻すので，それ以前のオプションがほぼ全て無効になります．このオプションは最初につけるとよいでしょう．
 
 
@@ -256,11 +256,11 @@ https://code.google.com/p/pdfium/
     - dvips を使うテンプレートを追加．
     - プリアンブル編集ウィンドウが画面外に出ないように調整することにした．
     - パス名とオプション名の分割をある程度柔軟にするようにした．
-    - オプション名を /platex --> /latex ， /dvipdfmx --> /dvidevice と変更．（古いものも残してある．）
+    - オプション名を /platex --> /latex ， /dvipdfmx --> /dvidriver と変更．（古いものも残してある．）
     - /timeout のデフォルトを 10 秒とした（tex2imgc のみ）．更に 0 以下の値を受けつけないようにした．
 
 * 1.6.1（2015/09/14）
     - 「ページサイズを維持する」オプションを追加．
     - PDF / TIFF 出力で有効な「単一ファイルで出力」オプションを追加．
-    - Ghostsript による BoundingBox の取得を一回で済ませるようにした．
+    - Ghostscript による BoundingBox の取得を一回で済ませるようにした．
     - PDFium を最新のものにした．

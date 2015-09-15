@@ -387,7 +387,7 @@
             this.groupBox2.Controls.Add(this.transparentPngCheckBox);
             this.groupBox2.Location = new System.Drawing.Point(25, 267);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(612, 143);
+            this.groupBox2.Size = new System.Drawing.Size(612, 185);
             this.groupBox2.TabIndex = 2;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "画像形式ごとの設定";
@@ -395,7 +395,7 @@
             // MergeOutputFilesCheckBox
             // 
             this.MergeOutputFilesCheckBox.AutoSize = true;
-            this.MergeOutputFilesCheckBox.Location = new System.Drawing.Point(289, 94);
+            this.MergeOutputFilesCheckBox.Location = new System.Drawing.Point(24, 149);
             this.MergeOutputFilesCheckBox.Name = "MergeOutputFilesCheckBox";
             this.MergeOutputFilesCheckBox.Size = new System.Drawing.Size(274, 22);
             this.MergeOutputFilesCheckBox.TabIndex = 3;
@@ -405,28 +405,28 @@
             // deleteDisplaySizeCheckBox
             // 
             this.deleteDisplaySizeCheckBox.AutoSize = true;
-            this.deleteDisplaySizeCheckBox.Location = new System.Drawing.Point(24, 94);
+            this.deleteDisplaySizeCheckBox.Location = new System.Drawing.Point(24, 121);
             this.deleteDisplaySizeCheckBox.Name = "deleteDisplaySizeCheckBox";
-            this.deleteDisplaySizeCheckBox.Size = new System.Drawing.Size(208, 22);
+            this.deleteDisplaySizeCheckBox.Size = new System.Drawing.Size(237, 22);
             this.deleteDisplaySizeCheckBox.TabIndex = 2;
-            this.deleteDisplaySizeCheckBox.Text = "寸法情報を削除（SVG）";
+            this.deleteDisplaySizeCheckBox.Text = "寸法情報を削除する（SVG）";
             this.deleteDisplaySizeCheckBox.UseVisualStyleBackColor = true;
             // 
             // useMagickCheckBox
             // 
             this.useMagickCheckBox.AutoSize = true;
-            this.useMagickCheckBox.Location = new System.Drawing.Point(24, 35);
+            this.useMagickCheckBox.Location = new System.Drawing.Point(24, 33);
             this.useMagickCheckBox.Margin = new System.Windows.Forms.Padding(5, 4, 5, 4);
             this.useMagickCheckBox.Name = "useMagickCheckBox";
-            this.useMagickCheckBox.Size = new System.Drawing.Size(375, 22);
+            this.useMagickCheckBox.Size = new System.Drawing.Size(429, 22);
             this.useMagickCheckBox.TabIndex = 0;
-            this.useMagickCheckBox.Text = "アンチエイリアス処理する（JPEG / PNG / BMP）";
+            this.useMagickCheckBox.Text = "アンチエイリアス処理する（JPEG / PNG / BMP / TIFF）";
             this.useMagickCheckBox.UseVisualStyleBackColor = true;
             // 
             // notOutllinedTextCheckBox
             // 
             this.notOutllinedTextCheckBox.AutoSize = true;
-            this.notOutllinedTextCheckBox.Location = new System.Drawing.Point(351, 64);
+            this.notOutllinedTextCheckBox.Location = new System.Drawing.Point(24, 92);
             this.notOutllinedTextCheckBox.Name = "notOutllinedTextCheckBox";
             this.notOutllinedTextCheckBox.Size = new System.Drawing.Size(220, 22);
             this.notOutllinedTextCheckBox.TabIndex = 1;
@@ -438,12 +438,12 @@
             this.transparentPngCheckBox.AutoSize = true;
             this.transparentPngCheckBox.Checked = true;
             this.transparentPngCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.transparentPngCheckBox.Location = new System.Drawing.Point(24, 65);
+            this.transparentPngCheckBox.Location = new System.Drawing.Point(24, 63);
             this.transparentPngCheckBox.Margin = new System.Windows.Forms.Padding(5, 4, 5, 4);
             this.transparentPngCheckBox.Name = "transparentPngCheckBox";
-            this.transparentPngCheckBox.Size = new System.Drawing.Size(284, 22);
+            this.transparentPngCheckBox.Size = new System.Drawing.Size(338, 22);
             this.transparentPngCheckBox.TabIndex = 0;
-            this.transparentPngCheckBox.Text = "背景色を透過させる（PNG / EMF）";
+            this.transparentPngCheckBox.Text = "背景色を透過させる（PNG / EMF / TIFF）";
             this.transparentPngCheckBox.UseVisualStyleBackColor = true;
             // 
             // groupBox1
@@ -474,7 +474,7 @@
             // KeepPageSizeCheckBox
             // 
             this.KeepPageSizeCheckBox.AutoSize = true;
-            this.KeepPageSizeCheckBox.Location = new System.Drawing.Point(13, 205);
+            this.KeepPageSizeCheckBox.Location = new System.Drawing.Point(13, 211);
             this.KeepPageSizeCheckBox.Name = "KeepPageSizeCheckBox";
             this.KeepPageSizeCheckBox.Size = new System.Drawing.Size(201, 22);
             this.KeepPageSizeCheckBox.TabIndex = 10;
@@ -491,16 +491,16 @@
             this.groupBox3.Size = new System.Drawing.Size(577, 58);
             this.groupBox3.TabIndex = 7;
             this.groupBox3.TabStop = false;
-            this.groupBox3.Text = "余白の単位（ JPEG / PNG /BMP ）";
+            this.groupBox3.Text = "余白の単位（JPEG / PNG /BMP / TIFF）";
             // 
             // label9
             // 
             this.label9.AutoSize = true;
             this.label9.Location = new System.Drawing.Point(181, 28);
             this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(319, 18);
+            this.label9.Size = new System.Drawing.Size(314, 18);
             this.label9.TabIndex = 2;
-            this.label9.Text = "（ PDF / EPS / EMF / SVG は bp で固定）";
+            this.label9.Text = "（PDF / EPS / EMF / SVG は bp で固定）";
             // 
             // radioButtonbp
             // 

@@ -54,7 +54,7 @@ namespace TeX2img {
 
         #region 設定値の読み書き
         private void loadSettings() {
-            //sourceTextBox.Text = "あいうえお\n\\newpage\nかきくけこ";
+            sourceTextBox.Text = "あいうえお\n\\newpage\nかきくけこ";
 
             const int minLength = 50;
             if(Properties.Settings.Default.Height > minLength) this.Height = Properties.Settings.Default.Height;

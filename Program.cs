@@ -53,6 +53,8 @@ namespace TeX2img {
             {"keep-page-size","ページサイズを維持[-]",val=>Properties.Settings.Default.keepPageSize=(val != null),()=>Properties.Settings.Default.keepPageSize},
             {"pagebox=",val=>Properties.Settings.Default.pagebox = GetStringsFromArray("pagebox",val,new string[]{"media","crop","bleed","trim","art"})},// 隠しオプション
             {"merge-output-files","PDF / TIFF ファイルを単一ファイルにまとめる[-]",val=>Properties.Settings.Default.mergeOutputFiles = (val != null),()=>Properties.Settings.Default.mergeOutputFiles},
+            {"animation-delay=",(double sec)=>{Properties.Settings.Default.animationDelay = (uint)(sec*100);}},
+            {"animation-loop=",(uint val)=>Properties.Settings.Default.animationLoop = val},
 			{"transparent","透過 PNG / TIFF / EMF[-]",val => Properties.Settings.Default.transparentPngFlag = (val != null),()=>Properties.Settings.Default.transparentPngFlag},
             {"with-text","PDF のテキスト情報を保持[-]",val =>Properties.Settings.Default.outlinedText = !(val != null),()=>!Properties.Settings.Default.outlinedText},
             {"delete-display-size","SVG の表示寸法を削除[-]",val => Properties.Settings.Default.deleteDisplaySize = (val != null),()=>Properties.Settings.Default.deleteDisplaySize},

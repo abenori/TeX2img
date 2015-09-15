@@ -207,5 +207,11 @@
     <Setting Name="pagebox" Type="System.String" Scope="User">
       <Value Profile="(Default)">crop</Value>
     </Setting>
+    <Setting Name="animationDelay" Type="System.UInt32" Scope="User">
+      <Value Profile="(Default)">100</Value>
+    </Setting>
+    <Setting Name="animationLoop" Type="System.UInt32" Scope="User">
+      <Value Profile="(Default)">1</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

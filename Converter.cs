@@ -9,11 +9,11 @@ using System.ComponentModel;
 using System.Text.RegularExpressions;
 
 namespace TeX2img {
-    class Converter : IDisposable{
+    class Converter : IDisposable {
         /* 空ページの扱い：
          * 生成されるEPSファイルはBoundingBoxが0 0 0 0かもしれない。
          * 変換に渡されるEPSファイルのBoundingBoxは必ず幅を持つようにする。
-         */ 
+         */
 
         // ADS名
         public const string ADSName = "TeX2img.source";
@@ -73,6 +73,8 @@ namespace TeX2img {
 
         // 変換
         public bool Convert() {
+            warnngs.Clear();
+            error_ignored = false;
             if(GetInputEncoding().CodePage == Encoding.UTF8.CodePage) {
                 Environments["command_line_encoding"] = "utf8";
             }
@@ -84,9 +86,9 @@ namespace TeX2img {
 
             return rv;
         }
-        
+
         #region BoundingBox関連
-        struct BoundingBox{
+        struct BoundingBox {
             private decimal left, right, bottom, top;
             public decimal Left { get { return left; } }
             public decimal Right { get { return right; } }
@@ -97,13 +99,13 @@ namespace TeX2img {
             }
             public bool IsEmpty { get { return left >= right || bottom >= top; } }
             public BoundingBox HiresBBToBB() {
-                int ileft = (int)left, iright = (int)right, ibottom = (int)bottom, itop = (int)top;
+                int ileft = (int) left, iright = (int) right, ibottom = (int) bottom, itop = (int) top;
                 if((decimal) itop != top) ++itop;
                 if((decimal) iright != iright) ++iright;
                 return new BoundingBox(ileft, ibottom, iright, itop);
             }
         };
-        
+
         class BoundingBoxPair {
             public BoundingBox bb, hiresbb;
             public BoundingBoxPair() { }
@@ -113,11 +115,11 @@ namespace TeX2img {
         }
 
         void enlargeBB(string inputEpsFileName, bool use_bp = true) {
-            Func<BoundingBox, BoundingBox> func = bb => AddMargineToBoundingBox(bb,use_bp);
+            Func<BoundingBox, BoundingBox> func = bb => AddMargineToBoundingBox(bb, use_bp);
             rewriteBB(inputEpsFileName, func, func);
         }
 
-        void rewriteBB(string inputEpsFileName,Func<BoundingBox,BoundingBox> bb,Func<BoundingBox,BoundingBox> hiresbb) {
+        void rewriteBB(string inputEpsFileName, Func<BoundingBox, BoundingBox> bb, Func<BoundingBox, BoundingBox> hiresbb) {
             Regex regexBB = new Regex(@"^\%\%(HiRes|)BoundingBox\: ([-\d\.]+) ([-\d\.]+) ([-\d\.]+) ([-\d\.]+)$");
             byte[] inbuf;
             using(var fs = new FileStream(Path.Combine(workingDir, inputEpsFileName), FileMode.Open, FileAccess.Read)) {
@@ -180,7 +182,7 @@ namespace TeX2img {
             }
         }
 
-        private BoundingBoxPair readBB(string inputEpsFileName) { 
+        private BoundingBoxPair readBB(string inputEpsFileName) {
             Regex regex = new Regex(@"^\%\%(HiRes)?BoundingBox\: ([-\d\.]+) ([-\d\.]+) ([-\d\.]+) ([-\d\.]+)$");
             var bb = new BoundingBox();
             var hiresbb = new BoundingBox();
@@ -207,7 +209,7 @@ namespace TeX2img {
             return new BoundingBoxPair(bb, hiresbb);
         }
 
-		// boxは\pdfpageboxと同じ
+        // boxは\pdfpageboxと同じ
         List<BoundingBoxPair> readPDFBox(string inputPDFFileName, List<int> pages, int box = 0) {
             var rv = new List<BoundingBoxPair>();
             var tmpfile = GetTempFileName(".tex", workingDir);
@@ -276,10 +278,10 @@ namespace TeX2img {
             else return new BoundingBoxPair();
         }
 
-        List<BoundingBoxPair> readPDFBB(string inputPDFFileName,int firstpage, int lastpage){
+        List<BoundingBoxPair> readPDFBB(string inputPDFFileName, int firstpage, int lastpage) {
             System.Diagnostics.Debug.Assert(lastpage >= firstpage);
             string arg;
-            var gspath = setProcStartInfo(Properties.Settings.Default.gsPath,out arg);
+            var gspath = setProcStartInfo(Properties.Settings.Default.gsPath, out arg);
             using(var proc = GetProcess()) {
                 proc.StartInfo.FileName = gspath;
                 proc.StartInfo.Arguments = arg + "-q -dBATCH -dNOPAUSE -sDEVICE=bbox ";
@@ -514,30 +516,6 @@ namespace TeX2img {
             return true;
         }
 
-        int pdfpages(string file) {
-            using(var proc = GetProcess()) {
-                proc.StartInfo.FileName = Path.Combine(GetToolsPath(), "pdfiumdraw.exe");
-                proc.StartInfo.Arguments = "--output-page \"" + file + "\"";
-                try {
-                    proc.ErrorDataReceived += ((s, e) => { });
-                    string output = "";
-                    ReadOutputs(proc, "PDF ページ数の取得", (line) => output += line, (l) => { });
-                    output = output.Replace("\r", "").Replace("\n", "");
-                    output.Trim();
-                    try {
-                        return Int32.Parse(output);
-                    }
-                    catch(FormatException) {
-                        return -1;
-                    }
-                }
-                catch(Win32Exception) {
-                    if(controller_ != null) controller_.showToolError("pdfiumdraw.exe");
-                    return -1;
-                }
-            }
-        }
-
         bool png2img(string inputFileName, string outputFileName) {
             generatedImageFiles.Add(Path.Combine(workingDir, outputFileName));
             System.Drawing.Imaging.ImageFormat format;
@@ -580,7 +558,7 @@ namespace TeX2img {
             }
         }
 
-        bool pdf2img_mudraw(string inputFileName, string outputFileName,int page = 0) {
+        bool pdf2img_mudraw(string inputFileName, string outputFileName, int page = 0) {
             generatedImageFiles.Add(Path.Combine(workingDir, outputFileName));
             using(var proc = GetProcess()) {
                 proc.StartInfo.FileName = Path.Combine(GetToolsPath(), "mudraw.exe");
@@ -600,7 +578,7 @@ namespace TeX2img {
                 return true;
             }
         }
-        
+
         void DeleteHeightAndWidthFromSVGFile(string svgFile) {
             var fullpath = Path.Combine(workingDir, svgFile);
             var xml = new System.Xml.XmlDocument();
@@ -639,9 +617,9 @@ namespace TeX2img {
                 var rect = AddMargineToBoundingBox(bb.hiresbb, use_bp);
                 bbBox.Add(rect);
             }
-            using(var fw = new StreamWriter(Path.Combine(workingDir,tmpfile))) {
+            using(var fw = new StreamWriter(Path.Combine(workingDir, tmpfile))) {
                 fw.WriteLine(@"\pdfoutput=1\relax");
-                for(int i = 0 ; i < pages.Count ; ++i){
+                for(int i = 0 ; i < pages.Count ; ++i) {
                     var box = bbBox[i];
                     var page = pages[i];
                     fw.WriteLine(@"\pdfhorigin=" + (-box.Left).ToString() + @"bp\relax");
@@ -668,12 +646,12 @@ namespace TeX2img {
                 catch(TimeoutException) { return false; }
             }
             File.Delete(Path.Combine(workingDir, outputFileName));
-            File.Move(Path.Combine(workingDir, Path.GetFileNameWithoutExtension(tmpfile) + ".pdf"),Path.Combine(workingDir,outputFileName));
+            File.Move(Path.Combine(workingDir, Path.GetFileNameWithoutExtension(tmpfile) + ".pdf"), Path.Combine(workingDir, outputFileName));
             return true;
         }
 
         // 余白の付加も行う。
-        private bool eps2img(string inputFileName, string outputFileName, BoundingBoxPair origbb = null){
+        private bool eps2img(string inputFileName, string outputFileName, BoundingBoxPair origbb = null) {
             string extension = Path.GetExtension(outputFileName).ToLower();
             string baseName = Path.GetFileNameWithoutExtension(inputFileName);
             generatedImageFiles.Add(Path.Combine(workingDir, outputFileName));
@@ -682,8 +660,8 @@ namespace TeX2img {
             generatedImageFiles.Add(Path.Combine(workingDir, trimEpsFileName));
             if(origbb == null) origbb = readBB(inputFileName);
             decimal devicedevide = Properties.Settings.Default.yohakuUnitBP ? 1 : Properties.Settings.Default.resolutionScale;
-            decimal translateleft = - origbb.bb.Left + Properties.Settings.Default.leftMargin / devicedevide;
-            decimal translatebottom = - origbb.bb.Bottom + Properties.Settings.Default.bottomMargin / devicedevide;
+            decimal translateleft = -origbb.bb.Left + Properties.Settings.Default.leftMargin / devicedevide;
+            decimal translatebottom = -origbb.bb.Bottom + Properties.Settings.Default.bottomMargin / devicedevide;
             using(StreamWriter sw = new StreamWriter(Path.Combine(workingDir, trimEpsFileName), false, Encoding.GetEncoding("shift_jis"))) {
                 sw.WriteLine("/NumbDict countdictstack def");
                 sw.WriteLine("1 dict begin");
@@ -742,15 +720,15 @@ namespace TeX2img {
             return true;
         }
 
-        bool pdf2img_pdfium(string inputFilename, string outputFileName,int pages = 0) {
+        bool pdf2img_pdfium(string inputFilename, string outputFileName, int pages = 0) {
             generatedImageFiles.Add(Path.Combine(workingDir, outputFileName));
             var type = Path.GetExtension(outputFileName).Substring(1).ToLower();
             using(var proc = GetProcess()) {
                 proc.StartInfo.FileName = Path.Combine(GetToolsPath(), "pdfiumdraw.exe");
-                proc.StartInfo.Arguments = 
+                proc.StartInfo.Arguments =
                     (type == "emf" ? "" : "--scale=" + Properties.Settings.Default.resolutionScale.ToString() + " ") +
                     "--" + type + " " + (Properties.Settings.Default.transparentPngFlag ? "--transparent " : "") +
-                    (pages > 0 ? "--pages=" + pages.ToString() + " " : "") + 
+                    (pages > 0 ? "--pages=" + pages.ToString() + " " : "") +
                     "--output=\"" + outputFileName + "\" \"" + inputFilename + "\"";
                 try {
                     printCommandLine(proc);
@@ -776,7 +754,7 @@ namespace TeX2img {
             using(var proc = GetProcess()) {
                 proc.StartInfo.FileName = Path.Combine(GetToolsPath(), "pdfiumdraw.exe");
                 proc.StartInfo.Arguments =
-                    "--" + type + " --input-format=" + inputtype + 
+                    "--" + type + " --input-format=" + inputtype +
                     " --output=\"" + outputFileName + "\" \"" + inputFileName + "\"";
                 try {
                     printCommandLine(proc);
@@ -821,7 +799,9 @@ namespace TeX2img {
                 }
             }
         }
+        #endregion
 
+        #region 画像結合
         bool pdfconcat(List<string> files, string output, int boxnumber = 0) {
             var tempfile = GetTempFileName(".tex", workingDir);
             generatedTeXFilesWithoutExtension.Add(Path.Combine(workingDir, Path.GetFileNameWithoutExtension(tempfile)));
@@ -831,7 +811,7 @@ namespace TeX2img {
                 fw.WriteLine(@"\newcount\pagecount\newcount\tempcount\newdimen\tempdimen");
                 fw.WriteLine(@"\pdfhorigin=0bp\relax");
                 fw.WriteLine(@"\pdfvorigin=0bp\relax");
-                foreach(var f in files){
+                foreach(var f in files) {
                     fw.WriteLine(@"\pdfximage{" + f + @"}\relax");
                     fw.WriteLine(@"\pagecount=\pdflastximagepages");
                     fw.WriteLine(@"\tempcount=0\relax");
@@ -864,8 +844,11 @@ namespace TeX2img {
             return true;
         }
 
+        // http://dobon.net/vb/dotnet/graphics/createmultitiff.html
         bool tiffconcat(List<string> files, string output) {
-            if(files.Count == 0)return true;
+            generatedImageFiles.Add(output);
+            var Compression = System.Drawing.Imaging.EncoderValue.CompressionLZW;
+            if(files.Count == 0) return true;
             System.Drawing.Imaging.ImageCodecInfo ici = null;
             foreach(var enc in System.Drawing.Imaging.ImageCodecInfo.GetImageEncoders()) {
                 if(enc.MimeType == "image/tiff") {
@@ -881,10 +864,9 @@ namespace TeX2img {
                 File.Copy(Path.Combine(workingDir, files[0]), Path.Combine(workingDir, output));
                 return true;
             } else {
-                var Compression = System.Drawing.Imaging.EncoderValue.CompressionNone;
                 var bitmaps = new List<System.Drawing.Bitmap>();
                 foreach(var f in files) bitmaps.Add(new System.Drawing.Bitmap(Path.Combine(workingDir, f)));
-                try { 
+                try {
                     using(var ep = new System.Drawing.Imaging.EncoderParameters(2)) {
                         ep.Param[0] = new System.Drawing.Imaging.EncoderParameter(System.Drawing.Imaging.Encoder.SaveFlag, (long) System.Drawing.Imaging.EncoderValue.MultiFrame);
                         ep.Param[1] = new System.Drawing.Imaging.EncoderParameter(System.Drawing.Imaging.Encoder.Compression, (long) Compression);
@@ -902,11 +884,69 @@ namespace TeX2img {
                         bitmaps[0].SaveAdd(ep);
                     }
                 }
-                finally{
-                    foreach(var b in bitmaps)b.Dispose();
+                finally {
+                    foreach(var b in bitmaps) b.Dispose();
                 }
             }
             return File.Exists(Path.Combine(workingDir, output));
+        }
+
+        bool gifconcat(List<string> files, string output, uint delay, uint loop) {
+            generatedImageFiles.Add(output);
+            using(var fw = new FileStream(Path.Combine(workingDir, output), FileMode.Create, FileAccess.Write))
+            using(var writer = new BinaryWriter(fw)) {
+                for(int i = 0 ; i < files.Count ; ++i) {
+                    using(var fr = new FileStream(Path.Combine(workingDir, files[i]), FileMode.Open, FileAccess.Read))
+                    using(var reader = new BinaryReader(fr)) {
+                        byte[] bytes = null;
+                        byte b = 0;
+                        bytes = reader.ReadBytes(13);//Global Color Tableの前まで
+                        int ColorTableSize = -1;
+                        if((bytes[10] & 0x80) != 0) ColorTableSize = (int) Math.Pow(2, bytes[10] & 0x07 + 1);
+                        byte[] ColorTable = null;
+                        // GlobalColorTableの読み込み
+                        if(ColorTableSize >= 0) ColorTable = reader.ReadBytes(ColorTableSize * 3);
+                        if(i == 0) {
+                            bytes[4] = 0x39;
+                            bytes[10] &= 0x78;
+                            writer.Write(bytes);
+                            bytes = BitConverter.GetBytes(loop);
+                            writer.Write(new byte[] {
+                                0x21, 0xFF, 0x0B, (byte) 'N', (byte) 'E', (byte) 'T', (byte) 'S' ,
+                                (byte)'C',(byte)'A',(byte)'P',(byte)'E',(byte)'2',(byte)'.',(byte)'0',
+                                0x03,0x01,bytes[0],bytes[1],0x00});
+                        }
+                        // Graphic Control Extension
+                        b = reader.ReadByte();
+                        writer.Write((byte) 0x21);
+                        var delaybytes = BitConverter.GetBytes(delay);
+                        if(b == 0x21) {
+                            bytes = reader.ReadBytes(7);
+                            if(bytes[0] != 0xF9) return false;
+                            bytes[3] = delaybytes[0];
+                            bytes[4] = delaybytes[1];
+                            b = reader.ReadByte();
+                        } else bytes = new byte[] { 0xF9, 0x04, 0x00, delaybytes[0], delaybytes[1], 0x00, 0x00 };
+                        writer.Write(bytes);
+                        // Image Descriptor
+                        if(b != 0x2C) return false;
+                        writer.Write(b);
+                        bytes = reader.ReadBytes(9);
+                        if(ColorTable == null && (bytes[8] & 0x80) == 0) return false;
+                        if((bytes[8] & 0x80) != 0) {
+                            ColorTableSize = (int) Math.Pow(2, (bytes[8] & 7) + 1);
+                            ColorTable = reader.ReadBytes(ColorTableSize * 3);
+                        }
+                        bytes[8] = (byte) (bytes[8] | 0x80);
+                        writer.Write(bytes);
+                        writer.Write(ColorTable);// Local Color Table
+                        bytes = reader.ReadBytes((int) (fr.Length - fr.Position) - 1);
+                        writer.Write(bytes);
+                    }
+                }
+                writer.Write((byte) 0x3B);// Trailer
+            }
+            return true;
         }
 
         #endregion
@@ -914,11 +954,8 @@ namespace TeX2img {
         // 1 file1が生成，-1 file2が生成，0 生成に失敗
         static int IsGenerated(string file1, string file2) {
             if(!File.Exists(file1)) {
-                if(!File.Exists(file2)) {
-                    return 0;
-                } else {
-                    return -1;
-                }
+                if(!File.Exists(file2)) return 0;
+                else return -1;
             } else {
                 if(File.Exists(file2) && System.IO.File.GetLastWriteTime(file2) > System.IO.File.GetLastWriteTime(file1)) {
                     return -1;
@@ -1048,66 +1085,70 @@ namespace TeX2img {
 
             // 複数ファイルをまとめる．
             if(Properties.Settings.Default.mergeOutputFiles && page > 1) {
-                if(extension == ".pdf" || extension == ".tiff") {
-                    var files = new List<string>();
-                    var tempfile = GetTempFileName(extension, workingDir);
-                    for(int i = 1 ; i <= page ; ++i) {
-                        string generatedFile = tmpFileBaseName + "-" + i + extension;
-                        if(File.Exists(Path.Combine(workingDir, generatedFile))) files.Add(generatedFile);
-                    }
-                    switch(extension) {
-                    case ".pdf": if(!pdfconcat(files, tempfile, pdfboxnumber)) return false; break;
-                    case ".tiff": if(!tiffconcat(files, tempfile)) return false; break;
-                    default: break;// ないけど……
-                    }
-                    try {
-                        File.Delete(Path.Combine(workingDir, tmpFileBaseName + "-1" + extension));
-                        File.Move(Path.Combine(workingDir, tempfile), Path.Combine(workingDir, tmpFileBaseName + "-1" + extension));
-                    }
-                    catch(UnauthorizedAccessException) {
-                        if(controller_ != null) controller_.showUnauthorizedError(outputFilePath);
-                        return false;
-                    }
-                    catch(IOException) {
-                        if(controller_ != null) controller_.showIOError(outputFilePath);
-                        return false;
-                    }
-                    page = 1;
+                var files = new List<string>();
+                var tempfile = GetTempFileName(extension, workingDir);
+                for(int i = 1 ; i <= page ; ++i) {
+                    string generatedFile = tmpFileBaseName + "-" + i + extension;
+                    if(File.Exists(Path.Combine(workingDir, generatedFile))) files.Add(generatedFile);
+                }
+                bool? merged = null;
+                switch(extension) {
+                case ".pdf": merged = pdfconcat(files, tempfile, pdfboxnumber); break;
+                case ".tiff": merged = tiffconcat(files, tempfile); break;
+                case ".gif": merged = gifconcat(files, tempfile, Properties.Settings.Default.animationDelay, Properties.Settings.Default.animationLoop); break;
+                default: break;
+                }
+                if(merged != null) {
+                    if(merged.Value) {
+                        try {
+                            File.Delete(Path.Combine(workingDir, tmpFileBaseName + "-1" + extension));
+                            File.Move(Path.Combine(workingDir, tempfile), Path.Combine(workingDir, tmpFileBaseName + "-1" + extension));
+                        }
+                        catch(UnauthorizedAccessException) {
+                            if(controller_ != null) controller_.showUnauthorizedError(outputFilePath);
+                            return false;
+                        }
+                        catch(IOException) {
+                            if(controller_ != null) controller_.showIOError(outputFilePath);
+                            return false;
+                        }
+                        page = 1;
+                    } else warnngs.Add("画像の結合に失敗しました．");
                 }
             }
             // 出力ファイルをターゲットディレクトリにコピー
-                if(page == 1) {
-                    string generatedFile = Path.Combine(workingDir, tmpFileBaseName + "-1" + extension);
+            if(page == 1) {
+                string generatedFile = Path.Combine(workingDir, tmpFileBaseName + "-1" + extension);
+                if(File.Exists(generatedFile)) {
+                    try { File.Copy(generatedFile, outputFilePath, true); }
+                    catch(UnauthorizedAccessException) {
+                        if(controller_ != null) controller_.showUnauthorizedError(outputFilePath);
+                    }
+                    catch(IOException) {
+                        if(controller_ != null) controller_.showIOError(outputFilePath);
+                    }
+
+                    outputFileNames.Add(outputFilePath);
+                }
+            } else {
+                string outputFilePathBaseName = Path.Combine(Path.GetDirectoryName(outputFilePath), Path.GetFileNameWithoutExtension(outputFilePath));
+                for(int i = 1 ; i <= page ; ++i) {
+                    string generatedFile = Path.Combine(workingDir, tmpFileBaseName + "-" + i + extension);
                     if(File.Exists(generatedFile)) {
-                        try { File.Copy(generatedFile, outputFilePath, true); }
+                        try { File.Copy(generatedFile, outputFilePathBaseName + "-" + i + extension, true); }
                         catch(UnauthorizedAccessException) {
                             if(controller_ != null) controller_.showUnauthorizedError(outputFilePath);
                         }
                         catch(IOException) {
                             if(controller_ != null) controller_.showIOError(outputFilePath);
                         }
-
-                        outputFileNames.Add(outputFilePath);
-                    }
-                } else {
-                    string outputFilePathBaseName = Path.Combine(Path.GetDirectoryName(outputFilePath), Path.GetFileNameWithoutExtension(outputFilePath));
-                    for(int i = 1 ; i <= page ; ++i) {
-                        string generatedFile = Path.Combine(workingDir, tmpFileBaseName + "-" + i + extension);
-                        if(File.Exists(generatedFile)) {
-                            try { File.Copy(generatedFile, outputFilePathBaseName + "-" + i + extension, true); }
-                            catch(UnauthorizedAccessException) {
-                                if(controller_ != null) controller_.showUnauthorizedError(outputFilePath);
-                            }
-                            catch(IOException) {
-                                if(controller_ != null) controller_.showIOError(outputFilePath);
-                            }
-                            outputFileNames.Add(outputFilePathBaseName + "-" + i + extension);
-                        }
+                        outputFileNames.Add(outputFilePathBaseName + "-" + i + extension);
                     }
                 }
-                if(Properties.Settings.Default.previewFlag) {
-                    if(outputFileNames.Count > 0) Process.Start(outputFileNames[0]);
-                }
+            }
+            if(Properties.Settings.Default.previewFlag) {
+                if(outputFileNames.Count > 0) Process.Start(outputFileNames[0]);
+            }
 
             if(Properties.Settings.Default.embedTeXSource && inputextension == ".tex") {
                 // Alternative Data Streamにソースを書き込む
@@ -1132,11 +1173,37 @@ namespace TeX2img {
                 catch(NotImplementedException) { }
             }
             if(controller_ != null) {
-				foreach(var w in warnngs) controller_.appendOutput("TeX2img: " + w + "\n");
+                foreach(var w in warnngs) controller_.appendOutput("TeX2img: " + w + "\n");
                 if(error_ignored) controller_.errorIgnoredWarning();
             }
             return true;
         }
+
+        #region PDFページ数
+        int pdfpages(string file) {
+            using(var proc = GetProcess()) {
+                proc.StartInfo.FileName = Path.Combine(GetToolsPath(), "pdfiumdraw.exe");
+                proc.StartInfo.Arguments = "--output-page \"" + file + "\"";
+                try {
+                    proc.ErrorDataReceived += ((s, e) => { });
+                    string output = "";
+                    ReadOutputs(proc, "PDF ページ数の取得", (line) => output += line, (l) => { });
+                    output = output.Replace("\r", "").Replace("\n", "");
+                    output.Trim();
+                    try {
+                        return Int32.Parse(output);
+                    }
+                    catch(FormatException) {
+                        return -1;
+                    }
+                }
+                catch(Win32Exception) {
+                    if(controller_ != null) controller_.showToolError("pdfiumdraw.exe");
+                    return -1;
+                }
+            }
+        }
+        #endregion
 
         #region ユーティリティー的な
         public static string which(string name) {
@@ -1150,13 +1217,10 @@ namespace TeX2img {
             var extname = Path.GetExtension(name);
 
             if(pathenv == null) return "";
-            if(extensions == null)return "";
+            if(extensions == null) return "";
             foreach(string path in pathenv.Split(';')) {
-                if(path.Length > 0 && path[path.Length - 1] != '\\') {
-                    separator = "\\";
-                } else {
-                    separator = "";
-                }
+                if(path.Length > 0 && path[path.Length - 1] != '\\') separator = "\\";
+                else separator = "";
                 foreach(var extension in extensions) {
                     fullPath = path + separator + name + extension;
                     if(File.Exists(fullPath) && pathexts.Contains(Path.GetExtension(fullPath).ToLower())) {
@@ -1180,9 +1244,7 @@ namespace TeX2img {
         public static string GetTempFileName(string ext, string dir) {
             for(int i = 0 ; i < 1000 ; ++i) {
                 var random = Path.ChangeExtension(Path.GetRandomFileName(), ext);
-                if(!File.Exists(Path.Combine(dir, random))) {
-                    return random;
-                }
+                if(!File.Exists(Path.Combine(dir, random))) return random;
             }
             return null;
         }
@@ -1216,7 +1278,7 @@ namespace TeX2img {
 
         public bool CheckInputFormat() {
             string extension = Path.GetExtension(InputFile).ToLower();
-            if(!new string[] { ".tex", ".pdf", ".ps", ".eps" }.Contains(extension)) { 
+            if(!new string[] { ".tex", ".pdf", ".ps", ".eps" }.Contains(extension)) {
                 if(controller_ != null) controller_.showExtensionError(InputFile);
                 return false;
             }
@@ -1243,13 +1305,13 @@ namespace TeX2img {
                 return Encoding.UTF8;
             }
         }
-        
+
         public static Encoding GetOutputEncoding() {
             string arg;
             string latex = setProcStartInfo(Properties.Settings.Default.platexPath, out arg);
             return GetOutputEncoding(latex, arg);
         }
-        
+
         public static Encoding GetOutputEncoding(string latex, string arg) {
             if(IspTeX(latex)) {
                 if(arg.Contains("-sjis-terminal")) return Encoding.GetEncoding("shift_jis");
@@ -1268,7 +1330,7 @@ namespace TeX2img {
                 }
             } else return Encoding.UTF8;
         }
-        
+
         public static string setProcStartInfo(String path) {
             string dummy;
             return setProcStartInfo(path, out dummy);
@@ -1308,7 +1370,7 @@ namespace TeX2img {
         public void Abort() {
             abort = true;
         }
-        
+
         private void printCommandLine(Process proc) {
             if(controller_ != null) controller_.appendOutput(proc.StartInfo.WorkingDirectory + ">\"" + proc.StartInfo.FileName + "\" " + proc.StartInfo.Arguments + "\r\n");
         }
@@ -1320,23 +1382,21 @@ namespace TeX2img {
         // 非同期だと全部読み込んだかわからない気がしたので，スレッドを作成することにした。
         //
         // 結局どっちもスレッドを回すことにしてみた……。
-        void ReadOutputs(Process proc, string freezemsg){
-            Action<string> read_func = (s)=>{if(controller_ != null)controller_.appendOutput(s + "\n");};
+        void ReadOutputs(Process proc, string freezemsg) {
+            Action<string> read_func = (s) => { if(controller_ != null)controller_.appendOutput(s + "\n"); };
             ReadOutputs(proc, freezemsg, read_func, read_func);
         }
 
-        void ReadOutputs(Process proc, string freezemsg, Action<string> stdOutRead,Action<string> stdErrRead) {
+        void ReadOutputs(Process proc, string freezemsg, Action<string> stdOutRead, Action<string> stdErrRead) {
             proc.Start();
             object syncObj = new object();
-            var readThread = new Action<StreamReader,Action<string>>((sr,action) => {
+            var readThread = new Action<StreamReader, Action<string>>((sr, action) => {
                 try {
                     while(!sr.EndOfStream) {
                         if(abort) return;
                         var str = sr.ReadLine();
                         if(str != null) {
-                            lock(syncObj) {
-                                action(str);
-                            }
+                            lock(syncObj) { action(str); }
                         }
                     }
                 }
@@ -1423,7 +1483,7 @@ namespace TeX2img {
         }
 
         public static string GetToolsPath() {
-            return Path.Combine(Path.GetDirectoryName(Path.GetFullPath(System.Reflection.Assembly.GetExecutingAssembly().Location)),ShortToolPath);
+            return Path.Combine(Path.GetDirectoryName(Path.GetFullPath(System.Reflection.Assembly.GetExecutingAssembly().Location)), ShortToolPath);
         }
         public static readonly string ShortToolPath = "";
     }
