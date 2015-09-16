@@ -154,7 +154,9 @@ namespace TeX2img {
                 }
             }
             if(files.Count % 2 != 0) {
-                err += "ファイル " + files[files.Count - 1] + " に対応する出力ファイルが指定されていません。\n";
+                err += "ファイル " + files[files.Count - 1] + " に対応する出力ファイルが指定されていません。";
+                if(files[files.Count - 1].StartsWith("-") || files[files.Count - 1].StartsWith("/")) err += "オプション名のミスの可能性もあります。";
+                err += "\n";
             }
             if(err != "") {
                 err = err.Remove(err.Length - 1);// 最後の改行を削除

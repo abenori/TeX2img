@@ -909,21 +909,21 @@ namespace TeX2img {
                         byte[] bytes = null;
                         byte b = 0;
                         bytes = reader.ReadBytes(13);//Global Color Tableの前まで
-                        int ColorTableSize = -1;
+                        int ColorTableSize = 0;
                         if((bytes[10] & 0x80) != 0) ColorTableSize = (int) Math.Pow(2, bytes[10] & 0x07 + 1);
                         byte[] ColorTable = null;
                         // Global Color Tableの読み込み
-                        if(ColorTableSize >= 0) ColorTable = reader.ReadBytes(ColorTableSize * 3);
+                        if(ColorTableSize > 0) ColorTable = reader.ReadBytes(ColorTableSize * 3);
                         if(i == 0) {
-                            bytes[4] = 0x39;
+                            bytes[4] = 0x39;// GIF89aを強制
                             var dimbytes = BitConverter.GetBytes(width);
                             bytes[6] = dimbytes[0]; bytes[7] = dimbytes[1];
                             dimbytes = BitConverter.GetBytes(height);
                             bytes[8] = dimbytes[0]; bytes[9] = dimbytes[1];
                             bytes[10] &= 0x78;// Global Color Tableを無効化
                             writer.Write(bytes);
-                            bytes = BitConverter.GetBytes(loop);
                             // Netscape Apprication Extension
+                            bytes = BitConverter.GetBytes(loop);
                             writer.Write(new byte[] {
                                 0x21, 0xFF, 0x0B, (byte) 'N', (byte) 'E', (byte) 'T', (byte) 'S' ,
                                 (byte)'C',(byte)'A',(byte)'P',(byte)'E',(byte)'2',(byte)'.',(byte)'0',
@@ -936,10 +936,11 @@ namespace TeX2img {
                         if(b == 0x21) {
                             bytes = reader.ReadBytes(7);
                             if(bytes[0] != 0xF9) return false;
+                            bytes[2] &= 0xE3; bytes[2] |= 0x08;// 処分方法を背景色塗りつぶしに変更
                             bytes[3] = delaybytes[0];
                             bytes[4] = delaybytes[1];
                             b = reader.ReadByte();
-                        } else bytes = new byte[] { 0xF9, 0x04, 0x00, delaybytes[0], delaybytes[1], 0x00, 0x00 };
+                        } else bytes = new byte[] { 0xF9, 0x04, 0x08, delaybytes[0], delaybytes[1], 0x00, 0x00 };
                         writer.Write(bytes);
                         // Image Descriptor
                         if(b != 0x2C) return false;
@@ -952,7 +953,7 @@ namespace TeX2img {
                         } else bytes[8] |= 0x80;
                         writer.Write(bytes);
                         writer.Write(ColorTable);// Local Color Table
-                        bytes = reader.ReadBytes((int) (fr.Length - fr.Position) - 1);
+                        bytes = reader.ReadBytes((int) (fr.Length - fr.Position) - 1);// Trailer以外の残り
                         writer.Write(bytes);
                     }
                 }
