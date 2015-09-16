@@ -841,7 +841,7 @@ namespace TeX2img.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("1")]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
         public uint animationLoop {
             get {
                 return ((uint)(this["animationLoop"]));

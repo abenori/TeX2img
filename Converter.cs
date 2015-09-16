@@ -893,6 +893,14 @@ namespace TeX2img {
 
         bool gifconcat(List<string> files, string output, uint delay, uint loop) {
             generatedImageFiles.Add(output);
+            int width = 0;
+            int height = 0;
+            foreach(var f in files) {
+                using(var bmp = new System.Drawing.Bitmap(Path.Combine(workingDir, f))) {
+                    if(bmp.Width > width) width = bmp.Width;
+                    if(bmp.Height > height) height = bmp.Height;
+                }
+            }
             using(var fw = new FileStream(Path.Combine(workingDir, output), FileMode.Create, FileAccess.Write))
             using(var writer = new BinaryWriter(fw)) {
                 for(int i = 0 ; i < files.Count ; ++i) {
@@ -904,13 +912,18 @@ namespace TeX2img {
                         int ColorTableSize = -1;
                         if((bytes[10] & 0x80) != 0) ColorTableSize = (int) Math.Pow(2, bytes[10] & 0x07 + 1);
                         byte[] ColorTable = null;
-                        // GlobalColorTableの読み込み
+                        // Global Color Tableの読み込み
                         if(ColorTableSize >= 0) ColorTable = reader.ReadBytes(ColorTableSize * 3);
                         if(i == 0) {
                             bytes[4] = 0x39;
-                            bytes[10] &= 0x78;
+                            var dimbytes = BitConverter.GetBytes(width);
+                            bytes[6] = dimbytes[0]; bytes[7] = dimbytes[1];
+                            dimbytes = BitConverter.GetBytes(height);
+                            bytes[8] = dimbytes[0]; bytes[9] = dimbytes[1];
+                            bytes[10] &= 0x78;// Global Color Tableを無効化
                             writer.Write(bytes);
                             bytes = BitConverter.GetBytes(loop);
+                            // Netscape Apprication Extension
                             writer.Write(new byte[] {
                                 0x21, 0xFF, 0x0B, (byte) 'N', (byte) 'E', (byte) 'T', (byte) 'S' ,
                                 (byte)'C',(byte)'A',(byte)'P',(byte)'E',(byte)'2',(byte)'.',(byte)'0',
@@ -936,8 +949,7 @@ namespace TeX2img {
                         if((bytes[8] & 0x80) != 0) {
                             ColorTableSize = (int) Math.Pow(2, (bytes[8] & 7) + 1);
                             ColorTable = reader.ReadBytes(ColorTableSize * 3);
-                        }
-                        bytes[8] = (byte) (bytes[8] | 0x80);
+                        } else bytes[8] |= 0x80;
                         writer.Write(bytes);
                         writer.Write(ColorTable);// Local Color Table
                         bytes = reader.ReadBytes((int) (fr.Length - fr.Position) - 1);
@@ -948,7 +960,6 @@ namespace TeX2img {
             }
             return true;
         }
-
         #endregion
 
         // 1 file1が生成，-1 file2が生成，0 生成に失敗
