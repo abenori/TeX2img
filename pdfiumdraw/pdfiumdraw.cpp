@@ -2,6 +2,7 @@
 #include <tchar.h>
 #include <string>
 #include <vector>
+#include <set>
 #include <iostream>
 #include <exception>
 #include <fpdfview.h>
@@ -31,7 +32,7 @@ struct Data {
 	int target = EMF;
 	int input_format = PDF;
 	int scale = 1;
-	vector<int> pages;
+	set<int> pages;
 	bool transparent = false;
 	float extent = 50;
 	RECT viewport;
@@ -50,7 +51,7 @@ void ShowUsage() {
 	cout << "  --scale: specify scale" << endl;
 	cout << "  --transparent: output transparent file (if possible)" << endl;
 	cout << "  --output=<file>: specify output file name" << endl;
-	cout << "  --pages=<page>: specify output page" << endl;
+	cout << "  --pages=<page>: specify output page (e.g. 1,5-9,10)" << endl;
 //	cout << "  --viewport=<left>,<top>,<right>,<bottom>: specify viewport" << endl;
 	cout << "  --help: show this message" << endl;
 }
@@ -455,26 +456,28 @@ int ConvertIMG(Data &d) {
 void OutputBox(string boxname, Data &d) {
 	try {
 		PDFDoc doc(d.input);
-		int pagenum;
-		if(d.pages.empty())pagenum = 0;
-		else pagenum = d.pages[0];
-		PDFPage page(doc, pagenum);
-		float left, bottom, right, top;
-		FPDF_BOOL result;
-		if(boxname == "cropbox") {
-			result = ::FPDFPage_GetCropBox(page.page, &left, &bottom, &right, &top);
-			if(!result) boxname = "mediabox";
-		}
-		if(boxname == "mediabox") result = ::FPDFPage_GetMediaBox(page.page, &left, &bottom, &right, &top);
-		if(result) {
-			int ileft = (int) left;
-			int itop = (int) top;
-			int ibottom = (int) bottom; if((float) ibottom != bottom)++ibottom;
-			int iright = (int) right; if((float) iright != right)++iright;
-			cout << "%%BoundingBox: " << ileft << " " << ibottom << " " << iright << " " << itop << endl;
-			cout << "%%HiResBoundingBox: " << left << " " << bottom << " " << right << " " << top << endl;
-		} else {
-			cout << "Failed to get box size" << endl;
+		int pagecount = doc.GetPageCount();
+		for(int i = 0; i < pagecount; ++i) {
+			if(!!d.pages.empty() && d.pages.find(i) == d.pages.end())IContinue;
+			PDFPage page(doc, i);
+			float left, bottom, right, top;
+			FPDF_BOOL result;
+			if(boxname == "cropbox") {
+				result = ::FPDFPage_GetCropBox(page.page, &left, &bottom, &right, &top);
+				if(!result) boxname = "mediabox";
+			}
+			if(boxname == "mediabox") result = ::FPDFPage_GetMediaBox(page.page, &left, &bottom, &right, &top);
+			if(result) {
+				int ileft = (int) left;
+				int itop = (int) top;
+				int ibottom = (int) bottom; if((float) ibottom != bottom)++ibottom;
+				int iright = (int) right; if((float) iright != right)++iright;
+				cout << "%%Page: " << i << endl;
+				cout << "%%BoundingBox: " << ileft << " " << ibottom << " " << iright << " " << itop << endl;
+				cout << "%%HiResBoundingBox: " << left << " " << bottom << " " << right << " " << top << endl;
+			} else {
+				cout << "Failed to get box size, file = " << d.input << ", page = " << i << endl;
+			}
 		}
 	}
 	catch(runtime_error e) { cout << e.what() << endl; }
@@ -488,6 +491,23 @@ std::vector<std::string> split(const std::string &str, char sep) {
 		v.push_back(buffer);
 	}
 	return v;
+}
+
+vector<int> AnalyePageFormat(string &str) {
+	auto pformats = split(str, ',');
+	vector<int> rv;
+	for(auto format : pformats) {
+		auto r = format.find("-");
+		if(r == string::npos) {
+			auto x = std::stoi(format);
+			rv.push_back(x);
+		} else {
+			int start = atoi(format.substr(0, r).c_str());
+			int end = atoi(format.substr(r + 1).c_str());
+			for(int i = start; i <= end; ++i) rv.push_back(i);
+		}
+	}
+	return rv;
 }
 
 class Initializer {
@@ -533,8 +553,13 @@ int main(int argc, char *argv[]) {
 			else if(arg == "--input-format=tiff")current_data.input_format = TIFF;
 			else if(arg == "--input-format=pdf")current_data.input_format = PDF;
 			else if(arg == "--output-page")output_page = true;// ページ数を出力する
-			else if(arg.find("--pages=") == 0)current_data.pages.push_back(std::atoi(arg.substr(string("--pages=").length()).c_str()) - 1);
-			else if(arg.find("--scale=") == 0)current_data.scale = std::atoi(arg.substr(string("--scale=").length()).c_str());
+			else if(arg.find("--pages=") == 0) {
+				try {
+					auto pages = AnalyePageFormat(arg.substr(string("--pages=").length()));
+					for(auto p : pages)current_data.pages.insert(p - 1);
+				}
+				catch(exception e) { cout << "failed to analyze page format: " << e.what() << endl; return -1; }
+			} else if(arg.find("--scale=") == 0)current_data.scale = std::atoi(arg.substr(string("--scale=").length()).c_str());
 			else if(arg.find("--extent=") == 0)current_data.extent = std::atoi(arg.substr(string("--extent=").length()).c_str());
 			else if(arg.find("--output=") == 0) current_data.output = arg.substr(string("--output=").length());
 			else if(arg.find("--box=") == 0) box = arg.substr(string("--box=").length());
