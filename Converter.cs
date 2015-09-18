@@ -318,7 +318,7 @@ namespace TeX2img {
 
                 try {
                     printCommandLine(proc);
-                    ReadOutputs(proc, "PageBox の取得l", s => { System.Diagnostics.Debug.WriteLine(s); }, err_read);
+                    ReadOutputs(proc, "BoundingBox の取得", s => { System.Diagnostics.Debug.WriteLine(s); }, err_read);
                     if(controller_ != null) controller_.appendOutput("\n");
                     if(rv.Count != lastpage - firstpage + 1) return null;
                     else return rv;
@@ -327,6 +327,7 @@ namespace TeX2img {
                     if(controller_ != null) controller_.showPathError(gspath, "Ghostscript");
                     return null;
                 }
+                catch(TimeoutException) { return null; }
             }
         }
 
@@ -747,13 +748,18 @@ namespace TeX2img {
         }
 
         bool pdf2img_pdfium(string inputFilename, string outputFileName, int pages = 0) {
+            return pdf2img_pdfium(inputFilename, outputFileName, pages == 0 ? null : new List<int> { pages });
+        }
+
+        bool pdf2img_pdfium(string inputFilename, string outputFileName, List<int> pages) {
+            System.Diagnostics.Debug.Assert(pages == null || pages.Count > 0);
             var type = Path.GetExtension(outputFileName).Substring(1).ToLower();
             using(var proc = GetProcess()) {
                 proc.StartInfo.FileName = Path.Combine(GetToolsPath(), "pdfiumdraw.exe");
                 proc.StartInfo.Arguments =
                     (type == "emf" ? "" : "--scale=" + Properties.Settings.Default.resolutionScale.ToString() + " ") +
                     "--" + type + " " + (Properties.Settings.Default.transparentPngFlag ? "--transparent " : "") +
-                    (pages > 0 ? "--pages=" + pages.ToString() + " " : "") +
+                    (pages != null ? "--pages=" + String.Join(",",pages.Select(i=>i.ToString()).ToArray()) : "") + 
                     "--output=\"" + outputFileName + "\" \"" + inputFilename + "\"";
                 try {
                     printCommandLine(proc);
@@ -765,7 +771,7 @@ namespace TeX2img {
                 }
             }
             // 簡易チェック
-            if(outputFileName.Contains("%d") && pages == 0) {
+            if(outputFileName.Contains("%d") && pages == null) {
                 var r = outputFileName.IndexOf("%d");
                 var pre = outputFileName.Substring(0, r);
                 var aft = outputFileName.Substring(r + 2);
@@ -893,7 +899,7 @@ namespace TeX2img {
                 }
             }
             if(ici == null) {
-                if(controller_ != null) controller_.appendOutput("TIFF 結合時にエラー：ImageCodeInfo が見付かりませんでした．");
+                if(controller_ != null) controller_.appendOutput("TIFF 結合時にエラー：ImageCodeInfo が見付かりませんでした。");
                 return false;
             }
             if(files.Count == 1) {
@@ -1056,7 +1062,6 @@ namespace TeX2img {
             case "art": pdfboxnumber = 5; break;
             default: pdfboxnumber = 0; break;
             }
-
             var bbs = new List<BoundingBoxPair>();
             if(Properties.Settings.Default.keepPageSize) {
                 bbs = readPDFBox(tmpFileBaseName + ".pdf", new List<int>(Enumerable.Range(1, page)), pdfboxnumber);
@@ -1065,8 +1070,7 @@ namespace TeX2img {
             }
             if(bbs == null) return false;
 
-            bool addMargin = ((Properties.Settings.Default.leftMargin + Properties.Settings.Default.rightMargin + Properties.Settings.Default.topMargin + Properties.Settings.Default.bottomMargin) > 0);
-
+            // 空白ページの検出
             var emptyPages = new List<int>();
             for(int i = 1 ; i <= page ; ++i) {
                 if(bbs[i - 1].bb.IsEmpty) {
@@ -1078,10 +1082,17 @@ namespace TeX2img {
                     }
                 }
             }
-                // .svg，テキスト情報保持な pdf は PDF から作る
+            if(emptyPages.Count == page) return false;
+
+            // .svg，テキスト情報保持な pdf は PDF から作る
             if(extension == ".pdf" && !Properties.Settings.Default.outlinedText){
-                for(int i = 1 ; i <= page ; ++i) {
-                    if(!pdfcrop(tmpFileBaseName + ".pdf", tmpFileBaseName + "-" + i + ".pdf", extension == ".pdf" ? true : Properties.Settings.Default.yohakuUnitBP, i, bbs[i - 1])) return false;
+                if(!Properties.Settings.Default.mergeOutputFiles || emptyPages.Count > 0) {
+                    for(int i = 1 ; i <= page ; ++i) {
+                        if(emptyPages.Contains(i)) continue;
+                        if(!pdfcrop(tmpFileBaseName + ".pdf", tmpFileBaseName + "-" + i + ".pdf", true, i, bbs[i - 1])) return false;
+                    }
+                } else {
+                    if(!pdfcrop(tmpFileBaseName + ".pdf", tmpFileBaseName + "-1.pdf", true, new List<int>(Enumerable.Range(1, page)), bbs)) return false;
                 }
             } else if(
                  extension == ".svg" ||
@@ -1089,19 +1100,27 @@ namespace TeX2img {
                  ) {
                 var pdftemp = GetTempFileName(".pdf", workingDir);
                 if(!pdfcrop(tmpFileBaseName + ".pdf", pdftemp, vectorExtensions.Contains(extension) || Properties.Settings.Default.yohakuUnitBP, new List<int>(Enumerable.Range(1, page)), bbs)) return false;
+                var pagelist = Enumerable.Range(1,page).Where(i=>!emptyPages.Contains(i)).ToList();
                 switch(extension) {
                 case ".svg":
-                    if(!pdf2img_mudraw(pdftemp, tmpFileBaseName + "-%d.svg")) return false;
+                    if(!pdf2img_mudraw(pdftemp, tmpFileBaseName + "-%d.svg",pagelist)) return false;
+                    if(Properties.Settings.Default.deleteDisplaySize) {
+                        for(int i = 1 ; i <= page ; ++i) {
+                            if(!emptyPages.Contains(i)) DeleteHeightAndWidthFromSVGFile(tmpFileBaseName + "-" + i.ToString() + ".svg");
+                        }
+                    }
                     break;
                 case ".gif":
-                    if(!pdf2img_pdfium(pdftemp, tmpFileBaseName + "-%d" + extension)) return false;
+                    if(!pdf2img_pdfium(pdftemp, tmpFileBaseName + "-%d" + extension, pagelist)) return false;
                     break;
                 default:
                     System.Diagnostics.Debug.Assert(false);
                     break;
                 }
             } else {
+	            bool addMargin = ((Properties.Settings.Default.leftMargin + Properties.Settings.Default.rightMargin + Properties.Settings.Default.topMargin + Properties.Settings.Default.bottomMargin) > 0);
                 for(int i = 1 ; i <= page ; ++i) {
+                    if(emptyPages.Contains(i)) continue;
                     // それ以外はEPSを経由する。
                     int resolution;
                     if(Properties.Settings.Default.useLowResolution) epsResolution_ = 72 * Properties.Settings.Default.resolutionScale;
@@ -1170,14 +1189,17 @@ namespace TeX2img {
                             return false;
                         }
                         page = 1;
-                    } else warnngs.Add("画像の結合に失敗しました．");
+                    } else warnngs.Add("画像の結合に失敗しました。");
                 }
             }
             // 出力ファイルをターゲットディレクトリにコピー
             if(page == 1) {
                 string generatedFile = Path.Combine(workingDir, tmpFileBaseName + "-1" + extension);
                 if(File.Exists(generatedFile)) {
-                    try { File.Copy(generatedFile, outputFilePath, true); }
+                    try {
+                        File.Delete(outputFilePath);
+                        File.Move(generatedFile, outputFilePath); 
+                    }
                     catch(UnauthorizedAccessException) {
                         if(controller_ != null) controller_.showUnauthorizedError(outputFilePath);
                     }
@@ -1192,7 +1214,10 @@ namespace TeX2img {
                 for(int i = 1 ; i <= page ; ++i) {
                     string generatedFile = Path.Combine(workingDir, tmpFileBaseName + "-" + i + extension);
                     if(File.Exists(generatedFile)) {
-                        try { File.Copy(generatedFile, outputFilePathBaseName + "-" + i + extension, true); }
+                        try {
+                            File.Delete(outputFilePathBaseName + "-" + i + extension);
+                            File.Move(generatedFile, outputFilePathBaseName + "-" + i + extension);
+                        }
                         catch(UnauthorizedAccessException) {
                             if(controller_ != null) controller_.showUnauthorizedError(outputFilePath);
                         }
@@ -1258,6 +1283,7 @@ namespace TeX2img {
                     if(controller_ != null) controller_.showToolError("pdfiumdraw.exe");
                     return -1;
                 }
+                catch(TimeoutException) { return -1; }
             }
         }
         #endregion
