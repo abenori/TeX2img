@@ -43,6 +43,20 @@ namespace TeX2img {
 			{"right-margin=","右余白",(int val) => Properties.Settings.Default.rightMargin = val,()=>Properties.Settings.Default.rightMargin},
 			{"top-margin=","上余白",(int val) => Properties.Settings.Default.topMargin = val,()=>Properties.Settings.Default.topMargin},
 			{"bottom-margin=","下余白",(int val) => Properties.Settings.Default.bottomMargin = val,()=>Properties.Settings.Default.bottomMargin},
+            {"margins=","余白（一括）",val=>{
+                var list = new System.Text.RegularExpressions.Regex(" +").Split(val).ToList();
+                list.RemoveAll((s) => (s == ""));
+                if(list.Count == 1) Properties.Settings.Default.leftMargin = Properties.Settings.Default.topMargin = Properties.Settings.Default.rightMargin = Properties.Settings.Default.bottomMargin = Int32.Parse(list[0]);
+                else if(list.Count == 2) {
+                    Properties.Settings.Default.leftMargin = Properties.Settings.Default.rightMargin = Int32.Parse(list[0]);
+                    Properties.Settings.Default.topMargin = Properties.Settings.Default.bottomMargin = Int32.Parse(list[1]);
+                } else if(list.Count == 4) {
+                    Properties.Settings.Default.leftMargin = Int32.Parse(list[0]);
+                    Properties.Settings.Default.topMargin = Int32.Parse(list[1]);
+                    Properties.Settings.Default.rightMargin = Int32.Parse(list[2]);
+                    Properties.Settings.Default.bottomMargin = Int32.Parse(list[3]);
+                }else throw new NDesk.Options.OptionException("余白の指定が不正です．","margins");
+            }},
 			{"unit=","余白の単位（bp/px）",val => {
 			    switch(val){
 			    case "bp": Properties.Settings.Default.yohakuUnitBP = true; return;

@@ -626,7 +626,7 @@ namespace TeX2img {
         }
 
         // origbbには，GhostscriptのsDevice=bboxで得られた値を入れておく。（nullならばここで取得する。）
-        bool pdfcrop(string inputFileName, string outputFileName, bool use_bp, List<int> pages, List<BoundingBoxPair> origbb) {
+        bool pdfcrop(string inputFileName, string outputFileName, bool use_bp, List<int> pages, List<BoundingBoxPair> origbb, bool deleteemptypages = false) {
             System.Diagnostics.Debug.Assert(pages.Count == origbb.Count);
             var tmpfile = GetTempFileName(".tex", workingDir);
             if(tmpfile == null) return false;
@@ -642,20 +642,23 @@ namespace TeX2img {
                     bb = origbb[i];
                 }
                 var rect = AddMargineToBoundingBox(bb.hiresbb, use_bp);
+                if(rect.IsEmpty && !deleteemptypages) rect = new BoundingBox(0, 0, 10, 10);// dummy
                 bbBox.Add(rect);
             }
             using(var fw = new StreamWriter(Path.Combine(workingDir, tmpfile))) {
                 fw.WriteLine(@"\pdfoutput=1\relax");
                 for(int i = 0 ; i < pages.Count ; ++i) {
                     var box = bbBox[i];
-                    var page = pages[i];
-                    fw.WriteLine(@"\pdfhorigin=" + (-box.Left).ToString() + @"bp\relax");
-                    fw.WriteLine(@"\pdfvorigin=" + box.Bottom.ToString() + @"bp\relax");
-                    fw.WriteLine(@"\pdfpagewidth=" + (box.Right - box.Left).ToString() + @"bp\relax");
-                    fw.WriteLine(@"\pdfpageheight=" + (box.Top - box.Bottom).ToString() + @"bp\relax");
-                    fw.WriteLine(@"\setbox0=\hbox{\pdfximage page " + page.ToString() + " mediabox{" + inputFileName + @"}\pdfrefximage\pdflastximage}\relax");
-                    fw.WriteLine(@"\ht0=\pdfpageheight\relax");
-                    fw.WriteLine(@"\shipout\box0\relax");
+                    if(!box.IsEmpty) {
+                        var page = pages[i];
+                        fw.WriteLine(@"\pdfhorigin=" + (-box.Left).ToString() + @"bp\relax");
+                        fw.WriteLine(@"\pdfvorigin=" + box.Bottom.ToString() + @"bp\relax");
+                        fw.WriteLine(@"\pdfpagewidth=" + (box.Right - box.Left).ToString() + @"bp\relax");
+                        fw.WriteLine(@"\pdfpageheight=" + (box.Top - box.Bottom).ToString() + @"bp\relax");
+                        fw.WriteLine(@"\setbox0=\hbox{\pdfximage page " + page.ToString() + " mediabox{" + inputFileName + @"}\pdfrefximage\pdflastximage}\relax");
+                        fw.WriteLine(@"\ht0=\pdfpageheight\relax");
+                        fw.WriteLine(@"\shipout\box0\relax");
+                    }
                 }
                 fw.WriteLine(@"\bye");
             }
@@ -759,7 +762,7 @@ namespace TeX2img {
                 proc.StartInfo.Arguments =
                     (type == "emf" ? "" : "--scale=" + Properties.Settings.Default.resolutionScale.ToString() + " ") +
                     "--" + type + " " + (Properties.Settings.Default.transparentPngFlag ? "--transparent " : "") +
-                    (pages != null ? "--pages=" + String.Join(",",pages.Select(i=>i.ToString()).ToArray()) : "") + 
+                    (pages != null ? "--pages=" + String.Join(",",pages.Select(i=>i.ToString()).ToArray()) + " " : "") + 
                     "--output=\"" + outputFileName + "\" \"" + inputFilename + "\"";
                 try {
                     printCommandLine(proc);
@@ -771,14 +774,25 @@ namespace TeX2img {
                 }
             }
             // 簡易チェック
-            if(outputFileName.Contains("%d") && pages == null) {
+            if(outputFileName.Contains("%d")){
                 var r = outputFileName.IndexOf("%d");
                 var pre = outputFileName.Substring(0, r);
                 var aft = outputFileName.Substring(r + 2);
-                for(int i = 1 ; ; ++i) {
-                    var f = Path.Combine(workingDir, pre + i.ToString() + aft);
-                    if(File.Exists(f)) generatedImageFiles.Add(f);
-                    else break;
+                if(pages == null) {
+                    for(int i = 1 ; ; ++i) {
+                        var f = Path.Combine(workingDir, pre + i.ToString() + aft);
+                        if(File.Exists(f)) generatedImageFiles.Add(f);
+                        else break;
+                    }
+                } else {
+                    bool rv = true;
+                    foreach(var p in pages) {
+                        var f = Path.Combine(workingDir, pre + p.ToString() + aft);
+                        generatedImageFiles.Add(f);
+                        if(!File.Exists(f)) rv = false;
+                    }
+                    if(!rv && controller_ != null) controller_.showGenerateError();
+                    return rv;
                 }
             } else {
                 if(!File.Exists(Path.Combine(workingDir, outputFileName))) {

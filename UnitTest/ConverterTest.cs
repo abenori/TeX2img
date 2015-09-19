@@ -61,6 +61,12 @@ namespace UnitTest {
             doGenerateTest("keep-pagesize");
         }
 
+        List<int> ToList(object var) {
+            var rv = new List<int>();
+            for(int i = 0 ; i < (int) GetProperty(var, "Count") ; ++i) rv.Add((int) GetIndexer(var, i));
+            return rv;
+        }
+
         [TestMethod]
         public void sizeTest() {
             SetOutputDir("size");
@@ -69,37 +75,56 @@ namespace UnitTest {
                 BeforeTest();
                 tex2dvi_test(testfile + ".tex");
                 dvi2pdf_test(testfile + ".dvi");
+                int page = (int) CallMethod(converter, "pdfpages", Path.Combine(OutputDir, "dvi2pdf.pdf"));
                 AfterTest();
-                var orighiresbb = GetPDFBB("dvi2pdf.pdf", 1);
-                var origbb = GetPDFBB("dvi2pdf.pdf", 1, false);
-                var orighiresbox = GetPDFBox("dvi2pdf.pdf", 1);
-                var origbox = GetPDFBox("dvi2pdf.pdf", 1, false);
+                var orighiresbb = GetPDFBB("dvi2pdf.pdf", 1, page);
+                var origbb = GetPDFBB("dvi2pdf.pdf", 1, page, false);
+                var orighiresbox = GetPDFBox("dvi2pdf.pdf", Enumerable.Range(1, page).ToList());
+                var origbox = GetPDFBox("dvi2pdf.pdf", Enumerable.Range(1, page).ToList(), false);
                 Settings.Default.keepPageSize = false;
                 var exts = new string[] { ".pdf", ".eps", ".jpg", ".png" };
                 foreach(var ext in exts){
                     doGenerateTest("dvi2pdf.pdf", testfile + "-not-keep" + ext);
                 }
-                Assert.IsTrue(CheckVerctorImageSize(orighiresbb, GetPDFBox(testfile + "-not-keep.pdf", 1)));
-                Assert.IsTrue(CheckVerctorImageSize(orighiresbb, GetEPSBB(testfile + "-not-keep.eps")));
-                Assert.IsTrue(CheckBitmapImageSize(origbb, GetBitmapSize(testfile + "-not-keep.png")));
-                Assert.IsTrue(CheckBitmapImageSize(origbb, GetBitmapSize(testfile + "-not-keep.jpg")));
+                Func<string, List<string>> get_output_files_func = (s) => {
+                    if(page == 1) return new List<string>() { s };
+                    else {
+                        var basen = Path.GetFileNameWithoutExtension(s);
+                        var ext = Path.GetExtension(s);
+                        return Enumerable.Range(1, page).Select(i => basen + "-" + i.ToString() + ext).ToList();
+                    }
+                };
+                Func<string, List<Size>> get_pdf_box = (s) => {
+                    var rv = new List<Size>();
+                    var files = get_output_files_func(s);
+                    foreach(var file in files) {
+                        if(File.Exists(Path.Combine(OutputDir, file))) {
+                            rv.AddRange(GetPDFBox(file, new List<int>() { 1 }));
+                        }
+                    }
+                    return rv;
+                };
+                Assert.IsTrue(CheckVerctorImageSize(orighiresbb, get_pdf_box(testfile + "-not-keep.pdf")));
+                Assert.IsTrue(CheckVerctorImageSize(orighiresbb, GetEPSBB(get_output_files_func(testfile + "-not-keep.eps"))));
+                Assert.IsTrue(CheckBitmapImageSize(origbb, GetBitmapSize(get_output_files_func(testfile + "-not-keep.png"))));
+                Assert.IsTrue(CheckBitmapImageSize(origbb, GetBitmapSize(get_output_files_func(testfile + "-not-keep.jpg"))));
 
                 Settings.Default.keepPageSize = true;
                 foreach(var ext in exts) {
                     doGenerateTest("dvi2pdf.pdf", testfile + "-keep" + ext);
                 }
-                Assert.IsTrue(CheckVerctorImageSize(orighiresbox, GetPDFBox(testfile + "-keep.pdf", 1)));
-                Assert.IsTrue(CheckVerctorImageSize(orighiresbox, GetEPSBB(testfile + "-keep.eps")));
-                Assert.IsTrue(CheckBitmapImageSize(origbox, GetBitmapSize(testfile + "-keep.png")));
-                Assert.IsTrue(CheckBitmapImageSize(origbox, GetBitmapSize(testfile + "-keep.jpg")));
+                Assert.IsTrue(CheckVerctorImageSize(orighiresbox, get_pdf_box(testfile + "-keep.pdf")));
+                Assert.IsTrue(CheckVerctorImageSize(orighiresbox, GetEPSBB(get_output_files_func(testfile + "-keep.eps"))));
+                Assert.IsTrue(CheckBitmapImageSize(origbox, GetBitmapSize(get_output_files_func(testfile + "-keep.png"))));
+                Assert.IsTrue(CheckBitmapImageSize(origbox, GetBitmapSize(get_output_files_func(testfile + "-keep.jpg"))));
             }
         }
 
         void PrepareTest() {
-            Settings.Default.leftMargin = 5;
-            Settings.Default.rightMargin = 5;
-            Settings.Default.topMargin = 5;
-            Settings.Default.bottomMargin = 5;
+            Settings.Default.leftMargin = 0;
+            Settings.Default.rightMargin = 0;
+            Settings.Default.topMargin = 0;
+            Settings.Default.bottomMargin = 0;
             Settings.Default.yohakuUnitBP = false;
             Settings.Default.deleteTmpFileFlag = true;
             Settings.Default.previewFlag = false;
@@ -147,11 +172,27 @@ namespace UnitTest {
         }
 
         void doGenerateTest(string output, string[] exts) {
+            Tuple<List<Size>, List<Size>> expected = null;
+            using(converter = new Converter(controller, Path.Combine(WorkDir, testfile + ".tex"), Path.Combine(OutputDir, testfile + "-" + output + ".pdf"))) {
+                expected = GetExpectedSize(testfile + ".tex");
+            }
             foreach(var ext in exts) {
                 BeforeTest();
                 using(converter = new Converter(controller, Path.Combine(WorkDir, testfile + ".tex"), Path.Combine(OutputDir, testfile + "-" + output + ext))) {
                     converter.Convert();
-                    Assert.IsTrue(File.Exists(Path.Combine(OutputDir, testfile + "-" + output + ext)));
+                    if(expected.Item1.Count == 1) {
+                        Assert.IsTrue(File.Exists(Path.Combine(OutputDir, testfile + "-" + output + ext)));
+                    } else {
+                        bool widthpos = (Settings.Default.leftMargin + Settings.Default.rightMargin > 0);
+                        bool heightpos = (Settings.Default.topMargin + Settings.Default.bottomMargin > 0);
+                        for(int i = 0 ; i < expected.Item1.Count ; ++i) {
+                            if((expected.Item1[i].width != 0 || widthpos) && (expected.Item1[i].height != 0 || heightpos)) {
+                                Assert.IsTrue(File.Exists(Path.Combine(OutputDir, testfile + "-" + output + "-" + (i + 1).ToString() + ext)));
+                            } else {
+                                Assert.IsFalse(File.Exists(Path.Combine(OutputDir, testfile + "-" + output + "-" + (i + 1).ToString() + ext)));
+                            }
+                        }
+                    }
                 }
                 AfterTest();
             }
@@ -165,7 +206,7 @@ namespace UnitTest {
             if(!Path.IsPathRooted(outputfile))outputfile = Path.Combine(OutputDir,outputfile);
             using(converter = new Converter(controller, tempfile, outputfile)) {
                 converter.Convert();
-                Assert.IsTrue(File.Exists(outputfile));
+                Assert.IsTrue(File.Exists(outputfile) || File.Exists(Path.Combine(Path.GetDirectoryName(outputfile),Path.GetFileNameWithoutExtension(outputfile) + "-1" + Path.GetExtension(outputfile))));
             }
             AfterTest();
         }
@@ -188,7 +229,8 @@ namespace UnitTest {
         void AfterTest() {
             if(!sourceFileExisted) File.Delete(Path.Combine(WorkDir, testfile + ".tex"));
             else {
-                if(!File.Exists(Path.Combine(WorkDir, testfile + ".tex"))) File.Move(Path.Combine(WorkDir, testfile + "-backup.tex"), Path.Combine(WorkDir, testfile + ".tex"));
+                File.Delete(Path.Combine(WorkDir, testfile + ".tex"));
+                File.Move(Path.Combine(WorkDir, testfile + "-backup.tex"), Path.Combine(WorkDir, testfile + ".tex"));
             }
         }
 
@@ -308,35 +350,65 @@ namespace UnitTest {
             File.Copy(Path.Combine(WorkDir, pdf), Path.Combine(OutputDir, "eps2pdf.pdf"), true);
         }
 
-        struct Size { public decimal width, height;}
-        Size GetPDFBox(string file,int page,bool hires = true){
-            var dir = Path.GetDirectoryName(file);
-            if(dir == "") dir = OutputDir;
-            else file = Path.GetFileName(file);
-            using(var conv = new Converter(null, Path.Combine(dir, "dummy.tex"), file)) {
-                var bb = CallMethod(conv, "readPDFBox", Path.GetFileName(file), new List<int>() { page }, 0);
-                return BBToSize(GetIndexer(bb, 0), hires);
+        struct Size { 
+            public decimal width, height;
+            public bool IsEmpty { get { return width <= 0 || height <= 0; } }
+        }
+        Tuple<List<Size>,List<Size>> GetExpectedSize(string source) {
+            tex2dvi_test(source);
+            dvi2pdf_test(Path.ChangeExtension(source, ".dvi"));
+            var pdf = "dvi2pdf.pdf";
+            int page = (int) CallMethod(converter, "pdfpages", Path.Combine(OutputDir, pdf));
+            if(Settings.Default.keepPageSize) {
+                return new Tuple<List<Size>, List<Size>>(
+                    GetPDFBox(pdf, Enumerable.Range(1, page).ToList(), false),
+                    GetPDFBox(pdf, Enumerable.Range(1, page).ToList(), true));
+            } else {
+                return new Tuple<List<Size>, List<Size>>(
+                    GetPDFBB(pdf, 1, page, false),
+                    GetPDFBB(pdf, 1, page, true));
             }
         }
 
-        Size GetPDFBB(string file, int page, bool hires = true) {
+        List<Size> GetPDFBox(string file,List<int> pages,bool hires = true){
             var dir = Path.GetDirectoryName(file);
             if(dir == "") dir = OutputDir;
             else file = Path.GetFileName(file);
             using(var conv = new Converter(null, Path.Combine(dir, "dummy.tex"), file)) {
-                var bb = CallMethod(conv, "readPDFBB", Path.GetFileName(file), page);
-                return BBToSize(bb, hires);
+                var bb = CallMethod(conv, "readPDFBox", Path.GetFileName(file), pages, 0);
+                var rv = new List<Size>();
+                for(int i = 0 ; i < (int)GetProperty(bb, "Count") ; ++i) rv.Add(BBToSize(GetIndexer(bb, i), hires));
+                return rv;
             }
         }
 
-        Size GetEPSBB(string file,bool hires = true){
+        List<Size> GetPDFBB(string file, int firstpage, int lastpage, bool hires = true) {
             var dir = Path.GetDirectoryName(file);
             if(dir == "") dir = OutputDir;
             else file = Path.GetFileName(file);
+            var rv = new List<Size>();
             using(var conv = new Converter(null, Path.Combine(dir, "dummy.tex"), file)) {
-                var bb = CallMethod(conv, "readBB", Path.GetFileName(file));
-                return BBToSize(bb, hires);
+                var bb = CallMethod(conv, "readPDFBB", Path.GetFileName(file), firstpage, lastpage);
+                for(int i = 0 ; i < (int) GetProperty(bb, "Count") ; ++i )rv.Add(BBToSize(GetIndexer(bb,i), hires));
+                return rv;
             }
+        }
+
+        
+        List<Size> GetEPSBB(List<string> files,bool hires = true){
+            var rv = new List<Size>();
+            foreach(var f in files) {
+                var file = f;
+                var dir = Path.GetDirectoryName(file);
+                if(dir == "") dir = OutputDir;
+                else file = Path.GetFileName(file);
+                if(!File.Exists(Path.Combine(dir, file))) continue;
+                using(var conv = new Converter(null, Path.Combine(dir, "dummy.tex"), file)) {
+                    var bb = CallMethod(conv, "readBB", Path.GetFileName(file));
+                    rv.Add(BBToSize(bb, hires));
+                }
+            }
+            return rv;
         }
 
         static Size BBToSize(object bb, bool hires){
@@ -347,41 +419,61 @@ namespace UnitTest {
             return size;
         }
 
-        Size GetBitmapSize(string file) {
-            if(!Path.IsPathRooted(file)) file = Path.Combine(OutputDir, file);
-            using(var bitmap = new System.Drawing.Bitmap(file)) {
-                var size = new Size();
-                size.width = bitmap.Size.Width;
-                size.height = bitmap.Size.Height;
-                return size;
+        List<Size> GetBitmapSize(List<string> files) {
+            var rv = new List<Size>();
+            foreach(var f in files) {
+                var file = f;
+                if(!Path.IsPathRooted(file)) file = Path.Combine(OutputDir, file);
+                if(!File.Exists(file)) continue;
+                using(var bitmap = new System.Drawing.Bitmap(file)) {
+                    var size = new Size();
+                    size.width = bitmap.Size.Width;
+                    size.height = bitmap.Size.Height;
+                    rv.Add(size);
+                }
             }
+            return rv;
         }
 
         bool SameValue(decimal a, decimal b) {
             return Math.Abs(a - b) < 1;
         }
 
-        bool CheckVerctorImageSize(Size original, Size gend) {
-            bool bw = SameValue(original.width + Settings.Default.leftMargin + Settings.Default.rightMargin,gend.width);
-            bool bh = SameValue(original.height + Settings.Default.topMargin + Settings.Default.bottomMargin, gend.height);
-            return bw && bh;
-        }
-
-        bool CheckBitmapImageSize(Size original, Size gend) {
-            original.width *= Settings.Default.resolutionScale;
-            original.height *= Settings.Default.resolutionScale;
-            var addwidth = Settings.Default.leftMargin + Settings.Default.rightMargin;
-            var addheight = Settings.Default.topMargin + Settings.Default.bottomMargin;
-            if(Settings.Default.yohakuUnitBP){
-                addwidth *= Settings.Default.resolutionScale;
-                addheight *= Settings.Default.resolutionScale;
+        bool CheckVerctorImageSize(List<Size> original, List<Size> gend) {
+            int j = 0;
+            for(int i = 0 ; i < original.Count ; ++i) {
+                decimal width = original[i].width + Settings.Default.leftMargin + Settings.Default.rightMargin;
+                decimal height = original[i].height + Settings.Default.topMargin + Settings.Default.bottomMargin;
+                if(width == 0 || height == 0) continue;
+                bool bw = SameValue(width, gend[j].width);
+                bool bh = SameValue(height, gend[j].height);
+                if(!bw || !bh) return false;
+                ++j;
             }
-            bool bw = SameValue(original.width + addwidth, gend.width);
-            bool bh = SameValue(original.height + addheight, gend.height);
-            return bw && bh;
+            return (j == gend.Count);
         }
 
-
+        bool CheckBitmapImageSize(List<Size> original, List<Size> gend) {
+            int j = 0;
+            for(int i = 0 ; i < original.Count ; ++i) {
+                var width = original[i].width * Settings.Default.resolutionScale;
+                var height = original[i].height * Settings.Default.resolutionScale;
+                var addwidth = Settings.Default.leftMargin + Settings.Default.rightMargin;
+                var addheight = Settings.Default.topMargin + Settings.Default.bottomMargin;
+                if(Settings.Default.yohakuUnitBP) {
+                    addwidth *= Settings.Default.resolutionScale;
+                    addheight *= Settings.Default.resolutionScale;
+                }
+                width += addwidth;
+                height += addheight;
+                if(width == 0 && height == 0) continue;
+                bool bw = SameValue(width, gend[j].width);
+                bool bh = SameValue(height, gend[j].height);
+                if(!bw || !bh) return false;
+                ++j;
+            }
+            return (j == gend.Count);
+        }
 
 
         public void showExtensionError(string file) { Debug.WriteLine("showExtensionError: \nfile = " + file); }
