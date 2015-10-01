@@ -460,7 +460,7 @@ void OutputBox(string boxname, Data &d) {
 		PDFDoc doc(d.input);
 		int pagecount = doc.GetPageCount();
 		for(int i = 0; i < pagecount; ++i) {
-			if(!!d.pages.empty() && d.pages.find(i) == d.pages.end())IContinue;
+			if(!d.pages.empty() && d.pages.find(i) == d.pages.end())continue;
 			PDFPage page(doc, i);
 			float left, bottom, right, top;
 			FPDF_BOOL result;
