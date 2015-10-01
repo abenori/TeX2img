@@ -1,15 +1,15 @@
-diff -u -r pdfium/core/src/fxge/win32/fx_win32_device.cpp pdfium_orig/core/src/fxge/win32/fx_win32_device.cpp
---- pdfium/core/src/fxge/win32/fx_win32_device.cpp	2015-10-01 08:30:33 +0000
-+++ pdfium_orig/core/src/fxge/win32/fx_win32_device.cpp	2015-10-01 07:53:59 +0000
-@@ -627,10 +627,7 @@
+diff -u -r pdfium_orig/core/src/fxge/win32/fx_win32_device.cpp pdfium/core/src/fxge/win32/fx_win32_device.cpp
+--- pdfium_orig/core/src/fxge/win32/fx_win32_device.cpp	2015-10-01 07:53:59 +0000
++++ pdfium/core/src/fxge/win32/fx_win32_device.cpp	2015-10-01 08:30:33 +0000
+@@ -627,7 +627,10 @@
    return TRUE;
  }
  FX_BOOL CGdiDeviceDriver::GetClipBox(FX_RECT* pRect) {
--  //return ::GetClipBox(m_hDC, (RECT*)pRect);
--  pRect->left = pRect->top = -(1 << 30);
--  pRect->right = pRect->bottom = 1 << 30;
--  return SIMPLEREGION;
-+  return ::GetClipBox(m_hDC, (RECT*)pRect);
+-  return ::GetClipBox(m_hDC, (RECT*)pRect);
++  //return ::GetClipBox(m_hDC, (RECT*)pRect);
++  pRect->left = pRect->top = -(1 << 30);
++  pRect->right = pRect->bottom = 1 << 30;
++  return SIMPLEREGION;
  }
  FX_BOOL CGdiDeviceDriver::SetClipRgn(void* hRgn) {
    ::SelectClipRgn(m_hDC, (HRGN)hRgn);
