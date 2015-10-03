@@ -81,6 +81,7 @@
     <Compile Include="AnalyzeLaTeXCompile.cs" />
     <Compile Include="Converter.cs" />
     <Compile Include="CUIOutput.cs" />
+    <Compile Include="EmbedSource.cs" />
     <Compile Include="InputComboDialog.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -101,6 +102,7 @@
     <Compile Include="ManageTemplateDialog.Designer.cs">
       <DependentUpon>ManageTemplateDialog.cs</DependentUpon>
     </Compile>
+    <Compile Include="mudraw.cs" />
     <Compile Include="Options.cs" />
     <Compile Include="OptionSet.cs" />
     <Compile Include="OutputForm.cs">

@@ -53,21 +53,22 @@ namespace TeX2img {
                             File.Delete(f + ext);
                         }
                     }
-                    foreach(var d in generatedImageFiles) {
-                        File.Delete(d);
+                    foreach(var f in generatedImageFiles) {
+                        File.Delete(f);
                     }
                 }
                 catch(UnauthorizedAccessException) {
-                    if(controller_ != null) controller_.appendOutput("一部の一時ファイルの削除に失敗しました。\r\n");
+                    if(controller_ != null) controller_.appendOutput("一部の一時ファイルの削除に失敗しました。\n");
                 }
                 catch(IOException) {
-                    if(controller_ != null) controller_.appendOutput("一部の一時ファイルの削除に失敗しました。\r\n");
+                    if(controller_ != null) controller_.appendOutput("一部の一時ファイルの削除に失敗しました。\n");
                 }
             }
             generatedTeXFilesWithoutExtension.Clear();
             generatedImageFiles.Clear();
         }
 
+        // 後で消す一時ファイル（フルパス）
         List<string> generatedImageFiles = new List<string>();
         List<string> generatedTeXFilesWithoutExtension = new List<string>();
 
@@ -94,14 +95,16 @@ namespace TeX2img {
             public decimal Right { get { return right; } }
             public decimal Bottom { get { return bottom; } }
             public decimal Top { get { return top; } }
+            public decimal Width { get { return right - left; } }
+            public decimal Height { get { return top - bottom; } }
             public BoundingBox(decimal l, decimal b, decimal r, decimal t) {
                 left = l; right = r; bottom = b; top = t;
             }
-            public bool IsEmpty { get { return left >= right || bottom >= top; } }
+            public bool IsEmpty { get { return Width <= 0 || Height <= 0; } }
             public BoundingBox HiresBBToBB() {
                 int ileft = (int) left, iright = (int) right, ibottom = (int) bottom, itop = (int) top;
                 if((decimal) itop != top) ++itop;
-                if((decimal) iright != iright) ++iright;
+                if((decimal) iright != right) ++iright;
                 return new BoundingBox(ileft, ibottom, iright, itop);
             }
         };
@@ -344,7 +347,6 @@ namespace TeX2img {
             return new BoundingBoxPair(AddMargineToBoundingBox(bb.bb, use_bp), AddMargineToBoundingBox(bb.hiresbb, use_bp));
         }
         #endregion
-
 
         #region 変換用関数たち
         // ファイル名はフルパスではなくファイル名のみで与える．
@@ -682,6 +684,22 @@ namespace TeX2img {
 
         // 余白の付加も行う。
         private bool eps2img(string inputFileName, string outputFileName, BoundingBoxPair origbb = null) {
+            string device;
+            switch(Path.GetExtension(outputFileName)) {
+            case ".png":
+                device = Properties.Settings.Default.transparentPngFlag ? "pngalpha" : "png16m";
+                break;
+            case ".bmp":
+                device = "bmp16m";
+                break;
+            default:
+                device = "jpeg";
+                break;
+            }
+            return eps2img(inputFileName, outputFileName, origbb, device);
+        }
+
+        private bool eps2img(string inputFileName, string outputFileName, BoundingBoxPair origbb, string device) {
             string extension = Path.GetExtension(outputFileName).ToLower();
             string baseName = Path.GetFileNameWithoutExtension(inputFileName);
             generatedImageFiles.Add(Path.Combine(workingDir, outputFileName));
@@ -690,8 +708,8 @@ namespace TeX2img {
             generatedImageFiles.Add(Path.Combine(workingDir, trimEpsFileName));
             if(origbb == null) origbb = readBB(inputFileName);
             decimal devicedevide = Properties.Settings.Default.yohakuUnitBP ? 1 : Properties.Settings.Default.resolutionScale;
-            decimal translateleft = -origbb.bb.Left + Properties.Settings.Default.leftMargin / devicedevide;
-            decimal translatebottom = -origbb.bb.Bottom + Properties.Settings.Default.bottomMargin / devicedevide;
+            decimal translateleft = -origbb.hiresbb.Left + Properties.Settings.Default.leftMargin / devicedevide;
+            decimal translatebottom = -origbb.hiresbb.Bottom + Properties.Settings.Default.bottomMargin / devicedevide;
             using(StreamWriter sw = new StreamWriter(Path.Combine(workingDir, trimEpsFileName), false, Encoding.GetEncoding("shift_jis"))) {
                 sw.WriteLine("/NumbDict countdictstack def");
                 sw.WriteLine("1 dict begin");
@@ -705,19 +723,6 @@ namespace TeX2img {
                 sw.WriteLine("showpage");
             }
             // Ghostscript を使ったJPEG,PNG生成
-            string device = "jpeg";
-
-            switch(extension) {
-            case ".png":
-                device = Properties.Settings.Default.transparentPngFlag ? "pngalpha" : "png16m";
-                break;
-            case ".bmp":
-                device = "bmp16m";
-                break;
-            default:
-                device = "jpeg";
-                break;
-            }
             string arg;
             using(var proc = GetProcess()) {
                 proc.StartInfo.FileName = setProcStartInfo(Properties.Settings.Default.gsPath, out arg);
@@ -727,11 +732,15 @@ namespace TeX2img {
                 }
                 string antialias = Properties.Settings.Default.useMagickFlag ? "4" : "1";
                 decimal marginmult = Properties.Settings.Default.yohakuUnitBP ? Properties.Settings.Default.resolutionScale : 1;
-                int width = (int) ((origbb.bb.Right - origbb.bb.Left) * Properties.Settings.Default.resolutionScale + (Properties.Settings.Default.leftMargin + Properties.Settings.Default.rightMargin) * marginmult);
-                int height = (int) ((origbb.bb.Top - origbb.bb.Bottom) * Properties.Settings.Default.resolutionScale + (Properties.Settings.Default.topMargin + Properties.Settings.Default.bottomMargin) * marginmult);
+                decimal dwidth = (origbb.hiresbb.Width * Properties.Settings.Default.resolutionScale + (Properties.Settings.Default.leftMargin + Properties.Settings.Default.rightMargin) * marginmult);
+                int width = (int) dwidth;
+                if((decimal) width != dwidth) ++width;
+                decimal dheight = origbb.hiresbb.Height * Properties.Settings.Default.resolutionScale + (Properties.Settings.Default.topMargin + Properties.Settings.Default.bottomMargin) * marginmult;
+                int height = (int) dheight;
+                if((decimal) height != dheight) ++height;
                 proc.StartInfo.Arguments = arg;
                 proc.StartInfo.Arguments += String.Format(
-                    "-q -sDEVICE={0} -sOutputFile={1} -dNOPAUSE -dBATCH -dPDFFitPage -dTextAlphaBits={2} -dGraphicsAlphaBits={2} -r{3} -g{4}x{5} {6}",
+                    "-q -sDEVICE={0} -sOutputFile={1} -dNOPAUSE -dBATCH -dPDFFitPage -dTextAlphaBits={2} -dGraphicsAlphaBits={2} -r{3} -g{4}x{5} \"{6}\"",
                     device, outputFileName, antialias,
                     72 * Properties.Settings.Default.resolutionScale,
                     width, height, trimEpsFileName);
@@ -905,23 +914,21 @@ namespace TeX2img {
             generatedImageFiles.Add(output);
             var Compression = System.Drawing.Imaging.EncoderValue.CompressionLZW;
             if(files.Count == 0) return true;
-            System.Drawing.Imaging.ImageCodecInfo ici = null;
-            foreach(var enc in System.Drawing.Imaging.ImageCodecInfo.GetImageEncoders()) {
-                if(enc.MimeType == "image/tiff") {
-                    ici = enc;
-                    break;
-                }
-            }
-            if(ici == null) {
-                if(controller_ != null) controller_.appendOutput("TIFF 結合時にエラー：ImageCodeInfo が見付かりませんでした。");
-                return false;
-            }
             if(files.Count == 1) {
                 File.Copy(Path.Combine(workingDir, files[0]), Path.Combine(workingDir, output));
-                return true;
             } else {
-                var bitmaps = new List<System.Drawing.Bitmap>();
-                foreach(var f in files) bitmaps.Add(new System.Drawing.Bitmap(Path.Combine(workingDir, f)));
+                System.Drawing.Imaging.ImageCodecInfo ici = null;
+                foreach(var enc in System.Drawing.Imaging.ImageCodecInfo.GetImageEncoders()) {
+                    if(enc.MimeType == "image/tiff") {
+                        ici = enc;
+                        break;
+                    }
+                }
+                if(ici == null) {
+                    if(controller_ != null) controller_.appendOutput("TIFF 結合時にエラー：ImageCodeInfo が見付かりませんでした。");
+                    return false;
+                }
+                var bitmaps = files.Select(f => new System.Drawing.Bitmap(Path.Combine(workingDir, f))).ToList();
                 try {
                     using(var ep = new System.Drawing.Imaging.EncoderParameters(2)) {
                         ep.Param[0] = new System.Drawing.Imaging.EncoderParameter(System.Drawing.Imaging.Encoder.SaveFlag, (long) System.Drawing.Imaging.EncoderValue.MultiFrame);
@@ -944,7 +951,11 @@ namespace TeX2img {
                     foreach(var b in bitmaps) b.Dispose();
                 }
             }
-            return File.Exists(Path.Combine(workingDir, output));
+
+            if(File.Exists(Path.Combine(workingDir, output))) {
+                if(controller_ != null) controller_.appendOutput("TeX2img: Concatinate TIFF files");
+                return true;
+            } else return false;
         }
 
         bool gifconcat(List<string> files, string output, uint delay, uint loop) {
@@ -1019,6 +1030,7 @@ namespace TeX2img {
                 }
                 writer.Write((byte) 0x3B);// Trailer
             }
+            if(controller_ != null) controller_.appendOutput("TeX2img: Concatinate TIFF files");
             return true;
         }
         #endregion
@@ -1067,17 +1079,17 @@ namespace TeX2img {
             int page = pdfpages(Path.Combine(workingDir, tmpFileBaseName + ".pdf"));
 
             // boundingBoxを取得
-            int pdfboxnumber = 0;
-            switch(Properties.Settings.Default.pagebox) {
-            case "media": pdfboxnumber = 1; break;
-            case "crop": pdfboxnumber = 2; break;
-            case "bleed": pdfboxnumber = 3; break;
-            case "trim": pdfboxnumber = 4; break;
-            case "art": pdfboxnumber = 5; break;
-            default: pdfboxnumber = 0; break;
-            }
             var bbs = new List<BoundingBoxPair>();
             if(Properties.Settings.Default.keepPageSize) {
+                int pdfboxnumber = 0;
+                switch(Properties.Settings.Default.pagebox) {
+                case "media": pdfboxnumber = 1; break;
+                case "crop": pdfboxnumber = 2; break;
+                case "bleed": pdfboxnumber = 3; break;
+                case "trim": pdfboxnumber = 4; break;
+                case "art": pdfboxnumber = 5; break;
+                default: pdfboxnumber = 0; break;
+                }
                 bbs = readPDFBox(tmpFileBaseName + ".pdf", new List<int>(Enumerable.Range(1, page)), pdfboxnumber);
             } else {
                 bbs = readPDFBB(tmpFileBaseName + ".pdf", 1, page);
@@ -1096,9 +1108,12 @@ namespace TeX2img {
                     }
                 }
             }
-            if(emptyPages.Count == page) return false;
+            if(emptyPages.Count == page) {
+				controller_.appendOutput("全てのページから空ページでした。");
+				return false;
+			}
 
-            // .svg，テキスト情報保持な pdf は PDF から作る
+            // テキスト情報保持PDF
             if(extension == ".pdf" && !Properties.Settings.Default.outlinedText){
                 if(!Properties.Settings.Default.mergeOutputFiles || emptyPages.Count > 0) {
                     for(int i = 1 ; i <= page ; ++i) {
@@ -1108,6 +1123,7 @@ namespace TeX2img {
                 } else {
                     if(!pdfcrop(tmpFileBaseName + ".pdf", tmpFileBaseName + "-1.pdf", true, new List<int>(Enumerable.Range(1, page)), bbs)) return false;
                 }
+                // svg（または透過gif）：PDFから変換
             } else if(
                  extension == ".svg" ||
                  (extension == ".gif" && Properties.Settings.Default.transparentPngFlag)
@@ -1132,10 +1148,10 @@ namespace TeX2img {
                     break;
                 }
             } else {
+				// その他：eps経由
 	            bool addMargin = ((Properties.Settings.Default.leftMargin + Properties.Settings.Default.rightMargin + Properties.Settings.Default.topMargin + Properties.Settings.Default.bottomMargin) > 0);
                 for(int i = 1 ; i <= page ; ++i) {
                     if(emptyPages.Contains(i)) continue;
-                    // それ以外はEPSを経由する。
                     int resolution;
                     if(Properties.Settings.Default.useLowResolution) epsResolution_ = 72 * Properties.Settings.Default.resolutionScale;
                     else epsResolution_ = 20016;
@@ -1160,8 +1176,8 @@ namespace TeX2img {
                     case ".bmp":
                         if(!eps2img(tmpFileBaseName + "-" + i + ".eps", tmpFileBaseName + "-" + i + extension, bbs[i - 1])) return false;
                         break;
-                    case ".gif":
                     case ".tiff":
+                    case ".gif":
                         if(!eps2img(tmpFileBaseName + "-" + i + ".eps", tmpFileBaseName + "-" + i + ".png", bbs[i - 1])) return false;
                         if(!img2img_pdfium(tmpFileBaseName + "-" + i + ".png", tmpFileBaseName + "-" + i + extension)) return false;
                         break;
@@ -1183,7 +1199,7 @@ namespace TeX2img {
                 }
                 bool? merged = null;
                 switch(extension) {
-                case ".pdf": merged = pdfconcat(files, tempfile, pdfboxnumber); break;
+                case ".pdf": merged = pdfconcat(files, tempfile); break;
                 case ".tiff": merged = tiffconcat(files, tempfile); break;
                 case ".gif": merged = gifconcat(files, tempfile, Properties.Settings.Default.animationDelay, Properties.Settings.Default.animationLoop); break;
                 default: break;
@@ -1257,16 +1273,14 @@ namespace TeX2img {
                         if(enc == null) enc = GetInputEncoding();
                         var srctext = enc.GetString(buf);
                         foreach(var f in outputFileNames) {
-                            using(var fs = AlternativeDataStream.WriteAlternativeDataStream(f, ADSName))
-                            using(var ws = new StreamWriter(fs, new UTF8Encoding(false))) {
-                                ws.Write(srctext);
-                            }
+                            EmbedSource.Embed(f, srctext);
                         }
                     }
                 }
                 // 例外は無視
                 catch(IOException) { }
                 catch(NotImplementedException) { }
+                catch (Win32Exception) { }
             }
             if(controller_ != null) {
                 foreach(var w in warnngs) controller_.appendOutput("TeX2img: " + w + "\n");
@@ -1469,7 +1483,7 @@ namespace TeX2img {
         }
 
         private void printCommandLine(Process proc) {
-            if(controller_ != null) controller_.appendOutput(proc.StartInfo.WorkingDirectory + ">\"" + proc.StartInfo.FileName + "\" " + proc.StartInfo.Arguments + "\r\n");
+            if(controller_ != null) controller_.appendOutput(proc.StartInfo.WorkingDirectory + ">\"" + proc.StartInfo.FileName + "\" " + proc.StartInfo.Arguments + "\n");
         }
 
         // Error -> 同期，Output -> 非同期
@@ -1526,7 +1540,7 @@ namespace TeX2img {
                             System.Threading.Thread.Sleep(500);
                             abort = true;
                         }
-                        if(controller_ != null) controller_.appendOutput("処理を中断しました。\r\n");
+                        if(controller_ != null) controller_.appendOutput("処理を中断しました。\n");
                         readThread.EndInvoke(ReadStdOutThread);
                         readThread.EndInvoke(ReadStdErrThread);
                         throw new System.TimeoutException();
@@ -1539,7 +1553,7 @@ namespace TeX2img {
             }
             readThread.EndInvoke(ReadStdOutThread);
             readThread.EndInvoke(ReadStdErrThread);
-            if(controller_ != null) controller_.appendOutput("\r\n");
+            if(controller_ != null) controller_.appendOutput("\n");
             if(abort) throw new System.TimeoutException();
         }
 

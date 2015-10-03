@@ -43,8 +43,8 @@ namespace TeX2img {
 			{"right-margin=","右余白",(int val) => Properties.Settings.Default.rightMargin = val,()=>Properties.Settings.Default.rightMargin},
 			{"top-margin=","上余白",(int val) => Properties.Settings.Default.topMargin = val,()=>Properties.Settings.Default.topMargin},
 			{"bottom-margin=","下余白",(int val) => Properties.Settings.Default.bottomMargin = val,()=>Properties.Settings.Default.bottomMargin},
-            {"margins=","余白（一括）",val=>{
-                var list = new System.Text.RegularExpressions.Regex(" +").Split(val).ToList();
+            {"margins=","余白（一括/左右 上下/左 上 右 下）",val=>{
+                var list = val.Split(new char[] { ' ' }).ToList();
                 list.RemoveAll((s) => (s == ""));
                 if(list.Count == 1) Properties.Settings.Default.leftMargin = Properties.Settings.Default.topMargin = Properties.Settings.Default.rightMargin = Properties.Settings.Default.bottomMargin = Int32.Parse(list[0]);
                 else if(list.Count == 2) {
@@ -66,7 +66,7 @@ namespace TeX2img {
             },()=>Properties.Settings.Default.yohakuUnitBP ? "bp" : "px"},
             {"keep-page-size","ページサイズを維持[-]",val=>Properties.Settings.Default.keepPageSize=(val != null),()=>Properties.Settings.Default.keepPageSize},
             {"pagebox=",val=>Properties.Settings.Default.pagebox = GetStringsFromArray("pagebox",val,new string[]{"media","crop","bleed","trim","art"})},// 隠しオプション
-            {"merge-output-files","PDF / TIFF ファイルを単一ファイルにまとめる[-]",val=>Properties.Settings.Default.mergeOutputFiles = (val != null),()=>Properties.Settings.Default.mergeOutputFiles},
+            {"merge-output-files","PDF / TIFF ファイルを単一ファイルに[-]",val=>Properties.Settings.Default.mergeOutputFiles = (val != null),()=>Properties.Settings.Default.mergeOutputFiles},
             {"animation-delay=",(double sec)=>{Properties.Settings.Default.animationDelay = (uint)(sec*100);}},
             {"animation-loop=",(uint val)=>Properties.Settings.Default.animationLoop = val},
 			{"transparent","透過 PNG / TIFF / EMF[-]",val => Properties.Settings.Default.transparentPngFlag = (val != null),()=>Properties.Settings.Default.transparentPngFlag},
@@ -76,9 +76,9 @@ namespace TeX2img {
 			{"low-resolution","低解像度で処理[-]",val => Properties.Settings.Default.useLowResolution = (val!= null),()=>Properties.Settings.Default.useLowResolution},
 			{"ignore-errors","少々のエラーは無視[-]",val => Properties.Settings.Default.ignoreErrorFlag = (val != null),()=>Properties.Settings.Default.ignoreErrorFlag},
             {"delete-tmpfiles","一時ファイルを削除[-]",val => Properties.Settings.Default.deleteTmpFileFlag = (val != null),()=>Properties.Settings.Default.deleteTmpFileFlag},
-			{"preview","生成されたファイルを開く[-]",val => preview = (val != null),()=>preview==null?false:preview.Value},
+			{"preview","生成ファイルを開く[-]",val => preview = (val != null),()=>preview==null?false:preview.Value},
             {"embed-source","ソース情報を生成ファイルに保存[-]",val => Properties.Settings.Default.embedTeXSource = (val != null),()=>Properties.Settings.Default.embedTeXSource},
-            {"copy-to-clipboard","生成したファイルをクリップボードにコピー[-]",val =>  Properties.Settings.Default.setFileToClipBoard = (val != null),()=>Properties.Settings.Default.setFileToClipBoard},
+            {"copy-to-clipboard","生成ファイルをクリップボードにコピー[-]",val =>  Properties.Settings.Default.setFileToClipBoard = (val != null),()=>Properties.Settings.Default.setFileToClipBoard},
 			{"savesettings","設定の保存を行う[-]",val => Properties.Settings.Default.SaveSettings = (val != null),()=>Properties.Settings.Default.SaveSettings},
 			{"quiet","Quiet モード[-]",val => quiet = (val != null),()=>quiet},
             {"timeout=","タイムアウト時間を設定（秒）", (int val) => {
@@ -198,7 +198,7 @@ namespace TeX2img {
         static void Main() {
             // アップデートしていたら前バージョンの設定を読み込む
             if(!Properties.Settings.Default.IsUpgraded) {
-                Properties.Settings.Default.Upgrade();
+                Properties.Settings.Default.Upgrade();     
                 Properties.Settings.Default.IsUpgraded = true;
                 Properties.Settings.Default.TeX2imgVersion = Application.ProductVersion;
                 Properties.Settings.Default.Save();

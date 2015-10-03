@@ -19,6 +19,7 @@
 もともとの作者は寺田侑祐さんです．Version 1.2 以降開発を引き継ぎました．
 
 ## 動作条件
+* Windows Vista 以降．
 * .NET Framework 3.5 以降．
 * 適切な TeX ディストリビューション（W32TeX か TeX Live を推奨）がインストールされいること．
 * Ghostscript がインストールされ，使えること．（TeX Live 内のものでも利用可能です．）
@@ -106,11 +107,11 @@ http://island.geocities.jp/loveinequality/
 http://sgry.b.sourceforge.jp/
 * コマンドライン解析には NDesk.Options を利用しています．
 http://www.ndesk.org/Options
-* 日本語文字コードの推測には，Gauche に含まれている推測ルーチン（を C# に移植したもの）を用いています．
+* 日本語文字コードの推測には，Gauche に含まれている推測ルーチン（を C# に移植したもの）を利用しています．
 http://practical-scheme.net/gauche/index-j.html
-* SVG ファイルの作成のために mudraw を用いています．
+* mudraw に独自拡張を施したものを利用しています．
 http://www.mupdf.com/
-* 添付 pdfiumdraw には PDFium を用いています．
+* 添付 pdfiumdraw には PDFium を利用しています．
 https://code.google.com/p/pdfium/
 
 
@@ -268,4 +269,10 @@ https://code.google.com/p/pdfium/
 
 * 1.6.2
     - SVG 変換の速度アップ．
+    - /margins オプションを追加．
+    - HiResBoundingBox を使うことにした．
+    - 開発環境を Visual Studio 2015 に．
+    - PDFium を最新のものにした．
+    - mudraw に独自拡張を施した．（PDF の注釈を操作するため．）
+
 

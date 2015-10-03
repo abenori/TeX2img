@@ -106,8 +106,8 @@ namespace UnitTest {
                 };
                 Assert.IsTrue(CheckVerctorImageSize(orighiresbb, get_pdf_box(testfile + "-not-keep.pdf")));
                 Assert.IsTrue(CheckVerctorImageSize(orighiresbb, GetEPSBB(get_output_files_func(testfile + "-not-keep.eps"))));
-                Assert.IsTrue(CheckBitmapImageSize(origbb, GetBitmapSize(get_output_files_func(testfile + "-not-keep.png"))));
-                Assert.IsTrue(CheckBitmapImageSize(origbb, GetBitmapSize(get_output_files_func(testfile + "-not-keep.jpg"))));
+                Assert.IsTrue(CheckBitmapImageSize(orighiresbb, GetBitmapSize(get_output_files_func(testfile + "-not-keep.png"))));
+                Assert.IsTrue(CheckBitmapImageSize(orighiresbb, GetBitmapSize(get_output_files_func(testfile + "-not-keep.jpg"))));
 
                 Settings.Default.keepPageSize = true;
                 foreach(var ext in exts) {
@@ -115,8 +115,8 @@ namespace UnitTest {
                 }
                 Assert.IsTrue(CheckVerctorImageSize(orighiresbox, get_pdf_box(testfile + "-keep.pdf")));
                 Assert.IsTrue(CheckVerctorImageSize(orighiresbox, GetEPSBB(get_output_files_func(testfile + "-keep.eps"))));
-                Assert.IsTrue(CheckBitmapImageSize(origbox, GetBitmapSize(get_output_files_func(testfile + "-keep.png"))));
-                Assert.IsTrue(CheckBitmapImageSize(origbox, GetBitmapSize(get_output_files_func(testfile + "-keep.jpg"))));
+                Assert.IsTrue(CheckBitmapImageSize(orighiresbox, GetBitmapSize(get_output_files_func(testfile + "-keep.png"))));
+                Assert.IsTrue(CheckBitmapImageSize(orighiresbox, GetBitmapSize(get_output_files_func(testfile + "-keep.jpg"))));
             }
         }
 

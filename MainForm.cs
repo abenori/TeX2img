@@ -54,7 +54,7 @@ namespace TeX2img {
 
         #region 設定値の読み書き
         private void loadSettings() {
-            sourceTextBox.Text = "あ\n\\newpage\nかきくけこ";
+            sourceTextBox.Text = "\\fbox{あ}";
 
             const int minLength = 50;
             if(Properties.Settings.Default.Height > minLength) this.Height = Properties.Settings.Default.Height;
@@ -205,7 +205,7 @@ namespace TeX2img {
             if(myOutputForm.InvokeRequired) {
                 this.Invoke(new appendOutputDelegate(appendOutput), new Object[] { log });
             } else {
-                myOutputForm.getOutputTextBox().AppendText(log);
+                myOutputForm.getOutputTextBox().AppendText(log.Replace("\n","\r\n"));
             }
         }
 
@@ -514,12 +514,14 @@ namespace TeX2img {
         public static void ImportImageFile(string path, out string preamble, out string body) {
             preamble = null; body = null;
             try {
-                using(var fs = AlternativeDataStream.ReadAlternativeDataStream(path, Converter.ADSName))
-                using(var sr = new StreamReader(fs,Encoding.UTF8)){
-                    if(!ParseTeXSourceFile(sr, out preamble, out body)) {
-                        MessageBox.Show("TeX ソースファイルの解析に失敗しました。\n\\begin{document} や \\end{document} 等が正しく入力されているか確認してください。", "TeX2img");
+                var text = EmbedSource.Read(path);
+                if (text != null) {
+                    using (var sr = new StringReader(text)) {
+                        if (!ParseTeXSourceFile(sr, out preamble, out body)) {
+                            MessageBox.Show("TeX ソースファイルの解析に失敗しました。\n\\begin{document} や \\end{document} 等が正しく入力されているか確認してください。", "TeX2img");
+                        }
                     }
-                }
+                } else throw new IOException();
             }
             catch(IOException) {
                 if(File.Exists(path)) {
@@ -594,10 +596,10 @@ namespace TeX2img {
                 return true;
             }
         }
-        static string ChangeReturnCode(string str) {
+        public static string ChangeReturnCode(string str) {
             return ChangeReturnCode(str, System.Environment.NewLine);
         }
-        static string ChangeReturnCode(string str,string returncode){
+        public static string ChangeReturnCode(string str,string returncode){
             string r = str;
             r = r.Replace("\r\n", "\n");
             r = r.Replace("\r", "\n");
