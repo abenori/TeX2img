@@ -10,23 +10,40 @@ namespace TeX2img {
         List<byte> StdInputBuf = new List<byte>(), StdOutputBuf = new List<byte>();
         Action ReadStdOutputAction; 
         IAsyncResult ReadStdOutputThread;
+        string error_str;
+        volatile bool error_occured = false;
         public MuPDF(string path) {
             process = new Process();
             process.StartInfo.FileName = path;
             process.StartInfo.Arguments = "--interactive";
-            process.StartInfo.RedirectStandardError = false;
+            process.StartInfo.RedirectStandardError = true;
             process.StartInfo.RedirectStandardInput = true;
             process.StartInfo.RedirectStandardOutput = true;
             process.StartInfo.UseShellExecute = false;
             process.StartInfo.CreateNoWindow = true;
+            process.ErrorDataReceived += Process_ErrorDataReceived;
             process.Start();
+            process.BeginErrorReadLine();
             ReadStdOutputAction = new Action(ReadFromStdOutput);
             ReadStdOutputThread = ReadStdOutputAction.BeginInvoke(null, null);
         }
 
+        private void Process_ErrorDataReceived(object sender, DataReceivedEventArgs e) {
+            error_str += e.Data + "\n";
+            error_occured = true;
+        }
+
+        public void ClearError() {
+            error_occured = false;
+            error_str = "";
+        }
+
         public void Dispose() {
             WriteLine("quit");
-            process.WaitForExit(100);
+            for(int i = 0; i < 10; ++i) {
+                if (process.HasExited) break;
+                process.WaitForExit(100);
+            }
             if (!process.HasExited) process.Kill();
             if (!ReadStdOutputThread.IsCompleted) System.Threading.Thread.Sleep(100);
             if (!ReadStdOutputThread.IsCompleted) ReadStdOutputAction.EndInvoke(ReadStdOutputThread);
@@ -67,6 +84,7 @@ namespace TeX2img {
 
         string ReadLine() {
             for(int i = 0; i < 10; ++i) {
+                if (error_occured) throw new Exception(error_str);
                 var s = ReadLineSub();
                 if (s != null) return s;
                 System.Threading.Thread.Sleep(100);
@@ -77,7 +95,7 @@ namespace TeX2img {
         string ReadString() {
             int size = Int32.Parse(ReadLine());
             if (StdOutputBuf.Count < size) System.Threading.Thread.Sleep(100);
-            if (StdOutputBuf.Count < size) return null;
+            if (StdOutputBuf.Count < size) throw new TimeoutException(); ;
             var buf = StdOutputBuf.GetRange(0, size);
             StdOutputBuf.RemoveRange(0, size);
             ReadLine();
@@ -86,6 +104,7 @@ namespace TeX2img {
 
         int ReadInt() {
             var str = ReadLine();
+            if (str == null) throw new TimeoutException();
             return Int32.Parse(str);
         }
 

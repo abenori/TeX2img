@@ -1265,22 +1265,20 @@ namespace TeX2img {
             if(Properties.Settings.Default.embedTeXSource && inputextension == ".tex") {
                 // Alternative Data Streamにソースを書き込む
                 try {
-                    using(var source = new FileStream(inputTeXFilePath, FileMode.Open, FileAccess.Read)) {
+                    using (var source = new FileStream(inputTeXFilePath, FileMode.Open, FileAccess.Read)) {
                         var buf = new byte[source.Length];
-                        source.Read(buf, 0, (int) source.Length);
+                        source.Read(buf, 0, (int)source.Length);
                         // エンコードの決定
                         var enc = KanjiEncoding.CheckBOM(buf);
-                        if(enc == null) enc = GetInputEncoding();
+                        if (enc == null) enc = GetInputEncoding();
                         var srctext = enc.GetString(buf);
-                        foreach(var f in outputFileNames) {
-                            EmbedSource.Embed(f, srctext);
+                        foreach (var f in outputFileNames) {
+                            TeXSource.EmbedSource(f, srctext);
                         }
                     }
                 }
                 // 例外は無視
-                catch(IOException) { }
-                catch(NotImplementedException) { }
-                catch (Win32Exception) { }
+                catch (Exception) { }
             }
             if(controller_ != null) {
                 foreach(var w in warnngs) controller_.appendOutput("TeX2img: " + w + "\n");

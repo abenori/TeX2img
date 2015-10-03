@@ -360,7 +360,7 @@ namespace TeX2img {
                     if(InputFromTextboxRadioButton.Checked) {
                         using(StreamWriter sw = new StreamWriter(Path.Combine(tmpDir, tmpTeXFileName), false, Converter.GetInputEncoding())) {
                             try {
-                                WriteTeXSourceFile(sw, myPreambleForm.PreambleTextBox.Text, sourceTextBox.Text);
+                                TeXSource.WriteTeXSourceFile(sw, myPreambleForm.PreambleTextBox.Text, sourceTextBox.Text);
                             }
                             catch { }
                         }
@@ -488,7 +488,7 @@ namespace TeX2img {
                 if(encoding.CodePage == Encoding.UTF8.CodePage) encoding = new System.Text.UTF8Encoding(false);
                 try {
                     using(var file = new StreamWriter(sfd.FileName, false, encoding)) {
-                        WriteTeXSourceFile(file, myPreambleForm.PreambleTextBox.Text, sourceTextBox.Text);
+                        TeXSource.WriteTeXSourceFile(file, myPreambleForm.PreambleTextBox.Text, sourceTextBox.Text);
                     }
                 }
                 catch(UnauthorizedAccessException){
@@ -500,8 +500,8 @@ namespace TeX2img {
         public void ImportFile(string path) {
             string preamble, body;
             ImportFile(path, out preamble, out body);
-            if(preamble != null) myPreambleForm.PreambleTextBox.Text = ChangeReturnCode(preamble);
-            if(body != null) sourceTextBox.Text = ChangeReturnCode(body);
+            if(preamble != null) myPreambleForm.PreambleTextBox.Text = TeXSource.ChangeReturnCode(preamble);
+            if(body != null) sourceTextBox.Text = TeXSource.ChangeReturnCode(body);
         }
 
         public static void ImportFile(string path, out string preamble, out string body) {
@@ -514,24 +514,24 @@ namespace TeX2img {
         public static void ImportImageFile(string path, out string preamble, out string body) {
             preamble = null; body = null;
             try {
-                var text = EmbedSource.Read(path);
+                var text = TeXSource.ReadEmbededSource(path);
                 if (text != null) {
                     using (var sr = new StringReader(text)) {
-                        if (!ParseTeXSourceFile(sr, out preamble, out body)) {
+                        if (!TeXSource.ParseTeXSourceFile(sr, out preamble, out body)) {
                             MessageBox.Show("TeX ソースファイルの解析に失敗しました。\n\\begin{document} や \\end{document} 等が正しく入力されているか確認してください。", "TeX2img");
                         }
                     }
                 } else throw new IOException();
             }
-            catch(IOException) {
+            catch(NotImplementedException) {
+                MessageBox.Show("NTFS ファイルシステム以外ではソースファイルの埋め込みはサポートされていません。");
+            }
+            catch(Exception) {
                 if(File.Exists(path)) {
                     MessageBox.Show(path + "\nにはソース情報がないようです。", "TeX2img");
                 } else {
                     MessageBox.Show(path + "\nは開けませんでした。", "TeX2img");
                 }
-            }
-            catch(NotImplementedException) {
-                MessageBox.Show("NTFS ファイルシステム以外ではソースファイルの埋め込みはサポートされていません。");
             }
         }
 
@@ -576,44 +576,10 @@ namespace TeX2img {
                 }
             }
             using(var sr = new StringReader(encoding.GetString(buf))) {
-                if(!ParseTeXSourceFile(sr, out preamble,out body)) {
+                if(!TeXSource.ParseTeXSourceFile(sr, out preamble,out body)) {
                    MessageBox.Show("TeX ソースファイルの解析に失敗しました。\n\\begin{document} や \\end{document} 等が正しく入力されているか確認してください。","TeX2img");
                 }
             }
-        }
-
-        static bool ParseTeXSourceFile(TextReader file, out string preamble, out string body) {
-            preamble = null; body = null;
-            var reg = new Regex(@"(?<preamble>^(.*\n)*?[^%]*?(\\\\)*)\\begin\{document\}\n?(?<body>(.*\n)*[^%]*)\\end\{document\}");
-            var text = file.ReadToEnd().Replace("\r\n", "\n").Replace("\r", "\n");
-            var m = reg.Match(text);
-            if(m.Success) {
-                preamble = m.Groups["preamble"].Value;
-                body = m.Groups["body"].Value;
-                return true;
-            } else {
-                body = text;
-                return true;
-            }
-        }
-        public static string ChangeReturnCode(string str) {
-            return ChangeReturnCode(str, System.Environment.NewLine);
-        }
-        public static string ChangeReturnCode(string str,string returncode){
-            string r = str;
-            r = r.Replace("\r\n", "\n");
-            r = r.Replace("\r", "\n");
-            r = r.Replace("\n", returncode);
-            return r;
-        }
-
-        static void WriteTeXSourceFile(TextWriter sw, string preamble, string body) {
-            sw.Write(ChangeReturnCode(preamble));
-            if(!preamble.EndsWith("\n")) sw.WriteLine("");
-            sw.WriteLine("\\begin{document}");
-            sw.Write(ChangeReturnCode(body));
-            if(!body.EndsWith("\n")) sw.WriteLine("");
-            sw.WriteLine("\\end{document}");
         }
 
         private void sourceTextBox_DragDrop(object sender, DragEventArgs e) {

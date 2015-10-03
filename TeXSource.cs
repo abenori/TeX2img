@@ -2,16 +2,56 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.IO;
 
 namespace TeX2img {
-    public static class EmbedSource {
+    public static class TeXSource {
         // ADS名
         public const string ADSName = "TeX2img.source";
         public static string mudraw = Path.Combine(Converter.GetToolsPath(), "mudraw.exe");
         public const string PDFsrcHead = "%%TeX2img Document";
 
-        public static void Embed(string file, string text) {
+        public static bool ParseTeXSourceFile(TextReader file, out string preamble, out string body) {
+            preamble = null; body = null;
+            var reg = new Regex(@"(?<preamble>^(.*\n)*?[^%]*?(\\\\)*)\\begin\{document\}\n?(?<body>(.*\n)*[^%]*)\\end\{document\}");
+            var text = file.ReadToEnd().Replace("\r\n", "\n").Replace("\r", "\n");
+            var m = reg.Match(text);
+            if (m.Success) {
+                preamble = m.Groups["preamble"].Value;
+                body = m.Groups["body"].Value;
+                return true;
+            } else {
+                body = text;
+                return true;
+            }
+        }
+        public static string ChangeReturnCode(string str) {
+            return ChangeReturnCode(str, System.Environment.NewLine);
+        }
+        public static string ChangeReturnCode(string str, string returncode) {
+            string r = str;
+            r = r.Replace("\r\n", "\n");
+            r = r.Replace("\r", "\n");
+            r = r.Replace("\n", returncode);
+            return r;
+        }
+
+        public static void WriteTeXSourceFile(TextWriter sw, string preamble, string body) {
+            sw.Write(ChangeReturnCode(preamble));
+            if (!preamble.EndsWith("\n")) sw.WriteLine("");
+            sw.WriteLine("\\begin{document}");
+            sw.Write(ChangeReturnCode(body));
+            if (!body.EndsWith("\n")) sw.WriteLine("");
+            sw.WriteLine("\\end{document}");
+        }
+
+        #region ソース埋め込み
+        public static void EmbedSource(string file, string text) {
+            // 拡張子毎の処理（あれば）
+            var ext = Path.GetExtension(file);
+            if (ExtraEmbed.ContainsKey(ext)) ExtraEmbed[ext](file, text);
+
             // Alternative Data Streamにソースを書き込む
             try {
                 using (var fs = AlternativeDataStream.WriteAlternativeDataStream(file, ADSName))
@@ -20,13 +60,11 @@ namespace TeX2img {
                 }
             }
             // 例外は無視
-            catch (IOException) { }
-            catch (NotImplementedException) { }
-            var ext = Path.GetExtension(file);
-            if (ExtraEmbed.ContainsKey(ext)) ExtraEmbed[ext](file, text);
+            catch (IOException e) { System.Diagnostics.Debug.WriteLine(e.Data); }
+            catch (NotImplementedException e) { System.Diagnostics.Debug.WriteLine(e.Data); }
         }
 
-        public static string Read(string file) {
+        public static string ReadEmbededSource(string file) {
             try {
                 using (var fs = AlternativeDataStream.ReadAlternativeDataStream(file, ADSName))
                 using (var sr = new StreamReader(fs, Encoding.UTF8)) {
@@ -49,8 +87,9 @@ namespace TeX2img {
         };
 
         static void PDFEmbed(string file,string text) {
-            var tmp = Converter.GetTempFileName(".pdf", Path.GetDirectoryName(file));
-            tmp = Path.Combine(Path.GetDirectoryName(file), tmp);
+            var tmpdir = Path.GetTempPath();
+            var tmp = Converter.GetTempFileName(".pdf", tmpdir);
+            tmp = Path.Combine(tmpdir, tmp);
             using (var mupdf = new MuPDF(mudraw)) { 
                 var doc = (int)mupdf.Execute("open_document", typeof(int), file);
                 if (doc == 0) return;
@@ -59,7 +98,7 @@ namespace TeX2img {
                 var annot = (int)mupdf.Execute("create_annot", typeof(int), page, "Text");
                 if (annot == 0) return;
                 mupdf.Execute("set_annot_contents", annot, PDFsrcHead + System.Environment.NewLine + text);
-                mupdf.Execute("set_annot_flag",annot, 35);
+                mupdf.Execute("set_annot_flag", annot, 35);
                 mupdf.Execute("write_document", doc, tmp);
             }
             if (File.Exists(tmp)) {
@@ -72,18 +111,18 @@ namespace TeX2img {
             using (var mupdf = new MuPDF(mudraw)) {
                 var doc = (int)mupdf.Execute("open_document", typeof(int), file);
                 if (doc == 0) return null;
-                var page = (int)mupdf.Execute("load_page", typeof(int), doc,0);
+                var page = (int)mupdf.Execute("load_page", typeof(int), doc, 0);
                 if (page == 0) return null;
                 var annot = (int)mupdf.Execute("first_annot", typeof(int), page);
-                while(annot != 0) {
+                while (annot != 0) {
                     var rect = mupdf.Execute("bound_annot",
                         new Type[] { typeof(int), typeof(int), typeof(int), typeof(int) },
                         annot);
-                    if(((int)rect[0] ==  (int)rect[2]) && ((int)rect[1] == (int)rect[3])) { 
-                        if((string)mupdf.Execute("annot_type",typeof(string),annot) == "Text") {
+                    if (((int)rect[0] == (int)rect[2]) && ((int)rect[1] == (int)rect[3])) {
+                        if ((string)mupdf.Execute("annot_type", typeof(string), annot) == "Text") {
                             var text = (string)mupdf.Execute("annot_contents", typeof(string), annot);
-                            text = MainForm.ChangeReturnCode(text);
-                            if(text.StartsWith(srcHead)) {
+                            text = ChangeReturnCode(text);
+                            if (text.StartsWith(srcHead)) {
                                 return text.Substring(srcHead.Length);
                             }
                         }
@@ -93,6 +132,6 @@ namespace TeX2img {
             }
             return null;
         }
-
+        #endregion
     }
 }

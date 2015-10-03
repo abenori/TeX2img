@@ -25,7 +25,6 @@ namespace mudraw {
 	wstring Convert(const string &str) {
 		static ::std::vector<wchar_t> buf;
 		DWORD size = ::MultiByteToWideChar(CP_UTF8, 0, str.c_str(), str.length(), NULL, 0);
-		DWORD d = ::GetLastError();
 		buf.resize(size + 1);
 		size = ::MultiByteToWideChar(CP_UTF8, 0, str.c_str(), str.length(), &buf[0], buf.size());
 		buf[size] = L'\0';
@@ -117,14 +116,19 @@ namespace mudraw {
 		void Write(int num) {
 			::std::cout << num << ::std::endl;;
 		}
+		void Write(fz_rect rect) {
+			Write(rect.x0);
+			Write(rect.y0);
+			Write(rect.x1);
+			Write(rect.y1);
+		}
 		void skip_line();
-
 
 	public:
 		int Main();
-
 		Interactive() {
 			context = fz_new_context(NULL, NULL, FZ_STORE_DEFAULT);
+			if (context == nullptr)throw runtime_error("failed to get MuPDF context");
 		}
 		~Interactive() {
 			free_all();
@@ -142,48 +146,38 @@ namespace mudraw {
 		}
 
 		int open_document(const string &file) {
-			fz_try(context) {
-				auto d = ::pdf_open_document(context, file.c_str());
-				documents.push_back(d);
-				return documents.size();
-			}
-			fz_catch(context) { return 0; }
-			return 0;
+			auto d = ::pdf_open_document(context, file.c_str());
+			documents.push_back(d);
+			return documents.size();
 		}
 		int load_page(int document, int page) {
-			fz_try(context) {
-				auto docptr = documents[document - 1];
-				auto p = ::pdf_load_page(docptr, page);
-				pages.push_back(Page(p, docptr));
-				return pages.size();
-			}
-			fz_catch(context) { return 0; }
-			return 0;
+			auto docptr = documents[document - 1];
+			auto p = ::pdf_load_page(docptr, page);
+			pages.push_back(Page(p, docptr));
+			return pages.size();
 		}
-		int page_count(int document) {
+		int count_pages(int document) {
 			return ::pdf_count_pages(documents[document - 1]);
 		}
-		int first_annot(int page) {
-			fz_try(context) {
-				auto p = pages[page - 1];
-				auto a = ::pdf_first_annot(p.document, p.page);
-				if (a == nullptr)return 0;
-				annots.push_back(Annot(a, p.document));
-				return annots.size();
-			}
-			fz_catch(context) { return 0; }
-			return 0;
+		fz_rect bound_page(int page) {
+			fz_rect rect;
+			auto p = pages[page - 1];
+			::pdf_bound_page(p.document, p.page, &rect);
+			return rect;
 		}
-		int next_annot(int annot){
-			fz_try(context) {
-				auto olda = annots[annot - 1];
-				auto a = ::pdf_next_annot(olda.document, olda.annot);
-				if (a == nullptr)return 0;
-				annots.push_back(Annot(a, olda.document));
-				return annots.size();
-			}
-			fz_catch(context) { return 0; }
-			return 0;
+		int first_annot(int page) {
+			auto p = pages[page - 1];
+			auto a = ::pdf_first_annot(p.document, p.page);
+			if (a == nullptr)return 0;
+			annots.push_back(Annot(a, p.document));
+			return annots.size();
+		}
+		int next_annot(int annot) {
+			auto olda = annots[annot - 1];
+			auto a = ::pdf_next_annot(olda.document, olda.annot);
+			if (a == nullptr)return 0;
+			annots.push_back(Annot(a, olda.document));
+			return annots.size();
 		}
 		fz_annot_type annot_type(int annot) {
 			return ::pdf_annot_type(annots[annot - 1].annot);
@@ -219,26 +213,34 @@ namespace mudraw {
 			auto s = Convert(str);
 			std::vector<char> buf;
 			buf.resize(s.length() * 2 + 3);
-			buf[0] = 0xFE; buf[1] = 0xFF; buf[2 * s.length() + 2] = '\0';
-			for (int i = 0; i < s.length(); ++i) {
+			buf[0] = static_cast<char>(0xFE); buf[1] = static_cast<char>(0xFF);
+			buf[2 * s.length() + 2] = '\0';
+			for (wstring::size_type i = 0; i < s.length(); ++i) {
 				buf[2 * i + 3] = s[i] & 0x00FF;
 				buf[2 * i + 2] = (s[i] & 0xFF00) >> 8;
 			}
-			pdf_dict_puts_drop(a.annot->obj, "Contents", pdf_new_string(a.document, &buf[0], 2*s.length() + 2));
+			pdf_dict_puts_drop(a.annot->obj, "Contents", pdf_new_string(a.document, &buf[0], 2 * s.length() + 2));
 			return;
-		}
-		void write_document(int doc, const string &file) {
-			fz_write_options opt;
-			::ZeroMemory(&opt, sizeof(fz_write_options));
-			::pdf_write_document(documents[doc - 1], const_cast<char*>(file.c_str()),&opt);
 		}
 		void set_annot_flag(int annot, int flag) {
 			auto a = annots[annot - 1];
 			pdf_dict_puts_drop(a.annot->obj, "F", pdf_new_int(a.document, flag));
 		}
-		void update_annot(int annot) {
-			auto a = annots[annot - 1];
-			::pdf_update_annot(a.document, a.annot);
+
+		void write_document(int doc, const string &file) {
+			fz_write_options opt;
+			::ZeroMemory(&opt, sizeof(fz_write_options));
+			::pdf_write_document(documents[doc - 1], const_cast<char*>(file.c_str()),&opt);
 		}
+		void insert_page(int doc, int page, int at) {
+			::pdf_insert_page(documents[doc - 1], pages[page - 1].page, at);
+		}
+		void delete_page(int doc, int number) {
+			::pdf_delete_page(documents[doc - 1], number);
+		}
+		void delete_page_range(int doc, int start, int end) {
+			::pdf_delete_page_range(documents[doc - 1], start, end);
+		}
+
 	};
 }// namespace mudraw

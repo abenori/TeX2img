@@ -1,3 +1,11 @@
+/*
+コンパイル：SumatraPDFのソースを使っている．
+mudrawにパッチを当てる．
+Interactive.cppとInteractive.hを入れる．
+二つの言語をC++にして，例外を有効にする．
+適当に警告をエラー扱いするのをやめる．
+*/
+
 #include "Interactive.h"
 #include <map>
 #undef max
@@ -6,8 +14,14 @@ extern "C" int Interactive() {
 	::_setmode(::_fileno(stdout), _O_BINARY);
 	::_setmode(::_fileno(stdin), _O_BINARY);
 	::_setmode(::_fileno(stderr), _O_BINARY);
-	mudraw::Interactive interactive;
-	return interactive.Main();
+	try {
+		mudraw::Interactive interactive;
+		return interactive.Main();
+	}
+	catch (std::runtime_error) {
+		std::cerr << "fatal error: failed to get MuPDF context" << std::endl;
+		return 1;
+	}
 }
 
 namespace mudraw {
@@ -15,7 +29,11 @@ namespace mudraw {
 	template<> int Interactive::Read<int>() {
 		int num;
 		std::cin >> num;
-		if (std::cin.fail())throw std::runtime_error("invalid type: number expected");
+		if (std::cin.fail()) {
+			cin.clear();
+			skip_line();
+			fz_throw(context, 1, "invalid type: number expected");
+		}
 		skip_line();
 		return num;
 	}
@@ -45,8 +63,8 @@ namespace mudraw {
 	}
 
 	int Interactive::Main() {
-		try {
-			while (true) {
+		while (true) {
+			fz_try(context) {
 				std::string func;
 				std::cin >> func;
 				if (func == "quit")return 0;
@@ -56,17 +74,13 @@ namespace mudraw {
 					int page = Read<int>();
 					Write(load_page(doc, page));
 				}
+				else if (func == "count_pages")Write(count_pages(Read<int>()));
+				else if (func == "bound_page")Write(bound_page(Read<int>()));
 				else if (func == "annot_type") Write(fz_annot_type_to_str(annot_type(Read<int>())));
 				else if (func == "first_annot") Write(first_annot(Read<int>()));
 				else if (func == "next_annot") Write(next_annot(Read<int>()));
 				else if (func == "annot_contents") Write(annot_contents(Read<int>()));
-				else if (func == "bound_annot") {
-					auto rect = bound_annot(Read<int>());
-					Write(rect.x0);
-					Write(rect.y0);
-					Write(rect.x1);
-					Write(rect.y1);
-				}
+				else if (func == "bound_annot") Write(bound_annot(Read<int>()));
 				else if (func == "create_annot") {
 					int page = Read<int>();
 					auto type = Read<string>();
@@ -97,13 +111,32 @@ namespace mudraw {
 					write_document(doc, file);
 					Write("");
 				}
+				else if (func == "insert_page") {
+					int doc = Read<int>();
+					int page = Read<int>();
+					int at = Read<int>();
+					insert_page(doc, page, at);
+					Write("");
+				}
+				else if (func == "delete_page") {
+					int doc = Read<int>();
+					int number = Read<int>();
+					delete_page(doc, number);
+					Write("");
+				}
+				else if (func == "delete_page_range") {
+					int doc = Read<int>();
+					int start = Read<int>();
+					int end = Read<int>();
+					delete_page_range(doc, start, end);
+					Write("");
+				}
 				else if (func == "free_all")free_all();
-				else ::std::cout << "function \"" + func + "\" does not exist" << ::std::endl;
+				else fz_throw(context, 1, ("function " + func + " is not defined").c_str());
 			}
-		}
-		catch (std::runtime_error e) {
-			std::cerr << e.what() << std::endl;
-			return 1;
+			fz_catch(context) {
+				cerr << context->error->message << endl;
+			}
 		}
 	}
 }
