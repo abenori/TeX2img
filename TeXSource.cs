@@ -11,6 +11,7 @@ namespace TeX2img {
         public const string ADSName = "TeX2img.source";
         public static string mudraw = Path.Combine(Converter.GetToolsPath(), "mudraw.exe");
         public const string PDFsrcHead = "%%TeX2img Document";
+        public const string MacTeX2imgName = "com.loveinequality.TeX2img";
 
         public static bool ParseTeXSourceFile(TextReader file, out string preamble, out string body) {
             preamble = null; body = null;
@@ -71,12 +72,18 @@ namespace TeX2img {
                     return sr.ReadToEnd();
                 }
             }
-            catch (Exception) {
+            catch (Exception) { }
+            try {
                 var ext = Path.GetExtension(file).ToLower();
                 if (ExtraRead.ContainsKey(ext)) {
-                    return ExtraRead[ext](file);
-                } else throw;
+                    var s = ExtraRead[ext](file);
+                    if (s != null) return s;
+                }
             }
+            catch (Exception) { }
+            try { return ReadAppleDouble(file); }
+            catch (Exception) { }
+            return null;
         }
 
         static Dictionary<string, Action<string, string>> ExtraEmbed = new Dictionary<string, Action<string, string>>() {
@@ -132,6 +139,31 @@ namespace TeX2img {
             }
             return null;
         }
+
+        static string ReadAppleDouble(string file) {
+            var dir = Path.GetDirectoryName(file);
+            var doubleFile = "._" + Path.GetFileName(file);
+            string f = null;
+            var tmpf = Path.Combine(dir, doubleFile);
+            if (File.Exists(tmpf)) f = tmpf;
+            tmpf = Path.Combine(Path.Combine(dir, "__MACOSX"), doubleFile);
+            if (File.Exists(tmpf)) f = tmpf;
+            if (f != null) {
+                var apd = new AppleDouble(f);
+                foreach (var entry in apd.Entries) {
+                    if (entry.ID == 9) {
+                        var finfo = (AppleDouble.FinderInfo)entry;
+                        foreach (var attr in finfo.Attrs) {
+                            if (attr.Name == MacTeX2imgName) {
+                                return ChangeReturnCode(Encoding.UTF8.GetString(attr.Data));
+                            }
+                        }
+                    }
+                }
+            }
+            return null;
+        }
+
         #endregion
     }
 }

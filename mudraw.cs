@@ -147,6 +147,10 @@ namespace TeX2img {
                 else throw new System.NotImplementedException();
             }
             var rv = new object[types.Length];
+            for(int i = 0; i < 10; ++i) {
+                if (StdOutputBuf.Count != 0) break;
+                System.Threading.Thread.Sleep(10);
+            }
             for(int i = 0; i < types.Length; ++i) {
                 if (types[i] == typeof(string)) rv[i] = ReadString();
                 else if (types[i] == typeof(int)) rv[i] = ReadInt();

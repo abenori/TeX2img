@@ -198,7 +198,7 @@ namespace TeX2img {
         static void Main() {
             // アップデートしていたら前バージョンの設定を読み込む
             if(!Properties.Settings.Default.IsUpgraded) {
-                Properties.Settings.Default.Upgrade();     
+                Properties.Settings.Default.Upgrade();
                 Properties.Settings.Default.IsUpgraded = true;
                 Properties.Settings.Default.TeX2imgVersion = Application.ProductVersion;
                 Properties.Settings.Default.Save();
