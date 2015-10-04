@@ -40,12 +40,12 @@ namespace TeX2img {
 
         public void Dispose() {
             WriteLine("quit");
-            for(int i = 0; i < 10; ++i) {
-                if (process.HasExited) break;
-                process.WaitForExit(100);
-            }
+            process.WaitForExit(1000);
             if (!process.HasExited) process.Kill();
-            if (!ReadStdOutputThread.IsCompleted) System.Threading.Thread.Sleep(100);
+            for(int i = 0; i < 10; ++i) {
+                if (ReadStdOutputThread.IsCompleted) break;
+                System.Threading.Thread.Sleep(i < 5 ? 1 : 10);
+            }
             if (!ReadStdOutputThread.IsCompleted) ReadStdOutputAction.EndInvoke(ReadStdOutputThread);
             process.Dispose();
         }
@@ -83,17 +83,24 @@ namespace TeX2img {
         }
 
         string ReadLine() {
-            for(int i = 0; i < 10; ++i) {
+            for(int i = 0; i < 25; ++i) {
                 if (error_occured) throw new Exception(error_str);
                 var s = ReadLineSub();
                 if (s != null) return s;
-                System.Threading.Thread.Sleep(100);
+                System.Threading.Thread.Sleep(i < 10 ? 1 : (i < 15 ? 10 : 100));
             }
             return null;
         }
 
         string ReadString() {
             int size = Int32.Parse(ReadLine());
+            for (int i = 0; i < 15; ++i) {
+                if (StdOutputBuf.Count >= size) {
+                    System.Diagnostics.Debug.WriteLine(i);
+                    break;
+                }
+                System.Threading.Thread.Sleep(i < 5 ? 1 : (i < 10 ? 10 : 100));
+            }
             if (StdOutputBuf.Count < size) System.Threading.Thread.Sleep(100);
             if (StdOutputBuf.Count < size) throw new TimeoutException(); ;
             var buf = StdOutputBuf.GetRange(0, size);
@@ -147,9 +154,9 @@ namespace TeX2img {
                 else throw new System.NotImplementedException();
             }
             var rv = new object[types.Length];
-            for(int i = 0; i < 10; ++i) {
+            for(int i = 0; i < 5; ++i) {
                 if (StdOutputBuf.Count != 0) break;
-                System.Threading.Thread.Sleep(10);
+                System.Threading.Thread.Sleep(1);
             }
             for(int i = 0; i < types.Length; ++i) {
                 if (types[i] == typeof(string)) rv[i] = ReadString();

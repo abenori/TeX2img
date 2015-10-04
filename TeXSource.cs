@@ -16,14 +16,14 @@ namespace TeX2img {
         public static bool ParseTeXSourceFile(TextReader file, out string preamble, out string body) {
             preamble = null; body = null;
             var reg = new Regex(@"(?<preamble>^(.*\n)*?[^%]*?(\\\\)*)\\begin\{document\}\n?(?<body>(.*\n)*[^%]*)\\end\{document\}");
-            var text = file.ReadToEnd().Replace("\r\n", "\n").Replace("\r", "\n");
+            var text = ChangeReturnCode(file.ReadToEnd(), "\n");
             var m = reg.Match(text);
             if (m.Success) {
-                preamble = m.Groups["preamble"].Value;
-                body = m.Groups["body"].Value;
+                preamble = ChangeReturnCode(m.Groups["preamble"].Value);
+                body = ChangeReturnCode(m.Groups["body"].Value);
                 return true;
             } else {
-                body = text;
+                body = ChangeReturnCode(text);
                 return true;
             }
         }

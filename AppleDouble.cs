@@ -22,7 +22,7 @@ namespace TeX2img {
     // (FinderInfo)
     // [(32) 何かデータ]
     // [(2) 何かデータ]
-    // [(?×n) 拡張属性ヘッダ達]
+    // [(?) 拡張属性ヘッダ]
     // [(?×n) 拡張属性本体]
     //
     // (拡張属性ヘッダ)
@@ -57,9 +57,9 @@ namespace TeX2img {
                 var entriesList = new List<Entry>();
                 var br = new BinaryReader(fr);
                 var magic = FromBE(br.ReadInt32());
-                if (magic != 0x00051607) throw new FormatException();
+                if (magic != 0x00051607) throw new ArgumentException();
                 var version = FromBE(br.ReadInt32());
-                if (version != 0x00020000) throw new FormatException();
+                if (version != 0x00020000) throw new ArgumentException();
                 BaseFileFormat = Encoding.UTF8.GetString(br.ReadBytes(16));
                 int entriesCount = FromBE(br.ReadUInt16());
                 var entryHeaders = new List<EntryHeader>();
@@ -106,7 +106,7 @@ namespace TeX2img {
             public FinderInfo(FileStream fr) {
                 var br = new BinaryReader(fr);
                 fr.Position += 34;// Finder Info ヘッダ本体？（読み飛ばし）
-                if (!br.ReadBytes(4).SequenceEqual(new byte[] { (byte)'A', (byte)'T', (byte)'T', (byte)'R' })) throw new FormatException();
+                if (!br.ReadBytes(4).SequenceEqual(new byte[] { (byte)'A', (byte)'T', (byte)'T', (byte)'R' })) throw new ArgumentException();
                 br.ReadInt32();// debug_tag
                 Length = FromBE(br.ReadUInt32());
                 var data_start = FromBE(br.ReadUInt32());
@@ -122,7 +122,7 @@ namespace TeX2img {
                     br.ReadUInt16();//flags
                     var namelen = br.ReadByte();
                     header.name = Encoding.UTF8.GetString(br.ReadBytes(namelen - 1));// 0終端
-                    if (br.ReadByte() != 0) throw new FormatException();
+                    if (br.ReadByte() != 0) throw new ArgumentException();
                     fr.Position += 3 - ((11 + namelen + 3) % 4);
                     attrHeaders.Add(header);
                 }
