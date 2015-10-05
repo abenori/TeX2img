@@ -267,7 +267,7 @@ https://code.google.com/p/pdfium/
     - Ghostscript による BoundingBox の取得を一回で済ませるようにした．
     - PDFium を最新のものにした．
 
-* 1.6.2
+* 1.6.2（2015/10/06）
     - SVG 変換の速度アップ．
     - /margins オプションを追加．
     - HiResBoundingBox を使うことにした．

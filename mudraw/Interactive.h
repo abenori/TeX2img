@@ -241,6 +241,5 @@ namespace mudraw {
 		void delete_page_range(int doc, int start, int end) {
 			::pdf_delete_page_range(documents[doc - 1], start, end);
 		}
-
 	};
 }// namespace mudraw

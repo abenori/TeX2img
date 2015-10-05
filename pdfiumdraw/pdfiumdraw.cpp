@@ -372,7 +372,7 @@ int WriteEMF(const Data &d){
 			//int height = (int) (page.GetHeight() * 1000 * d.scale);
 			if((int) x != 1) {
 				::SetMapMode(dc, MM_ANISOTROPIC);
-				::SetWindowExtEx(dc, x, x, nullptr);
+				::SetWindowExtEx(dc, static_cast<int>(x), static_cast<int>(x), nullptr);
 			}
 			//::SetGraphicsMode(dc, GM_ADVANCED);
 			//XFORM form = {0, 0, 0, 0, 0, 0};
@@ -562,7 +562,7 @@ int main(int argc, char *argv[]) {
 				}
 				catch(exception e) { cout << "failed to analyze page format: " << e.what() << endl; return -1; }
 			} else if(arg.find("--scale=") == 0)current_data.scale = std::atoi(arg.substr(string("--scale=").length()).c_str());
-			else if(arg.find("--extent=") == 0)current_data.extent = std::atoi(arg.substr(string("--extent=").length()).c_str());
+			else if(arg.find("--extent=") == 0)current_data.extent = static_cast<float>(std::atoi(arg.substr(string("--extent=").length()).c_str()));
 			else if(arg.find("--output=") == 0) current_data.output = arg.substr(string("--output=").length());
 			else if(arg.find("--box=") == 0) box = arg.substr(string("--box=").length());
 			else if(arg.find("--viewport=") == 0) {
