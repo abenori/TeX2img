@@ -20,67 +20,72 @@ namespace TeX2img {
         static bool help = false;
 
         static OptionSet options = new OptionSet(){
-			{"latex=","LaTeX のパス", val => Properties.Settings.Default.platexPath=val,()=>Properties.Settings.Default.platexPath},
-			{"platex=","/latex と同じ（obsolete）", val => Properties.Settings.Default.platexPath=val},
-			{"dvidriver=","DVI driver のパス",val =>Properties.Settings.Default.dvipdfmxPath=val,()=>Properties.Settings.Default.dvipdfmxPath},
-			{"dvipdfmx=","/dvidriver と同じ（obsolete）",val =>Properties.Settings.Default.dvipdfmxPath=val},
-			{"gs=","Ghostscript のパス",val => Properties.Settings.Default.gsPath = val,()=>Properties.Settings.Default.gsPath},
-			{"gsdevice=",
-				"Ghostscript の device（epswrite/eps2write）",
-				val => {Properties.Settings.Default.gsDevice = GetStringsFromArray("gsdevice",val,new string[]{"epswrite","eps2write"});},
+            {"latex=","LaTeX のパス", val => Properties.Settings.Default.platexPath=val,()=>Properties.Settings.Default.platexPath},
+            {"platex=","/latex と同じ（obsolete）", val => Properties.Settings.Default.platexPath=val},
+            {"dvidriver=","DVI driver のパス",val =>Properties.Settings.Default.dvipdfmxPath=val,()=>Properties.Settings.Default.dvipdfmxPath},
+            {"dvipdfmx=","/dvidriver と同じ（obsolete）",val =>Properties.Settings.Default.dvipdfmxPath=val},
+            {"gs=","Ghostscript のパス",val => Properties.Settings.Default.gsPath = val,()=>Properties.Settings.Default.gsPath},
+            {"gsdevice=",
+                "Ghostscript の device（epswrite/eps2write）",
+                val => {Properties.Settings.Default.gsDevice = GetStringsFromArray("gsdevice",val,new string[]{"epswrite","eps2write"});},
                 ()=>Properties.Settings.Default.gsDevice
-			},
-			{"kanji=","文字コード（utf8/sjis/jis/euc/no)",val => {
-				string v = GetStringsFromArray("kanji", val, new string[] { "utf8", "sjis", "jis", "euc", "no" });
-				if(v == "no"){
-					if(Properties.Settings.Default.encode != "_sjis") Properties.Settings.Default.encode = "_utf8";
-				}else Properties.Settings.Default.encode = val;
-			},()=>Properties.Settings.Default.encode.StartsWith("_") ? "no" : Properties.Settings.Default.encode},
-			{"guess-compile","LaTeX ソースコンパイル回数を推定[-]",val => Properties.Settings.Default.guessLaTeXCompile = (val != null),()=>Properties.Settings.Default.guessLaTeXCompile},
-			{"num=","LaTeX ソースコンパイルの（最大）回数",(int val) => {Properties.Settings.Default.LaTeXCompileMaxNumber = val;},()=>Properties.Settings.Default.LaTeXCompileMaxNumber},
-			{"resolution=","解像度レベル",(int val) => Properties.Settings.Default.resolutionScale = val,()=>Properties.Settings.Default.resolutionScale},
+            },
+            {"kanji=","文字コード（utf8/sjis/jis/euc/no)",val => {
+                string v = GetStringsFromArray("kanji", val, new string[] { "utf8", "sjis", "jis", "euc", "no" });
+                if(v == "no"){
+                    if(Properties.Settings.Default.encode != "_sjis") Properties.Settings.Default.encode = "_utf8";
+                }else Properties.Settings.Default.encode = val;
+            },()=>Properties.Settings.Default.encode.StartsWith("_") ? "no" : Properties.Settings.Default.encode},
+            {"guess-compile","LaTeX ソースコンパイル回数を推定[-]",val => Properties.Settings.Default.guessLaTeXCompile = (val != null),()=>Properties.Settings.Default.guessLaTeXCompile},
+            {"num=","LaTeX ソースコンパイルの（最大）回数",(int val) => {Properties.Settings.Default.LaTeXCompileMaxNumber = val;},()=>Properties.Settings.Default.LaTeXCompileMaxNumber},
+            {"resolution=","解像度レベル",(int val) => Properties.Settings.Default.resolutionScale = val,()=>Properties.Settings.Default.resolutionScale},
             {"left-margin=","左余白",(int val) => Properties.Settings.Default.leftMargin = val,()=>Properties.Settings.Default.leftMargin},
-			{"right-margin=","右余白",(int val) => Properties.Settings.Default.rightMargin = val,()=>Properties.Settings.Default.rightMargin},
-			{"top-margin=","上余白",(int val) => Properties.Settings.Default.topMargin = val,()=>Properties.Settings.Default.topMargin},
-			{"bottom-margin=","下余白",(int val) => Properties.Settings.Default.bottomMargin = val,()=>Properties.Settings.Default.bottomMargin},
+            {"top-margin=","上余白",(int val) => Properties.Settings.Default.topMargin = val,()=>Properties.Settings.Default.topMargin},
+            {"right-margin=","右余白",(int val) => Properties.Settings.Default.rightMargin = val,()=>Properties.Settings.Default.rightMargin},
+            {"bottom-margin=","下余白",(int val) => Properties.Settings.Default.bottomMargin = val,()=>Properties.Settings.Default.bottomMargin},
             {"margins=","余白（一括/左右 上下/左 上 右 下）",val=>{
                 var list = val.Split(new char[] { ' ' }).ToList();
                 list.RemoveAll((s) => (s == ""));
-                if(list.Count == 1) Properties.Settings.Default.leftMargin = Properties.Settings.Default.topMargin = Properties.Settings.Default.rightMargin = Properties.Settings.Default.bottomMargin = Int32.Parse(list[0]);
-                else if(list.Count == 2) {
-                    Properties.Settings.Default.leftMargin = Properties.Settings.Default.rightMargin = Int32.Parse(list[0]);
-                    Properties.Settings.Default.topMargin = Properties.Settings.Default.bottomMargin = Int32.Parse(list[1]);
-                } else if(list.Count == 4) {
-                    Properties.Settings.Default.leftMargin = Int32.Parse(list[0]);
-                    Properties.Settings.Default.topMargin = Int32.Parse(list[1]);
-                    Properties.Settings.Default.rightMargin = Int32.Parse(list[2]);
-                    Properties.Settings.Default.bottomMargin = Int32.Parse(list[3]);
-                }else throw new NDesk.Options.OptionException("余白の指定が不正です．","margins");
-            }},
-			{"unit=","余白の単位（bp/px）",val => {
-			    switch(val){
-			    case "bp": Properties.Settings.Default.yohakuUnitBP = true; return;
-			    case "px": Properties.Settings.Default.yohakuUnitBP = false; return;
-			    default: throw new NDesk.Options.OptionException("bp, px のいずれかを指定してください。", "unit");
-			    }
+                try {
+                    if(list.Count == 1) Properties.Settings.Default.leftMargin = Properties.Settings.Default.topMargin = Properties.Settings.Default.rightMargin = Properties.Settings.Default.bottomMargin = Int32.Parse(list[0]);
+                    else if(list.Count == 2) {
+                        Properties.Settings.Default.leftMargin = Properties.Settings.Default.rightMargin = Int32.Parse(list[0]);
+                        Properties.Settings.Default.topMargin = Properties.Settings.Default.bottomMargin = Int32.Parse(list[1]);
+                    } else if(list.Count == 4) {
+                        Properties.Settings.Default.leftMargin = Int32.Parse(list[0]);
+                        Properties.Settings.Default.topMargin = Int32.Parse(list[1]);
+                        Properties.Settings.Default.rightMargin = Int32.Parse(list[2]);
+                        Properties.Settings.Default.bottomMargin = Int32.Parse(list[3]);
+                    }else throw new NDesk.Options.OptionException("余白の指定が不正です．","margins");
+                }
+                catch(FormatException e) {
+                    throw new NDesk.Options.OptionException(e.Message,"margins");
+                }
+            } },
+            {"unit=","余白の単位（bp/px）",val => {
+                switch(val){
+                case "bp": Properties.Settings.Default.yohakuUnitBP = true; return;
+                case "px": Properties.Settings.Default.yohakuUnitBP = false; return;
+                default: throw new NDesk.Options.OptionException("bp, px のいずれかを指定してください。", "unit");
+                }
             },()=>Properties.Settings.Default.yohakuUnitBP ? "bp" : "px"},
             {"keep-page-size","ページサイズを維持[-]",val=>Properties.Settings.Default.keepPageSize=(val != null),()=>Properties.Settings.Default.keepPageSize},
             {"pagebox=",val=>Properties.Settings.Default.pagebox = GetStringsFromArray("pagebox",val,new string[]{"media","crop","bleed","trim","art"})},// 隠しオプション
             {"merge-output-files","PDF / TIFF ファイルを単一ファイルに[-]",val=>Properties.Settings.Default.mergeOutputFiles = (val != null),()=>Properties.Settings.Default.mergeOutputFiles},
             {"animation-delay=",(double sec)=>{Properties.Settings.Default.animationDelay = (uint)(sec*100);}},
             {"animation-loop=",(uint val)=>Properties.Settings.Default.animationLoop = val},
-			{"transparent","透過 PNG / TIFF / EMF[-]",val => Properties.Settings.Default.transparentPngFlag = (val != null),()=>Properties.Settings.Default.transparentPngFlag},
+            {"transparent","透過 PNG / TIFF / EMF[-]",val => Properties.Settings.Default.transparentPngFlag = (val != null),()=>Properties.Settings.Default.transparentPngFlag},
             {"with-text","PDF のテキスト情報を保持[-]",val =>Properties.Settings.Default.outlinedText = !(val != null),()=>!Properties.Settings.Default.outlinedText},
             {"delete-display-size","SVG の表示寸法を削除[-]",val => Properties.Settings.Default.deleteDisplaySize = (val != null),()=>Properties.Settings.Default.deleteDisplaySize},
-			{"antialias","アンチエイリアス処理[-]",val => Properties.Settings.Default.useMagickFlag = (val != null),()=>Properties.Settings.Default.useMagickFlag},
-			{"low-resolution","低解像度で処理[-]",val => Properties.Settings.Default.useLowResolution = (val!= null),()=>Properties.Settings.Default.useLowResolution},
-			{"ignore-errors","少々のエラーは無視[-]",val => Properties.Settings.Default.ignoreErrorFlag = (val != null),()=>Properties.Settings.Default.ignoreErrorFlag},
+            {"antialias","アンチエイリアス処理[-]",val => Properties.Settings.Default.useMagickFlag = (val != null),()=>Properties.Settings.Default.useMagickFlag},
+            {"low-resolution","低解像度で処理[-]",val => Properties.Settings.Default.useLowResolution = (val!= null),()=>Properties.Settings.Default.useLowResolution},
+            {"ignore-errors","少々のエラーは無視[-]",val => Properties.Settings.Default.ignoreErrorFlag = (val != null),()=>Properties.Settings.Default.ignoreErrorFlag},
             {"delete-tmpfiles","一時ファイルを削除[-]",val => Properties.Settings.Default.deleteTmpFileFlag = (val != null),()=>Properties.Settings.Default.deleteTmpFileFlag},
-			{"preview","生成ファイルを開く[-]",val => preview = (val != null),()=>preview==null?false:preview.Value},
+            {"preview","生成ファイルを開く[-]",val => preview = (val != null),()=>preview==null?false:preview.Value},
             {"embed-source","ソース情報を生成ファイルに保存[-]",val => Properties.Settings.Default.embedTeXSource = (val != null),()=>Properties.Settings.Default.embedTeXSource},
             {"copy-to-clipboard","生成ファイルをクリップボードにコピー[-]",val =>  Properties.Settings.Default.setFileToClipBoard = (val != null),()=>Properties.Settings.Default.setFileToClipBoard},
-			{"savesettings","設定の保存を行う[-]",val => Properties.Settings.Default.SaveSettings = (val != null),()=>Properties.Settings.Default.SaveSettings},
-			{"quiet","Quiet モード[-]",val => quiet = (val != null),()=>quiet},
+            {"savesettings","設定の保存を行う[-]",val => Properties.Settings.Default.SaveSettings = (val != null),()=>Properties.Settings.Default.SaveSettings},
+            {"quiet","Quiet モード[-]",val => quiet = (val != null),()=>quiet},
             {"timeout=","タイムアウト時間を設定（秒）", (int val) => {
                 if(val <= 0) throw new NDesk.Options.OptionException("タイムアウト時間は 0 より大きい値を指定してください。", "timeout");
                 Properties.Settings.Default.timeOut = val * 1000;
@@ -98,10 +103,10 @@ namespace TeX2img {
                 case Properties.Settings.BatchMode.Stop: return "stop";
                 default: return "deafult";
             }}},
-			{"exit","設定の保存のみを行い終了する", val => {exit = true;}},
+            {"exit","設定の保存のみを行い終了する", val => {exit = true;}},
             {"load-defaults","現在の設定をデフォルトに戻す",val => {if(val != null)Properties.Settings.Default.ReloadDefaults();}},
-			{"help","このメッセージを表示する",val => {help = true;}},
-			{"version","バージョン情報を表示する",val => {version = true;}}
+            {"help","このメッセージを表示する",val => {help = true;}},
+            {"version","バージョン情報を表示する",val => {version = true;}}
         };
 
         static string GetStringsFromArray(string optionname, string val, string[] possibleargs) {
@@ -208,7 +213,7 @@ namespace TeX2img {
 
             // コマンドライン解析
             var cmds = new List<string>(Environment.GetCommandLineArgs());
-            //cmds = new List<string> { "TeX2img.exe", "/nogui", "test.tex","test.pdf" };
+            //cmds = new List<string> { "TeX2img.exe", "/nogui", "--margins=\"a b c d\"","test.tex","test.pdf" };
             // 一つ目がTeX2img本体ならば削除
             // abtlinstからCreateProcessで呼び出すとTeX2img本体にならなかったので，一応確認をする。
             if(cmds.Count > 0) {

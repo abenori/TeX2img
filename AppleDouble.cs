@@ -19,7 +19,7 @@ namespace TeX2img {
     // [(4) offset]
     // [(4) length]
     //
-    // (FinderInfo)
+    // (FinderInfo, type = 9)
     // [(32) 何かデータ]
     // [(2) 何かデータ]
     // [(?) 拡張属性ヘッダ]

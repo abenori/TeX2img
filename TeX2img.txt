@@ -54,9 +54,9 @@ TeX2img.exe input output
 とすると起動直後に変換が行われます．
 
 /latex=<VAL>             LaTeX のパス
-/platex=<VAL>            /latex と同じ（obsolete）
+/platex=<VAL>          /latex と同じ（obsolete）
 /dvidriver=<VAL>         DVI driver のパス
-/dvipdfmx=<VAL>          /dvidriver と同じ（obsolete）
+/dvipdfmx=<VAL>        /dvidriver と同じ（obsolete）
 /gs=<VAL>                Ghostscript のパス
 /gsdevice=<VAL>          Ghostscript の device（epswrite/eps2write）
 /kanji=<VAL>             文字コード（utf8/sjis/jis/euc/no)
@@ -64,12 +64,13 @@ TeX2img.exe input output
 /num=<NUM>               LaTeX ソースコンパイルの（最大）回数
 /resolution=<NUM>        解像度レベル
 /left-margin=<NUM>       左余白
-/right-margin=<NUM>      右余白
 /top-margin=<NUM>        上余白
+/right-margin=<NUM>      右余白
 /bottom-margin=<NUM>     下余白
+/margins=<VAL>           余白（一括/左右 上下/左 上 右 下）
 /unit=<VAL>              余白の単位（bp/px）
 /keep-page-size[-]       ページサイズを維持
-/merge-output-files[-]   PDF / TIFF ファイルを単一ファイルにまとめる
+/merge-output-files[-]   PDF / TIFF ファイルを単一ファイルに
 /transparent[-]          透過 PNG / TIFF / EMF
 /with-text[-]            PDF のテキスト情報を保持
 /delete-display-size[-]  SVG の表示寸法を削除
@@ -77,9 +78,9 @@ TeX2img.exe input output
 /low-resolution[-]       低解像度で処理
 /ignore-errors[-]        少々のエラーは無視
 /delete-tmpfiles[-]      一時ファイルを削除
-/preview[-]              生成されたファイルを開く
+/preview[-]              生成ファイルを開く
 /embed-source[-]         ソース情報を生成ファイルに保存
-/copy-to-clipboard[-]    生成したファイルをクリップボードにコピー
+/copy-to-clipboard[-]    生成ファイルをクリップボードにコピー
 /savesettings[-]         設定の保存を行う
 /quiet[-]                Quiet モード
 /timeout=<NUM>           タイムアウト時間を設定（秒）
@@ -277,3 +278,5 @@ https://code.google.com/p/pdfium/
     - PDF の注釈にソースを埋め込むことにした．
     - AppleDouble Header file がある場合，Mac の TeX2img で埋め込まれたソースを探すことにした．
 
+* 1.6.3（2015/10/08）
+    - /margins オプションに不正な値が入力されると落ちるバグを修正．
