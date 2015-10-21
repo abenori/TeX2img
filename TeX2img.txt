@@ -54,9 +54,9 @@ TeX2img.exe input output
 とすると起動直後に変換が行われます．
 
 /latex=<VAL>             LaTeX のパス
-/platex=<VAL>          /latex と同じ（obsolete）
+/platex=<VAL>            /latex と同じ（obsolete）
 /dvidriver=<VAL>         DVI driver のパス
-/dvipdfmx=<VAL>        /dvidriver と同じ（obsolete）
+/dvipdfmx=<VAL>          /dvidriver と同じ（obsolete）
 /gs=<VAL>                Ghostscript のパス
 /gsdevice=<VAL>          Ghostscript の device（epswrite/eps2write）
 /kanji=<VAL>             文字コード（utf8/sjis/jis/euc/no)
@@ -280,3 +280,7 @@ https://code.google.com/p/pdfium/
 
 * 1.6.3（2015/10/08）
     - /margins オプションに不正な値が入力されると落ちるバグを修正．
+
+* 1.6.4
+    - 最初に引数でファイルが指定された時，一時ファイルではなくカレントフォルダで作業をしてしまっていたバグを修正．
+

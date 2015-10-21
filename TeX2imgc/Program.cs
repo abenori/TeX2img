@@ -14,9 +14,10 @@ namespace TeX2imgc {
             Console.WriteLine("TeX2imgc.exe，ビルド時刻：" + GetBuildDateTime(Path.Combine(dir, "TeX2imgc.exe")));
             Console.WriteLine("TeX2img.exe，ビルド時刻：" + GetBuildDateTime(tex2img));
             Console.WriteLine("pdfiumdraw.exe，ビルド時刻：" + GetBuildDateTime(Path.Combine(dir,"pdfiumdraw.exe")));
+            Console.WriteLine("mudraw.exe，ビルド時刻：" + GetBuildDateTime(Path.Combine(dir,"mudraw.exe")));
 #endif
 
-            if(!File.Exists(tex2img)) {
+            if (!File.Exists(tex2img)) {
                 Console.WriteLine("TeX2img.exe が見つかりませんでした．");
                 Environment.Exit(-1);
             }

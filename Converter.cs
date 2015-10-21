@@ -45,33 +45,10 @@ namespace TeX2img {
         ~Converter() {
             Dispose();
         }
+        private TempFilesDeleter tempFilesDeleter = new TempFilesDeleter();
         public void Dispose() {
-            if(Properties.Settings.Default.deleteTmpFileFlag) {
-                try {
-                    foreach(var f in generatedTeXFilesWithoutExtension) {
-                        foreach(var ext in new string[] { ".tex", ".dvi", ".pdf", ".log", ".aux", ".tmp", ".out", ".pdf", ".ps" }) {
-                            File.Delete(f + ext);
-                        }
-                    }
-                    foreach(var f in generatedImageFiles) {
-                        File.Delete(f);
-                    }
-                }
-                catch(UnauthorizedAccessException) {
-                    if(controller_ != null) controller_.appendOutput("一部の一時ファイルの削除に失敗しました。\n");
-                }
-                catch(IOException) {
-                    if(controller_ != null) controller_.appendOutput("一部の一時ファイルの削除に失敗しました。\n");
-                }
-            }
-            generatedTeXFilesWithoutExtension.Clear();
-            generatedImageFiles.Clear();
+            tempFilesDeleter.Dispose();
         }
-
-        // 後で消す一時ファイル（フルパス）
-        List<string> generatedImageFiles = new List<string>();
-        List<string> generatedTeXFilesWithoutExtension = new List<string>();
-
         // 変換
         public bool Convert() {
             warnngs.Clear();
@@ -79,9 +56,9 @@ namespace TeX2img {
             if(GetInputEncoding().CodePage == Encoding.UTF8.CodePage) {
                 Environments["command_line_encoding"] = "utf8";
             }
-            generatedTeXFilesWithoutExtension.Add(Path.Combine(workingDir, Path.GetFileNameWithoutExtension(InputFile)));
+            tempFilesDeleter.AddTeXFile(Path.Combine(workingDir, Path.GetFileNameWithoutExtension(InputFile)));
             if(Path.GetExtension(InputFile).ToLower() != ".tex") {
-                generatedImageFiles.Add(Path.Combine(workingDir, InputFile));
+                tempFilesDeleter.AddFile(Path.Combine(workingDir, InputFile));
             }
             bool rv = generate(InputFile, OutputFile);
 
@@ -216,7 +193,7 @@ namespace TeX2img {
         List<BoundingBoxPair> readPDFBox(string inputPDFFileName, List<int> pages, int box = 0) {
             var rv = new List<BoundingBoxPair>();
             var tmpfile = GetTempFileName(".tex", workingDir);
-            generatedTeXFilesWithoutExtension.Add(Path.Combine(workingDir, Path.GetFileNameWithoutExtension(tmpfile)));
+            tempFilesDeleter.AddTeXFile(Path.Combine(workingDir, Path.GetFileNameWithoutExtension(tmpfile)));
             using(var fw = new StreamWriter(Path.Combine(workingDir, tmpfile))) {
                 fw.WriteLine(@"\pdfpagebox=" + box.ToString() + @"\relax");
                 fw.WriteLine(@"\newdimen\tempdimen\tempdimen=1bp\relax\message{^^J1bp=\the\tempdimen^^J}");
@@ -482,7 +459,7 @@ namespace TeX2img {
         // origbbには，GhostscriptのsDevice=bboxで得られた値を入れておく。（nullならばここで取得する。）
         private bool pdf2eps(string inputFileName, string outputFileName, int resolution, int page, BoundingBoxPair origbb = null) {
             string arg;
-            generatedImageFiles.Add(Path.Combine(workingDir, outputFileName));
+            tempFilesDeleter.AddFile(Path.Combine(workingDir, outputFileName));
             using(var proc = GetProcess()) {
                 proc.StartInfo.FileName = setProcStartInfo(Properties.Settings.Default.gsPath, out arg);
                 if(proc.StartInfo.FileName == "") {
@@ -490,7 +467,8 @@ namespace TeX2img {
                     return false;
                 }
                 proc.StartInfo.Arguments = arg + "-q -sDEVICE=" + Properties.Settings.Default.gsDevice + " -dFirstPage=" + page + " -dLastPage=" + page;
-                if(Properties.Settings.Default.gsDevice == "eps2write") proc.StartInfo.Arguments += " -dNoOutputFonts";
+                //proc.StartInfo.Arguments += " -dASCII85EncodePages=true -dCompressPages=false -dCompressEntireFile=false -dProduceDSC=false";
+                if (Properties.Settings.Default.gsDevice == "eps2write") proc.StartInfo.Arguments += " -dNoOutputFonts";
                 proc.StartInfo.Arguments += " -dNOCACHE -dEPSCrop -sOutputFile=\"" + outputFileName + "\" -dNOPAUSE -dBATCH -r" + resolution + " \"" + inputFileName + "\"";
 
                 try {
@@ -520,7 +498,7 @@ namespace TeX2img {
         }
 
         bool png2img(string inputFileName, string outputFileName) {
-            generatedImageFiles.Add(Path.Combine(workingDir, outputFileName));
+            tempFilesDeleter.AddFile(Path.Combine(workingDir, outputFileName));
             System.Drawing.Imaging.ImageFormat format;
             var extension = Path.GetExtension(outputFileName).ToLower();
             switch(extension) {
@@ -566,7 +544,7 @@ namespace TeX2img {
         }
 
         bool pdf2img_mudraw(string inputFileName, string outputFileName, List<int> pages){
-            generatedImageFiles.Add(Path.Combine(workingDir, outputFileName));
+            tempFilesDeleter.AddFile(Path.Combine(workingDir, outputFileName));
             using(var proc = GetProcess()) {
                 proc.StartInfo.FileName = Path.Combine(GetToolsPath(), "mudraw.exe");
                 proc.StartInfo.Arguments = "-l -o \"" + outputFileName + "\" \"" + inputFileName + "\"";
@@ -587,14 +565,14 @@ namespace TeX2img {
                         bool rv = true;
                         foreach(var p in pages) {
                             var f = Path.Combine(workingDir, pre + p.ToString() + aft);
-                            if(File.Exists(f)) generatedImageFiles.Add(f);
+                            if(File.Exists(f)) tempFilesDeleter.AddFile(f);
                             else rv = false;
                         }
                         return rv;
                     } else {
                         for(int i = 1 ; ; ++i) {
                             var f = Path.Combine(workingDir, pre + i.ToString() + aft);
-                            if(File.Exists(f)) generatedImageFiles.Add(f);
+                            if(File.Exists(f)) tempFilesDeleter.AddFile(f);
                             else break;
                         }
                     }
@@ -632,8 +610,8 @@ namespace TeX2img {
             System.Diagnostics.Debug.Assert(pages.Count == origbb.Count);
             var tmpfile = GetTempFileName(".tex", workingDir);
             if(tmpfile == null) return false;
-            generatedTeXFilesWithoutExtension.Add(Path.Combine(workingDir, Path.GetFileNameWithoutExtension(tmpfile)));
-            generatedImageFiles.Add(Path.Combine(workingDir, outputFileName));
+            tempFilesDeleter.AddTeXFile(Path.Combine(workingDir, Path.GetFileNameWithoutExtension(tmpfile)));
+            tempFilesDeleter.AddFile(Path.Combine(workingDir, outputFileName));
 
             var bbBox = new List<BoundingBox>();
             for(int i = 0 ; i < pages.Count ; ++i) {
@@ -702,10 +680,10 @@ namespace TeX2img {
         private bool eps2img(string inputFileName, string outputFileName, BoundingBoxPair origbb, string device) {
             string extension = Path.GetExtension(outputFileName).ToLower();
             string baseName = Path.GetFileNameWithoutExtension(inputFileName);
-            generatedImageFiles.Add(Path.Combine(workingDir, outputFileName));
+            tempFilesDeleter.AddFile(Path.Combine(workingDir, outputFileName));
             // ターゲットのepsを「含む」epsを作成。
             string trimEpsFileName = GetTempFileName(".eps", workingDir);
-            generatedImageFiles.Add(Path.Combine(workingDir, trimEpsFileName));
+            tempFilesDeleter.AddFile(Path.Combine(workingDir, trimEpsFileName));
             if(origbb == null) origbb = readBB(inputFileName);
             decimal devicedevide = Properties.Settings.Default.yohakuUnitBP ? 1 : Properties.Settings.Default.resolutionScale;
             decimal translateleft = -origbb.hiresbb.Left + Properties.Settings.Default.leftMargin / devicedevide;
@@ -790,14 +768,14 @@ namespace TeX2img {
                 if(pages == null) {
                     for(int i = 1 ; ; ++i) {
                         var f = Path.Combine(workingDir, pre + i.ToString() + aft);
-                        if(File.Exists(f)) generatedImageFiles.Add(f);
+                        if(File.Exists(f)) tempFilesDeleter.AddFile(f);
                         else break;
                     }
                 } else {
                     bool rv = true;
                     foreach(var p in pages) {
                         var f = Path.Combine(workingDir, pre + p.ToString() + aft);
-                        generatedImageFiles.Add(f);
+                        tempFilesDeleter.AddFile(f);
                         if(!File.Exists(f)) rv = false;
                     }
                     if(!rv && controller_ != null) controller_.showGenerateError();
@@ -807,13 +785,13 @@ namespace TeX2img {
                 if(!File.Exists(Path.Combine(workingDir, outputFileName))) {
                     if(controller_ != null) controller_.showGenerateError();
                     return false;
-                } else generatedImageFiles.Add(Path.Combine(workingDir, outputFileName));
+                } else tempFilesDeleter.AddFile(Path.Combine(workingDir, outputFileName));
             }
             return true;
         }
 
         bool img2img_pdfium(string inputFileName, string outputFileName) {
-            generatedImageFiles.Add(Path.Combine(workingDir, outputFileName));
+            tempFilesDeleter.AddFile(Path.Combine(workingDir, outputFileName));
             var inputtype = Path.GetExtension(inputFileName).Substring(1).ToLower();
             var type = Path.GetExtension(outputFileName).Substring(1).ToLower();
             using(var proc = GetProcess()) {
@@ -839,7 +817,7 @@ namespace TeX2img {
         }
 
         bool eps2pdf(string inputFileName, string outputFileName) {
-            generatedImageFiles.Add(Path.Combine(workingDir, outputFileName));
+            tempFilesDeleter.AddFile(Path.Combine(workingDir, outputFileName));
             string arg;
             using(var proc = GetProcess()) {
                 proc.StartInfo.FileName = setProcStartInfo(Properties.Settings.Default.gsPath, out arg);
@@ -869,7 +847,7 @@ namespace TeX2img {
         #region 画像結合
         bool pdfconcat(List<string> files, string output, int boxnumber = 0) {
             var tempfile = GetTempFileName(".tex", workingDir);
-            generatedTeXFilesWithoutExtension.Add(Path.Combine(workingDir, Path.GetFileNameWithoutExtension(tempfile)));
+            tempFilesDeleter.AddTeXFile(Path.Combine(workingDir, Path.GetFileNameWithoutExtension(tempfile)));
             using(var fw = new StreamWriter(Path.Combine(workingDir, tempfile))) {
                 fw.WriteLine(@"\pdfoutput=1\relax");
                 fw.WriteLine(@"\pdfpagebox=" + boxnumber.ToString() + @"\relax");
@@ -911,7 +889,7 @@ namespace TeX2img {
 
         // http://dobon.net/vb/dotnet/graphics/createmultitiff.html
         bool tiffconcat(List<string> files, string output) {
-            generatedImageFiles.Add(output);
+            tempFilesDeleter.AddFile(output);
             var Compression = System.Drawing.Imaging.EncoderValue.CompressionLZW;
             if(files.Count == 0) return true;
             if(files.Count == 1) {
@@ -959,7 +937,7 @@ namespace TeX2img {
         }
 
         bool gifconcat(List<string> files, string output, uint delay, uint loop) {
-            generatedImageFiles.Add(output);
+            tempFilesDeleter.AddFile(output);
             int width = 0;
             int height = 0;
             foreach(var f in files) {

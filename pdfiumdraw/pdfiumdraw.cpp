@@ -498,7 +498,7 @@ std::vector<std::string> split(const std::string &str, char sep) {
 vector<int> AnalyePageFormat(string &str) {
 	auto pformats = split(str, ',');
 	vector<int> rv;
-	for(auto format : pformats) {
+	for(auto &&format : pformats) {
 		auto r = format.find("-");
 		if(r == string::npos) {
 			auto x = std::stoi(format);
@@ -523,6 +523,7 @@ public:
 		::CoUninitialize();
 	}
 };
+
 
 int main(int argc, char *argv[]) {
 	if(argc <= 1) {
@@ -602,7 +603,7 @@ int main(int argc, char *argv[]) {
 		}
 	}
 	int errpages = 0;
-	for(auto d : files) {
+	for(auto &&d : files) {
 		try {
 			if(d.input_format == PDF) {
 				switch(d.target) {

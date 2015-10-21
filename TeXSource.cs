@@ -87,30 +87,33 @@ namespace TeX2img {
         }
 
         static Dictionary<string, Action<string, string>> ExtraEmbed = new Dictionary<string, Action<string, string>>() {
-            { ".pdf",PDFEmbed }
+//            { ".pdf",PDFEmbed },
         };
         static Dictionary<string, Func<string, string>> ExtraRead = new Dictionary<string, Func<string, string>>() {
-            { ".pdf",PDFRead }
+            { ".pdf",PDFRead },
         };
 
         static void PDFEmbed(string file,string text) {
             var tmpdir = Path.GetTempPath();
             var tmp = Converter.GetTempFileName(".pdf", tmpdir);
             tmp = Path.Combine(tmpdir, tmp);
-            using (var mupdf = new MuPDF(mudraw)) { 
-                var doc = (int)mupdf.Execute("open_document", typeof(int), file);
-                if (doc == 0) return;
-                var page = (int)mupdf.Execute("load_page", typeof(int), doc, 0);
-                if (page == 0) return;
-                var annot = (int)mupdf.Execute("create_annot", typeof(int), page, "Text");
-                if (annot == 0) return;
-                mupdf.Execute("set_annot_contents", annot, PDFsrcHead + System.Environment.NewLine + text);
-                mupdf.Execute("set_annot_flag", annot, 35);
-                mupdf.Execute("write_document", doc, tmp);
-            }
-            if (File.Exists(tmp)) {
-                File.Delete(file);
-                File.Move(tmp, file);
+            using (var tmp_deleter = new TempFilesDeleter()) {
+                tmp_deleter.AddFile(tmp);
+                using (var mupdf = new MuPDF(mudraw)) {
+                    var doc = (int)mupdf.Execute("open_document", typeof(int), file);
+                    if (doc == 0) return;
+                    var page = (int)mupdf.Execute("load_page", typeof(int), doc, 0);
+                    if (page == 0) return;
+                    var annot = (int)mupdf.Execute("create_annot", typeof(int), page, "Text");
+                    if (annot == 0) return;
+                    mupdf.Execute("set_annot_contents", annot, PDFsrcHead + System.Environment.NewLine + text);
+                    mupdf.Execute("set_annot_flag", annot, 35);
+                    mupdf.Execute("write_document", doc, tmp);
+                }
+                if (File.Exists(tmp)) {
+                    File.Delete(file);
+                    File.Move(tmp, file);
+                }
             }
         }
         static string PDFRead(string file) {

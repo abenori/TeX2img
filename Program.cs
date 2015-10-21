@@ -315,9 +315,10 @@ namespace TeX2img {
                 // 一時フォルダにコピー
                 File.Copy(file, tmpTeXFileName, true);
                 (new FileInfo(tmpTeXFileName)).Attributes = FileAttributes.Normal;
+                var output = Path.GetFullPath(files[2 * i + 1]);
                 // 変換！
                 try {
-                    using(var converter = new Converter(Output, tmpTeXFileName, files[2 * i + 1])) {
+                    using(var converter = new Converter(Output, tmpTeXFileName, output)) {
                         converter.AddInputPath(Path.GetDirectoryName(file));
                         if(!converter.Convert()) ++failnum;
                         else outFiles.AddRange(converter.OutputFileNames.ToArray());

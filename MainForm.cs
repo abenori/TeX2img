@@ -295,19 +295,19 @@ namespace TeX2img {
             if(FirstFiles != null) {
                 for(int i = 0 ; i < FirstFiles.Count / 2 ; ++i) {
                     string file = FirstFiles[2 * i];
-                    string tmppath, tmptexfn;
+                    string tmppath;
                     try {
                         string inputextension = Path.GetExtension(file);
-                        tmppath = Converter.GetTempFileName(inputextension);
-                        tmptexfn = Path.Combine(Path.GetDirectoryName(tmppath), Path.GetFileNameWithoutExtension(tmppath) + inputextension);
-                        File.Delete(tmptexfn);
-                        File.Copy(file, tmptexfn, true);
+                        tmppath = Path.Combine(Path.GetTempPath(),Converter.GetTempFileName(inputextension));
+                        File.Delete(tmppath);
+                        File.Copy(file, tmppath, true);
                     }
                     catch(Exception) {
                         MessageBox.Show(file + "\nに対する一時ファイルの生成に失敗しました。");
                         continue;
                     }
-                    converter = new Converter(this, tmptexfn, FirstFiles[2 * i + 1]);
+                    var output = Path.GetFullPath(FirstFiles[2 * i + 1]);
+                    converter = new Converter(this, tmppath, output);
                     converter.Convert();
                 }
                 FirstFiles = null;
