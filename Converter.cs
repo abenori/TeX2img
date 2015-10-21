@@ -1072,7 +1072,10 @@ namespace TeX2img {
             } else {
                 bbs = readPDFBB(tmpFileBaseName + ".pdf", 1, page);
             }
-            if(bbs == null) return false;
+            if (bbs == null) {
+                controller_.appendOutput("BoundigBox の取得に失敗しました．");
+                return false;
+            }
 
             // 空白ページの検出
             var emptyPages = new List<int>();
@@ -1442,12 +1445,15 @@ namespace TeX2img {
                 for(int i = splitted.Count() ; i >= 0 ; --i) {
                     var file = String.Join(" ", splitted, 0, i);
                     if(file.EndsWith(" ")) continue;// File.Existsは末尾の空白を削除してから存在チェックをする
-                    if(File.Exists(file) || File.Exists(file + ".exe") || (Path.GetDirectoryName(file) == "" && which(file) != "")) {
-                        FileName = file;
-                        Arguments = String.Join(" ", splitted, i, splitted.Count() - i);
-                        if(Arguments != "") Arguments += " ";
-                        break;
+                    try {
+                        if (File.Exists(file) || File.Exists(file + ".exe") || (Path.GetDirectoryName(file) == "" && which(file) != "")) {
+                            FileName = file;
+                            Arguments = String.Join(" ", splitted, i, splitted.Count() - i);
+                            if (Arguments != "") Arguments += " ";
+                            break;
+                        }
                     }
+                    catch(Exception) { }
                 }
             }
             return FileName;

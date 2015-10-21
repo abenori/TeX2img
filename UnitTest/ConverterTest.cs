@@ -173,12 +173,14 @@ namespace UnitTest {
 
         void doGenerateTest(string output, string[] exts) {
             Tuple<List<Size>, List<Size>> expected = null;
+            BeforeTest();
             using(converter = new Converter(controller, Path.Combine(WorkDir, testfile + ".tex"), Path.Combine(OutputDir, testfile + "-" + output + ".pdf"))) {
                 expected = GetExpectedSize(testfile + ".tex");
             }
+            AfterTest();
             foreach(var ext in exts) {
                 BeforeTest();
-                using(converter = new Converter(controller, Path.Combine(WorkDir, testfile + ".tex"), Path.Combine(OutputDir, testfile + "-" + output + ext))) {
+                using (converter = new Converter(controller, Path.Combine(WorkDir, testfile + ".tex"), Path.Combine(OutputDir, testfile + "-" + output + ext))) {
                     converter.Convert();
                     if(expected.Item1.Count == 1) {
                         Assert.IsTrue(File.Exists(Path.Combine(OutputDir, testfile + "-" + output + ext)));

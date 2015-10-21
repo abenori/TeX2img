@@ -87,7 +87,7 @@ namespace TeX2img {
         }
 
         static Dictionary<string, Action<string, string>> ExtraEmbed = new Dictionary<string, Action<string, string>>() {
-//            { ".pdf",PDFEmbed },
+            { ".pdf",PDFEmbed },
         };
         static Dictionary<string, Func<string, string>> ExtraRead = new Dictionary<string, Func<string, string>>() {
             { ".pdf",PDFRead },
@@ -106,13 +106,36 @@ namespace TeX2img {
                     if (page == 0) return;
                     var annot = (int)mupdf.Execute("create_annot", typeof(int), page, "Text");
                     if (annot == 0) return;
-                    mupdf.Execute("set_annot_contents", annot, PDFsrcHead + System.Environment.NewLine + text);
+                    mupdf.Execute("set_annot_contents", annot, ChangeReturnCode(PDFsrcHead + System.Environment.NewLine + text, "\n"));
                     mupdf.Execute("set_annot_flag", annot, 35);
                     mupdf.Execute("write_document", doc, tmp);
                 }
                 if (File.Exists(tmp)) {
-                    File.Delete(file);
-                    File.Move(tmp, file);
+                    using(var proc = new System.Diagnostics.Process()) {
+                        var tmp2 = Converter.GetTempFileName(".pdf", tmpdir);
+                        tmp_deleter.AddFile(tmp2);
+                        string arg;
+                        proc.StartInfo.FileName = Converter.setProcStartInfo(Properties.Settings.Default.gsPath, out arg);
+                        proc.StartInfo.Arguments = arg + " -dBATCH -dNOPAUSE -q -sDEVICE=pdfwrite -sOutputFile=" + tmp2 + " " + tmp;
+                        proc.StartInfo.WorkingDirectory = tmpdir;
+                        proc.StartInfo.CreateNoWindow = true;
+                        proc.StartInfo.UseShellExecute = false;
+                        proc.StartInfo.RedirectStandardError = true;
+                        proc.StartInfo.RedirectStandardOutput = true;
+                        proc.ErrorDataReceived += (s,e) => System.Diagnostics.Debug.WriteLine(e.Data);
+                        proc.OutputDataReceived += (s,e) => System.Diagnostics.Debug.WriteLine(e.Data);
+                        proc.Start();
+                        proc.BeginOutputReadLine();
+                        proc.BeginErrorReadLine();
+                        proc.WaitForExit(1000);
+                        if (!proc.HasExited) proc.Kill();
+
+                        tmp2 = Path.Combine(tmpdir, tmp2);
+                        if (File.Exists(tmp2)) {
+                            File.Delete(file);
+                            File.Move(tmp2, file);
+                        }
+                    }
                 }
             }
         }
