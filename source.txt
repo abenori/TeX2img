@@ -5,3 +5,4 @@ Azuki エディタコンポーネント
 http://sgry.b.sourceforge.jp/
 を用いていますので，リンク先を参考に必要ファイルをダウンロード後，適切に設定してください．
 pdfiumdraw のビルドは pdfiumdraw/hottobuild.txt を見てください．
+mudraw のビルドは mudraw/interactive.cpp の最初の方のコメントを見てください．

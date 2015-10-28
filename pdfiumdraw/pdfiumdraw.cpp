@@ -362,7 +362,7 @@ int WriteEMF(const Data &d){
 			PDFPage page(doc, i);
 			string outfile;
 			if((pages == 1 || d.pages.size() == 1) && d.output.find("%d") == string::npos)outfile = (d.output != "" ? d.output : GetDirectory(d.input) + "\\" + GetFileNameWithoutExtension(d.input) + ".emf");
-			else outfile = outputpre + to_string(i) + outputpost;
+			else outfile = outputpre + to_string(i + 1) + outputpost;
 			cout << "output: " << outfile << endl;
 			HDC dc = ::CreateEnhMetaFile(nullptr, outfile.c_str(), nullptr, nullptr);
 			float x = d.extent;

@@ -99,6 +99,7 @@ namespace TeX2img {
             rewriteBB(inputEpsFileName, func, func);
         }
 
+
         void rewriteBB(string inputEpsFileName, Func<BoundingBox, BoundingBox> bb, Func<BoundingBox, BoundingBox> hiresbb) {
             Regex regexBB = new Regex(@"^\%\%(HiRes|)BoundingBox\: ([-\d\.]+) ([-\d\.]+) ([-\d\.]+) ([-\d\.]+)$");
             byte[] inbuf;
@@ -107,6 +108,7 @@ namespace TeX2img {
                 inbuf = new byte[fs.Length];
                 fs.Read(inbuf, 0, (int) fs.Length);
             }
+            var s = System.Text.UTF8Encoding.UTF8.GetString(inbuf);
             byte[] outbuf = new byte[inbuf.Length + 200];
             byte[] tmpbuf;
 
@@ -157,7 +159,8 @@ namespace TeX2img {
                     if(q == inbuf.Length - 1) break;
                 } else ++q;
             }
-            using(FileStream wfs = new System.IO.FileStream(Path.Combine(workingDir, inputEpsFileName), FileMode.Open, FileAccess.Write)) {
+            using(FileStream wfs = new System.IO.FileStream(Path.Combine(workingDir, inputEpsFileName), FileMode.Create, FileAccess.Write)) {
+                var ss = System.Text.UTF8Encoding.UTF8.GetString(outbuf,0,outp);
                 wfs.Write(outbuf, 0, outp);
             }
         }
@@ -1103,10 +1106,12 @@ namespace TeX2img {
                     }
                 } else {
                     if(!pdfcrop(tmpFileBaseName + ".pdf", tmpFileBaseName + "-1.pdf", true, new List<int>(Enumerable.Range(1, page)), bbs)) return false;
+                    page = 1;
                 }
-                // svg（または透過gif）：PDFから変換
+                // svg or テキスト付きemf（または透過gif）：PDFから変換
             } else if(
                  extension == ".svg" ||
+                 (extension == ".emf" && !Properties.Settings.Default.outlinedText) || 
                  (extension == ".gif" && Properties.Settings.Default.transparentPngFlag)
                  ) {
                 var pdftemp = GetTempFileName(".pdf", workingDir);
@@ -1121,6 +1126,7 @@ namespace TeX2img {
                         }
                     }
                     break;
+                case ".emf":
                 case ".gif":
                     if(!pdf2img_pdfium(pdftemp, tmpFileBaseName + "-%d" + extension, pagelist)) return false;
                     break;
@@ -1131,13 +1137,13 @@ namespace TeX2img {
             } else {
 				// その他：eps経由
 	            bool addMargin = ((Properties.Settings.Default.leftMargin + Properties.Settings.Default.rightMargin + Properties.Settings.Default.topMargin + Properties.Settings.Default.bottomMargin) > 0);
-                for(int i = 1 ; i <= page ; ++i) {
+                int resolution;
+                if (Properties.Settings.Default.useLowResolution) epsResolution_ = 72 * Properties.Settings.Default.resolutionScale;
+                else epsResolution_ = 20016;
+                if (vectorExtensions.Contains(extension)) resolution = epsResolution_;
+                else resolution = 72 * Properties.Settings.Default.resolutionScale;
+                for (int i = 1 ; i <= page ; ++i) {
                     if(emptyPages.Contains(i)) continue;
-                    int resolution;
-                    if(Properties.Settings.Default.useLowResolution) epsResolution_ = 72 * Properties.Settings.Default.resolutionScale;
-                    else epsResolution_ = 20016;
-                    if(vectorExtensions.Contains(extension)) resolution = epsResolution_;
-                    else resolution = 72 * Properties.Settings.Default.resolutionScale;
                     if(!pdf2eps(tmpFileBaseName + ".pdf", tmpFileBaseName + "-" + i + ".eps", resolution, i, bbs[i - 1])) return false;
                     switch(extension) {
                     case ".pdf":
@@ -1246,7 +1252,7 @@ namespace TeX2img {
             if(Properties.Settings.Default.embedTeXSource && inputextension == ".tex") {
                 // Alternative Data Streamにソースを書き込む
                 try {
-                    using (var source = new FileStream(inputTeXFilePath, FileMode.Open, FileAccess.Read)) {
+                    using (var source = new FileStream(inputTeXFilePath, FileMode.Create, FileAccess.Read)) {
                         var buf = new byte[source.Length];
                         source.Read(buf, 0, (int)source.Length);
                         // エンコードの決定
