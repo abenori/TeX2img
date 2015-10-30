@@ -195,7 +195,7 @@ namespace TeX2img {
         // boxは\pdfpageboxと同じ
         List<BoundingBoxPair> readPDFBox(string inputPDFFileName, List<int> pages, int box = 0) {
             var rv = new List<BoundingBoxPair>();
-            var tmpfile = GetTempFileName(".tex", workingDir);
+            var tmpfile = TempFilesDeleter.GetTempFileName(".tex", workingDir);
             tempFilesDeleter.AddTeXFile(Path.Combine(workingDir, Path.GetFileNameWithoutExtension(tmpfile)));
             using(var fw = new StreamWriter(Path.Combine(workingDir, tmpfile))) {
                 fw.WriteLine(@"\pdfpagebox=" + box.ToString() + @"\relax");
@@ -611,7 +611,7 @@ namespace TeX2img {
         // origbbには，GhostscriptのsDevice=bboxで得られた値を入れておく。（nullならばここで取得する。）
         bool pdfcrop(string inputFileName, string outputFileName, bool use_bp, List<int> pages, List<BoundingBoxPair> origbb, bool deleteemptypages = false) {
             System.Diagnostics.Debug.Assert(pages.Count == origbb.Count);
-            var tmpfile = GetTempFileName(".tex", workingDir);
+            var tmpfile = TempFilesDeleter.GetTempFileName(".tex", workingDir);
             if(tmpfile == null) return false;
             tempFilesDeleter.AddTeXFile(Path.Combine(workingDir, Path.GetFileNameWithoutExtension(tmpfile)));
             tempFilesDeleter.AddFile(Path.Combine(workingDir, outputFileName));
@@ -685,7 +685,7 @@ namespace TeX2img {
             string baseName = Path.GetFileNameWithoutExtension(inputFileName);
             tempFilesDeleter.AddFile(Path.Combine(workingDir, outputFileName));
             // ターゲットのepsを「含む」epsを作成。
-            string trimEpsFileName = GetTempFileName(".eps", workingDir);
+            string trimEpsFileName = TempFilesDeleter.GetTempFileName(".eps", workingDir);
             tempFilesDeleter.AddFile(Path.Combine(workingDir, trimEpsFileName));
             if(origbb == null) origbb = readBB(inputFileName);
             decimal devicedevide = Properties.Settings.Default.yohakuUnitBP ? 1 : Properties.Settings.Default.resolutionScale;
@@ -828,7 +828,7 @@ namespace TeX2img {
                     if(controller_ != null) controller_.showPathError("gswin32c.exe", "Ghostscript");
                     return false;
                 }
-                proc.StartInfo.Arguments = arg + "-q -sDEVICE=pdfwrite -dNOPAUSE -dBATCH -dEPSCrop -sOutputFile=\"" + outputFileName + "\" \"" + inputFileName + "\"";
+                proc.StartInfo.Arguments = arg + "-q -sDEVICE=pdfwrite -dAutoRotatePages=/None -dNOPAUSE -dBATCH -dEPSCrop -sOutputFile=\"" + outputFileName + "\" -c .setpdfwrite -f\"" + inputFileName + "\"";
                 try {
                     printCommandLine(proc);
                     ReadOutputs(proc, "Ghostscript の実行");
@@ -849,7 +849,7 @@ namespace TeX2img {
 
         #region 画像結合
         bool pdfconcat(List<string> files, string output, int boxnumber = 0) {
-            var tempfile = GetTempFileName(".tex", workingDir);
+            var tempfile = TempFilesDeleter.GetTempFileName(".tex", workingDir);
             tempFilesDeleter.AddTeXFile(Path.Combine(workingDir, Path.GetFileNameWithoutExtension(tempfile)));
             using(var fw = new StreamWriter(Path.Combine(workingDir, tempfile))) {
                 fw.WriteLine(@"\pdfoutput=1\relax");
@@ -1114,7 +1114,7 @@ namespace TeX2img {
                  (extension == ".emf" && !Properties.Settings.Default.outlinedText) || 
                  (extension == ".gif" && Properties.Settings.Default.transparentPngFlag)
                  ) {
-                var pdftemp = GetTempFileName(".pdf", workingDir);
+                var pdftemp = TempFilesDeleter.GetTempFileName(".pdf", workingDir);
                 if(!pdfcrop(tmpFileBaseName + ".pdf", pdftemp, vectorExtensions.Contains(extension) || Properties.Settings.Default.yohakuUnitBP, new List<int>(Enumerable.Range(1, page)), bbs)) return false;
                 var pagelist = Enumerable.Range(1,page).Where(i=>!emptyPages.Contains(i)).ToList();
                 switch(extension) {
@@ -1179,7 +1179,7 @@ namespace TeX2img {
             // 複数ファイルをまとめる．
             if(Properties.Settings.Default.mergeOutputFiles && page > 1) {
                 var files = new List<string>();
-                var tempfile = GetTempFileName(extension, workingDir);
+                var tempfile = TempFilesDeleter.GetTempFileName(extension, workingDir);
                 for(int i = 1 ; i <= page ; ++i) {
                     string generatedFile = tmpFileBaseName + "-" + i + extension;
                     if(File.Exists(Path.Combine(workingDir, generatedFile))) files.Add(generatedFile);
@@ -1245,14 +1245,11 @@ namespace TeX2img {
                     }
                 }
             }
-            if(Properties.Settings.Default.previewFlag) {
-                if(outputFileNames.Count > 0) Process.Start(outputFileNames[0]);
-            }
 
             if(Properties.Settings.Default.embedTeXSource && inputextension == ".tex") {
                 // Alternative Data Streamにソースを書き込む
                 try {
-                    using (var source = new FileStream(inputTeXFilePath, FileMode.Create, FileAccess.Read)) {
+                    using (var source = new FileStream(inputTeXFilePath, FileMode.Open, FileAccess.Read)) {
                         var buf = new byte[source.Length];
                         source.Read(buf, 0, (int)source.Length);
                         // エンコードの決定
@@ -1270,6 +1267,9 @@ namespace TeX2img {
             if(controller_ != null) {
                 foreach(var w in warnngs) controller_.appendOutput("TeX2img: " + w + "\n");
                 if(error_ignored) controller_.errorIgnoredWarning();
+            }
+            if (Properties.Settings.Default.previewFlag) {
+                if (outputFileNames.Count > 0) Process.Start(outputFileNames[0]);
             }
             return true;
         }
@@ -1331,18 +1331,6 @@ namespace TeX2img {
             var f = Path.Combine(Path.GetDirectoryName(setProcStartInfo(Properties.Settings.Default.platexPath)), "pdftex.exe");
             if(File.Exists(f)) return f;
             return which("pdftex");
-        }
-
-        public static string GetTempFileName(string ext = ".tex") {
-            return GetTempFileName(ext, Path.GetTempPath());
-        }
-
-        public static string GetTempFileName(string ext, string dir) {
-            for(int i = 0 ; i < 1000 ; ++i) {
-                var random = Path.ChangeExtension(Path.GetRandomFileName(), ext);
-                if(!File.Exists(Path.Combine(dir, random))) return random;
-            }
-            return null;
         }
 
         ProcessStartInfo GetProcessStartInfo() {

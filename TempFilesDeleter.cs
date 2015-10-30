@@ -28,5 +28,17 @@ namespace TeX2img {
         private List<string> tmpTeXFiles = new List<string>();
         public void AddFile(string file) { tmpFiles.Add(file); }
         public void AddTeXFile(string file) { tmpTeXFiles.Add(file); }
+
+        public static string GetTempFileName(string ext = ".tex") {
+            return GetTempFileName(ext, Path.GetTempPath());
+        }
+
+        public static string GetTempFileName(string ext, string dir) {
+            for(int i = 0 ; i < 1000 ; ++i) {
+                var random = Path.ChangeExtension(Path.GetRandomFileName(), ext);
+                if(!File.Exists(Path.Combine(dir, random))) return random;
+            }
+            return null;
+        }
     }
 }

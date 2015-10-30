@@ -298,7 +298,7 @@ namespace TeX2img {
                     string tmppath;
                     try {
                         string inputextension = Path.GetExtension(file);
-                        tmppath = Path.Combine(Path.GetTempPath(),Converter.GetTempFileName(inputextension));
+                        tmppath = Path.Combine(Path.GetTempPath(),TempFilesDeleter.GetTempFileName(inputextension));
                         File.Delete(tmppath);
                         File.Copy(file, tmppath, true);
                     }
@@ -329,9 +329,9 @@ namespace TeX2img {
                 string extension = Path.GetExtension(outputFilePath).ToLower();
                 string tmpTeXFileName;
                 if(InputFromFileRadioButton.Checked) {
-                    tmpTeXFileName = Converter.GetTempFileName(Path.GetExtension(inputFileNameTextBox.Text));
+                    tmpTeXFileName = TempFilesDeleter.GetTempFileName(Path.GetExtension(inputFileNameTextBox.Text));
                 }else{
-                    tmpTeXFileName = Converter.GetTempFileName();
+                    tmpTeXFileName = TempFilesDeleter.GetTempFileName();
                 }
 
                 if(tmpTeXFileName == null) {

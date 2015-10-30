@@ -95,7 +95,7 @@ namespace TeX2img {
 
         static void PDFEmbed(string file,string text) {
             var tmpdir = Path.GetTempPath();
-            var tmp = Converter.GetTempFileName(".pdf", tmpdir);
+            var tmp = TempFilesDeleter.GetTempFileName(".pdf", tmpdir);
             tmp = Path.Combine(tmpdir, tmp);
             using (var tmp_deleter = new TempFilesDeleter()) {
                 tmp_deleter.AddFile(tmp);
@@ -112,11 +112,11 @@ namespace TeX2img {
                 }
                 if (File.Exists(tmp)) {
                     using(var proc = new System.Diagnostics.Process()) {
-                        var tmp2 = Converter.GetTempFileName(".pdf", tmpdir);
+                        var tmp2 = TempFilesDeleter.GetTempFileName(".pdf", tmpdir);
                         tmp_deleter.AddFile(tmp2);
                         string arg;
                         proc.StartInfo.FileName = Converter.setProcStartInfo(Properties.Settings.Default.gsPath, out arg);
-                        proc.StartInfo.Arguments = arg + " -dBATCH -dNOPAUSE -q -sDEVICE=pdfwrite -sOutputFile=" + tmp2 + " " + tmp;
+                        proc.StartInfo.Arguments = arg + " -dBATCH -dNOPAUSE -q -sDEVICE=pdfwrite -dAutoRotatePages=/None -sOutputFile=\"" + tmp2 + "\"  -c .setpdfwrite -f\"" + tmp + "\"";
                         proc.StartInfo.WorkingDirectory = tmpdir;
                         proc.StartInfo.CreateNoWindow = true;
                         proc.StartInfo.UseShellExecute = false;
