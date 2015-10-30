@@ -439,7 +439,7 @@ namespace TeX2img {
                     if(controller_ != null) controller_.showPathError("gswin32c.exe", "Ghostscript");
                     return false;
                 }
-                proc.StartInfo.Arguments = arg + "-dSAFER -dNOPAUSE -dBATCH -sDEVICE=pdfwrite -dAutoRotatePages=/None -sOutputFile=\"" + outputFileName + "\" -c .setpdfwrite -f\"" + filename + "\"";
+                proc.StartInfo.Arguments = arg + "-dSAFER -dNOPAUSE -dBATCH -sDEVICE=pdfwrite -dAutoRotatePages=/None -sOutputFile=\"" + outputFileName + "\" -c .setpdfwrite -f \"" + filename + "\"";
                 try {
                     printCommandLine(proc);
                     ReadOutputs(proc, "PS から PDF への変換");
@@ -828,7 +828,7 @@ namespace TeX2img {
                     if(controller_ != null) controller_.showPathError("gswin32c.exe", "Ghostscript");
                     return false;
                 }
-                proc.StartInfo.Arguments = arg + "-q -sDEVICE=pdfwrite -dAutoRotatePages=/None -dNOPAUSE -dBATCH -dEPSCrop -sOutputFile=\"" + outputFileName + "\" -c .setpdfwrite -f\"" + inputFileName + "\"";
+                proc.StartInfo.Arguments = arg + "-q -sDEVICE=pdfwrite -dAutoRotatePages=/None -dNOPAUSE -dBATCH -dEPSCrop -sOutputFile=\"" + outputFileName + "\" -c .setpdfwrite -f \"" + inputFileName + "\"";
                 try {
                     printCommandLine(proc);
                     ReadOutputs(proc, "Ghostscript の実行");
@@ -849,45 +849,25 @@ namespace TeX2img {
 
         #region 画像結合
         bool pdfconcat(List<string> files, string output, int boxnumber = 0) {
-            var tempfile = TempFilesDeleter.GetTempFileName(".tex", workingDir);
-            tempFilesDeleter.AddTeXFile(Path.Combine(workingDir, Path.GetFileNameWithoutExtension(tempfile)));
-            using(var fw = new StreamWriter(Path.Combine(workingDir, tempfile))) {
-                fw.WriteLine(@"\pdfoutput=1\relax");
-                fw.WriteLine(@"\pdfpagebox=" + boxnumber.ToString() + @"\relax");
-                fw.WriteLine(@"\newcount\pagecount\newcount\tempcount\newdimen\tempdimen");
-                fw.WriteLine(@"\pdfhorigin=0bp\relax");
-                fw.WriteLine(@"\pdfvorigin=0bp\relax");
-                foreach(var f in files) {
-                    fw.WriteLine(@"\pdfximage{" + f + @"}\relax");
-                    fw.WriteLine(@"\pagecount=\pdflastximagepages");
-                    fw.WriteLine(@"\tempcount=0\relax");
-                    fw.WriteLine(@"\loop");
-                    fw.WriteLine(@"\advance\tempcount by 1\relax");
-                    fw.WriteLine(@"\pdfximage page \the\tempcount{" + f + @"}\relax");
-                    fw.WriteLine(@"\setbox0=\hbox{\pdfrefximage\pdflastximage}\relax");
-                    fw.WriteLine(@"\pdfpagewidth=\wd0\relax");
-                    fw.WriteLine(@"\pdfpageheight=\ht0\relax");
-                    fw.WriteLine(@"\shipout\box0\relax");
-                    fw.WriteLine(@"\ifnum\tempcount<\pagecount\repeat");
-                }
-                fw.WriteLine(@"\bye");
-            }
             using(var proc = GetProcess()) {
-                proc.StartInfo.FileName = GetpdftexPath();
-                proc.StartInfo.Arguments = "-no-shell-escape -interaction=nonstopmode " + tempfile;
-                try {
-                    printCommandLine(proc);
-                    ReadOutputs(proc, "pdftex の実行 ");
-                }
-                catch(Win32Exception) {
-                    if(controller_ != null) controller_.showPathError("pdftex.exe", "TeX ディストリビューション");
+                string arg;
+                proc.StartInfo.FileName = setProcStartInfo(Properties.Settings.Default.gsPath, out arg);
+                if (proc.StartInfo.FileName == "") {
+                    if (controller_ != null) controller_.showPathError("gswin32c.exe", "Ghostscript");
                     return false;
                 }
-                catch(TimeoutException) { return false; }
+                proc.StartInfo.Arguments = arg + "-q -sDEVICE=pdfwrite -dAutoRotatePages=/None -dNOPAUSE -dBATCH -sOutputFile=\"" + output + "\" -c .setpdfwrite -f \"" + String.Join("\" \"", files.ToArray()) + "\"";
+                try {
+                    printCommandLine(proc);
+                    ReadOutputs(proc, "Ghostscript の実行");
+                }
+                catch (Win32Exception) {
+                    if (controller_ != null) controller_.showPathError(proc.StartInfo.FileName, "Ghostscript ");
+                    return false;
+                }
+                catch (TimeoutException) { return false; }
+                return true;
             }
-            File.Delete(Path.Combine(workingDir, output));
-            File.Move(Path.Combine(workingDir, Path.ChangeExtension(tempfile, ".pdf")), Path.Combine(workingDir, output));
-            return true;
         }
 
         // http://dobon.net/vb/dotnet/graphics/createmultitiff.html
