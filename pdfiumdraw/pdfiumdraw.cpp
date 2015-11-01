@@ -4,12 +4,16 @@
 #include <vector>
 #include <set>
 #include <iostream>
+#include <fstream>
 #include <exception>
-#include <fpdfview.h>
-#include <fpdf_transformpage.h>
 #include <sstream>
 #include <shlwapi.h>
 #include <wincodec.h>
+#include <fpdfview.h>
+#include <fpdf_transformpage.h>
+#include <fpdf_edit.h>
+#include <fpdf_ppo.h>
+#include <fpdf_save.h>
 
 const int PDF = 0;
 const int EMF = 1;
@@ -455,6 +459,33 @@ int ConvertIMG(Data &d) {
 	return 0;
 }
 
+class PDFWriter : public FPDF_FILEWRITE{
+public:
+	PDFWriter(const string &path) : ofs(path, ios_base::out | ios_base::binary){
+		version = 1;
+		WriteBlock = [](struct FPDF_FILEWRITE_* pThis, const void* pData, unsigned long size){
+			((PDFWriter*)pThis)->ofs.write((char*)pData, size);
+			return TRUE;
+		};
+	}
+private:
+	ofstream ofs;
+};
+
+int WritePDF(const Data &d){
+	PDFDoc doc(d.input);
+	int errpage = 0;
+	PDFDoc newdoc(::FPDF_CreateNewDocument());
+	int pos = 0;
+	for(auto p : d.pages){
+		::FPDF_ImportPages(newdoc.doc, doc.doc, to_string(p + 1).c_str(), pos);
+		++pos;
+	}
+	PDFWriter writer(d.output);
+	if(::FPDF_SaveAsCopy(newdoc.doc, &writer, 0) == FALSE)throw new runtime_error("fail to save " + d.output);
+	return errpage;
+}
+
 void OutputBox(string boxname, Data &d) {
 	try {
 		PDFDoc doc(d.input);
@@ -549,6 +580,7 @@ int main(int argc, char *argv[]) {
 			else if(arg == "--jpg")current_data.target = JPG;
 			else if(arg == "--gif")current_data.target = GIF;
 			else if(arg == "--tiff")current_data.target = TIFF;
+			else if(arg == "--pdf")current_data.target = PDF;
 			else if(arg == "--input-format=png")current_data.input_format = PNG;
 			else if(arg == "--input-format=bmp")current_data.input_format = BMP;
 			else if(arg == "--input-format=jpg")current_data.input_format = JPG;
@@ -625,6 +657,8 @@ int main(int argc, char *argv[]) {
 				case TIFF:
 					errpages += WriteTIFF(d);
 					break;
+				case PDF:
+					errpages += WritePDF(d);
 				default:
 					break;
 				}
