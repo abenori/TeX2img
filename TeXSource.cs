@@ -139,6 +139,7 @@ namespace TeX2img {
                 }
             }
         }
+        
         static string PDFRead(string file) {
             var srcHead = PDFsrcHead + System.Environment.NewLine;
             using (var mupdf = new MuPDF(mudraw)) {
