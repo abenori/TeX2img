@@ -1327,6 +1327,7 @@ namespace TeX2img {
             }
             return rv;
         }
+        
         Process GetProcess() {
             return new Process() { StartInfo = GetProcessStartInfo() };
         }

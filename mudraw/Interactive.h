@@ -165,6 +165,14 @@ namespace mudraw {
 			::pdf_bound_page(p.document, p.page, &rect);
 			return rect;
 		}
+		fz_rect mediabox_page(int page){
+			auto p = pages[page - 1];
+			return p.page->mediabox;
+		}
+		int rotate_page(int page){
+			auto p = pages[page - 1];
+			return p.page->rotate;
+		}
 		int first_annot(int page) {
 			auto p = pages[page - 1];
 			auto a = ::pdf_first_annot(p.document, p.page);
