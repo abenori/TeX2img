@@ -3,6 +3,7 @@
 #include <string>
 #include <vector>
 #include <set>
+#include <tuple>
 #include <iostream>
 #include <fstream>
 #include <exception>
@@ -36,7 +37,7 @@ struct Data {
 	int target = EMF;
 	int input_format = PDF;
 	int scale = 1;
-	set<int> pages;
+	vector<int> pages;
 	bool transparent = false;
 	float extent = 50;
 	RECT viewport;
@@ -52,6 +53,8 @@ void ShowUsage() {
 	cout << "  --jpg: output jpeg file" << endl;
 	cout << "  --gif: output gif file" << endl;
 	cout << "  --tiff: output tiff file" << endl;
+	cout << "  --pdf: output pdf file" << endl;
+	cout << "  --merge: merge output files (PDF -> PDF only)" << endl;
 	cout << "  --scale: specify scale" << endl;
 	cout << "  --transparent: output transparent file (if possible)" << endl;
 	cout << "  --output=<file>: specify output file name" << endl;
@@ -472,14 +475,44 @@ private:
 	ofstream ofs;
 };
 
+int WritePDF(const vector<tuple<string, vector<int>>> &files, string output){
+	PDFDoc newdoc(::FPDF_CreateNewDocument());
+	int errpage = 0;
+	int pos = 0;
+	for(auto &&f : files){
+		PDFDoc doc(get<0>(f));
+		if(get<1>(f).empty()){
+			int pagecount = doc.GetPageCount();
+			for(int i = 0; i < pagecount; ++i){
+				::FPDF_ImportPages(newdoc.doc, doc.doc, to_string(i + 1).c_str(), pos);
+				++pos;
+			}
+		} else{
+			for(auto p : get<1>(f)){
+				::FPDF_ImportPages(newdoc.doc, doc.doc, to_string(p + 1).c_str(), pos);
+				++pos;
+			}
+		}
+	}
+	PDFWriter writer(output);
+	if(::FPDF_SaveAsCopy(newdoc.doc, &writer, 0) == FALSE)throw new runtime_error("fail to save " + output);
+	return errpage;
+}
 int WritePDF(const Data &d){
 	PDFDoc doc(d.input);
 	int errpage = 0;
 	PDFDoc newdoc(::FPDF_CreateNewDocument());
 	int pos = 0;
-	for(auto p : d.pages){
-		::FPDF_ImportPages(newdoc.doc, doc.doc, to_string(p + 1).c_str(), pos);
-		++pos;
+	if(d.pages.empty()){
+		for(int i = 0; i < doc.GetPageCount(); ++i){
+			::FPDF_ImportPages(newdoc.doc, doc.doc, to_string(i + 1).c_str(), pos);
+			++pos;
+		}
+	} else{
+		for(auto p : d.pages){
+			::FPDF_ImportPages(newdoc.doc, doc.doc, to_string(p + 1).c_str(), pos);
+			++pos;
+		}
 	}
 	PDFWriter writer(d.output);
 	if(::FPDF_SaveAsCopy(newdoc.doc, &writer, 0) == FALSE)throw new runtime_error("fail to save " + d.output);
@@ -491,7 +524,7 @@ void OutputBox(string boxname, Data &d) {
 		PDFDoc doc(d.input);
 		int pagecount = doc.GetPageCount();
 		for(int i = 0; i < pagecount; ++i) {
-			if(!d.pages.empty() && d.pages.find(i) == d.pages.end())continue;
+			if(!d.pages.empty() && find(d.pages.begin(), d.pages.end(), i) == d.pages.end())continue;
 			PDFPage page(doc, i);
 			float left, bottom, right, top;
 			FPDF_BOOL result;
@@ -564,6 +597,7 @@ int main(int argc, char *argv[]) {
 	}
 	Initializer init;
 	vector<Data> files;
+	bool merge = false;
 	{
 		Data current_data;
 		bool output_page = false;
@@ -588,10 +622,11 @@ int main(int argc, char *argv[]) {
 			else if(arg == "--input-format=tiff")current_data.input_format = TIFF;
 			else if(arg == "--input-format=pdf")current_data.input_format = PDF;
 			else if(arg == "--output-page")output_page = true;// ページ数を出力する
+			else if(arg == "--merge")merge = true;
 			else if(arg.find("--pages=") == 0) {
 				try {
 					auto pages = AnalyePageFormat(arg.substr(string("--pages=").length()));
-					for(auto p : pages)current_data.pages.insert(p - 1);
+					for(auto p : pages)current_data.pages.push_back(p - 1);
 				}
 				catch(exception e) { cout << "failed to analyze page format: " << e.what() << endl; return -1; }
 			} else if(arg.find("--scale=") == 0)current_data.scale = std::atoi(arg.substr(string("--scale=").length()).c_str());
@@ -635,40 +670,52 @@ int main(int argc, char *argv[]) {
 		}
 	}
 	int errpages = 0;
-	for(auto &&d : files) {
-		try {
-			if(d.input_format == PDF) {
-				switch(d.target) {
-				case EMF:
-					errpages += WriteEMF(d);
-					break;
-				case BMP:
-					errpages += WriteBMP(d);
-					break;
-				case PNG:
-					errpages += WritePNG(d);
-					break;
-				case JPG:
-					errpages += WriteJPG(d);
-					break;
-				case GIF:
-					errpages += WriteGIF(d);
-					break;
-				case TIFF:
-					errpages += WriteTIFF(d);
-					break;
-				case PDF:
-					errpages += WritePDF(d);
-				default:
-					break;
+	try{
+		if(merge){
+			vector<tuple<string, vector<int>>> fds;
+			string out;
+			for(auto &&d : files) {
+				if(d.target != PDF || d.input_format != PDF)throw runtime_error("merge is only supported PDF -> PDF");
+				if(d.output != "")out = d.output;
+				fds.push_back(tuple<string, vector<int>>(d.input, d.pages));
+			}
+			if(out == "")throw runtime_error("Outut file name should be specified for --merge");
+			return WritePDF(fds, out);
+		} else{
+			for(auto &&d : files) {
+				if(d.input_format == PDF) {
+					switch(d.target) {
+					case EMF:
+						errpages += WriteEMF(d);
+						break;
+					case BMP:
+						errpages += WriteBMP(d);
+						break;
+					case PNG:
+						errpages += WritePNG(d);
+						break;
+					case JPG:
+						errpages += WriteJPG(d);
+						break;
+					case GIF:
+						errpages += WriteGIF(d);
+						break;
+					case TIFF:
+						errpages += WriteTIFF(d);
+						break;
+					case PDF:
+						errpages += WritePDF(d);
+					default:
+						break;
+					}
+				} else {
+					ConvertIMG(d);
 				}
-			} else {
-				ConvertIMG(d);
 			}
 		}
-		catch(runtime_error e) {
-			cout << e.what() << endl;
-		}
+	}
+	catch(runtime_error e) {
+		cout << e.what() << endl;
 	}
 	return errpages;
 }

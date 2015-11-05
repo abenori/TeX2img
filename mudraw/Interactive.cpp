@@ -1,4 +1,4 @@
-/*k
+/*
 コンパイル：SumatraPDFのソースを使っている．
 mudrawにパッチを当てる．
 Interactive.cppとInteractive.hを入れる．
@@ -42,8 +42,8 @@ namespace mudraw {
 	template<> std::string Interactive::Read<std::string>() {
 		string fline;
 		std::cin >> fline;
-		if(fline[0] == '%')return args[std::atoi(fline.substr(1).c_str())];
 		skip_line();
+		if(fline[0] == '%')return args[std::atoi(fline.substr(1).c_str())];
 		int len = std::atoi(fline.c_str());
 		std::vector<char> buf;
 		buf.resize(len + 1);
