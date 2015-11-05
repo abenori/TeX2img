@@ -115,6 +115,22 @@ namespace TeX2img {
             return Int32.Parse(str);
         }
 
+        decimal ReadDecimal() {
+            var str = ReadLine();
+            if (str == null) throw new TimeoutException();
+            return Decimal.Parse(str);
+        }
+
+        BoundingBox ReadBoundingBox() {
+            // 左下
+            var x0 = ReadDecimal();
+            var y0 = ReadDecimal();
+            // 右上
+            var x1 = ReadDecimal();
+            var y1 = ReadDecimal();
+            return new BoundingBox(x0, y0, x1, y1);
+        }
+
         void Write(string str) {
             var buf = Encoding.UTF8.GetBytes(str);
             Write(buf.Length);
@@ -161,6 +177,7 @@ namespace TeX2img {
             for(int i = 0; i < types.Length; ++i) {
                 if (types[i] == typeof(string)) rv[i] = ReadString();
                 else if (types[i] == typeof(int)) rv[i] = ReadInt();
+                else if (types[i] == typeof(BoundingBox)) rv[i] = ReadBoundingBox();
                 else throw new System.NotImplementedException();
             }
             return rv;

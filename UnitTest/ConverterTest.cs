@@ -61,11 +61,6 @@ namespace UnitTest {
             doGenerateTest("keep-pagesize");
         }
 
-        List<int> ToList(object var) {
-            var rv = new List<int>();
-            for(int i = 0 ; i < (int) GetProperty(var, "Count") ; ++i) rv.Add((int) GetIndexer(var, i));
-            return rv;
-        }
 
         [TestMethod]
         public void sizeTest() {
@@ -300,11 +295,11 @@ namespace UnitTest {
             Debug.WriteLine("TEST: pdfcrop");
             string cropped = Path.GetFileNameWithoutExtension(file) + "-crop.pdf";
             File.Delete(Path.Combine(WorkDir, cropped));
-            CallMethod(converter, "pdfcrop", file, cropped, true, 1, new NullArgument(BoundingBoxPairTypeName));
+            CallMethod(converter, "pdfcrop", file, cropped, true, 1, new NullArgument(typeof(BoundingBoxPair)));
             Assert.IsTrue(File.Exists(Path.Combine(WorkDir, cropped)));
             File.Copy(Path.Combine(WorkDir, cropped), Path.Combine(OutputDir, "pdfcrop-usebp.pdf"), true);
             File.Delete(Path.Combine(WorkDir, cropped));
-            CallMethod(converter, "pdfcrop", file, cropped, false, 1, new NullArgument(BoundingBoxPairTypeName));
+            CallMethod(converter, "pdfcrop", file, cropped, false, 1, new NullArgument(typeof(BoundingBoxPair)));
             Assert.IsTrue(File.Exists(Path.Combine(WorkDir, cropped)));
             File.Copy(Path.Combine(WorkDir, cropped), Path.Combine(OutputDir, "pdfcrop-nonusebp.pdf"), true);
         }
@@ -332,12 +327,12 @@ namespace UnitTest {
                 Settings.Default.transparentPngFlag = true;
                 string img = Path.ChangeExtension(file, extension);
                 File.Delete(Path.Combine(WorkDir, img));
-                CallMethod(converter, "eps2img", file, img, new NullArgument(BoundingBoxPairTypeName));
+                CallMethod(converter, "eps2img", file, img, new NullArgument(typeof(BoundingBoxPair)));
                 Assert.IsTrue(File.Exists(Path.Combine(WorkDir, img)));
                 File.Copy(Path.Combine(WorkDir, Path.ChangeExtension(file, extension)), Path.Combine(OutputDir, "eps2img-transparent" + extension), true);
                 Settings.Default.transparentPngFlag = false;
                 File.Delete(Path.Combine(WorkDir, img));
-                CallMethod(converter, "eps2img", file, img, new NullArgument(BoundingBoxPairTypeName));
+                CallMethod(converter, "eps2img", file, img, new NullArgument(typeof(BoundingBoxPair)));
                 Assert.IsTrue(File.Exists(Path.Combine(WorkDir, img)));
                 File.Copy(Path.Combine(WorkDir, Path.ChangeExtension(file, extension)), Path.Combine(OutputDir, "eps2img-notransparent" + extension), true);
             }
@@ -377,9 +372,9 @@ namespace UnitTest {
             if(dir == "") dir = OutputDir;
             else file = Path.GetFileName(file);
             using(var conv = new Converter(null, Path.Combine(dir, "dummy.tex"), file)) {
-                var bb = CallMethod(conv, "readPDFBox", Path.GetFileName(file), pages, 0);
+                var bb = (List<BoundingBoxPair>)CallMethod(conv, "readPDFBox", Path.GetFileName(file), pages, 0);
                 var rv = new List<Size>();
-                for(int i = 0 ; i < (int)GetProperty(bb, "Count") ; ++i) rv.Add(BBToSize(GetIndexer(bb, i), hires));
+                for(int i = 0 ; i < bb.Count ; ++i) rv.Add(BBToSize(bb[i], hires));
                 return rv;
             }
         }
@@ -390,8 +385,8 @@ namespace UnitTest {
             else file = Path.GetFileName(file);
             var rv = new List<Size>();
             using(var conv = new Converter(null, Path.Combine(dir, "dummy.tex"), file)) {
-                var bb = CallMethod(conv, "readPDFBB", Path.GetFileName(file), firstpage, lastpage);
-                for(int i = 0 ; i < (int) GetProperty(bb, "Count") ; ++i )rv.Add(BBToSize(GetIndexer(bb,i), hires));
+                var bb = (List<BoundingBoxPair>)CallMethod(conv, "readPDFBB", Path.GetFileName(file), firstpage, lastpage);
+                for(int i = 0 ; i < bb.Count ; ++i )rv.Add(BBToSize(bb[i], hires));
                 return rv;
             }
         }
@@ -406,18 +401,18 @@ namespace UnitTest {
                 else file = Path.GetFileName(file);
                 if(!File.Exists(Path.Combine(dir, file))) continue;
                 using(var conv = new Converter(null, Path.Combine(dir, "dummy.tex"), file)) {
-                    var bb = CallMethod(conv, "readBB", Path.GetFileName(file));
+                    var bb = (BoundingBoxPair)CallMethod(conv, "readBB", Path.GetFileName(file));
                     rv.Add(BBToSize(bb, hires));
                 }
             }
             return rv;
         }
 
-        static Size BBToSize(object bb, bool hires){
-            var hiresbb = GetField(bb, hires ? "hiresbb" : "bb");
+        static Size BBToSize(BoundingBoxPair bb, bool hires){
+            var usebb = hires ? bb.hiresbb : bb.bb;
             var size = new Size();
-            size.width = (decimal) GetProperty(hiresbb, "Right") - (decimal) GetProperty(hiresbb, "Left");
-            size.height = (decimal) GetProperty(hiresbb, "Top") - (decimal) GetProperty(hiresbb, "Bottom");
+            size.width = usebb.Width;
+            size.height = usebb.Height;
             return size;
         }
 
@@ -501,7 +496,7 @@ namespace UnitTest {
         }
 
         //string BoundingBoxPairTypeName = "TeX2img.Converter+BoundingBoxPair, TeX2img, Version=1.5.5.0, Culture=neutral, PublicKeyToken=null";
-        string BoundingBoxPairTypeName = "TeX2img.Converter+BoundingBoxPair, TeX2img";
+        //string BoundingBoxPairTypeName = "TeX2img.Converter+BoundingBoxPair, TeX2img";
         static object CallMethod(object obj, string func, params object[] args) {
             if(args.Contains(null)) {
                 return obj.GetType().GetMethod(func, System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic).Invoke(obj, args);

@@ -80,6 +80,7 @@
     <Compile Include="AlternativeDataStream.cs" />
     <Compile Include="AnalyzeLaTeXCompile.cs" />
     <Compile Include="AppleDouble.cs" />
+    <Compile Include="BoundingBox.cs" />
     <Compile Include="Converter.cs" />
     <Compile Include="CUIOutput.cs" />
     <Compile Include="TempFilesDeleter.cs" />

@@ -86,7 +86,7 @@ namespace TeX2img.Properties {
             SetValues();
             //SaveSettings = true;
             batchMode = BatchMode.Default;
-            timeOut = 10;
+            timeOut = 10000;
         }
 
         #region TeX関連パスの推定

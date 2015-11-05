@@ -110,11 +110,14 @@ namespace mudraw {
 		::std::vector<Annot> annots;
 		template<typename T> T Read();
 		void Write(string str) {
-			Write(str.length());
+			Write((int)str.length());
 			::std::cout << str << ::std::endl;
 		}
 		void Write(int num) {
-			::std::cout << num << ::std::endl;;
+			::std::cout << std::to_string(num) << ::std::endl;;
+		}
+		void Write(float num){
+			::std::cout << std::to_string(num) << ::std::endl;
 		}
 		void Write(fz_rect rect) {
 			Write(rect.x0);
