@@ -133,6 +133,10 @@ namespace mudraw {
 			context = fz_new_context(NULL, NULL, FZ_STORE_DEFAULT);
 			if (context == nullptr)throw runtime_error("failed to get MuPDF context");
 		}
+		vector<string> args;
+		void SetArgs(int argc, char** argv){
+			for(int i = 0; i < argc; ++i)args.push_back(argv[i]);
+		}
 		~Interactive() {
 			free_all();
 			context->error = 0;

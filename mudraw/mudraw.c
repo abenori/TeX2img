@@ -826,7 +826,7 @@ trace_realloc(void *arg, void *p_, unsigned int size)
 	return &p[1];
 }
 
-int Interactive();
+int Interactive(int argc, char **argv);
 int InteractiveCheck(int argc, char **argv) {
 	int i = 0;
 	for (i = 0; i < argc; ++i) {
@@ -844,7 +844,7 @@ int main(int argc, char **argv)
 	fz_alloc_context alloc_ctx = { NULL, trace_malloc, trace_realloc, trace_free };
 
 	if (InteractiveCheck(argc, argv)) {
-		return Interactive();
+		return Interactive(argc, argv);
 	}
 
 	fz_var(doc);

@@ -1,4 +1,4 @@
-/*
+/*k
 コンパイル：SumatraPDFのソースを使っている．
 mudrawにパッチを当てる．
 Interactive.cppとInteractive.hを入れる．
@@ -10,12 +10,13 @@ Interactive.cppとInteractive.hを入れる．
 #include <map>
 #undef max
 
-extern "C" int Interactive() {
+extern "C" int Interactive(int argc, char **argv) {
 	::_setmode(::_fileno(stdout), _O_BINARY);
 	::_setmode(::_fileno(stdin), _O_BINARY);
 	::_setmode(::_fileno(stderr), _O_BINARY);
 	try {
 		mudraw::Interactive interactive;
+		interactive.SetArgs(argc, argv);
 		return interactive.Main();
 	}
 	catch (std::runtime_error) {
@@ -39,7 +40,11 @@ namespace mudraw {
 	}
 
 	template<> std::string Interactive::Read<std::string>() {
-		int len = Read<int>();
+		string fline;
+		std::cin >> fline;
+		if(fline[0] == '%')return args[std::atoi(fline.substr(1).c_str())];
+		skip_line();
+		int len = std::atoi(fline.c_str());
 		std::vector<char> buf;
 		buf.resize(len + 1);
 		std::cin.read(&buf[0], len);
