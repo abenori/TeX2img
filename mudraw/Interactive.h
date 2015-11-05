@@ -168,14 +168,6 @@ namespace mudraw {
 			::pdf_bound_page(p.document, p.page, &rect);
 			return rect;
 		}
-		fz_rect mediabox_page(int page){
-			auto p = pages[page - 1];
-			return p.page->mediabox;
-		}
-		int rotate_page(int page){
-			auto p = pages[page - 1];
-			return p.page->rotate;
-		}
 		int first_annot(int page) {
 			auto p = pages[page - 1];
 			auto a = ::pdf_first_annot(p.document, p.page);
@@ -251,6 +243,44 @@ namespace mudraw {
 		}
 		void delete_page_range(int doc, int start, int end) {
 			::pdf_delete_page_range(documents[doc - 1], start, end);
+		}
+		int rotate_page(int page){
+			auto p = pages[page - 1];
+			return p.page->rotate;
+		}
+		fz_rect pdfbox_page(int page, const string &boxname){
+			auto p = pages[page - 1];
+			if(boxname == "media")return GetMediaBox(p);
+			else if(boxname == "crop")return GetCropBox(p);
+			else if(boxname == "bleed")return GetOtherBox(p, "BleedBox");
+			else if(boxname == "trim")return GetOtherBox(p, "TrimBox");
+			else if(boxname == "art")return GetOtherBox(p, "ArtBox");
+			else fz_throw(context, 1, (string("unknown boxname: ") + boxname).c_str());
+		}
+		fz_rect GetMediaBox(Page &p){
+			fz_rect rect;
+			::pdf_to_rect(context, pdf_lookup_inherited_page_item(p.document, p.page->me, "MediaBox"), &rect);
+			return rect;
+		}
+		fz_rect GetCropBox(Page &p){
+			auto media = GetMediaBox(p);
+			fz_rect rect;
+			::pdf_to_rect(context, pdf_lookup_inherited_page_item(p.document, p.page->me, "CropBox"), &rect);
+			if(fz_is_empty_rect(&rect))return media;
+			else{
+				::fz_intersect_rect(&rect, &media);
+				return rect;
+			}
+		}
+		fz_rect GetOtherBox(Page &p, const char *boxname){
+			fz_rect rect;
+			::pdf_to_rect(context, pdf_lookup_inherited_page_item(p.document, p.page->me, boxname), &rect);
+			if(fz_is_empty_rect(&rect))return GetCropBox(p);
+			else{
+				auto media = GetMediaBox(p);
+				::fz_intersect_rect(&rect, &media);
+				return rect;
+			}
 		}
 	};
 }// namespace mudraw

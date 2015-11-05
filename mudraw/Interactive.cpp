@@ -75,8 +75,6 @@ namespace mudraw {
 					Write(load_page(doc, page));
 				} else if(func == "count_pages")Write(count_pages(Read<int>()));
 				else if(func == "bound_page")Write(bound_page(Read<int>()));
-				else if(func == "mediabox_page")Write(mediabox_page(Read<int>()));
-				else if(func == "rotate_page")Write(rotate_page(Read<int>()));
 				else if(func == "annot_type") Write(fz_annot_type_to_str(annot_type(Read<int>())));
 				else if(func == "first_annot") Write(first_annot(Read<int>()));
 				else if(func == "next_annot") Write(next_annot(Read<int>()));
@@ -125,6 +123,11 @@ namespace mudraw {
 					delete_page_range(doc, start, end);
 					Write("");
 				} else if(func == "free_all")free_all();
+				else if(func == "pdfbox_page"){
+					int page = Read<int>();
+					string boxname = Read<string>();
+					Write(pdfbox_page(page, boxname));
+				} else if(func == "rotate_page")Write(rotate_page(Read<int>()));
 				else fz_throw(context, 1, ("function " + func + " is not defined").c_str());
 			}
 			fz_catch(context) {

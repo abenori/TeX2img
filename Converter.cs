@@ -162,100 +162,38 @@ namespace TeX2img {
             return new BoundingBoxPair(bb, hiresbb);
         }
 
-        // boxは\pdfpageboxと同じ
-        List<BoundingBoxPair> readPDFBox(string inputPDFFileName, List<int> pages, int box = 0) {
+        List<BoundingBoxPair> readPDFBox(string inputPDFFileName, List<int> pages, string boxname) {
             using (var mupdf = new MuPDF(Path.Combine(GetToolsPath(), "mudraw.exe"))) {
+                if (controller_ != null) controller_.appendOutput("Getting the size of PDFBox...\n");
+                var rv = new List<BoundingBoxPair>();
                 var doc = (int)mupdf.Execute("open_document", typeof(int), Path.Combine(workingDir, inputPDFFileName));
                 if (doc == 0) return null;
-                var rv = new List<BoundingBoxPair>();
-                var tmpfile = TempFilesDeleter.GetTempFileName(".tex", workingDir);
-                tempFilesDeleter.AddTeXFile(Path.Combine(workingDir, Path.GetFileNameWithoutExtension(tmpfile)));
-                using (var fw = new StreamWriter(Path.Combine(workingDir, tmpfile))) {
-                    fw.WriteLine(@"\pdfpagebox=" + box.ToString() + @"\relax");
-                    fw.WriteLine(@"\message{^^J1bp=\the\dimexpr 1bp\relax^^J}");
-                    fw.WriteLine(@"\newdimen\dimtop\newdimen\dimleft\newdimen\dimbottom\newdimen\dimright");
-                    fw.WriteLine(@"\catcode37=12\relax");
-                    fw.WriteLine(@"\def\space{ }");
-                    foreach (var p in pages) {
-                        var page = (int)mupdf.Execute("load_page", typeof(int), doc, p - 1);
-                        var rotate = (int)mupdf.Execute("rotate_page", typeof(int), page);
-                        fw.WriteLine(@"\pdfximage page " + p.ToString() + "{" + inputPDFFileName + "}");
-                        fw.WriteLine(@"\dimleft=\pdfximagebbox\pdflastximage1\relax");
-                        fw.WriteLine(@"\dimbottom=\pdfximagebbox\pdflastximage2\relax");
-                        fw.WriteLine(@"\dimright=\pdfximagebbox\pdflastximage3\relax");
-                        fw.WriteLine(@"\dimtop=\pdfximagebbox\pdflastximage4\relax");
-                        fw.WriteLine(@"\pdfximage page " + p.ToString() + " mediabox{" + inputPDFFileName + "}");
-                        string str = "";
-                        switch (rotate) {
-                        default:
-                        case 0:
-                            str +=
-                                @"\the\dimexpr\dimleft - \pdfximagebbox\pdflastximage1\relax \space" +
-                                @"\the\dimexpr\dimbottom - \pdfximagebbox\pdflastximage2\relax \space" +
-                                @"\the\dimexpr\dimright - \pdfximagebbox\pdflastximage1\relax \space" +
-                                @"\the\dimexpr\dimtop - \pdfximagebbox\pdflastximage2\relax";
-                            break;
-                        case 90:
-                            str +=
-                                @"\the\dimexpr\dimbottom - \pdfximagebbox\pdflastximage2\relax \space" +
-                                @"\the\dimexpr\pdfximagebbox\pdflastximage3 - \dimright\relax \space" +
-                                @"\the\dimexpr\dimtop - \pdfximagebbox\pdflastximage2\relax \space" +
-                                @"\the\dimexpr\pdfximagebbox\pdflastximage3 - \dimleft\relax";
-                            break;
-                        case 180:
-                            str +=
-                                @"\the\dimexpr\pdfximagebbox\pdflastximage3 - \dimright\relax \space" +
-                                @"\the\dimexpr\pdfximagebbox\pdflastximage4 - \dimtop\relax \space" +
-                                @"\the\dimexpr\pdfximagebbox\pdflastximage3 - \dimleft\relax \space" +
-                                @"\the\dimexpr\pdfximagebbox\pdflastximage4 - \dimbottom\relax";
-                            break;
-                        case 270:
-                            str +=
-                                @"\the\dimexpr\pdfximagebbox\pdflastximage4 - \dimtop\relax \space" +
-                                @"\the\dimexpr\dimleft - \pdfximagebbox\pdflastximage1\relax \space" +
-                                @"\the\dimexpr\pdfximagebbox\pdflastximage4 - \dimbottom\relax \space" +
-                                @"\the\dimexpr\dimright - \pdfximagebbox\pdflastximage1\relax";
-                            break;
-                        }
-                        fw.WriteLine(@"\message{^^J%%BoundingBox: " + str + "^^J}");
+                foreach(var p in pages) {
+                    var page = (int)mupdf.Execute("load_page", typeof(int), doc, p - 1);
+                    var media = (BoundingBox)mupdf.Execute("pdfbox_page", typeof(BoundingBox), page,"media");
+                    var box = (BoundingBox)mupdf.Execute("pdfbox_page", typeof(BoundingBox), page, boxname);
+                    var rotate = (int)mupdf.Execute("rotate_page", typeof(int), page);
+                    BoundingBox bb;
+                    switch (rotate) {
+                    default:
+                    case 0:
+                        bb = new BoundingBox(box.Left - media.Left, box.Bottom - media.Bottom, box.Right - media.Left, box.Top - media.Bottom);
+                        break;
+                    case 90:
+                        bb = new BoundingBox(box.Bottom - media.Bottom, media.Right - box.Right, box.Top - media.Bottom, media.Right - box.Left);
+                        break;
+                    case 180:
+                        bb = new BoundingBox(media.Right - box.Right, media.Top - box.Top, media.Right - box.Left, media.Top - box.Bottom);
+                        break;
+                    case 270:
+                        bb = new BoundingBox(media.Top - box.Top, box.Left - media.Left, media.Top - box.Bottom, box.Right - media.Left);
+                        break;
                     }
-                    fw.WriteLine(@"\bye");
+                    if (controller_ != null) controller_.appendOutput(bb.ToString() + "\n");
+                    rv.Add(new BoundingBoxPair(bb.HiresBBToBB(), bb));
                 }
-                using (var proc = GetProcess()) {
-                    proc.StartInfo.FileName = GetpdftexPath();
-                    proc.StartInfo.Arguments = "-no-shell-escape -interaction=nonstopmode \"" + tmpfile + "\"";
-                    Action<string> err_read = s => System.Diagnostics.Debug.WriteLine(s);
-                    decimal bp = (decimal)72.27 / 72;
-                    Regex regexBB = new Regex(@"^\%\%(HiRes)?BoundingBox\: ([-\d\.]+)pt ([-\d\.]+)pt ([-\d\.]+)pt ([-\d\.]+)pt$");
-                    Regex readbppt = new Regex(@"^1bp=([-\d\.]+)pt");
-                    Action<string> std_read = line => {
-                        if (controller_ != null) controller_.appendOutput(line + "\n");
-                        var match = readbppt.Match(line);
-                        if (match.Success) {
-                            bp = System.Convert.ToDecimal(match.Groups[1].Value);
-                        } else {
-                            match = regexBB.Match(line);
-                            if (match.Success) {
-                                var hiresbb = new BoundingBox(
-                                    System.Convert.ToDecimal(match.Groups[2].Value) / bp,
-                                    System.Convert.ToDecimal(match.Groups[3].Value) / bp,
-                                    System.Convert.ToDecimal(match.Groups[4].Value) / bp,
-                                    System.Convert.ToDecimal(match.Groups[5].Value) / bp);
-                                rv.Add(new BoundingBoxPair(hiresbb.HiresBBToBB(), hiresbb));
-                            }
-                        }
-                    };
-                    try {
-                        printCommandLine(proc);
-                        ReadOutputs(proc, "BoundingBox の取得", std_read, err_read);
-                    }
-                    catch (Win32Exception) {
-                        if (controller_ != null) controller_.showPathError("pdftex.exe", "TeX ディストリビューション");
-                        return null;
-                    }
-                }
-                if (rv.Count != pages.Count) return null;
-                else return rv;
+                if (controller_ != null) controller_.appendOutput("\n");
+                return rv;
             }
         }
 
@@ -1046,16 +984,7 @@ namespace TeX2img {
             // boundingBoxを取得
             var bbs = new List<BoundingBoxPair>();
             if(Properties.Settings.Default.keepPageSize) {
-                int pdfboxnumber = 0;
-                switch(Properties.Settings.Default.pagebox) {
-                case "media": pdfboxnumber = 1; break;
-                case "crop": pdfboxnumber = 2; break;
-                case "bleed": pdfboxnumber = 3; break;
-                case "trim": pdfboxnumber = 4; break;
-                case "art": pdfboxnumber = 5; break;
-                default: pdfboxnumber = 0; break;
-                }
-                bbs = readPDFBox(tmpFileBaseName + ".pdf", new List<int>(Enumerable.Range(1, page)), pdfboxnumber);
+                bbs = readPDFBox(tmpFileBaseName + ".pdf", new List<int>(Enumerable.Range(1, page)), Properties.Settings.Default.pagebox);
             } else {
                 bbs = readPDFBB(tmpFileBaseName + ".pdf", 1, page);
             }
