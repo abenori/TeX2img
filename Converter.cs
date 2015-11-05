@@ -792,19 +792,14 @@ namespace TeX2img {
         #region 画像結合
         bool pdfconcat(List<string> files, string output, int boxnumber = 0) {
             using(var proc = GetProcess()) {
-                string arg;
-                proc.StartInfo.FileName = setProcStartInfo(Properties.Settings.Default.gsPath, out arg);
-                if (proc.StartInfo.FileName == "") {
-                    if (controller_ != null) controller_.showPathError("gswin32c.exe", "Ghostscript");
-                    return false;
-                }
-                proc.StartInfo.Arguments = arg + "-q -sDEVICE=pdfwrite -dAutoRotatePages=/None -dNOPAUSE -dBATCH -sOutputFile=\"" + output + "\" -c .setpdfwrite -f \"" + String.Join("\" \"", files.ToArray()) + "\"";
+                proc.StartInfo.FileName = Path.Combine(GetToolsPath(), "pdfiumdraw.exe");
+                proc.StartInfo.Arguments = "--merge --pdf --output=" + output + " \"" + String.Join("\" \"", files.ToArray()) + "\"";
                 try {
                     printCommandLine(proc);
-                    ReadOutputs(proc, "Ghostscript の実行");
+                    ReadOutputs(proc, "pdfiumdraw の実行");
                 }
                 catch (Win32Exception) {
-                    if (controller_ != null) controller_.showPathError(proc.StartInfo.FileName, "Ghostscript ");
+                    if (controller_ != null) controller_.showToolError("pdfiumdraw");
                     return false;
                 }
                 catch (TimeoutException) { return false; }

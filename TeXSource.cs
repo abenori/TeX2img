@@ -114,9 +114,8 @@ namespace TeX2img {
                     using(var proc = new System.Diagnostics.Process()) {
                         var tmp2 = TempFilesDeleter.GetTempFileName(".pdf", tmpdir);
                         tmp_deleter.AddFile(tmp2);
-                        string arg;
-                        proc.StartInfo.FileName = Converter.setProcStartInfo(Properties.Settings.Default.gsPath, out arg);
-                        proc.StartInfo.Arguments = arg + " -dBATCH -dNOPAUSE -q -sDEVICE=pdfwrite -dAutoRotatePages=/None -sOutputFile=\"" + tmp2 + "\"  -c .setpdfwrite -f\"" + tmp + "\"";
+                        proc.StartInfo.FileName = Path.Combine(Converter.GetToolsPath(), "pdfiumdraw.exe");
+                        proc.StartInfo.Arguments = "--pdf --output=\"" + tmp2 + "\" \"" + tmp + "\"";
                         proc.StartInfo.WorkingDirectory = tmpdir;
                         proc.StartInfo.CreateNoWindow = true;
                         proc.StartInfo.UseShellExecute = false;
