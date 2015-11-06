@@ -296,3 +296,6 @@ https://code.google.com/p/pdfium/
 * 1.6.7
     - /load-defaults すると /timeout が 0.01 秒に設定されてしまっていたバグを修正．
     - PDF の Box の取得を，pdftex から MuPDF によるものに変更．さらに回転を考慮するようにした．
+    - PDF 結合を PDFium で行うようにした．
+    - MuPDF で注釈を追加したファイルにさらに Ghostscript をかけていたのをやめた．
+

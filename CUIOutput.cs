@@ -39,6 +39,10 @@ namespace TeX2img {
             Console.WriteLine(filePath + "\nが他のアプリケーション開かれているため生成できませんでした。\nこのファイルを開いているアプリケーションを閉じて再試行してください。");
         }
 
+        public void showError(string msg) {
+            Console.WriteLine(msg);
+        }
+
         public bool askYesorNo(string msg) {
             Console.WriteLine(msg + "（y/n）");
             while(true) {

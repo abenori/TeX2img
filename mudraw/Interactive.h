@@ -270,7 +270,7 @@ namespace mudraw {
 			auto media = GetMediaBox(p);
 			fz_rect rect;
 			::pdf_to_rect(context, pdf_lookup_inherited_page_item(p.document, p.page->me, "CropBox"), &rect);
-			if(fz_is_empty_rect(&rect))return media;
+			if(::fz_is_empty_rect(&rect))return media;
 			else{
 				::fz_intersect_rect(&rect, &media);
 				return rect;
@@ -279,7 +279,7 @@ namespace mudraw {
 		fz_rect GetOtherBox(Page &p, const char *boxname){
 			fz_rect rect;
 			::pdf_to_rect(context, pdf_lookup_inherited_page_item(p.document, p.page->me, boxname), &rect);
-			if(fz_is_empty_rect(&rect))return GetCropBox(p);
+			if(::fz_is_empty_rect(&rect))return GetCropBox(p);
 			else{
 				auto media = GetMediaBox(p);
 				::fz_intersect_rect(&rect, &media);

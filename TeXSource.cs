@@ -51,7 +51,10 @@ namespace TeX2img {
         public static void EmbedSource(string file, string text) {
             // 拡張子毎の処理（あれば）
             var ext = Path.GetExtension(file);
-            if (ExtraEmbed.ContainsKey(ext)) ExtraEmbed[ext](file, text);
+            if (ExtraEmbed.ContainsKey(ext)) {
+                try { ExtraEmbed[ext](file, text); }
+                catch (Exception e) { System.Diagnostics.Debug.WriteLine(e.Data); }
+            }
 
             // Alternative Data Streamにソースを書き込む
             try {
@@ -93,7 +96,7 @@ namespace TeX2img {
             { ".pdf",PDFRead },
         };
 
-        static void PDFEmbed(string file,string text) {
+        static void PDFEmbed(string file, string text) {
             var tmpdir = Path.GetTempPath();
             var tmp = TempFilesDeleter.GetTempFileName(".pdf", tmpdir);
             tmp = Path.Combine(tmpdir, tmp);
@@ -111,30 +114,8 @@ namespace TeX2img {
                     mupdf.Execute("write_document", doc, tmp);
                 }
                 if (File.Exists(tmp)) {
-                    using(var proc = new System.Diagnostics.Process()) {
-                        var tmp2 = TempFilesDeleter.GetTempFileName(".pdf", tmpdir);
-                        tmp_deleter.AddFile(tmp2);
-                        proc.StartInfo.FileName = Path.Combine(Converter.GetToolsPath(), "pdfiumdraw.exe");
-                        proc.StartInfo.Arguments = "--pdf --output=\"" + tmp2 + "\" \"" + tmp + "\"";
-                        proc.StartInfo.WorkingDirectory = tmpdir;
-                        proc.StartInfo.CreateNoWindow = true;
-                        proc.StartInfo.UseShellExecute = false;
-                        proc.StartInfo.RedirectStandardError = true;
-                        proc.StartInfo.RedirectStandardOutput = true;
-                        proc.ErrorDataReceived += (s,e) => System.Diagnostics.Debug.WriteLine(e.Data);
-                        proc.OutputDataReceived += (s,e) => System.Diagnostics.Debug.WriteLine(e.Data);
-                        proc.Start();
-                        proc.BeginOutputReadLine();
-                        proc.BeginErrorReadLine();
-                        proc.WaitForExit(1000);
-                        if (!proc.HasExited) proc.Kill();
-
-                        tmp2 = Path.Combine(tmpdir, tmp2);
-                        if (File.Exists(tmp2)) {
-                            File.Delete(file);
-                            File.Move(tmp2, file);
-                        }
-                    }
+                    File.Delete(file);
+                    File.Move(tmp, file);
                 }
             }
         }

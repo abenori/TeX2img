@@ -15,6 +15,7 @@ namespace TeX2img
         void scrollOutputTextBoxToEnd();
         void showUnauthorizedError(string filePath);
         void showIOError(string filePath);
+        void showError(string msg);
 		bool askYesorNo(string msg);
         void showToolError(string tool);
         void errorIgnoredWarning();

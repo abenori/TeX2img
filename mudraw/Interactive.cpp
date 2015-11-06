@@ -1,8 +1,16 @@
 /*
 コンパイル：SumatraPDFのソースを使っている．
+
 mudrawにパッチを当てる．
+
+SumatraPDFソースツリー内，pdf-write.cのwritexref内の
+fprintf(opts->out, "\n");
+を消す．
+
 Interactive.cppとInteractive.hを入れる．
+
 二つの言語をC++にして，例外を有効にする．
+
 適当に警告をエラー扱いするのをやめる．
 */
 

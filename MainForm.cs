@@ -240,6 +240,10 @@ namespace TeX2img {
             MessageBox.Show(filePath + "\nが他のアプリケーション開かれているため生成できませんでした。\nこのファイルを開いているアプリケーションを閉じて再試行してください。", "画像生成失敗", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
 
+        public void showError(string msg) {
+            MessageBox.Show(msg, "TeX2img");
+        }
+
         public bool askYesorNo(string msg) {
             return (MessageBox.Show(msg, "TeX2img", MessageBoxButtons.YesNo) == System.Windows.Forms.DialogResult.Yes);
         }

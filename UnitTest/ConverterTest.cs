@@ -482,6 +482,7 @@ namespace UnitTest {
         public void showIOError(string filePath) { Debug.WriteLine("showIOError: filePath = " + filePath); }
         public void showToolError(string tool) { Debug.WriteLine("showToolError: tool = " + tool); }
         public void errorIgnoredWarning() { Debug.WriteLine("errorIgnoredWarning"); }
+        public void showError(string msg) { Debug.WriteLine("showError: msg = " + msg); }
         public bool askYesorNo(string msg) {
             Debug.WriteLine("askYesorNo: msg = \n" + msg);
             return true;

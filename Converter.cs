@@ -163,37 +163,42 @@ namespace TeX2img {
         }
 
         List<BoundingBoxPair> readPDFBox(string inputPDFFileName, List<int> pages, string boxname) {
-            using (var mupdf = new MuPDF(Path.Combine(GetToolsPath(), "mudraw.exe"))) {
-                if (controller_ != null) controller_.appendOutput("Getting the size of PDFBox...\n");
-                var rv = new List<BoundingBoxPair>();
-                var doc = (int)mupdf.Execute("open_document", typeof(int), Path.Combine(workingDir, inputPDFFileName));
-                if (doc == 0) return null;
-                foreach(var p in pages) {
-                    var page = (int)mupdf.Execute("load_page", typeof(int), doc, p - 1);
-                    var media = (BoundingBox)mupdf.Execute("pdfbox_page", typeof(BoundingBox), page,"media");
-                    var box = (BoundingBox)mupdf.Execute("pdfbox_page", typeof(BoundingBox), page, boxname);
-                    var rotate = (int)mupdf.Execute("rotate_page", typeof(int), page);
-                    BoundingBox bb;
-                    switch (rotate) {
-                    default:
-                    case 0:
-                        bb = new BoundingBox(box.Left - media.Left, box.Bottom - media.Bottom, box.Right - media.Left, box.Top - media.Bottom);
-                        break;
-                    case 90:
-                        bb = new BoundingBox(box.Bottom - media.Bottom, media.Right - box.Right, box.Top - media.Bottom, media.Right - box.Left);
-                        break;
-                    case 180:
-                        bb = new BoundingBox(media.Right - box.Right, media.Top - box.Top, media.Right - box.Left, media.Top - box.Bottom);
-                        break;
-                    case 270:
-                        bb = new BoundingBox(media.Top - box.Top, box.Left - media.Left, media.Top - box.Bottom, box.Right - media.Left);
-                        break;
+            try {
+                using (var mupdf = new MuPDF(Path.Combine(GetToolsPath(), "mudraw.exe"))) {
+                    if (controller_ != null) controller_.appendOutput("Getting the size of PDFBox...\n");
+                    var rv = new List<BoundingBoxPair>();
+                    var doc = (int)mupdf.Execute("open_document", typeof(int), Path.Combine(workingDir, inputPDFFileName));
+                    if (doc == 0) return null;
+                    foreach (var p in pages) {
+                        var page = (int)mupdf.Execute("load_page", typeof(int), doc, p - 1);
+                        var media = (BoundingBox)mupdf.Execute("pdfbox_page", typeof(BoundingBox), page, "media");
+                        var box = (BoundingBox)mupdf.Execute("pdfbox_page", typeof(BoundingBox), page, boxname);
+                        var rotate = (int)mupdf.Execute("rotate_page", typeof(int), page);
+                        BoundingBox bb;
+                        switch (rotate) {
+                        default:
+                        case 0:
+                            bb = new BoundingBox(box.Left - media.Left, box.Bottom - media.Bottom, box.Right - media.Left, box.Top - media.Bottom);
+                            break;
+                        case 90:
+                            bb = new BoundingBox(box.Bottom - media.Bottom, media.Right - box.Right, box.Top - media.Bottom, media.Right - box.Left);
+                            break;
+                        case 180:
+                            bb = new BoundingBox(media.Right - box.Right, media.Top - box.Top, media.Right - box.Left, media.Top - box.Bottom);
+                            break;
+                        case 270:
+                            bb = new BoundingBox(media.Top - box.Top, box.Left - media.Left, media.Top - box.Bottom, box.Right - media.Left);
+                            break;
+                        }
+                        if (controller_ != null) controller_.appendOutput(bb.ToString() + "\n");
+                        rv.Add(new BoundingBoxPair(bb.HiresBBToBB(), bb));
                     }
-                    if (controller_ != null) controller_.appendOutput(bb.ToString() + "\n");
-                    rv.Add(new BoundingBoxPair(bb.HiresBBToBB(), bb));
+                    if (controller_ != null) controller_.appendOutput("\n");
+                    return rv;
                 }
-                if (controller_ != null) controller_.appendOutput("\n");
-                return rv;
+            }
+            catch (Exception) {
+                return null;
             }
         }
 
@@ -984,7 +989,7 @@ namespace TeX2img {
                 bbs = readPDFBB(tmpFileBaseName + ".pdf", 1, page);
             }
             if (bbs == null) {
-                controller_.appendOutput("BoundigBox の取得に失敗しました．");
+                controller_.showError("BoundigBox の取得に失敗しました．");
                 return false;
             }
 
