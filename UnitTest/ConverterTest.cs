@@ -372,7 +372,7 @@ namespace UnitTest {
             if(dir == "") dir = OutputDir;
             else file = Path.GetFileName(file);
             using(var conv = new Converter(null, Path.Combine(dir, "dummy.tex"), file)) {
-                var bb = (List<BoundingBoxPair>)CallMethod(conv, "readPDFBox", Path.GetFileName(file), pages, 0);
+                var bb = (List<BoundingBoxPair>)CallMethod(conv, "readPDFBox", Path.GetFileName(file), pages, "crop");
                 var rv = new List<Size>();
                 for(int i = 0 ; i < bb.Count ; ++i) rv.Add(BBToSize(bb[i], hires));
                 return rv;
@@ -453,8 +453,8 @@ namespace UnitTest {
         bool CheckBitmapImageSize(List<Size> original, List<Size> gend) {
             int j = 0;
             for(int i = 0 ; i < original.Count ; ++i) {
-                var width = original[i].width * Settings.Default.resolutionScale;
-                var height = original[i].height * Settings.Default.resolutionScale;
+                var width = original[i].width * Settings.Default.resolutionScale + 2;
+                var height = original[i].height * Settings.Default.resolutionScale + 2;
                 var addwidth = Settings.Default.leftMargin + Settings.Default.rightMargin;
                 var addheight = Settings.Default.topMargin + Settings.Default.bottomMargin;
                 if(Settings.Default.yohakuUnitBP) {

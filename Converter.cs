@@ -662,7 +662,6 @@ namespace TeX2img {
                 decimal marginmult = Properties.Settings.Default.yohakuUnitBP ? Properties.Settings.Default.resolutionScale : 1;
                 int width = (int)(origbb.hiresbb.Width * Properties.Settings.Default.resolutionScale + (Properties.Settings.Default.leftMargin + Properties.Settings.Default.rightMargin) * marginmult + 2);
                 int height = (int)(origbb.hiresbb.Height * Properties.Settings.Default.resolutionScale + (Properties.Settings.Default.topMargin + Properties.Settings.Default.bottomMargin) * marginmult + 2);
-                controller_.appendOutput("Original Height = " + origbb.hiresbb.Height + ", height = " + height + "\n");
                 proc.StartInfo.Arguments = arg;
                 proc.StartInfo.Arguments += String.Format(
                     "-q -sDEVICE={0} -sOutputFile={1} -dNOPAUSE -dBATCH -dPDFFitPage -dTextAlphaBits={2} -dGraphicsAlphaBits={2} -r{3} -g{4}x{5} \"{6}\"",
@@ -1342,11 +1341,9 @@ namespace TeX2img {
                 case "jis": return Encoding.GetEncoding("iso-2022-jp");
                 case "euc": return Encoding.GetEncoding("euc-jp");
                 case "_utf8":
-                    if(!IsupTeX(latex) && !arg.Contains("-kanji")) return Encoding.GetEncoding("shift_jis");
-                    else return Encoding.UTF8;
                 case "_sjis":
                 default:
-                    if(IsupTeX(latex) && arg.Contains("-kanji")) return Encoding.GetEncoding("shift_jis");
+                    if(!IsupTeX(latex) && !arg.Contains("-kanji")) return Encoding.GetEncoding("shift_jis"); 
                     else return Encoding.UTF8;
                 }
             } else return Encoding.UTF8;
