@@ -298,4 +298,4 @@ https://code.google.com/p/pdfium/
     - PDF の Box の取得を，pdftex から MuPDF によるものに変更．さらに回転を考慮するようにした．
     - PDF 結合を PDFium で行うようにした．
     - MuPDF で注釈を追加したファイルにさらに Ghostscript をかけていたのをやめた．
-
+    - 作成される EMF を縦横 10 倍のものとした．

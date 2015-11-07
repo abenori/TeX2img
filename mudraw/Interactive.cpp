@@ -23,8 +23,7 @@ extern "C" int Interactive(int argc, char **argv) {
 	::_setmode(::_fileno(stdin), _O_BINARY);
 	::_setmode(::_fileno(stderr), _O_BINARY);
 	try {
-		mudraw::Interactive interactive;
-		interactive.SetArgs(argc, argv);
+		mudraw::Interactive interactive(argc, argv);
 		return interactive.Main();
 	}
 	catch (std::runtime_error) {
@@ -102,41 +101,45 @@ namespace mudraw {
 					int x = Read<int>();
 					int y = Read<int>();
 					set_text_annot_position(annot, x, y);
-					Write("");
+					cout << endl;
 				} else if(func == "set_annot_contents") {
 					int annot = Read<int>();
 					auto contents = Read<string>();
 					set_annot_contents(annot, contents);
-					Write("");
+					cout << endl;
 				} else if(func == "set_annot_flag") {
 					int annot = Read<int>();
 					int flag = Read<int>();
 					set_annot_flag(annot, flag);
-					Write("");
+					cout << endl;
+				} else if(func == "create_document"){
+                    Write(create_document());
 				} else if(func == "write_document") {
 					auto doc = Read<int>();
 					auto file = Read<string>();
 					write_document(doc, file);
-					Write("");
+					cout << endl;
 				} else if(func == "insert_page") {
 					int doc = Read<int>();
 					int page = Read<int>();
 					int at = Read<int>();
 					insert_page(doc, page, at);
-					Write("");
+					cout << endl;
 				} else if(func == "delete_page") {
 					int doc = Read<int>();
 					int number = Read<int>();
 					delete_page(doc, number);
-					Write("");
+					cout << endl;
 				} else if(func == "delete_page_range") {
 					int doc = Read<int>();
 					int start = Read<int>();
 					int end = Read<int>();
 					delete_page_range(doc, start, end);
-					Write("");
-				} else if(func == "free_all")free_all();
-				else if(func == "pdfbox_page"){
+					cout << endl;
+				} else if(func == "free_all"){
+					free_all();
+					cout << endl;
+				} else if(func == "pdfbox_page"){
 					int page = Read<int>();
 					string boxname = Read<string>();
 					Write(pdfbox_page(page, boxname));

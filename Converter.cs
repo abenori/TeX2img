@@ -796,8 +796,30 @@ namespace TeX2img {
         #endregion
 
         #region 画像結合
-        bool pdfconcat(List<string> files, string output, int boxnumber = 0) {
-            using(var proc = GetProcess()) {
+        bool pdfconcat(List<string> files, string output) { 
+            /*
+            try {
+                using (var mupdf = new MuPDF(Path.Combine(GetToolsPath(), "mudraw.exe"))) {
+                    var outdoc = (int)mupdf.Execute("create_document", typeof(int));
+                    int pos = 0;
+                    foreach (var f in files) {
+                        var doc = (int)mupdf.Execute("open_document", typeof(int), Path.Combine(workingDir, f));
+                        int pagecount = (int)mupdf.Execute("count_pages", typeof(int), doc);
+                        for (int i = 0; i < pagecount; ++i) {
+                            var page = (int)mupdf.Execute("load_page", typeof(int), doc, i);
+                            mupdf.Execute("insert_page", outdoc, page, pos);
+                            ++pos;
+                        }
+                    }
+                    mupdf.Execute("write_document", outdoc, Path.Combine(workingDir, output));
+                }
+                return true;
+            }
+            catch (Exception e) {
+                System.Diagnostics.Debug.WriteLine("pdfconcat: " + e.Message);
+                return false;
+            }*/
+            using (var proc = GetProcess()) {
                 proc.StartInfo.FileName = Path.Combine(GetToolsPath(), "pdfiumdraw.exe");
                 proc.StartInfo.Arguments = "--merge --pdf --output=" + output + " \"" + String.Join("\" \"", files.ToArray()) + "\"";
                 try {
@@ -981,6 +1003,10 @@ namespace TeX2img {
 
             // ページ数を取得
             int page = pdfpages(Path.Combine(workingDir, tmpFileBaseName + ".pdf"));
+            if(page == -1) {
+                controller_.showError("生成された PDF のページ数の取得に失敗．");
+                return false;
+            }
 
             // boundingBoxを取得
             var bbs = new List<BoundingBoxPair>();
@@ -1105,7 +1131,7 @@ namespace TeX2img {
                 case ".gif": merged = gifconcat(files, tempfile, Properties.Settings.Default.animationDelay, Properties.Settings.Default.animationLoop); break;
                 default: break;
                 }
-                if(merged != null) {
+                if (merged != null) {
                     if(merged.Value) {
                         try {
                             File.Delete(Path.Combine(workingDir, tmpFileBaseName + "-1" + extension));
@@ -1168,7 +1194,18 @@ namespace TeX2img {
                         source.Read(buf, 0, (int)source.Length);
                         // エンコードの決定
                         var enc = KanjiEncoding.CheckBOM(buf);
-                        if (enc == null) enc = GetInputEncoding();
+                        if (enc == null) {
+                            var encs = KanjiEncoding.GuessKajiEncoding(buf);
+                            var inpenc = GetInputEncoding();
+                            if (encs.Count() != 0) enc = encs[0];
+                            else enc = inpenc;
+                            foreach (var e in encs) {
+                                if (inpenc.CodePage == e.CodePage) {
+                                    enc = inpenc;
+                                    break;
+                                }
+                            }
+                        }
                         var srctext = enc.GetString(buf);
                         foreach (var f in outputFileNames) {
                             TeXSource.EmbedSource(f, srctext);
@@ -1190,28 +1227,13 @@ namespace TeX2img {
 
         #region PDFページ数
         int pdfpages(string file) {
-            using(var proc = GetProcess()) {
-                proc.StartInfo.FileName = Path.Combine(GetToolsPath(), "pdfiumdraw.exe");
-                proc.StartInfo.Arguments = "--output-page \"" + file + "\"";
-                try {
-                    proc.ErrorDataReceived += ((s, e) => { });
-                    string output = "";
-                    ReadOutputs(proc, "PDF ページ数の取得", (line) => output += line, (l) => { });
-                    output = output.Replace("\r", "").Replace("\n", "");
-                    output.Trim();
-                    try {
-                        return Int32.Parse(output);
-                    }
-                    catch(FormatException) {
-                        return -1;
-                    }
+            try {
+                using (var mupdf = new MuPDF(Path.Combine(GetToolsPath(), "mudraw.exe"))) {
+                    int doc = (int)mupdf.Execute("open_document", typeof(int), Path.Combine(workingDir, file));
+                    return (int)mupdf.Execute("count_pages", typeof(int), doc);
                 }
-                catch(Win32Exception) {
-                    if(controller_ != null) controller_.showToolError("pdfiumdraw.exe");
-                    return -1;
-                }
-                catch(TimeoutException) { return -1; }
             }
+            catch (Exception) { return -1; }
         }
         #endregion
 

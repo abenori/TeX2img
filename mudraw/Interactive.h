@@ -126,15 +126,14 @@ namespace mudraw {
 			Write(rect.y1);
 		}
 		void skip_line();
+		vector<string> args;
 
 	public:
 		int Main();
-		Interactive() {
+		Interactive() : Interactive(0,nullptr){}
+		Interactive(int argc, char **argv) {
 			context = fz_new_context(NULL, NULL, FZ_STORE_DEFAULT);
-			if (context == nullptr)throw runtime_error("failed to get MuPDF context");
-		}
-		vector<string> args;
-		void SetArgs(int argc, char** argv){
+			if(context == nullptr)throw runtime_error("failed to get MuPDF context");
 			for(int i = 0; i < argc; ++i)args.push_back(argv[i]);
 		}
 		~Interactive() {
@@ -233,10 +232,15 @@ namespace mudraw {
 			auto a = annots[annot - 1];
 			pdf_dict_puts_drop(a.annot->obj, "F", pdf_new_int(a.document, flag));
 		}
-
+		int create_document(){
+            auto d = ::pdf_create_document(context);
+			documents.push_back(d);
+			return documents.size();
+        }
 		void write_document(int doc, const string &file) {
 			fz_write_options opt;
 			::ZeroMemory(&opt, sizeof(fz_write_options));
+			::pdf_finish_edit(documents[doc - 1]);
 			::pdf_write_document(documents[doc - 1], const_cast<char*>(file.c_str()),&opt);
 		}
 		void insert_page(int doc, int page, int at) {

@@ -498,6 +498,7 @@ int WritePDF(const vector<tuple<string, vector<int>>> &files, string output){
 	if(::FPDF_SaveAsCopy(newdoc.doc, &writer, 0) == FALSE)throw new runtime_error("fail to save " + output);
 	return errpage;
 }
+
 int WritePDF(const Data &d){
 	PDFDoc doc(d.input);
 	int errpage = 0;
