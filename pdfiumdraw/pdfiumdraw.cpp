@@ -373,8 +373,8 @@ int WriteEMF(const Data &d){
 			cout << "output: " << outfile << endl;
 			HDC dc = ::CreateEnhMetaFile(nullptr, outfile.c_str(), nullptr, nullptr);
 			float x = d.extent;
-			int width = (int) (page.GetWidth() * d.scale*x);
-			int height = (int) (page.GetHeight()*d.scale*x);
+			int width = static_cast<int>(page.GetWidth() * d.scale * x) + 1;
+			int height = static_cast<int>(page.GetHeight() * d.scale * x) + 1;
 			//int width = (int) (page.GetWidth() * 1000 * d.scale);
 			//int height = (int) (page.GetHeight() * 1000 * d.scale);
 			if((int) x != 1) {

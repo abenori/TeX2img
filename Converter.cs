@@ -137,9 +137,8 @@ namespace TeX2img {
 
         private BoundingBoxPair readBB(string inputEpsFileName) {
             Regex regex = new Regex(@"^\%\%(HiRes)?BoundingBox\: ([-\d\.]+) ([-\d\.]+) ([-\d\.]+) ([-\d\.]+)$");
-            var bb = new BoundingBox();
-            var hiresbb = new BoundingBox();
-            bool bbread = false, hiresbbread = false;
+            BoundingBox? bb = null;
+            BoundingBox? hiresbb = null;
             using(StreamReader sr = new StreamReader(Path.Combine(workingDir, inputEpsFileName), Encoding.GetEncoding("shift_jis"))) {
                 string line;
                 while((line = sr.ReadLine()) != null) {
@@ -151,15 +150,16 @@ namespace TeX2img {
                             System.Convert.ToDecimal(match.Groups[4].Value),
                             System.Convert.ToDecimal(match.Groups[5].Value));
                         if(match.Groups[1].Value == "HiRes") {
-                            hiresbb = cb; hiresbbread = true;
+                            hiresbb = cb;
                         } else {
-                            bb = cb; bbread = true;
+                            bb = cb;
                         }
-                        if(bbread && hiresbbread) break;
+                        if(bb != null && hiresbb != null) break;
                     }
                 }
             }
-            return new BoundingBoxPair(bb, hiresbb);
+            if (bb == null || hiresbb == null) return null;
+            return new BoundingBoxPair(bb.Value, hiresbb.Value);
         }
 
         List<BoundingBoxPair> readPDFBox(string inputPDFFileName, List<int> pages, string boxname) {
@@ -636,9 +636,9 @@ namespace TeX2img {
             tempFilesDeleter.AddFile(Path.Combine(workingDir, trimEpsFileName));
             if(origbb == null) origbb = readBB(inputFileName);
             decimal devicedevide = Properties.Settings.Default.yohakuUnitBP ? 1 : Properties.Settings.Default.resolutionScale;
-            decimal translateleft = -origbb.hiresbb.Left + Properties.Settings.Default.leftMargin / devicedevide;
-            decimal translatebottom = -origbb.hiresbb.Bottom + Properties.Settings.Default.bottomMargin / devicedevide;
-            using(StreamWriter sw = new StreamWriter(Path.Combine(workingDir, trimEpsFileName), false, Encoding.GetEncoding("shift_jis"))) {
+            decimal translateleft = -origbb.hiresbb.Left + Properties.Settings.Default.leftMargin / devicedevide + 1m/ Properties.Settings.Default.resolutionScale;
+            decimal translatebottom = -origbb.hiresbb.Bottom + Properties.Settings.Default.bottomMargin / devicedevide + 1m/Properties.Settings.Default.resolutionScale;
+            using (StreamWriter sw = new StreamWriter(Path.Combine(workingDir, trimEpsFileName), false, Encoding.GetEncoding("shift_jis"))) {
                 sw.WriteLine("/NumbDict countdictstack def");
                 sw.WriteLine("1 dict begin");
                 sw.WriteLine("/showpage {} def");
@@ -660,12 +660,9 @@ namespace TeX2img {
                 }
                 string antialias = Properties.Settings.Default.useMagickFlag ? "4" : "1";
                 decimal marginmult = Properties.Settings.Default.yohakuUnitBP ? Properties.Settings.Default.resolutionScale : 1;
-                decimal dwidth = (origbb.hiresbb.Width * Properties.Settings.Default.resolutionScale + (Properties.Settings.Default.leftMargin + Properties.Settings.Default.rightMargin) * marginmult);
-                int width = (int) dwidth;
-                if((decimal) width != dwidth) ++width;
-                decimal dheight = origbb.hiresbb.Height * Properties.Settings.Default.resolutionScale + (Properties.Settings.Default.topMargin + Properties.Settings.Default.bottomMargin) * marginmult;
-                int height = (int) dheight;
-                if((decimal) height != dheight) ++height;
+                int width = (int)(origbb.hiresbb.Width * Properties.Settings.Default.resolutionScale + (Properties.Settings.Default.leftMargin + Properties.Settings.Default.rightMargin) * marginmult + 2);
+                int height = (int)(origbb.hiresbb.Height * Properties.Settings.Default.resolutionScale + (Properties.Settings.Default.topMargin + Properties.Settings.Default.bottomMargin) * marginmult + 2);
+                controller_.appendOutput("Original Height = " + origbb.hiresbb.Height + ", height = " + height + "\n");
                 proc.StartInfo.Arguments = arg;
                 proc.StartInfo.Arguments += String.Format(
                     "-q -sDEVICE={0} -sOutputFile={1} -dNOPAUSE -dBATCH -dPDFFitPage -dTextAlphaBits={2} -dGraphicsAlphaBits={2} -r{3} -g{4}x{5} \"{6}\"",
@@ -696,8 +693,12 @@ namespace TeX2img {
             var type = Path.GetExtension(outputFileName).Substring(1).ToLower();
             using(var proc = GetProcess()) {
                 proc.StartInfo.FileName = Path.Combine(GetToolsPath(), "pdfiumdraw.exe");
-                proc.StartInfo.Arguments =
-                    (type == "emf" ? "" : "--scale=" + Properties.Settings.Default.resolutionScale.ToString() + " ") +
+                if(type == "emf") {
+                    proc.StartInfo.Arguments = "--scale=10 --extent=5 ";
+                } else {
+                    proc.StartInfo.Arguments = "--scale=" + Properties.Settings.Default.resolutionScale.ToString() + " ";
+                }
+                proc.StartInfo.Arguments +=
                     "--" + type + " " + (Properties.Settings.Default.transparentPngFlag ? "--transparent " : "") +
                     (pages != null ? "--pages=" + String.Join(",",pages.Select(i=>i.ToString()).ToArray()) + " " : "") + 
                     "--output=\"" + outputFileName + "\" \"" + inputFilename + "\"";
