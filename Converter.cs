@@ -17,7 +17,7 @@ namespace TeX2img {
 
         // 拡張子たち
         public static readonly string[] bmpExtensions = new string[] { ".jpg", ".png", ".bmp", ".gif", ".tiff" };
-        public static readonly string[] vectorExtensions = new string[] { ".eps", ".pdf", ".emf", ".svg" };
+        public static readonly string[] vectorExtensions = new string[] { ".eps", ".pdf", ".emf", ".wmf", ".svg" };
         public static string[] imageExtensions {
             get { return bmpExtensions.Concat(vectorExtensions).ToArray(); }
         }
@@ -556,6 +556,7 @@ namespace TeX2img {
         }
 
         // origbbには，GhostscriptのsDevice=bboxで得られた値を入れておく。（nullならばここで取得する。）
+        // 空ページはdeleteemptypages = trueならば消されるが，falseならばダミーのページが挿入される．
         bool pdfcrop(string inputFileName, string outputFileName, bool use_bp, List<int> pages, List<BoundingBoxPair> origbb, bool deleteemptypages = false) {
             System.Diagnostics.Debug.Assert(pages.Count == origbb.Count);
             var tmpfile = TempFilesDeleter.GetTempFileName(".tex", workingDir);
@@ -796,28 +797,6 @@ namespace TeX2img {
 
         #region 画像結合
         bool pdfconcat(List<string> files, string output) { 
-            /*
-            try {
-                using (var mupdf = new MuPDF(Path.Combine(GetToolsPath(), "mudraw.exe"))) {
-                    var outdoc = (int)mupdf.Execute("create_document", typeof(int));
-                    int pos = 0;
-                    foreach (var f in files) {
-                        var doc = (int)mupdf.Execute("open_document", typeof(int), Path.Combine(workingDir, f));
-                        int pagecount = (int)mupdf.Execute("count_pages", typeof(int), doc);
-                        for (int i = 0; i < pagecount; ++i) {
-                            var page = (int)mupdf.Execute("load_page", typeof(int), doc, i);
-                            mupdf.Execute("insert_page", outdoc, page, pos);
-                            ++pos;
-                        }
-                    }
-                    mupdf.Execute("write_document", outdoc, Path.Combine(workingDir, output));
-                }
-                return true;
-            }
-            catch (Exception e) {
-                System.Diagnostics.Debug.WriteLine("pdfconcat: " + e.Message);
-                return false;
-            }*/
             using (var proc = GetProcess()) {
                 proc.StartInfo.FileName = Path.Combine(GetToolsPath(), "pdfiumdraw.exe");
                 proc.StartInfo.Arguments = "--merge --pdf --output=" + output + " \"" + String.Join("\" \"", files.ToArray()) + "\"";
@@ -1038,19 +1017,19 @@ namespace TeX2img {
 
             // テキスト情報保持PDF
             if(extension == ".pdf" && !Properties.Settings.Default.outlinedText){
-                if(!Properties.Settings.Default.mergeOutputFiles || emptyPages.Count > 0) {
+                if (!Properties.Settings.Default.mergeOutputFiles) { 
                     for(int i = 1 ; i <= page ; ++i) {
                         if(emptyPages.Contains(i)) continue;
                         if(!pdfcrop(tmpFileBaseName + ".pdf", tmpFileBaseName + "-" + i + ".pdf", true, i, bbs[i - 1])) return false;
                     }
                 } else {
-                    if(!pdfcrop(tmpFileBaseName + ".pdf", tmpFileBaseName + "-1.pdf", true, new List<int>(Enumerable.Range(1, page)), bbs)) return false;
+                    if (!pdfcrop(tmpFileBaseName + ".pdf", tmpFileBaseName + "-1.pdf", true, new List<int>(Enumerable.Range(1, page)), bbs, true)) return false;
                     page = 1;
                 }
                 // svg or テキスト付きemf（または透過gif）：PDFから変換
             } else if(
                  extension == ".svg" ||
-                 (extension == ".emf" && !Properties.Settings.Default.outlinedText) || 
+                 ((extension == ".emf" || extension == ".wmf") && !Properties.Settings.Default.outlinedText) || 
                  (extension == ".gif" && Properties.Settings.Default.transparentPngFlag)
                  ) {
                 var pdftemp = TempFilesDeleter.GetTempFileName(".pdf", workingDir);
@@ -1066,6 +1045,7 @@ namespace TeX2img {
                     }
                     break;
                 case ".emf":
+                case ".wmf":
                 case ".gif":
                     if(!pdf2img_pdfium(pdftemp, tmpFileBaseName + "-%d" + extension, pagelist)) return false;
                     break;
@@ -1093,9 +1073,10 @@ namespace TeX2img {
                         if(addMargin) enlargeBB(tmpFileBaseName + "-" + i + ".eps");
                         break;
                     case ".emf":
+                    case ".wmf":
                         if(addMargin) enlargeBB(tmpFileBaseName + "-" + i + ".eps");
                         if(!eps2pdf(tmpFileBaseName + "-" + i + ".eps", tmpFileBaseName + "-" + i + ".pdf")) return false;
-                        if(!pdf2img_pdfium(tmpFileBaseName + "-" + i + ".pdf", tmpFileBaseName + "-" + i + ".emf")) return false;
+                        if(!pdf2img_pdfium(tmpFileBaseName + "-" + i + ".pdf", tmpFileBaseName + "-" + i + extension)) return false;
                         break;
                     case ".png":
                     case ".jpg":

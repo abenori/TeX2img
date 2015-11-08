@@ -23,6 +23,7 @@ const int PNG = 3;
 const int JPG = 4;
 const int GIF = 5;
 const int TIFF = 6;
+const int WMF = 7;
 
 const int RENDER_FLAG = FPDF_PRINTING;
 
@@ -357,6 +358,55 @@ int WriteTIFF(const Data &d) {
 	return WriteIMG(d, "tiff");
 }
 
+int WriteWMF(const Data &d){
+	string outputpre, outputpost;
+	GetOutputFileName(d.input, d.output, ".wmf", outputpre, outputpost);
+	PDFDoc doc(d.input);
+	auto pages = doc.GetPageCount();
+	int errpages = 0;
+	for(int i = 0; i < pages; ++i) {
+		if(!d.pages.empty() && find(d.pages.begin(), d.pages.end(), i) == d.pages.end())continue;
+		try {
+			PDFPage page(doc, i);
+			string outfile;
+			if((pages == 1 || d.pages.size() == 1) && d.output.find("%d") == string::npos)outfile = (d.output != "" ? d.output : GetDirectory(d.input) + "\\" + GetFileNameWithoutExtension(d.input) + ".wmf");
+			else outfile = outputpre + to_string(i + 1) + outputpost;
+			cout << "output: " << outfile << endl;
+			HDC dc = ::CreateEnhMetaFile(nullptr, nullptr, nullptr, nullptr);
+			float x = d.extent;
+			int width = static_cast<int>(page.GetWidth() * d.scale * x) + 1;
+			int height = static_cast<int>(page.GetHeight() * d.scale * x) + 1;
+			if((int)x != 1) {
+				::SetMapMode(dc, MM_ANISOTROPIC);
+				::SetWindowExtEx(dc, static_cast<int>(x), static_cast<int>(x), nullptr);
+			}
+			RECT rc;
+			rc.left = 0; rc.top = 0; rc.right = width; rc.bottom = height;
+			if(d.transparent) {
+				::SetBkMode(dc, TRANSPARENT);
+				::FillRect(dc, &rc, (HBRUSH)::GetStockObject(NULL_BRUSH));
+			} else {
+				::SetBkMode(dc, OPAQUE);
+				::FillRect(dc, &rc, (HBRUSH)::GetStockObject(WHITE_BRUSH));
+			}
+			page.Render(dc, width, height);
+			auto enhmeta = ::CloseEnhMetaFile(dc);
+			auto size = ::GetWinMetaFileBits(enhmeta, 0, nullptr, MM_ANISOTROPIC, dc);
+			vector<BYTE> buf;
+			buf.resize(size + 1);
+			::GetWinMetaFileBits(enhmeta, size, &buf[0], MM_ANISOTROPIC, dc);
+			ofstream out(outfile, ios_base::out | ios_base::binary);
+			if(out)out.write((char*)&buf[0], size);
+			::DeleteEnhMetaFile(enhmeta);
+		}
+		catch(runtime_error e) {
+			cout << e.what() << endl;
+			++errpages;
+		}
+	}
+	return errpages;
+}
+
 int WriteEMF(const Data &d){
 	string outputpre,outputpost;
 	GetOutputFileName(d.input, d.output, ".emf", outputpre, outputpost);
@@ -616,6 +666,7 @@ int main(int argc, char *argv[]) {
 			else if(arg == "--gif")current_data.target = GIF;
 			else if(arg == "--tiff")current_data.target = TIFF;
 			else if(arg == "--pdf")current_data.target = PDF;
+			else if(arg == "--wmf")current_data.target = WMF;
 			else if(arg == "--input-format=png")current_data.input_format = PNG;
 			else if(arg == "--input-format=bmp")current_data.input_format = BMP;
 			else if(arg == "--input-format=jpg")current_data.input_format = JPG;
@@ -706,6 +757,8 @@ int main(int argc, char *argv[]) {
 						break;
 					case PDF:
 						errpages += WritePDF(d);
+					case WMF:
+						errpages += WriteWMF(d);
 					default:
 						break;
 					}
