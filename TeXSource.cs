@@ -129,10 +129,8 @@ namespace TeX2img {
                 if (page == 0) return null;
                 var annot = (int)mupdf.Execute("first_annot", typeof(int), page);
                 while (annot != 0) {
-                    var rect = mupdf.Execute("bound_annot",
-                        new Type[] { typeof(int), typeof(int), typeof(int), typeof(int) },
-                        annot);
-                    if (((int)rect[0] == (int)rect[2]) && ((int)rect[1] == (int)rect[3])) {
+                    var rect = (BoundingBox)mupdf.Execute("bound_annot", typeof(BoundingBox), annot);
+                    if(rect.Width == 0 && rect.Height == 0) { 
                         if ((string)mupdf.Execute("annot_type", typeof(string), annot) == "Text") {
                             var text = (string)mupdf.Execute("annot_contents", typeof(string), annot);
                             text = ChangeReturnCode(text);

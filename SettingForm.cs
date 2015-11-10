@@ -82,6 +82,8 @@ namespace TeX2img {
             ignoreErrorCheckBox.Checked = Properties.Settings.Default.ignoreErrorFlag;
             embedTeXSourCecheckBox.Checked = Properties.Settings.Default.embedTeXSource;
             setFileToClipboardCheckBox.Checked = Properties.Settings.Default.setFileToClipBoard;
+            workDir_FileDirRadioButton.Checked = Properties.Settings.Default.workingDirectory == "file";
+            workDir_TempDirRadioButton.Checked = Properties.Settings.Default.workingDirectory == "tmp";
 
             drawEOFCheckBox.Checked = Properties.Settings.Default.editorDrawEOF;
             drawEOLCheckBox.Checked = Properties.Settings.Default.editorDrawEOL;
@@ -151,6 +153,8 @@ namespace TeX2img {
             Properties.Settings.Default.ignoreErrorFlag = ignoreErrorCheckBox.Checked;
             Properties.Settings.Default.embedTeXSource = embedTeXSourCecheckBox.Checked;
             Properties.Settings.Default.setFileToClipBoard = setFileToClipboardCheckBox.Checked;
+            if (workDir_FileDirRadioButton.Checked) Properties.Settings.Default.workingDirectory = "file";
+            else Properties.Settings.Default.workingDirectory = "tmp";
 
             Properties.Settings.Default.settingTabIndex = SettingTab.SelectedIndex;
 

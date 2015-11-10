@@ -213,5 +213,8 @@
     <Setting Name="animationLoop" Type="System.UInt32" Scope="User">
       <Value Profile="(Default)">0</Value>
     </Setting>
+    <Setting Name="workingDirectory" Type="System.String" Scope="User">
+      <Value Profile="(Default)">tmp</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

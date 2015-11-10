@@ -299,10 +299,13 @@ namespace TeX2img {
             if(FirstFiles != null) {
                 for(int i = 0 ; i < FirstFiles.Count / 2 ; ++i) {
                     string file = FirstFiles[2 * i];
+                    string workdir;
+                    if (Properties.Settings.Default.workingDirectory == "file") workdir = Path.GetDirectoryName(file);
+                    else workdir = Path.GetTempPath();
                     string tmppath;
                     try {
                         string inputextension = Path.GetExtension(file);
-                        tmppath = Path.Combine(Path.GetTempPath(),TempFilesDeleter.GetTempFileName(inputextension));
+                        tmppath = Path.Combine(workdir,TempFilesDeleter.GetTempFileName(inputextension));
                         File.Delete(tmppath);
                         File.Copy(file, tmppath, true);
                     }
@@ -332,9 +335,13 @@ namespace TeX2img {
 
                 string extension = Path.GetExtension(outputFilePath).ToLower();
                 string tmpTeXFileName;
-                if(InputFromFileRadioButton.Checked) {
-                    tmpTeXFileName = TempFilesDeleter.GetTempFileName(Path.GetExtension(inputFileNameTextBox.Text));
+                string tmpDir;
+                if (InputFromFileRadioButton.Checked) {
+                    if (Properties.Settings.Default.workingDirectory == "file") tmpDir = Path.GetDirectoryName(inputFileNameTextBox.Text);
+                    else tmpDir = Path.GetTempPath();
+                    tmpTeXFileName = TempFilesDeleter.GetTempFileName(Path.GetExtension(inputFileNameTextBox.Text), tmpDir);
                 }else{
+                    tmpDir = Path.GetTempPath();
                     tmpTeXFileName = TempFilesDeleter.GetTempFileName();
                 }
 
@@ -343,7 +350,6 @@ namespace TeX2img {
                     return;
                 }
                 string tmpFileBaseName = Path.GetFileNameWithoutExtension(tmpTeXFileName);
-                string tmpDir = Path.GetTempPath();
 
                 using(converter = new Converter(this, Path.Combine(tmpDir, tmpTeXFileName), outputFileNameTextBox.Text)) {
                     if(!converter.CheckFormat()) return;

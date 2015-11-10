@@ -84,6 +84,7 @@ namespace TeX2img {
             {"preview","生成ファイルを開く[-]",val => preview = (val != null),()=>preview==null?false:preview.Value},
             {"embed-source","ソース情報を生成ファイルに保存[-]",val => Properties.Settings.Default.embedTeXSource = (val != null),()=>Properties.Settings.Default.embedTeXSource},
             {"copy-to-clipboard","生成ファイルをクリップボードにコピー[-]",val =>  Properties.Settings.Default.setFileToClipBoard = (val != null),()=>Properties.Settings.Default.setFileToClipBoard},
+            {"workingdir=","作業ディレクトリ（tmp/file）",val=> Properties.Settings.Default.workingDirectory = GetStringsFromArray("workingdir", val, new string[] { "tmp","file" }),()=>Properties.Settings.Default.workingDirectory },
             {"savesettings","設定の保存を行う[-]",val => Properties.Settings.Default.SaveSettings = (val != null),()=>Properties.Settings.Default.SaveSettings},
             {"quiet","Quiet モード[-]",val => quiet = (val != null),()=>quiet},
             {"timeout=","タイムアウト時間を設定（秒）", (int val) => {
@@ -306,12 +307,15 @@ namespace TeX2img {
             var outFiles = new System.Collections.Specialized.StringCollection();
             for(int i = 0 ; i < files.Count / 2 ; ++i) {
                 string file = Path.GetFullPath(files[2 * i]);
-                string tmpTeXFileName = TempFilesDeleter.GetTempFileName(Path.GetExtension(file));
+                string dir;
+                if (Properties.Settings.Default.workingDirectory == "file") dir = Path.GetDirectoryName(file);
+                else dir = Path.GetTempPath();
+                string tmpTeXFileName = TempFilesDeleter.GetTempFileName(dir, Path.GetExtension(file));
                 if(tmpTeXFileName == null) {
                     Console.WriteLine("一時ファイル名の決定に失敗しました。作業フォルダ：\n" + Path.GetTempPath() + "\nを確認してください。");
                     return -6;
                 }
-                tmpTeXFileName = Path.Combine(Path.GetTempPath(), tmpTeXFileName);
+                tmpTeXFileName = Path.Combine(dir, tmpTeXFileName);
                 // 一時フォルダにコピー
                 File.Copy(file, tmpTeXFileName, true);
                 (new FileInfo(tmpTeXFileName)).Attributes = FileAttributes.Normal;
