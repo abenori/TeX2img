@@ -64,8 +64,10 @@
             this.deleteDisplaySizeCheckBox = new System.Windows.Forms.CheckBox();
             this.useMagickCheckBox = new System.Windows.Forms.CheckBox();
             this.notOutllinedTextCheckBox = new System.Windows.Forms.CheckBox();
-            this.transparentPngCheckBox = new System.Windows.Forms.CheckBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.backgroundColorButton = new System.Windows.Forms.Button();
+            this.label18 = new System.Windows.Forms.Label();
+            this.transparentPngCheckBox = new System.Windows.Forms.CheckBox();
             this.KeepPageSizeCheckBox = new System.Windows.Forms.CheckBox();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.label9 = new System.Windows.Forms.Label();
@@ -82,11 +84,14 @@
             this.resolutionScaleUpDown = new System.Windows.Forms.NumericUpDown();
             this.label8 = new System.Windows.Forms.Label();
             this.AfterCompilingTab = new System.Windows.Forms.TabPage();
+            this.groupBox4 = new System.Windows.Forms.GroupBox();
+            this.workDir_FileDirRadioButton = new System.Windows.Forms.RadioButton();
+            this.workDir_TempDirRadioButton = new System.Windows.Forms.RadioButton();
+            this.openTmpFolderButton = new System.Windows.Forms.Button();
             this.setFileToClipboardCheckBox = new System.Windows.Forms.CheckBox();
             this.embedTeXSourCecheckBox = new System.Windows.Forms.CheckBox();
             this.showOutputWindowCheckBox = new System.Windows.Forms.CheckBox();
             this.previewCheckBox = new System.Windows.Forms.CheckBox();
-            this.openTmpFolderButton = new System.Windows.Forms.Button();
             this.deleteTmpFilesCheckBox = new System.Windows.Forms.CheckBox();
             this.EditorSettingTab = new System.Windows.Forms.TabPage();
             this.acceptTabCheckBox = new System.Windows.Forms.CheckBox();
@@ -114,9 +119,6 @@
             this.platexOpenFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.dvipdfmxOpenFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.gsOpenFileDialog = new System.Windows.Forms.OpenFileDialog();
-            this.groupBox4 = new System.Windows.Forms.GroupBox();
-            this.workDir_TempDirRadioButton = new System.Windows.Forms.RadioButton();
-            this.workDir_FileDirRadioButton = new System.Windows.Forms.RadioButton();
             this.SettingTab.SuspendLayout();
             this.BasicSettingTab.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.LaTeXCompileNumbernumUpDown)).BeginInit();
@@ -130,11 +132,11 @@
             ((System.ComponentModel.ISupportInitialize)(this.topMarginUpDown)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.resolutionScaleUpDown)).BeginInit();
             this.AfterCompilingTab.SuspendLayout();
+            this.groupBox4.SuspendLayout();
             this.EditorSettingTab.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.tabWidthNumericUpDown)).BeginInit();
             this.showGroupBox.SuspendLayout();
             this.FontColorGroup.SuspendLayout();
-            this.groupBox4.SuspendLayout();
             this.SuspendLayout();
             // 
             // SettingTab
@@ -388,18 +390,17 @@
             this.groupBox2.Controls.Add(this.deleteDisplaySizeCheckBox);
             this.groupBox2.Controls.Add(this.useMagickCheckBox);
             this.groupBox2.Controls.Add(this.notOutllinedTextCheckBox);
-            this.groupBox2.Controls.Add(this.transparentPngCheckBox);
-            this.groupBox2.Location = new System.Drawing.Point(24, 267);
+            this.groupBox2.Location = new System.Drawing.Point(24, 301);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(612, 185);
-            this.groupBox2.TabIndex = 2;
+            this.groupBox2.Size = new System.Drawing.Size(612, 150);
+            this.groupBox2.TabIndex = 1;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "画像形式ごとの設定";
             // 
             // MergeOutputFilesCheckBox
             // 
             this.MergeOutputFilesCheckBox.AutoSize = true;
-            this.MergeOutputFilesCheckBox.Location = new System.Drawing.Point(24, 149);
+            this.MergeOutputFilesCheckBox.Location = new System.Drawing.Point(24, 115);
             this.MergeOutputFilesCheckBox.Name = "MergeOutputFilesCheckBox";
             this.MergeOutputFilesCheckBox.Size = new System.Drawing.Size(274, 22);
             this.MergeOutputFilesCheckBox.TabIndex = 3;
@@ -409,7 +410,7 @@
             // deleteDisplaySizeCheckBox
             // 
             this.deleteDisplaySizeCheckBox.AutoSize = true;
-            this.deleteDisplaySizeCheckBox.Location = new System.Drawing.Point(24, 121);
+            this.deleteDisplaySizeCheckBox.Location = new System.Drawing.Point(24, 87);
             this.deleteDisplaySizeCheckBox.Name = "deleteDisplaySizeCheckBox";
             this.deleteDisplaySizeCheckBox.Size = new System.Drawing.Size(237, 22);
             this.deleteDisplaySizeCheckBox.TabIndex = 2;
@@ -419,7 +420,7 @@
             // useMagickCheckBox
             // 
             this.useMagickCheckBox.AutoSize = true;
-            this.useMagickCheckBox.Location = new System.Drawing.Point(24, 33);
+            this.useMagickCheckBox.Location = new System.Drawing.Point(24, 28);
             this.useMagickCheckBox.Margin = new System.Windows.Forms.Padding(4);
             this.useMagickCheckBox.Name = "useMagickCheckBox";
             this.useMagickCheckBox.Size = new System.Drawing.Size(429, 22);
@@ -430,30 +431,20 @@
             // notOutllinedTextCheckBox
             // 
             this.notOutllinedTextCheckBox.AutoSize = true;
-            this.notOutllinedTextCheckBox.Location = new System.Drawing.Point(24, 92);
+            this.notOutllinedTextCheckBox.Location = new System.Drawing.Point(24, 58);
             this.notOutllinedTextCheckBox.Name = "notOutllinedTextCheckBox";
             this.notOutllinedTextCheckBox.Size = new System.Drawing.Size(220, 22);
             this.notOutllinedTextCheckBox.TabIndex = 1;
             this.notOutllinedTextCheckBox.Text = "テキストを保持する（PDF）";
             this.notOutllinedTextCheckBox.UseVisualStyleBackColor = true;
             // 
-            // transparentPngCheckBox
-            // 
-            this.transparentPngCheckBox.AutoSize = true;
-            this.transparentPngCheckBox.Checked = true;
-            this.transparentPngCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.transparentPngCheckBox.Location = new System.Drawing.Point(24, 63);
-            this.transparentPngCheckBox.Margin = new System.Windows.Forms.Padding(4);
-            this.transparentPngCheckBox.Name = "transparentPngCheckBox";
-            this.transparentPngCheckBox.Size = new System.Drawing.Size(338, 22);
-            this.transparentPngCheckBox.TabIndex = 0;
-            this.transparentPngCheckBox.Text = "背景色を透過させる（PNG / EMF / TIFF）";
-            this.transparentPngCheckBox.UseVisualStyleBackColor = true;
-            // 
             // groupBox1
             // 
             this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox1.Controls.Add(this.backgroundColorButton);
+            this.groupBox1.Controls.Add(this.label18);
+            this.groupBox1.Controls.Add(this.transparentPngCheckBox);
             this.groupBox1.Controls.Add(this.KeepPageSizeCheckBox);
             this.groupBox1.Controls.Add(this.groupBox3);
             this.groupBox1.Controls.Add(this.label4);
@@ -470,10 +461,43 @@
             this.groupBox1.Margin = new System.Windows.Forms.Padding(4);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Padding = new System.Windows.Forms.Padding(4);
-            this.groupBox1.Size = new System.Drawing.Size(612, 243);
+            this.groupBox1.Size = new System.Drawing.Size(612, 277);
             this.groupBox1.TabIndex = 0;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "共通設定";
+            // 
+            // backgroundColorButton
+            // 
+            this.backgroundColorButton.BackColor = System.Drawing.Color.White;
+            this.backgroundColorButton.Location = new System.Drawing.Point(93, 242);
+            this.backgroundColorButton.Name = "backgroundColorButton";
+            this.backgroundColorButton.Size = new System.Drawing.Size(75, 28);
+            this.backgroundColorButton.TabIndex = 10;
+            this.backgroundColorButton.UseVisualStyleBackColor = false;
+            this.backgroundColorButton.Click += new System.EventHandler(this.backgroundColorButton_Click);
+            // 
+            // label18
+            // 
+            this.label18.AutoSize = true;
+            this.label18.Location = new System.Drawing.Point(13, 246);
+            this.label18.Name = "label18";
+            this.label18.Size = new System.Drawing.Size(74, 18);
+            this.label18.TabIndex = 9;
+            this.label18.Text = "背景色...";
+            // 
+            // transparentPngCheckBox
+            // 
+            this.transparentPngCheckBox.AutoSize = true;
+            this.transparentPngCheckBox.Checked = true;
+            this.transparentPngCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.transparentPngCheckBox.Location = new System.Drawing.Point(180, 244);
+            this.transparentPngCheckBox.Margin = new System.Windows.Forms.Padding(4);
+            this.transparentPngCheckBox.Name = "transparentPngCheckBox";
+            this.transparentPngCheckBox.Size = new System.Drawing.Size(175, 22);
+            this.transparentPngCheckBox.TabIndex = 11;
+            this.transparentPngCheckBox.Text = "透過（可能な場合）";
+            this.transparentPngCheckBox.UseVisualStyleBackColor = true;
+            this.transparentPngCheckBox.CheckedChanged += new System.EventHandler(this.transparentPngCheckBox_CheckedChanged);
             // 
             // KeepPageSizeCheckBox
             // 
@@ -481,7 +505,7 @@
             this.KeepPageSizeCheckBox.Location = new System.Drawing.Point(13, 211);
             this.KeepPageSizeCheckBox.Name = "KeepPageSizeCheckBox";
             this.KeepPageSizeCheckBox.Size = new System.Drawing.Size(201, 22);
-            this.KeepPageSizeCheckBox.TabIndex = 10;
+            this.KeepPageSizeCheckBox.TabIndex = 8;
             this.KeepPageSizeCheckBox.Text = "ページサイズを維持する";
             this.KeepPageSizeCheckBox.UseVisualStyleBackColor = true;
             // 
@@ -645,6 +669,51 @@
             this.AfterCompilingTab.Text = "コンパイル後処理";
             this.AfterCompilingTab.UseVisualStyleBackColor = true;
             // 
+            // groupBox4
+            // 
+            this.groupBox4.Controls.Add(this.workDir_FileDirRadioButton);
+            this.groupBox4.Controls.Add(this.workDir_TempDirRadioButton);
+            this.groupBox4.Controls.Add(this.openTmpFolderButton);
+            this.groupBox4.Location = new System.Drawing.Point(24, 189);
+            this.groupBox4.Name = "groupBox4";
+            this.groupBox4.Size = new System.Drawing.Size(586, 100);
+            this.groupBox4.TabIndex = 5;
+            this.groupBox4.TabStop = false;
+            this.groupBox4.Text = "作業フォルダ";
+            // 
+            // workDir_FileDirRadioButton
+            // 
+            this.workDir_FileDirRadioButton.AutoSize = true;
+            this.workDir_FileDirRadioButton.Location = new System.Drawing.Point(9, 30);
+            this.workDir_FileDirRadioButton.Name = "workDir_FileDirRadioButton";
+            this.workDir_FileDirRadioButton.Size = new System.Drawing.Size(370, 22);
+            this.workDir_FileDirRadioButton.TabIndex = 0;
+            this.workDir_FileDirRadioButton.TabStop = true;
+            this.workDir_FileDirRadioButton.Text = "ファイルのあるフォルダ（外部ファイル入力時のみ）";
+            this.workDir_FileDirRadioButton.UseVisualStyleBackColor = true;
+            // 
+            // workDir_TempDirRadioButton
+            // 
+            this.workDir_TempDirRadioButton.AutoSize = true;
+            this.workDir_TempDirRadioButton.Location = new System.Drawing.Point(9, 63);
+            this.workDir_TempDirRadioButton.Name = "workDir_TempDirRadioButton";
+            this.workDir_TempDirRadioButton.Size = new System.Drawing.Size(121, 22);
+            this.workDir_TempDirRadioButton.TabIndex = 1;
+            this.workDir_TempDirRadioButton.TabStop = true;
+            this.workDir_TempDirRadioButton.Text = "一時フォルダ";
+            this.workDir_TempDirRadioButton.UseVisualStyleBackColor = true;
+            // 
+            // openTmpFolderButton
+            // 
+            this.openTmpFolderButton.Location = new System.Drawing.Point(319, 59);
+            this.openTmpFolderButton.Margin = new System.Windows.Forms.Padding(4);
+            this.openTmpFolderButton.Name = "openTmpFolderButton";
+            this.openTmpFolderButton.Size = new System.Drawing.Size(260, 30);
+            this.openTmpFolderButton.TabIndex = 2;
+            this.openTmpFolderButton.Text = "一時フォルダを開く...";
+            this.openTmpFolderButton.UseVisualStyleBackColor = true;
+            this.openTmpFolderButton.Click += new System.EventHandler(this.openTmpFolderButton_Click);
+            // 
             // setFileToClipboardCheckBox
             // 
             this.setFileToClipboardCheckBox.AutoSize = true;
@@ -690,17 +759,6 @@
             this.previewCheckBox.TabIndex = 1;
             this.previewCheckBox.Text = "コンパイル後生成ファイルを開く";
             this.previewCheckBox.UseVisualStyleBackColor = true;
-            // 
-            // openTmpFolderButton
-            // 
-            this.openTmpFolderButton.Location = new System.Drawing.Point(319, 59);
-            this.openTmpFolderButton.Margin = new System.Windows.Forms.Padding(4);
-            this.openTmpFolderButton.Name = "openTmpFolderButton";
-            this.openTmpFolderButton.Size = new System.Drawing.Size(260, 30);
-            this.openTmpFolderButton.TabIndex = 2;
-            this.openTmpFolderButton.Text = "一時フォルダを開く...";
-            this.openTmpFolderButton.UseVisualStyleBackColor = true;
-            this.openTmpFolderButton.Click += new System.EventHandler(this.openTmpFolderButton_Click);
             // 
             // deleteTmpFilesCheckBox
             // 
@@ -984,40 +1042,6 @@
             this.gsOpenFileDialog.FileName = "gswin32c.exe";
             this.gsOpenFileDialog.Filter = "exe ファイル (*.exe)|*.exe|bat ファイル (*.bat)|*.bat|すべてのファイル (*.*)|*.*";
             // 
-            // groupBox4
-            // 
-            this.groupBox4.Controls.Add(this.workDir_FileDirRadioButton);
-            this.groupBox4.Controls.Add(this.workDir_TempDirRadioButton);
-            this.groupBox4.Controls.Add(this.openTmpFolderButton);
-            this.groupBox4.Location = new System.Drawing.Point(24, 189);
-            this.groupBox4.Name = "groupBox4";
-            this.groupBox4.Size = new System.Drawing.Size(586, 100);
-            this.groupBox4.TabIndex = 5;
-            this.groupBox4.TabStop = false;
-            this.groupBox4.Text = "作業フォルダ";
-            // 
-            // workDir_TempDirRadioButton
-            // 
-            this.workDir_TempDirRadioButton.AutoSize = true;
-            this.workDir_TempDirRadioButton.Location = new System.Drawing.Point(9, 63);
-            this.workDir_TempDirRadioButton.Name = "workDir_TempDirRadioButton";
-            this.workDir_TempDirRadioButton.Size = new System.Drawing.Size(121, 22);
-            this.workDir_TempDirRadioButton.TabIndex = 1;
-            this.workDir_TempDirRadioButton.TabStop = true;
-            this.workDir_TempDirRadioButton.Text = "一時フォルダ";
-            this.workDir_TempDirRadioButton.UseVisualStyleBackColor = true;
-            // 
-            // workDir_FileDirRadioButton
-            // 
-            this.workDir_FileDirRadioButton.AutoSize = true;
-            this.workDir_FileDirRadioButton.Location = new System.Drawing.Point(9, 30);
-            this.workDir_FileDirRadioButton.Name = "workDir_FileDirRadioButton";
-            this.workDir_FileDirRadioButton.Size = new System.Drawing.Size(370, 22);
-            this.workDir_FileDirRadioButton.TabIndex = 0;
-            this.workDir_FileDirRadioButton.TabStop = true;
-            this.workDir_FileDirRadioButton.Text = "ファイルのあるフォルダ（外部ファイル入力時のみ）";
-            this.workDir_FileDirRadioButton.UseVisualStyleBackColor = true;
-            // 
             // SettingForm
             // 
             this.AcceptButton = this.OKButton;
@@ -1053,6 +1077,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.resolutionScaleUpDown)).EndInit();
             this.AfterCompilingTab.ResumeLayout(false);
             this.AfterCompilingTab.PerformLayout();
+            this.groupBox4.ResumeLayout(false);
+            this.groupBox4.PerformLayout();
             this.EditorSettingTab.ResumeLayout(false);
             this.EditorSettingTab.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.tabWidthNumericUpDown)).EndInit();
@@ -1060,8 +1086,6 @@
             this.showGroupBox.PerformLayout();
             this.FontColorGroup.ResumeLayout(false);
             this.FontColorGroup.PerformLayout();
-            this.groupBox4.ResumeLayout(false);
-            this.groupBox4.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -1127,7 +1151,6 @@
         private System.Windows.Forms.NumericUpDown LaTeXCompileNumbernumUpDown;
         private System.Windows.Forms.Button GuessPathButton;
         private System.Windows.Forms.CheckBox embedTeXSourCecheckBox;
-        private System.Windows.Forms.CheckBox transparentPngCheckBox;
         private System.Windows.Forms.CheckBox useMagickCheckBox;
         private System.Windows.Forms.CheckBox notOutllinedTextCheckBox;
         private System.Windows.Forms.GroupBox groupBox2;
@@ -1147,5 +1170,8 @@
         private System.Windows.Forms.GroupBox groupBox4;
         private System.Windows.Forms.RadioButton workDir_TempDirRadioButton;
         private System.Windows.Forms.RadioButton workDir_FileDirRadioButton;
+        private System.Windows.Forms.CheckBox transparentPngCheckBox;
+        private System.Windows.Forms.Label label18;
+        private System.Windows.Forms.Button backgroundColorButton;
     }
 }

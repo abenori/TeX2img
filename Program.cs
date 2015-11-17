@@ -253,7 +253,16 @@ namespace TeX2img {
                 Properties.Settings.Default.timeOut = 0;
             }
             // メイン
+#if DEBUG
+            int exitcode;
+            try { exitcode = TeX2imgMain(cmds); }
+            catch (Exception e) {
+                Console.WriteLine(e.Message + e.StackTrace.ToString());
+                throw;
+            }
+#else
             var exitcode = TeX2imgMain(cmds);
+#endif
             Properties.Settings.Default.Save();
             Environment.ExitCode = exitcode;
         }
@@ -310,7 +319,7 @@ namespace TeX2img {
                 string dir;
                 if (Properties.Settings.Default.workingDirectory == "file") dir = Path.GetDirectoryName(file);
                 else dir = Path.GetTempPath();
-                string tmpTeXFileName = TempFilesDeleter.GetTempFileName(dir, Path.GetExtension(file));
+                string tmpTeXFileName = TempFilesDeleter.GetTempFileName(Path.GetExtension(file), dir);
                 if(tmpTeXFileName == null) {
                     Console.WriteLine("一時ファイル名の決定に失敗しました。作業フォルダ：\n" + Path.GetTempPath() + "\nを確認してください。");
                     return -6;

@@ -69,8 +69,10 @@ namespace TeX2img {
             rightMarginUpDown.Value = Properties.Settings.Default.rightMargin;
             bottomMarginUpDown.Value = Properties.Settings.Default.bottomMargin;
 
-            useMagickCheckBox.Checked = Properties.Settings.Default.useMagickFlag;
             transparentPngCheckBox.Checked = Properties.Settings.Default.transparentPngFlag;
+            backgroundColorButton.BackColor = Properties.Settings.Default.backgroundColor;
+            backgroundColorButton.Enabled = !transparentPngCheckBox.Checked;
+            useMagickCheckBox.Checked = Properties.Settings.Default.useMagickFlag;
             notOutllinedTextCheckBox.Checked = !Properties.Settings.Default.outlinedText;
             deleteDisplaySizeCheckBox.Checked = Properties.Settings.Default.deleteDisplaySize;
             KeepPageSizeCheckBox.Checked = Properties.Settings.Default.keepPageSize;
@@ -140,8 +142,9 @@ namespace TeX2img {
             Properties.Settings.Default.rightMargin = rightMarginUpDown.Value;
             Properties.Settings.Default.bottomMargin = bottomMarginUpDown.Value;
 
-            Properties.Settings.Default.useMagickFlag = useMagickCheckBox.Checked;
+            Properties.Settings.Default.backgroundColor = backgroundColorButton.BackColor;
             Properties.Settings.Default.transparentPngFlag = transparentPngCheckBox.Checked;
+            Properties.Settings.Default.useMagickFlag = useMagickCheckBox.Checked;
             Properties.Settings.Default.outlinedText = !notOutllinedTextCheckBox.Checked;
             Properties.Settings.Default.deleteDisplaySize = deleteDisplaySizeCheckBox.Checked;
             Properties.Settings.Default.keepPageSize = KeepPageSizeCheckBox.Checked;
@@ -278,6 +281,21 @@ namespace TeX2img {
             });
             var btn = (Button) sender;
             menu.Show(btn, new Point(btn.Width, 0));
+        }
+
+        private void backgroundColorButton_Click(object sender, EventArgs e) {
+            using (var cdg = new ColorDialog()) {
+                cdg.CustomColors = (int[])Properties.Settings.Default.ColorDialogCustomColors.Clone();
+                cdg.AnyColor = true;
+                cdg.Color = backgroundColorButton.BackColor;
+                if (cdg.ShowDialog() == System.Windows.Forms.DialogResult.OK) {
+                    backgroundColorButton.BackColor = cdg.Color;
+                }
+            }
+        }
+
+        private void transparentPngCheckBox_CheckedChanged(object sender, EventArgs e) {
+            backgroundColorButton.Enabled = !transparentPngCheckBox.Checked;
         }
     }
 }

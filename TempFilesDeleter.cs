@@ -27,7 +27,11 @@ namespace TeX2img {
         private List<string> tmpFiles = new List<string>();
         private List<string> tmpTeXFiles = new List<string>();
         public void AddFile(string file) { tmpFiles.Add(file); }
-        public void AddTeXFile(string file) { tmpTeXFiles.Add(file); }
+        public void AddTeXFile(string file) {
+            var d = Path.GetDirectoryName(file);
+            var b = Path.GetFileNameWithoutExtension(file);
+            tmpTeXFiles.Add(Path.Combine(d, b));
+        }
 
         public static string GetTempFileName(string ext = ".tex") {
             return GetTempFileName(ext, Path.GetTempPath());

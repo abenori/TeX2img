@@ -216,5 +216,8 @@
     <Setting Name="workingDirectory" Type="System.String" Scope="User">
       <Value Profile="(Default)">tmp</Value>
     </Setting>
+    <Setting Name="backgroundColor" Type="System.Drawing.Color" Scope="User">
+      <Value Profile="(Default)">White</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

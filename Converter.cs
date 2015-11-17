@@ -795,6 +795,62 @@ namespace TeX2img {
         }
         #endregion
 
+        #region 画像処理
+        bool fillpdfbackground(string pdfFile,System.Drawing.Color color) {
+            var tmpfile = TempFilesDeleter.GetTempFileName(".tex", workingDir);
+            tempFilesDeleter.AddTeXFile(Path.Combine(workingDir, tmpfile));
+            using (var fw = new StreamWriter(Path.Combine(workingDir, tmpfile))) {
+                fw.WriteLine(@"\def\targetpdffilename{" + pdfFile + @"}\relax");
+                fw.WriteLine(@"\def\colorrgb{" + ((double)color.R/255).ToString() + " " + ((double)color.G/255).ToString() + " " + ((double)color.B/255).ToString() + @"}\relax");
+                fw.Write(
+@"\pdfoutput=1\relax
+\newdimen\zero\zero=0pt\relax
+\begingroup\catcode`P=12\relax\catcode`T=12\relax
+\lowercase{\def\x{\def\rempt##1.##2PT{##1\ifnum##2>\zero.##2\fi}}}\relax
+\expandafter\endgroup\x
+\def\strippt{\expandafter\rempt\the}\relax
+\newcount\totalpage\newcount\pagecount
+\pdfhorigin=0bp\relax
+\pdfvorigin=0bp\relax
+\pdfximage{\targetpdffilename}\relax
+\totalpage=\pdflastximagepages
+\advance\totalpage by 1\relax
+\pagecount=1\relax
+\loop\ifnum\pagecount<\totalpage
+\pdfximage page \pagecount mediabox{\targetpdffilename}\relax
+\setbox0=\hbox{\pdfrefximage\pdflastximage}\relax
+\setbox1=\hbox{\pdfliteral{q \colorrgb \space rg 0 0 \strippt\wd0 \space \strippt\dimexpr\ht0+\wd0\relax \space re f Q}\box0}\relax
+\pdfpageheight=\dimexpr\ht0+\dp0\relax
+\pdfpagewidth=\wd0\relax
+\shipout\box1\relax
+\advance\pagecount by 1\relax
+\repeat
+\bye
+");
+            }
+            using (var proc = GetProcess()) {
+                proc.StartInfo.FileName = GetpdftexPath();
+                proc.StartInfo.Arguments = "-no-shell-escape -interaction=nonstopmode \"" + tmpfile + "\"";
+                try {
+                    printCommandLine(proc);
+                    ReadOutputs(proc, "pdftex の実行 ");
+                }
+                catch (Win32Exception) {
+                    if (controller_ != null) controller_.showPathError("pdftex.exe", "TeX ディストリビューション");
+                    return false;
+                }
+                catch (TimeoutException) { return false; }
+                var tmppdf = Path.Combine(workingDir, Path.ChangeExtension(tmpfile, ".pdf"));
+                if (File.Exists(tmppdf)) {
+                    File.Delete(Path.Combine(workingDir, pdfFile));
+                    File.Move(tmppdf, Path.Combine(workingDir, pdfFile));
+                }
+            }
+            return true;
+        }
+
+        #endregion
+
         #region 画像結合
         bool pdfconcat(List<string> files, string output) { 
             using (var proc = GetProcess()) {
@@ -996,6 +1052,10 @@ namespace TeX2img {
             if (bbs == null) {
                 controller_.showError("BoundigBox の取得に失敗しました．");
                 return false;
+            }
+
+            if (!Properties.Settings.Default.transparentPngFlag) {
+                fillpdfbackground(tmpFileBaseName + ".pdf", Properties.Settings.Default.backgroundColor);
             }
 
             // 空白ページの検出
