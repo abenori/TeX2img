@@ -301,6 +301,7 @@ namespace TeX2img {
                     string file = FirstFiles[2 * i];
                     string workdir;
                     if (Properties.Settings.Default.workingDirectory == "file") workdir = Path.GetDirectoryName(file);
+                    else if (Properties.Settings.Default.workingDirectory == "current") workdir = Directory.GetCurrentDirectory();
                     else workdir = Path.GetTempPath();
                     string tmppath;
                     try {
@@ -338,10 +339,12 @@ namespace TeX2img {
                 string tmpDir;
                 if (InputFromFileRadioButton.Checked) {
                     if (Properties.Settings.Default.workingDirectory == "file") tmpDir = Path.GetDirectoryName(inputFileNameTextBox.Text);
+                    else if (Properties.Settings.Default.workingDirectory == "current") tmpDir = Directory.GetCurrentDirectory();
                     else tmpDir = Path.GetTempPath();
                     tmpTeXFileName = TempFilesDeleter.GetTempFileName(Path.GetExtension(inputFileNameTextBox.Text), tmpDir);
                 }else{
-                    tmpDir = Path.GetTempPath();
+                    if (Properties.Settings.Default.workingDirectory == "current") tmpDir = Directory.GetCurrentDirectory();
+                    else tmpDir = Path.GetTempPath();
                     tmpTeXFileName = TempFilesDeleter.GetTempFileName();
                 }
 

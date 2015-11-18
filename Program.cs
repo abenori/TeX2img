@@ -74,8 +74,42 @@ namespace TeX2img {
             {"merge-output-files","PDF / TIFF ファイルを単一ファイルに[-]",val=>Properties.Settings.Default.mergeOutputFiles = (val != null),()=>Properties.Settings.Default.mergeOutputFiles},
             {"animation-delay=",(double sec)=>{Properties.Settings.Default.animationDelay = (uint)(sec*100);}},// hidden
             {"animation-loop=",(uint val)=>Properties.Settings.Default.animationLoop = val},// hidden
-            {"transparent","透過 PNG / TIFF / EMF[-]",val => Properties.Settings.Default.transparentPngFlag = (val != null),()=>Properties.Settings.Default.transparentPngFlag},
-            {"with-text","PDF のテキスト情報を保持[-]",val =>Properties.Settings.Default.outlinedText = !(val != null),()=>!Properties.Settings.Default.outlinedText},
+            {"background-color=","背景色 指定例： FF0000 , red , \"255 0 0\"",val=> {
+                if(val.ToLower() == "transparent") {
+                    Properties.Settings.Default.transparentPngFlag = true;
+                    return;
+                }else {
+                    Properties.Settings.Default.transparentPngFlag = false;
+                }
+                try {
+                    Properties.Settings.Default.backgroundColor =  System.Drawing.ColorTranslator.FromHtml(val);
+                    return;
+                }catch(Exception) { }
+                try {
+                    Properties.Settings.Default.backgroundColor =  System.Drawing.ColorTranslator.FromHtml("#" + val);
+                    return;
+                }catch(Exception) { }
+                var list = val.Split(new char[] { ' ' }).ToList();
+                list.RemoveAll((s) => (s == ""));
+                if(list.Count == 1)throw new NDesk.Options.OptionException("認識できない色名です：" + val,"background-color");
+                try {
+                    if(list.Count != 3)throw new Exception();
+                    Properties.Settings.Default.backgroundColor = System.Drawing.Color.FromArgb(0,
+                        Int32.Parse(list[0]),Int32.Parse(list[1]),Int32.Parse(list[2]));
+                }
+                catch(Exception) {throw new NDesk.Options.OptionException("背景色指定が不正です．","background-color"); }
+            },()=> {if(Properties.Settings.Default.transparentPngFlag)return "transparent";
+                var c = Properties.Settings.Default.backgroundColor;
+                var r = String.Format("{0,2:X2}{1,2:X2}{2,2:X2}",c.R,c.G,c.B);
+                if(c.IsKnownColor)r = c.Name.ToLower() + " (" + r + ")";
+                return r; } },
+            {"transparent","透過（--background-color=transparent[white] と同じ）",val=>{
+                if(val != null)Properties.Settings.Default.transparentPngFlag = true;
+                else{
+                    Properties.Settings.Default.transparentPngFlag = false;
+                    Properties.Settings.Default.backgroundColor = System.Drawing.Color.White;
+                } } },
+            { "with-text","PDF のテキスト情報を保持[-]",val =>Properties.Settings.Default.outlinedText = !(val != null),()=>!Properties.Settings.Default.outlinedText},
             {"delete-display-size","SVG の表示寸法を削除[-]",val => Properties.Settings.Default.deleteDisplaySize = (val != null),()=>Properties.Settings.Default.deleteDisplaySize},
             {"antialias","アンチエイリアス処理[-]",val => Properties.Settings.Default.useMagickFlag = (val != null),()=>Properties.Settings.Default.useMagickFlag},
             {"low-resolution","低解像度で処理[-]",val => Properties.Settings.Default.useLowResolution = (val!= null),()=>Properties.Settings.Default.useLowResolution},
@@ -84,7 +118,7 @@ namespace TeX2img {
             {"preview","生成ファイルを開く[-]",val => preview = (val != null),()=>preview==null?false:preview.Value},
             {"embed-source","ソース情報を生成ファイルに保存[-]",val => Properties.Settings.Default.embedTeXSource = (val != null),()=>Properties.Settings.Default.embedTeXSource},
             {"copy-to-clipboard","生成ファイルをクリップボードにコピー[-]",val =>  Properties.Settings.Default.setFileToClipBoard = (val != null),()=>Properties.Settings.Default.setFileToClipBoard},
-            {"workingdir=","作業ディレクトリ（tmp/file）",val=> Properties.Settings.Default.workingDirectory = GetStringsFromArray("workingdir", val, new string[] { "tmp","file" }),()=>Properties.Settings.Default.workingDirectory },
+            {"workingdir=","作業ディレクトリ（tmp/file/current）",val=> Properties.Settings.Default.workingDirectory = GetStringsFromArray("workingdir", val, new string[] { "tmp","file","current" }),()=>Properties.Settings.Default.workingDirectory },
             {"savesettings","設定の保存を行う[-]",val => Properties.Settings.Default.SaveSettings = (val != null),()=>Properties.Settings.Default.SaveSettings},
             {"quiet","Quiet モード[-]",val => quiet = (val != null),()=>quiet},
             {"timeout=","タイムアウト時間を設定（秒）", (int val) => {
@@ -111,7 +145,7 @@ namespace TeX2img {
         };
 
         static string GetStringsFromArray(string optionname, string val, string[] possibleargs) {
-            if(possibleargs.Contains(val)) return val;
+            if (possibleargs.Contains(val)) return val;
             throw new NDesk.Options.OptionException(String.Join(", ", possibleargs) + " のいずれかを指定してください。", optionname);
         }
 
@@ -120,13 +154,13 @@ namespace TeX2img {
             // オプション解析
             List<string> files;
             try { files = options.Parse(cmds); }
-            catch(NDesk.Options.OptionException e) {
-                if(e.OptionName != null) {
+            catch (NDesk.Options.OptionException e) {
+                if (e.OptionName != null) {
                     var msg = "オプション " + e.OptionName + " への入力が不正です";
-                    if(e.Message != "") msg += "：" + e.Message;
+                    if (e.Message != "") msg += "：" + e.Message;
                     else msg += "。";
                     msg += "\nTeX2img" + (nogui ? "c" : "") + ".exe /help によるヘルプを参照してください。";
-                    if(nogui) Console.WriteLine(msg);
+                    if (nogui) Console.WriteLine(msg);
                     else MessageBox.Show(msg, "TeX2img");
                 }
                 return -1;
@@ -134,65 +168,65 @@ namespace TeX2img {
             // 各種バイナリのパスが設定されていなかったら推測する。
             // "/exit"が指定されている場合はメッセージ表示をしない。
             setPath(exit);
-            if(help) {
+            if (help) {
                 ShowHelp();
                 return 0;
             }
-            if(version) {
+            if (version) {
                 ShowVersion();
                 return 0;
             }
             // CUIモードの引数なしはエラー
-            if(nogui && files.Count == 0) {
+            if (nogui && files.Count == 0) {
                 Console.WriteLine("引数がありません。\n");
                 ShowHelp();
                 return -1;
             }
 
-            if(preview != null) Properties.Settings.Default.previewFlag = (bool) preview;
+            if (preview != null) Properties.Settings.Default.previewFlag = (bool)preview;
             //Console.WriteLine(preview == null ? "null" : preview.ToString());
 
             // すぐに終了
-            if(exit) {
+            if (exit) {
                 Properties.Settings.Default.Save();
                 return 0;
             }
             // filesのチェック
             string err = "";
-            for(int i = 0 ; i < files.Count / 2 ; ++i) {
+            for (int i = 0; i < files.Count / 2; ++i) {
                 var chkconv = new Converter(null, files[2 * i], files[2 * i + 1]);
-                if(!chkconv.CheckInputFormat()) {
+                if (!chkconv.CheckInputFormat()) {
                     err += "ファイル " + files[2 * i + 1] + " の拡張子は .tex ではありません。\n";
                 }
-                if(!File.Exists(files[2 * i])) {
+                if (!File.Exists(files[2 * i])) {
                     err += "ファイル " + files[2 * i] + " は見つかりませんでした。";
-                    if(files[2 * i].StartsWith("-") || files[2 * i].StartsWith("/")) err += "オプション名のミスの可能性もあります。";
+                    if (files[2 * i].StartsWith("-") || files[2 * i].StartsWith("/")) err += "オプション名のミスの可能性もあります。";
                     err += "\n";
                 }
-                if(!chkconv.CheckFormat()) {
+                if (!chkconv.CheckFormat()) {
                     err += "ファイル " + files[2 * i + 1] + " の拡張子は " + String.Join("/", Converter.imageExtensions) + " のいずれでもありません。\n";
                 }
             }
-            if(files.Count % 2 != 0) {
+            if (files.Count % 2 != 0) {
                 err += "ファイル " + files[files.Count - 1] + " に対応する出力ファイルが指定されていません。";
-                if(files[files.Count - 1].StartsWith("-") || files[files.Count - 1].StartsWith("/")) err += "オプション名のミスの可能性もあります。";
+                if (files[files.Count - 1].StartsWith("-") || files[files.Count - 1].StartsWith("/")) err += "オプション名のミスの可能性もあります。";
                 err += "\n";
             }
-            if(err != "") {
+            if (err != "") {
                 err = err.Remove(err.Length - 1);// 最後の改行を削除
-                if(nogui) Console.WriteLine(err);
+                if (nogui) Console.WriteLine(err);
                 else MessageBox.Show(err, "TeX2img");
                 return -2;
             }
 
-            if(nogui) {
+            if (nogui) {
                 // CUIでオプション指定がないときは，設定によらずプレビューをしないようにする。
-                if(preview == null) {
+                if (preview == null) {
                     preview = Properties.Settings.Default.previewFlag;
                     Properties.Settings.Default.previewFlag = false;
                 }
                 int r = CUIExec(quiet, files);
-                Properties.Settings.Default.previewFlag = (bool) preview;
+                Properties.Settings.Default.previewFlag = (bool)preview;
                 return r;
             } else {
                 Application.Run(new MainForm(files));
@@ -203,7 +237,7 @@ namespace TeX2img {
         [STAThread]
         static void Main() {
             // アップデートしていたら前バージョンの設定を読み込む
-            if(!Properties.Settings.Default.IsUpgraded) {
+            if (!Properties.Settings.Default.IsUpgraded) {
                 Properties.Settings.Default.Upgrade();
                 Properties.Settings.Default.IsUpgraded = true;
                 Properties.Settings.Default.TeX2imgVersion = Application.ProductVersion;
@@ -217,38 +251,38 @@ namespace TeX2img {
             //cmds = new List<string> { "TeX2img.exe", "/nogui", "--margins=\"a b c d\"","test.tex","test.pdf" };
             // 一つ目がTeX2img本体ならば削除
             // abtlinstからCreateProcessで呼び出すとTeX2img本体にならなかったので，一応確認をする。
-            if(cmds.Count > 0) {
+            if (cmds.Count > 0) {
                 string filecmds0 = Path.GetFileName(cmds[0]).ToLower();
                 string me = Path.GetFileName(System.Reflection.Assembly.GetExecutingAssembly().Location).ToLower();
 #if DEBUG
                 string vshost = Path.Combine(Path.GetDirectoryName(me), Path.GetFileNameWithoutExtension(me) + ".vshost.exe").ToLower();
-                if(vshost == filecmds0 || vshost == filecmds0 + ".exe") filecmds0 = me;
+                if (vshost == filecmds0 || vshost == filecmds0 + ".exe") filecmds0 = me;
 #endif
-                if(filecmds0 == me || filecmds0 + ".exe" == me) cmds.RemoveAt(0);
+                if (filecmds0 == me || filecmds0 + ".exe" == me) cmds.RemoveAt(0);
             }
-            
+
             // 二つ目でCUIモードか判定する。
-            if(cmds.Count > 0 && (cmds[0] == "/nogui" || cmds[0] == "-nogui" || cmds[0] == "--nogui")) {
+            if (cmds.Count > 0 && (cmds[0] == "/nogui" || cmds[0] == "-nogui" || cmds[0] == "--nogui")) {
                 nogui = true;
                 cmds.RemoveAt(0);
             }
             var chkfiles = new List<string>() { "pdfiumdraw.exe", "mudraw.exe" };
-            if(!nogui) chkfiles.Add("Azuki.dll");
+            if (!nogui) chkfiles.Add("Azuki.dll");
             string mydir = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
             chkfiles = chkfiles.Where(f => !File.Exists(Path.Combine(mydir, f))).ToList();
             string chkfile_errmsg = null;
-            if(chkfiles.Count != 0) {
+            if (chkfiles.Count != 0) {
                 chkfile_errmsg = "以下のファイルが見つからないため，起動することができませんでした。\n" + String.Join("\n", chkfiles.ToArray());
             }
-            if(chkfile_errmsg != null) {
-                if(nogui) Console.WriteLine(chkfile_errmsg);
+            if (chkfile_errmsg != null) {
+                if (nogui) Console.WriteLine(chkfile_errmsg);
                 else MessageBox.Show(chkfile_errmsg, "TeX2img");
-                Environment.ExitCode = - 3;
+                Environment.ExitCode = -3;
                 return;
             }
 
             // GUIか否かで設定の変更をする
-            if(!nogui) {
+            if (!nogui) {
                 //Properties.Settings.Default.batchMode = Properties.Settings.BatchMode.NonStop;
                 Properties.Settings.Default.timeOut = 0;
             }
@@ -268,30 +302,30 @@ namespace TeX2img {
         }
 
         static void setPath(bool nomsg) {
-            if(Properties.Settings.Default.platexPath == "" || Properties.Settings.Default.dvipdfmxPath == "" || Properties.Settings.Default.gsPath == "") {
-                if(Properties.Settings.Default.platexPath == "") Properties.Settings.Default.platexPath = Properties.Settings.Default.GuessPlatexPath();
-                if(Properties.Settings.Default.dvipdfmxPath == "") Properties.Settings.Default.dvipdfmxPath = Properties.Settings.Default.GuessDvipdfmxPath();
-                if(Properties.Settings.Default.gsPath == "") Properties.Settings.Default.gsPath = Properties.Settings.Default.GuessGsPath();
-                if(Properties.Settings.Default.platexPath == "" || Properties.Settings.Default.dvipdfmxPath == "" || Properties.Settings.Default.gsPath == "") {
-                    if(!nomsg) {
+            if (Properties.Settings.Default.platexPath == "" || Properties.Settings.Default.dvipdfmxPath == "" || Properties.Settings.Default.gsPath == "") {
+                if (Properties.Settings.Default.platexPath == "") Properties.Settings.Default.platexPath = Properties.Settings.Default.GuessPlatexPath();
+                if (Properties.Settings.Default.dvipdfmxPath == "") Properties.Settings.Default.dvipdfmxPath = Properties.Settings.Default.GuessDvipdfmxPath();
+                if (Properties.Settings.Default.gsPath == "") Properties.Settings.Default.gsPath = Properties.Settings.Default.GuessGsPath();
+                if (Properties.Settings.Default.platexPath == "" || Properties.Settings.Default.dvipdfmxPath == "" || Properties.Settings.Default.gsPath == "") {
+                    if (!nomsg) {
                         var msg = "LaTeX / DVI driver / Ghostscript のパス設定に失敗しました。\n環境設定画面で手動で設定してください。";
-                        if(nogui) Console.WriteLine(msg + "\n");
+                        if (nogui) Console.WriteLine(msg + "\n");
                         else MessageBox.Show(msg, "TeX2img");
                         (new SettingForm()).ShowDialog();
                     }
                 } else {
-                    if(!nomsg) {
+                    if (!nomsg) {
                         var msg = String.Format("TeX 関連プログラムのパスを\n {0}\n {1}\n {2}\nに設定しました。\n違っている場合は環境設定画面で手動で変更してください。", Properties.Settings.Default.platexPath, Properties.Settings.Default.dvipdfmxPath, Properties.Settings.Default.gsPath);
-                        if(nogui) Console.WriteLine(msg + "\n");
+                        if (nogui) Console.WriteLine(msg + "\n");
                         else MessageBox.Show(msg, "TeX2img");
                     }
                 }
                 Properties.Settings.Default.Save();
             }
 
-            if(Properties.Settings.Default.gsDevice == "" && Properties.Settings.Default.gsPath != "") {
+            if (Properties.Settings.Default.gsDevice == "" && Properties.Settings.Default.gsPath != "") {
                 Properties.Settings.Default.gsDevice = Properties.Settings.Default.GuessGsdevice();
-                if(Properties.Settings.Default.gsDevice == "") Properties.Settings.Default.gsDevice = "epswrite";
+                if (Properties.Settings.Default.gsDevice == "") Properties.Settings.Default.gsDevice = "epswrite";
                 Properties.Settings.Default.Save();
             }
         }
@@ -299,14 +333,14 @@ namespace TeX2img {
         // CUIモード
         static int CUIExec(bool q, List<string> files) {
             IOutputController Output = new CUIOutput(q);
-            if(files.Count == 0) {
+            if (files.Count == 0) {
                 Console.WriteLine("入力ファイルが存在しません。");
                 return -5;
             }
             try {
                 Directory.CreateDirectory(Path.GetTempPath());
             }
-            catch(Exception) {
+            catch (Exception) {
                 Console.WriteLine("一時フォルダ\n" + Path.GetTempPath() + "の作成に失敗しました。環境変数 TMP 及び TEMP を確認してください。");
                 return -7;
             }
@@ -314,13 +348,14 @@ namespace TeX2img {
             int failnum = 0;
 
             var outFiles = new System.Collections.Specialized.StringCollection();
-            for(int i = 0 ; i < files.Count / 2 ; ++i) {
+            for (int i = 0; i < files.Count / 2; ++i) {
                 string file = Path.GetFullPath(files[2 * i]);
                 string dir;
                 if (Properties.Settings.Default.workingDirectory == "file") dir = Path.GetDirectoryName(file);
+                else if (Properties.Settings.Default.workingDirectory == "current") dir = Directory.GetCurrentDirectory();
                 else dir = Path.GetTempPath();
                 string tmpTeXFileName = TempFilesDeleter.GetTempFileName(Path.GetExtension(file), dir);
-                if(tmpTeXFileName == null) {
+                if (tmpTeXFileName == null) {
                     Console.WriteLine("一時ファイル名の決定に失敗しました。作業フォルダ：\n" + Path.GetTempPath() + "\nを確認してください。");
                     return -6;
                 }
@@ -331,21 +366,21 @@ namespace TeX2img {
                 var output = Path.GetFullPath(files[2 * i + 1]);
                 // 変換！
                 try {
-                    using(var converter = new Converter(Output, tmpTeXFileName, output)) {
+                    using (var converter = new Converter(Output, tmpTeXFileName, output)) {
                         converter.AddInputPath(Path.GetDirectoryName(file));
-                        if(!converter.Convert()) ++failnum;
+                        if (!converter.Convert()) ++failnum;
                         else outFiles.AddRange(converter.OutputFileNames.ToArray());
                     }
-                    if(Properties.Settings.Default.setFileToClipBoard) Clipboard.SetFileDropList(outFiles);
+                    if (Properties.Settings.Default.setFileToClipBoard) Clipboard.SetFileDropList(outFiles);
                 }
-                catch(Exception e) { Console.WriteLine(e.Message); }
+                catch (Exception e) { Console.WriteLine(e.Message); }
             }
             return failnum;
         }
 
         static void ShowVersion() {
             var msg = Application.ProductName + " Version " + Application.ProductVersion;
-            if(nogui) Console.WriteLine(msg);
+            if (nogui) Console.WriteLine(msg);
             else MessageBox.Show(msg, "TeX2img");
         }
 
@@ -354,7 +389,7 @@ namespace TeX2img {
             options.WriteOptionDescriptions(sw);
             var msg = "使い方：TeX2img" + (nogui ? "c" : "") + ".exe [Options] Input Output\n\n" + sw.ToString();
             //if(msg.EndsWith("\n")) msg = msg.Remove(msg.Length - 1);
-            if(nogui) Console.WriteLine(msg);
+            if (nogui) Console.WriteLine(msg);
             else MessageBox.Show(msg, "TeX2img");
         }
     }

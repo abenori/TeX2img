@@ -70,8 +70,8 @@ namespace TeX2img {
             bottomMarginUpDown.Value = Properties.Settings.Default.bottomMargin;
 
             transparentPngCheckBox.Checked = Properties.Settings.Default.transparentPngFlag;
-            backgroundColorButton.BackColor = Properties.Settings.Default.backgroundColor;
-            backgroundColorButton.Enabled = !transparentPngCheckBox.Checked;
+            backgroundColor = Properties.Settings.Default.backgroundColor;
+            SetbackgroundColorButtonTextANDColor();
             useMagickCheckBox.Checked = Properties.Settings.Default.useMagickFlag;
             notOutllinedTextCheckBox.Checked = !Properties.Settings.Default.outlinedText;
             deleteDisplaySizeCheckBox.Checked = Properties.Settings.Default.deleteDisplaySize;
@@ -86,6 +86,7 @@ namespace TeX2img {
             setFileToClipboardCheckBox.Checked = Properties.Settings.Default.setFileToClipBoard;
             workDir_FileDirRadioButton.Checked = Properties.Settings.Default.workingDirectory == "file";
             workDir_TempDirRadioButton.Checked = Properties.Settings.Default.workingDirectory == "tmp";
+            workDir_CurrentRadioButton.Checked = Properties.Settings.Default.workingDirectory == "current";
 
             drawEOFCheckBox.Checked = Properties.Settings.Default.editorDrawEOF;
             drawEOLCheckBox.Checked = Properties.Settings.Default.editorDrawEOL;
@@ -142,7 +143,7 @@ namespace TeX2img {
             Properties.Settings.Default.rightMargin = rightMarginUpDown.Value;
             Properties.Settings.Default.bottomMargin = bottomMarginUpDown.Value;
 
-            Properties.Settings.Default.backgroundColor = backgroundColorButton.BackColor;
+            Properties.Settings.Default.backgroundColor = backgroundColor;
             Properties.Settings.Default.transparentPngFlag = transparentPngCheckBox.Checked;
             Properties.Settings.Default.useMagickFlag = useMagickCheckBox.Checked;
             Properties.Settings.Default.outlinedText = !notOutllinedTextCheckBox.Checked;
@@ -157,6 +158,7 @@ namespace TeX2img {
             Properties.Settings.Default.embedTeXSource = embedTeXSourCecheckBox.Checked;
             Properties.Settings.Default.setFileToClipBoard = setFileToClipboardCheckBox.Checked;
             if (workDir_FileDirRadioButton.Checked) Properties.Settings.Default.workingDirectory = "file";
+            else if (workDir_CurrentRadioButton.Checked) Properties.Settings.Default.workingDirectory = "current";
             else Properties.Settings.Default.workingDirectory = "tmp";
 
             Properties.Settings.Default.settingTabIndex = SettingTab.SelectedIndex;
@@ -287,15 +289,28 @@ namespace TeX2img {
             using (var cdg = new ColorDialog()) {
                 cdg.CustomColors = (int[])Properties.Settings.Default.ColorDialogCustomColors.Clone();
                 cdg.AnyColor = true;
-                cdg.Color = backgroundColorButton.BackColor;
+                cdg.Color = backgroundColor;
                 if (cdg.ShowDialog() == System.Windows.Forms.DialogResult.OK) {
-                    backgroundColorButton.BackColor = cdg.Color;
+                    backgroundColor = cdg.Color;
+                    SetbackgroundColorButtonTextANDColor();
                 }
             }
         }
 
-        private void transparentPngCheckBox_CheckedChanged(object sender, EventArgs e) {
+        Color backgroundColor;
+        private void SetbackgroundColorButtonTextANDColor() {
             backgroundColorButton.Enabled = !transparentPngCheckBox.Checked;
+            if (transparentPngCheckBox.Checked) {
+                backgroundColorButton.Text = "透過";
+                backgroundColorButton.BackColor = Color.White;
+            } else {
+                backgroundColorButton.Text = "";
+                backgroundColorButton.BackColor = backgroundColor;
+            }
+        }
+
+        private void transparentPngCheckBox_CheckedChanged(object sender, EventArgs e) {
+            SetbackgroundColorButtonTextANDColor();
         }
     }
 }

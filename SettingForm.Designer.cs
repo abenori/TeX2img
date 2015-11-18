@@ -85,6 +85,7 @@
             this.label8 = new System.Windows.Forms.Label();
             this.AfterCompilingTab = new System.Windows.Forms.TabPage();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
+            this.workDir_CurrentRadioButton = new System.Windows.Forms.RadioButton();
             this.workDir_FileDirRadioButton = new System.Windows.Forms.RadioButton();
             this.workDir_TempDirRadioButton = new System.Windows.Forms.RadioButton();
             this.openTmpFolderButton = new System.Windows.Forms.Button();
@@ -493,9 +494,9 @@
             this.transparentPngCheckBox.Location = new System.Drawing.Point(180, 244);
             this.transparentPngCheckBox.Margin = new System.Windows.Forms.Padding(4);
             this.transparentPngCheckBox.Name = "transparentPngCheckBox";
-            this.transparentPngCheckBox.Size = new System.Drawing.Size(175, 22);
+            this.transparentPngCheckBox.Size = new System.Drawing.Size(322, 22);
             this.transparentPngCheckBox.TabIndex = 11;
-            this.transparentPngCheckBox.Text = "透過（可能な場合）";
+            this.transparentPngCheckBox.Text = "透過（可能な場合，不可能なら白背景）";
             this.transparentPngCheckBox.UseVisualStyleBackColor = true;
             this.transparentPngCheckBox.CheckedChanged += new System.EventHandler(this.transparentPngCheckBox_CheckedChanged);
             // 
@@ -671,45 +672,57 @@
             // 
             // groupBox4
             // 
+            this.groupBox4.Controls.Add(this.workDir_CurrentRadioButton);
             this.groupBox4.Controls.Add(this.workDir_FileDirRadioButton);
             this.groupBox4.Controls.Add(this.workDir_TempDirRadioButton);
             this.groupBox4.Controls.Add(this.openTmpFolderButton);
             this.groupBox4.Location = new System.Drawing.Point(24, 189);
             this.groupBox4.Name = "groupBox4";
-            this.groupBox4.Size = new System.Drawing.Size(586, 100);
+            this.groupBox4.Size = new System.Drawing.Size(586, 122);
             this.groupBox4.TabIndex = 5;
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "作業フォルダ";
             // 
+            // workDir_CurrentRadioButton
+            // 
+            this.workDir_CurrentRadioButton.AutoSize = true;
+            this.workDir_CurrentRadioButton.Location = new System.Drawing.Point(7, 86);
+            this.workDir_CurrentRadioButton.Name = "workDir_CurrentRadioButton";
+            this.workDir_CurrentRadioButton.Size = new System.Drawing.Size(138, 22);
+            this.workDir_CurrentRadioButton.TabIndex = 2;
+            this.workDir_CurrentRadioButton.TabStop = true;
+            this.workDir_CurrentRadioButton.Text = "カレントフォルダ";
+            this.workDir_CurrentRadioButton.UseVisualStyleBackColor = true;
+            // 
             // workDir_FileDirRadioButton
             // 
             this.workDir_FileDirRadioButton.AutoSize = true;
-            this.workDir_FileDirRadioButton.Location = new System.Drawing.Point(9, 30);
+            this.workDir_FileDirRadioButton.Location = new System.Drawing.Point(6, 55);
             this.workDir_FileDirRadioButton.Name = "workDir_FileDirRadioButton";
-            this.workDir_FileDirRadioButton.Size = new System.Drawing.Size(370, 22);
-            this.workDir_FileDirRadioButton.TabIndex = 0;
+            this.workDir_FileDirRadioButton.Size = new System.Drawing.Size(391, 22);
+            this.workDir_FileDirRadioButton.TabIndex = 1;
             this.workDir_FileDirRadioButton.TabStop = true;
-            this.workDir_FileDirRadioButton.Text = "ファイルのあるフォルダ（外部ファイル入力時のみ）";
+            this.workDir_FileDirRadioButton.Text = "ファイルのあるフォルダ（直接入力時は一時フォルダ）";
             this.workDir_FileDirRadioButton.UseVisualStyleBackColor = true;
             // 
             // workDir_TempDirRadioButton
             // 
             this.workDir_TempDirRadioButton.AutoSize = true;
-            this.workDir_TempDirRadioButton.Location = new System.Drawing.Point(9, 63);
+            this.workDir_TempDirRadioButton.Location = new System.Drawing.Point(6, 24);
             this.workDir_TempDirRadioButton.Name = "workDir_TempDirRadioButton";
             this.workDir_TempDirRadioButton.Size = new System.Drawing.Size(121, 22);
-            this.workDir_TempDirRadioButton.TabIndex = 1;
+            this.workDir_TempDirRadioButton.TabIndex = 0;
             this.workDir_TempDirRadioButton.TabStop = true;
             this.workDir_TempDirRadioButton.Text = "一時フォルダ";
             this.workDir_TempDirRadioButton.UseVisualStyleBackColor = true;
             // 
             // openTmpFolderButton
             // 
-            this.openTmpFolderButton.Location = new System.Drawing.Point(319, 59);
+            this.openTmpFolderButton.Location = new System.Drawing.Point(319, 20);
             this.openTmpFolderButton.Margin = new System.Windows.Forms.Padding(4);
             this.openTmpFolderButton.Name = "openTmpFolderButton";
             this.openTmpFolderButton.Size = new System.Drawing.Size(260, 30);
-            this.openTmpFolderButton.TabIndex = 2;
+            this.openTmpFolderButton.TabIndex = 3;
             this.openTmpFolderButton.Text = "一時フォルダを開く...";
             this.openTmpFolderButton.UseVisualStyleBackColor = true;
             this.openTmpFolderButton.Click += new System.EventHandler(this.openTmpFolderButton_Click);
@@ -1173,5 +1186,6 @@
         private System.Windows.Forms.CheckBox transparentPngCheckBox;
         private System.Windows.Forms.Label label18;
         private System.Windows.Forms.Button backgroundColorButton;
+        private System.Windows.Forms.RadioButton workDir_CurrentRadioButton;
     }
 }

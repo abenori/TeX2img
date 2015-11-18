@@ -197,7 +197,8 @@ namespace TeX2img {
                     return rv;
                 }
             }
-            catch (Exception) {
+            catch (Exception e) {
+                if (controller_ != null) controller_.appendOutput(e.Message + "\n");
                 return null;
             }
         }
