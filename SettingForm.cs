@@ -299,7 +299,7 @@ namespace TeX2img {
 
         Color backgroundColor;
         private void SetbackgroundColorButtonTextANDColor() {
-            backgroundColorButton.Enabled = !transparentPngCheckBox.Checked;
+            //backgroundColorButton.Enabled = !transparentPngCheckBox.Checked;
             if (transparentPngCheckBox.Checked) {
                 backgroundColorButton.Text = "透過";
                 backgroundColorButton.BackColor = Color.White;

@@ -77,9 +77,6 @@ namespace TeX2img {
             {"background-color=","背景色 指定例： FF0000 , red , \"255 0 0\"",val=> {
                 if(val.ToLower() == "transparent") {
                     Properties.Settings.Default.transparentPngFlag = true;
-                    return;
-                }else {
-                    Properties.Settings.Default.transparentPngFlag = false;
                 }
                 try {
                     Properties.Settings.Default.backgroundColor =  System.Drawing.ColorTranslator.FromHtml(val);
@@ -93,22 +90,17 @@ namespace TeX2img {
                 list.RemoveAll((s) => (s == ""));
                 if(list.Count == 1)throw new NDesk.Options.OptionException("認識できない色名です：" + val,"background-color");
                 try {
-                    if(list.Count != 3)throw new Exception();
+                    if(list.Count != 3)throw new Exception("入力が不正です．");
                     Properties.Settings.Default.backgroundColor = System.Drawing.Color.FromArgb(0,
                         Int32.Parse(list[0]),Int32.Parse(list[1]),Int32.Parse(list[2]));
                 }
-                catch(Exception) {throw new NDesk.Options.OptionException("背景色指定が不正です．","background-color"); }
-            },()=> {if(Properties.Settings.Default.transparentPngFlag)return "transparent";
-                var c = Properties.Settings.Default.backgroundColor;
+                catch(Exception e) {throw new NDesk.Options.OptionException(e.Message,"background-color"); }
+            },()=> {var c = Properties.Settings.Default.backgroundColor;
                 var r = String.Format("{0,2:X2}{1,2:X2}{2,2:X2}",c.R,c.G,c.B);
-                if(c.IsKnownColor)r = c.Name.ToLower() + " (" + r + ")";
+                if(c.IsNamedColor)r += " (" + c.Name + ")";
+                if(Properties.Settings.Default.transparentPngFlag)r += " 透過 or 白";
                 return r; } },
-            {"transparent","透過（--background-color=transparent[white] と同じ）",val=>{
-                if(val != null)Properties.Settings.Default.transparentPngFlag = true;
-                else{
-                    Properties.Settings.Default.transparentPngFlag = false;
-                    Properties.Settings.Default.backgroundColor = System.Drawing.Color.White;
-                } } },
+            {"transparent","透過",val=>Properties.Settings.Default.transparentPngFlag= (val != null) ,()=>Properties.Settings.Default.transparentPngFlag},
             { "with-text","PDF のテキスト情報を保持[-]",val =>Properties.Settings.Default.outlinedText = !(val != null),()=>!Properties.Settings.Default.outlinedText},
             {"delete-display-size","SVG の表示寸法を削除[-]",val => Properties.Settings.Default.deleteDisplaySize = (val != null),()=>Properties.Settings.Default.deleteDisplaySize},
             {"antialias","アンチエイリアス処理[-]",val => Properties.Settings.Default.useMagickFlag = (val != null),()=>Properties.Settings.Default.useMagickFlag},

@@ -9,10 +9,10 @@
 * PDF ファイル（フォントをアウトライン化またはテキストを保持）
 * SVG ファイル（フォントをアウトライン化かつテキストも保持）
 * JPEG ファイル
-* TIFF ファイル（透過・非透過）
-* PNG ファイル（透過・非透過）
+* TIFF ファイル
+* PNG ファイル
 * BMP ファイル
-* EMF ファイル（透過・非透過）
+* EMF ファイル
 
 出力した画像ファイルは Word / Excel / PowerPoint や，Illustrator / InDesign 等に貼り付けて利用することができます．
 
@@ -71,7 +71,8 @@ TeX2img.exe input output
 /unit=<VAL>              余白の単位（bp/px）
 /keep-page-size[-]       ページサイズを維持
 /merge-output-files[-]   PDF / TIFF ファイルを単一ファイルに
-/transparent[-]          透過 PNG / TIFF / EMF
+/background-color=<VAL>  背景色 指定例： FF0000 , red , "255 0 0"
+/transparent             透過
 /with-text[-]            PDF のテキスト情報を保持
 /delete-display-size[-]  SVG の表示寸法を削除
 /antialias[-]            アンチエイリアス処理
@@ -81,6 +82,7 @@ TeX2img.exe input output
 /preview[-]              生成ファイルを開く
 /embed-source[-]         ソース情報を生成ファイルに保存
 /copy-to-clipboard[-]    生成ファイルをクリップボードにコピー
+/workingdir=<VAL>        作業ディレクトリ（tmp/file/current）
 /savesettings[-]         設定の保存を行う
 /quiet[-]                Quiet モード
 /timeout=<NUM>           タイムアウト時間を設定（秒）
@@ -302,6 +304,7 @@ https://code.google.com/p/pdfium/
     - 注釈追加時に，もととなるソースファイルの文字コードを推定するようにした．
     - 文字コードが「指定しない（入力 Shift_JIS）」の時にアウトプット枠への出力が文字化けしていたのを修正．
 
-* 1.6.8
+* 1.6.8（2015/11/25）
     - 作業フォルダを，従来の一時フォルダの他に，ファイルのあるフォルダとカレントフォルダを選べるようにした．
-    - 透過と白以外の背景色を指定できるようにした．
+    - 背景色を指定できるようにした．（透過が ON の場合は従来と同じ動作となる．）
+

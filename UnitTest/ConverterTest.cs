@@ -124,6 +124,7 @@ namespace UnitTest {
             Settings.Default.deleteTmpFileFlag = true;
             Settings.Default.previewFlag = false;
             Settings.Default.setFileToClipBoard = false;
+            Settings.Default.backgroundColor = System.Drawing.Color.Red;
 
             Settings.Default.platexPath = Settings.Default.GuessPlatexPath();
             Debug.WriteLine("platex = " + Settings.Default.platexPath);
