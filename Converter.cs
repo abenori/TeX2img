@@ -820,7 +820,7 @@ namespace TeX2img {
 \loop\ifnum\pagecount<\totalpage
 \pdfximage page \pagecount mediabox{\targetpdffilename}\relax
 \setbox0=\hbox{\pdfrefximage\pdflastximage}\relax
-\setbox1=\hbox{\pdfliteral{q \colorrgb \space rg 0 0 \strippt\wd0 \space \strippt\dimexpr\ht0+\wd0\relax \space re f Q}\box0}\relax
+\setbox1=\hbox{\pdfliteral{q \colorrgb \space rg n 0 0 \strippt\wd0 \space \strippt\dimexpr\ht0+\wd0\relax \space re f Q}\box0}\relax
 \pdfpageheight=\dimexpr\ht0+\dp0\relax
 \pdfpagewidth=\wd0\relax
 \shipout\box1\relax
@@ -1055,7 +1055,7 @@ namespace TeX2img {
                 return false;
             }
 
-            if (!Properties.Settings.Default.transparentPngFlag) {
+            if (!Properties.Settings.Default.transparentPngFlag && Properties.Settings.Default.backgroundColor.ToArgb() == System.Drawing.Color.White.ToArgb()) {
                 fillpdfbackground(tmpFileBaseName + ".pdf", Properties.Settings.Default.backgroundColor);
             }
 
