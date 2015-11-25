@@ -797,7 +797,7 @@ namespace TeX2img {
         #endregion
 
         #region 画像処理
-        bool fillpdfbackground(string pdfFile,System.Drawing.Color color) {
+        bool fillpdfbackground(string pdfFile,System.Drawing.Color color) { 
             var tmpfile = TempFilesDeleter.GetTempFileName(".tex", workingDir);
             tempFilesDeleter.AddTeXFile(Path.Combine(workingDir, tmpfile));
             using (var fw = new StreamWriter(Path.Combine(workingDir, tmpfile))) {
@@ -1055,7 +1055,7 @@ namespace TeX2img {
                 return false;
             }
 
-            if (!Properties.Settings.Default.transparentPngFlag && Properties.Settings.Default.backgroundColor.ToArgb() == System.Drawing.Color.White.ToArgb()) {
+            if (!Properties.Settings.Default.transparentPngFlag && Properties.Settings.Default.backgroundColor.ToArgb() != System.Drawing.Color.White.ToArgb()) {
                 fillpdfbackground(tmpFileBaseName + ".pdf", Properties.Settings.Default.backgroundColor);
             }
 

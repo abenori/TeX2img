@@ -115,7 +115,7 @@ http://practical-scheme.net/gauche/index-j.html
 * mudraw に独自拡張を施したものを利用しています．
 http://www.mupdf.com/
 * 添付 pdfiumdraw には PDFium を利用しています．
-https://code.google.com/p/pdfium/
+https://pdfium.googlesource.com/pdfium/
 
 
 ## ライセンス
