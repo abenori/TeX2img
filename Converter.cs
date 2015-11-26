@@ -607,8 +607,10 @@ namespace TeX2img {
                 }
                 catch(TimeoutException) { return false; }
             }
-            File.Delete(Path.Combine(workingDir, outputFileName));
-            File.Move(Path.Combine(workingDir, Path.GetFileNameWithoutExtension(tmpfile) + ".pdf"), Path.Combine(workingDir, outputFileName));
+            if (File.Exists(Path.Combine(workingDir, Path.GetFileNameWithoutExtension(tmpfile) + ".pdf"))) {
+                File.Delete(Path.Combine(workingDir, outputFileName));
+                File.Move(Path.Combine(workingDir, Path.GetFileNameWithoutExtension(tmpfile) + ".pdf"), Path.Combine(workingDir, outputFileName));
+            }
             return true;
         }
 
@@ -797,37 +799,32 @@ namespace TeX2img {
         #endregion
 
         #region 画像処理
-        bool fillpdfbackground(string pdfFile,System.Drawing.Color color) { 
+        bool fillpdfbackground(string pdfFile,System.Drawing.Color color,int pageCount,List<BoundingBoxPair> bbs) { 
             var tmpfile = TempFilesDeleter.GetTempFileName(".tex", workingDir);
             tempFilesDeleter.AddTeXFile(Path.Combine(workingDir, tmpfile));
             using (var fw = new StreamWriter(Path.Combine(workingDir, tmpfile))) {
-                fw.WriteLine(@"\def\targetpdffilename{" + pdfFile + @"}\relax");
-                fw.WriteLine(@"\def\colorrgb{" + ((double)color.R/255).ToString() + " " + ((double)color.G/255).ToString() + " " + ((double)color.B/255).ToString() + @"}\relax");
-                fw.Write(
-@"\pdfoutput=1\relax
-\newdimen\zero\zero=0pt\relax
-\begingroup\catcode`P=12\relax\catcode`T=12\relax
-\lowercase{\def\x{\def\rempt##1.##2PT{##1\ifnum##2>\zero.##2\fi}}}\relax
-\expandafter\endgroup\x
-\def\strippt{\expandafter\rempt\the}\relax
-\newcount\totalpage\newcount\pagecount
-\pdfhorigin=0bp\relax
-\pdfvorigin=0bp\relax
-\pdfximage{\targetpdffilename}\relax
-\totalpage=\pdflastximagepages
-\advance\totalpage by 1\relax
-\pagecount=1\relax
-\loop\ifnum\pagecount<\totalpage
-\pdfximage page \pagecount mediabox{\targetpdffilename}\relax
-\setbox0=\hbox{\pdfrefximage\pdflastximage}\relax
-\setbox1=\hbox{\pdfliteral{q \colorrgb \space rg n 0 0 \strippt\wd0 \space \strippt\dimexpr\ht0+\wd0\relax \space re f Q}\box0}\relax
-\pdfpageheight=\dimexpr\ht0+\dp0\relax
-\pdfpagewidth=\wd0\relax
-\shipout\box1\relax
-\advance\pagecount by 1\relax
-\repeat
-\bye
-");
+                var colorstr = ((double)color.R / 255).ToString() + " " + ((double)color.G / 255).ToString() + " " + ((double)color.B / 255).ToString();
+                fw.WriteLine(@"\pdfoutput=1\relax");
+                fw.WriteLine(@"\pdfhorigin=0bp\relax");
+                fw.WriteLine(@"\pdfvorigin=0bp\relax");
+                /*
+                if (Properties.Settings.Default.backgroundOpacity != 0) {
+                    fw.WriteLine(@"\pdfpageresources{/ExtGState<</TRP<</ca " + Properties.Settings.Default.backgroundOpacity.ToString() + @">>>>}\relax");
+                }*/
+                for (int i = 1; i <= pageCount; ++i) {
+                    fw.WriteLine(@"\pdfximage page " + pageCount.ToString() + " mediabox{" + pdfFile + @"}\relax");
+                    if (!bbs[i - 1].hiresbb.IsEmpty) {
+                        fw.WriteLine(@"\setbox0=\hbox{\pdfliteral{q " + colorstr + " rg n " +
+                            //((Properties.Settings.Default.backgroundOpacity != 0) ? "/TRP gs " : "") + 
+                            bbs[i - 1].hiresbb.Left.ToString() + " " + bbs[i - 1].hiresbb.Bottom.ToString() + " " +
+                            bbs[i - 1].hiresbb.Width.ToString() + " " + bbs[i - 1].hiresbb.Height.ToString() + " " +
+                            @"re f Q}\pdfrefximage\pdflastximage}\relax");
+                    }
+                    fw.WriteLine(@"\pdfpageheight=\dimexpr\ht0+\dp0\relax");
+                    fw.WriteLine(@"\pdfpagewidth=\wd0\relax");
+                    fw.WriteLine(@"\shipout\box0\relax");
+                }
+                fw.WriteLine(@"\bye");
             }
             using (var proc = GetProcess()) {
                 proc.StartInfo.FileName = GetpdftexPath();
@@ -849,7 +846,6 @@ namespace TeX2img {
             }
             return true;
         }
-
         #endregion
 
         #region 画像結合
@@ -991,7 +987,7 @@ namespace TeX2img {
                 }
                 writer.Write((byte) 0x3B);// Trailer
             }
-            if(controller_ != null) controller_.appendOutput("TeX2img: Concatinate TIFF files");
+            if(controller_ != null) controller_.appendOutput("TeX2img: Concatinate GIF files");
             return true;
         }
         #endregion
@@ -1055,8 +1051,8 @@ namespace TeX2img {
                 return false;
             }
 
-            if (!Properties.Settings.Default.transparentPngFlag && Properties.Settings.Default.backgroundColor.ToArgb() != System.Drawing.Color.White.ToArgb()) {
-                fillpdfbackground(tmpFileBaseName + ".pdf", Properties.Settings.Default.backgroundColor);
+            if (!Properties.Settings.Default.transparentPngFlag) {
+                fillpdfbackground(tmpFileBaseName + ".pdf", Properties.Settings.Default.backgroundColor,page,bbs);
             }
 
             // 空白ページの検出
@@ -1190,8 +1186,9 @@ namespace TeX2img {
                     } else warnngs.Add("画像の結合に失敗しました。");
                 }
             }
+
             // 出力ファイルをターゲットディレクトリにコピー
-            if(page == 1) {
+            if (page == 1) {
                 string generatedFile = Path.Combine(workingDir, tmpFileBaseName + "-1" + extension);
                 if(File.Exists(generatedFile)) {
                     try {
@@ -1228,7 +1225,6 @@ namespace TeX2img {
             }
 
             if(Properties.Settings.Default.embedTeXSource && inputextension == ".tex") {
-                // Alternative Data Streamにソースを書き込む
                 try {
                     using (var source = new FileStream(inputTeXFilePath, FileMode.Open, FileAccess.Read)) {
                         var buf = new byte[source.Length];
