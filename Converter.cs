@@ -989,6 +989,73 @@ namespace TeX2img {
             }
             if(controller_ != null) controller_.appendOutput("TeX2img: Concatinate GIF files");
             return true;
+       }
+
+        bool svgconcat(List<string> files, string output, uint delay, uint loop) {
+            if (controller_ != null) controller_.appendOutput("making animation svg...");
+            try {
+                var outxml = new System.Xml.XmlDocument();
+                outxml.XmlResolver = null;
+                outxml.AppendChild(outxml.CreateXmlDeclaration("1.0", "utf-8", "no"));
+                outxml.AppendChild(outxml.CreateDocumentType("svg", "-//W3C//DTD SVG 1.1//EN", "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd", null));
+                var svg = outxml.CreateElement("svg", "http://www.w3.org/2000/svg");
+                var attr = outxml.CreateAttribute("xmlns:xlink");
+                attr.Value = "http://www.w3.org/1999/xlink";
+                svg.Attributes.Append(attr);
+                attr = outxml.CreateAttribute("version");
+                attr.Value = "1.1";
+                svg.Attributes.Append(attr);
+                outxml.AppendChild(svg);
+                var defs = outxml.CreateElement("defs", "http://www.w3.org/2000/svg");
+                svg.AppendChild(defs);
+                var idreg = new System.Text.RegularExpressions.Regex(@"(?<!\&)#");
+                foreach (var f in files) {
+                    var id = Path.GetFileNameWithoutExtension(f);
+                    var xml = new System.Xml.XmlDocument();
+                    xml.XmlResolver = null;
+                    xml.Load(Path.Combine(workingDir, f));
+                    foreach (System.Xml.XmlNode tag in xml.GetElementsByTagName("*")) {
+                        foreach (System.Xml.XmlAttribute a in tag.Attributes) {
+                            System.Diagnostics.Debug.WriteLine(a.Value);
+                            if (a.Name.ToLower() == "id") {
+                                a.Value = id + a.Value;
+                            } else {
+                                a.Value = idreg.Replace(a.Value, "#" + id);
+                            }
+                        }
+                    }
+                    foreach (System.Xml.XmlNode tag in xml.GetElementsByTagName("svg")) {
+                        var idattr = xml.CreateAttribute("id");
+                        idattr.Value = id;
+                        tag.Attributes.Append(idattr);
+                    }
+                    foreach (System.Xml.XmlNode n in xml.ChildNodes) {
+                        if (n.NodeType != System.Xml.XmlNodeType.DocumentType && n.NodeType != System.Xml.XmlNodeType.XmlDeclaration) {
+                            defs.AppendChild(outxml.ImportNode(n, true));
+                        }
+                    }
+                }
+                var use = outxml.CreateElement("use", "http://www.w3.org/2000/svg");
+                svg.AppendChild(use);
+                var animate = outxml.CreateElement("animate", "http://www.w3.org/2000/svg");
+                use.AppendChild(animate);
+                attr = outxml.CreateAttribute("attributeName");
+                attr.Value = "xlink:href"; animate.Attributes.Append(attr);
+                attr = outxml.CreateAttribute("begin");
+                attr.Value = "0s"; animate.Attributes.Append(attr);
+                attr = outxml.CreateAttribute("dur");
+                attr.Value = ((decimal)(Properties.Settings.Default.animationDelay * files.Count) / 100).ToString() + "s";
+                animate.Attributes.Append(attr);
+                attr = outxml.CreateAttribute("repeatCount");
+                attr.Value = Properties.Settings.Default.animationLoop > 0 ? Properties.Settings.Default.animationLoop.ToString() : "indefinite";
+                animate.Attributes.Append(attr);
+                attr = outxml.CreateAttribute("values");
+                attr.Value = String.Join(";", files.Select(d => "#" + Path.GetFileNameWithoutExtension(d)).ToArray());
+                animate.Attributes.Append(attr);
+                outxml.Save(Path.Combine(workingDir, output));
+                return true;
+            }
+            catch (Exception) { return false; }
         }
         #endregion
 
@@ -1154,7 +1221,7 @@ namespace TeX2img {
             }
 
             // 複数ファイルをまとめる．
-            if(Properties.Settings.Default.mergeOutputFiles && page > 1) {
+            if(Properties.Settings.Default.mergeOutputFiles/* && page > 1*/) {
                 var files = new List<string>();
                 var tempfile = TempFilesDeleter.GetTempFileName(extension, workingDir);
                 for(int i = 1 ; i <= page ; ++i) {
@@ -1166,6 +1233,7 @@ namespace TeX2img {
                 case ".pdf": merged = pdfconcat(files, tempfile); break;
                 case ".tiff": merged = tiffconcat(files, tempfile); break;
                 case ".gif": merged = gifconcat(files, tempfile, Properties.Settings.Default.animationDelay, Properties.Settings.Default.animationLoop); break;
+                case ".svg": merged = svgconcat(files, tempfile, Properties.Settings.Default.animationDelay, Properties.Settings.Default.animationLoop); break;
                 default: break;
                 }
                 if (merged != null) {
