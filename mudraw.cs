@@ -36,6 +36,8 @@ namespace TeX2img {
         public void ClearError() {
             error_occured = false;
             error_str = "";
+            StdInputBuf.Clear();
+            StdOutputBuf.Clear();
         }
 
         public void Dispose() {
@@ -118,7 +120,10 @@ namespace TeX2img {
         decimal ReadDecimal() {
             var str = ReadLine();
             if (str == null) throw new TimeoutException();
-            return Decimal.Parse(str);
+            try {
+                return Decimal.Parse(str);
+            }
+            catch (Exception e) { System.Diagnostics.Debug.WriteLine("Exception = " + e.Message + ", str = [" + str + "]"); throw; }
         }
 
         BoundingBox ReadBoundingBox() {

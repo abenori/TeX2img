@@ -170,10 +170,22 @@ namespace TeX2img {
                     var doc = (int)mupdf.Execute("open_document", typeof(int), Path.Combine(workingDir, inputPDFFileName));
                     if (doc == 0) return null;
                     foreach (var p in pages) {
-                        var page = (int)mupdf.Execute("load_page", typeof(int), doc, p - 1);
-                        var media = (BoundingBox)mupdf.Execute("pdfbox_page", typeof(BoundingBox), page, "media");
-                        var box = (BoundingBox)mupdf.Execute("pdfbox_page", typeof(BoundingBox), page, boxname);
-                        var rotate = (int)mupdf.Execute("rotate_page", typeof(int), page);
+                        int rotate = 0;
+                        BoundingBox box = new BoundingBox(), media = new BoundingBox();
+                        const int repeatTimes = 10;
+                        for (int i = 1; i <= repeatTimes; ++i) {
+                            try {
+                                var page = (int)mupdf.Execute("load_page", typeof(int), doc, p - 1);
+                                media = (BoundingBox)mupdf.Execute("pdfbox_page", typeof(BoundingBox), page, "media");
+                                box = (BoundingBox)mupdf.Execute("pdfbox_page", typeof(BoundingBox), page, boxname);
+                                rotate = (int)mupdf.Execute("rotate_page", typeof(int), page);
+                                break;
+                            }
+                            catch (Exception) {
+                                mupdf.ClearError();
+                                if (i == repeatTimes) throw;
+                            }
+                        }
                         BoundingBox bb;
                         switch (rotate) {
                         default:
@@ -190,7 +202,7 @@ namespace TeX2img {
                             bb = new BoundingBox(media.Top - box.Top, box.Left - media.Left, media.Top - box.Bottom, box.Right - media.Left);
                             break;
                         }
-                        if (controller_ != null) controller_.appendOutput(bb.ToString() + "\n");
+                        if (controller_ != null) controller_.appendOutput(bb.ToString() + " (Page " + p + ")\n");
                         rv.Add(new BoundingBoxPair(bb.HiresBBToBB(), bb));
                     }
                     if (controller_ != null) controller_.appendOutput("\n");
@@ -199,6 +211,7 @@ namespace TeX2img {
             }
             catch (Exception e) {
                 if (controller_ != null) controller_.appendOutput(e.Message + "\n");
+                System.Diagnostics.Debug.WriteLine(e.StackTrace);
                 return null;
             }
         }
@@ -508,6 +521,7 @@ namespace TeX2img {
                     if(controller_ != null) controller_.showToolError("mudraw.exe");
                     return false;
                 }
+                catch (TimeoutException) { return false; }
                 if(outputFileName.Contains("%d")) {
                     var r = outputFileName.IndexOf("%d");
                     var pre = outputFileName.Substring(0, r);
@@ -1016,7 +1030,6 @@ namespace TeX2img {
                     xml.Load(Path.Combine(workingDir, f));
                     foreach (System.Xml.XmlNode tag in xml.GetElementsByTagName("*")) {
                         foreach (System.Xml.XmlAttribute a in tag.Attributes) {
-                            System.Diagnostics.Debug.WriteLine(a.Value);
                             if (a.Name.ToLower() == "id") {
                                 a.Value = id + a.Value;
                             } else {
