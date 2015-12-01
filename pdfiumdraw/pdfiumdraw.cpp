@@ -44,6 +44,17 @@ struct Data {
 	RECT viewport;
 };
 
+/** ページ番号の扱い
+--pages=1,3 --output=out.pdf
+の時，
+* 出力がPDFでなければout1.pdfとout3.pdfを出力する．
+* 出力がPDFならば全2ページのout.pdfを出力する．
+--output=out-%d.pdfならば
+* 出力がPDFでなければout-1.pdfとout-3.pdfを出力する．
+* 出力がPDFならば全2ページのout-%d.pdfを出力する．
+
+ややこしいので--pdfは隠しオプション．
+*/
 void ShowUsage() {
 	cout << "pdfiumdraw [option] input" << endl;
 	cout << "option:" << endl;
@@ -54,11 +65,11 @@ void ShowUsage() {
 	cout << "  --jpg: output jpeg file" << endl;
 	cout << "  --gif: output gif file" << endl;
 	cout << "  --tiff: output tiff file" << endl;
-	cout << "  --pdf: output pdf file" << endl;
-	cout << "  --merge: merge output files (PDF -> PDF only)" << endl;
+	//cout << "  --pdf: output pdf file" << endl;
+	//cout << "  --merge: merge output files (PDF -> PDF only)" << endl;
 	cout << "  --scale: specify scale" << endl;
 	cout << "  --transparent: output transparent file (if possible)" << endl;
-	cout << "  --output=<file>: specify output file name" << endl;
+	cout << "  --output=<file>: specify output file name (%d for the page number)" << endl;
 	cout << "  --pages=<page>: specify output page (e.g. 1,5-9,10)" << endl;
 //	cout << "  --viewport=<left>,<top>,<right>,<bottom>: specify viewport" << endl;
 	cout << "  --help: show this message" << endl;
@@ -546,6 +557,7 @@ int WritePDF(const vector<tuple<string, vector<int>>> &files, string output){
 	}
 	PDFWriter writer(output);
 	if(::FPDF_SaveAsCopy(newdoc.doc, &writer, 0) == FALSE)throw new runtime_error("fail to save " + output);
+	else cout << "output: " << output << endl;
 	return errpage;
 }
 
@@ -567,6 +579,7 @@ int WritePDF(const Data &d){
 	}
 	PDFWriter writer(d.output);
 	if(::FPDF_SaveAsCopy(newdoc.doc, &writer, 0) == FALSE)throw new runtime_error("fail to save " + d.output);
+	else cout << "output: " << d.output << endl;
 	return errpage;
 }
 
@@ -585,6 +598,7 @@ void OutputBox(string boxname, Data &d) {
 			}
 			if(boxname == "mediabox") result = ::FPDFPage_GetMediaBox(page.page, &left, &bottom, &right, &top);
 			if(result) {
+
 				int ileft = (int) left;
 				int itop = (int) top;
 				int ibottom = (int) bottom; if((float) ibottom != bottom)++ibottom;
@@ -757,8 +771,10 @@ int main(int argc, char *argv[]) {
 						break;
 					case PDF:
 						errpages += WritePDF(d);
+						break;
 					case WMF:
 						errpages += WriteWMF(d);
+						break;
 					default:
 						break;
 					}
