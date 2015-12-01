@@ -645,7 +645,7 @@ namespace TeX2img {
             return true;
         }
 
-        bool pdf2pdf(string input, string output) {
+        bool pdf2pdf(string input, string output, bool addnooutputfonts = true, int page = 0) {
             using (var proc = GetProcess()) {
                 string arg;
                 proc.StartInfo.FileName = setProcStartInfo(Properties.Settings.Default.gsPath, out arg);
@@ -655,7 +655,9 @@ namespace TeX2img {
                 }
                 if (arg != "") arg += " ";
                 if (proc.StartInfo.Arguments != "") proc.StartInfo.Arguments += " ";
-                proc.StartInfo.Arguments += "-dNOPAUSE -dBATCH -dPDFFitPage -sDEVICE=pdfwrite -dNoOutputFonts " +
+                proc.StartInfo.Arguments += "-dNOPAUSE -dBATCH -sDEVICE=pdfwrite " +
+                    (addnooutputfonts ? "-dNoOutputFonts " : "") +
+                    (page > 0 ? "-dFirstPage=" + page.ToString() + " -dLastPage=" + page.ToString() + " " : "") +
                     "-sOutputFile=\"" + output + "\" \"" + input + "\"";
                 try {
                     printCommandLine(proc);
@@ -719,79 +721,6 @@ namespace TeX2img {
             }
         }
 
-        // 余白の付加も行う。
-        private bool eps2img(string inputFileName, string outputFileName, BoundingBoxPair origbb = null) {
-            string device;
-            switch(Path.GetExtension(outputFileName)) {
-            case ".png":
-                device = Properties.Settings.Default.transparentPngFlag ? "pngalpha" : "png16m";
-                break;
-            case ".bmp":
-                device = "bmp16m";
-                break;
-            default:
-                device = "jpeg";
-                break;
-            }
-            return eps2img(inputFileName, outputFileName, origbb, device);
-        }
-
-        private bool eps2img(string inputFileName, string outputFileName, BoundingBoxPair origbb, string device) {
-            string extension = Path.GetExtension(outputFileName).ToLower();
-            string baseName = Path.GetFileNameWithoutExtension(inputFileName);
-            tempFilesDeleter.AddFile(outputFileName);
-            // ターゲットのepsを「含む」epsを作成。
-            string trimEpsFileName = TempFilesDeleter.GetTempFileName(".eps", workingDir);
-            tempFilesDeleter.AddFile(trimEpsFileName);
-            if(origbb == null) origbb = readBB(inputFileName);
-            decimal devicedevide = Properties.Settings.Default.yohakuUnitBP ? 1 : Properties.Settings.Default.resolutionScale;
-            decimal translateleft = -origbb.hiresbb.Left + Properties.Settings.Default.leftMargin / devicedevide + 1m/ Properties.Settings.Default.resolutionScale;
-            decimal translatebottom = -origbb.hiresbb.Bottom + Properties.Settings.Default.bottomMargin / devicedevide + 1m/Properties.Settings.Default.resolutionScale;
-            using (StreamWriter sw = new StreamWriter(Path.Combine(workingDir, trimEpsFileName), false, Encoding.GetEncoding("shift_jis"))) {
-                sw.WriteLine("/NumbDict countdictstack def");
-                sw.WriteLine("1 dict begin");
-                sw.WriteLine("/showpage {} def");
-                sw.WriteLine("userdict begin");
-                if(!origbb.bb.IsEmpty) sw.WriteLine("{0} {1} translate", translateleft, translatebottom);
-                sw.WriteLine("1.000000 1.000000 scale");
-                sw.WriteLine("0.000000 0.000000 translate");
-                if(!origbb.bb.IsEmpty) sw.WriteLine("({0}) run", inputFileName);
-                sw.WriteLine("countdictstack NumbDict sub {end} repeat");
-                sw.WriteLine("showpage");
-            }
-            // Ghostscript を使ったJPEG,PNG生成
-            string arg;
-            using(var proc = GetProcess()) {
-                proc.StartInfo.FileName = setProcStartInfo(Properties.Settings.Default.gsPath, out arg);
-                if(proc.StartInfo.FileName == "") {
-                    if(controller_ != null) controller_.showPathError("gswin32c.exe", "Ghostscript");
-                    return false;
-                }
-                string antialias = Properties.Settings.Default.useMagickFlag ? "4" : "1";
-                decimal marginmult = Properties.Settings.Default.yohakuUnitBP ? Properties.Settings.Default.resolutionScale : 1;
-                int width = (int)(origbb.hiresbb.Width * Properties.Settings.Default.resolutionScale + (Properties.Settings.Default.leftMargin + Properties.Settings.Default.rightMargin) * marginmult + 2);
-                int height = (int)(origbb.hiresbb.Height * Properties.Settings.Default.resolutionScale + (Properties.Settings.Default.topMargin + Properties.Settings.Default.bottomMargin) * marginmult + 2);
-                proc.StartInfo.Arguments = arg;
-                proc.StartInfo.Arguments += String.Format(
-                    "-q -sDEVICE={0} -sOutputFile={1} -dNOPAUSE -dBATCH -dPDFFitPage -dTextAlphaBits={2} -dGraphicsAlphaBits={2} -r{3} -g{4}x{5} \"{6}\"",
-                    device, outputFileName, antialias,
-                    72 * Properties.Settings.Default.resolutionScale,
-                    width, height, trimEpsFileName);
-                try {
-                    printCommandLine(proc);
-                    ReadOutputs(proc, "Ghostscript の実行");
-                }
-                catch(Win32Exception) {
-                    if(controller_ != null) controller_.showPathError(proc.StartInfo.FileName, "Ghostscript ");
-                    return false;
-                }
-                catch(TimeoutException) {
-                    return false;
-                }
-            }
-            return true;
-        }
-
         bool pdf2img_pdfium(string inputFilename, string outputFileName, int pages = 0) {
             return pdf2img_pdfium(inputFilename, outputFileName, pages == 0 ? null : new List<int> { pages });
         }
@@ -849,7 +778,28 @@ namespace TeX2img {
             return true;
         }
 
-        bool img2img_pdfium(string inputFileName, string outputFileName) {
+        bool pdf2pdf_pdfium(string input, string output, List<int> pagelist) {
+            using (var proc = GetProcess()) {
+                proc.StartInfo.FileName = Path.Combine(GetToolsPath(), "pdfiumdraw.exe");
+                proc.StartInfo.Arguments = "--pdf --input-format=pdf --pages=" + String.Join(",", pagelist.Select(i => i.ToString()).ToArray()) +
+                    " --output=\"" + output + "\" \"" + input + "\"";
+                try {
+                    printCommandLine(proc);
+                    ReadOutputs(proc, "pdfiumdraw の実行");
+                }
+                catch (Win32Exception) {
+                    if (controller_ != null) controller_.showToolError("pdfiumdraw.exe");
+                    return false;
+                }
+                if(proc.ExitCode != 0) {
+                    if (controller_ != null) controller_.showGenerateError();
+                    return false;
+                }
+                return true;
+            }
+        }
+
+            bool img2img_pdfium(string inputFileName, string outputFileName) {
             tempFilesDeleter.AddFile(outputFileName);
             var inputtype = Path.GetExtension(inputFileName).Substring(1).ToLower();
             var type = Path.GetExtension(outputFileName).Substring(1).ToLower();
@@ -1199,11 +1149,11 @@ namespace TeX2img {
                 }
                 if (!resize_pdf()) return false;
                 if (!Properties.Settings.Default.mergeOutputFiles && page > 1) {
-                    if (!pdf2img_pdfium(tmpFileBaseName + ".pdf", tmpFileBaseName + "-%d.pdf", pagelist)) return false;
+                    foreach(var i in pagelist) {
+                        if (!pdf2pdf(tmpFileBaseName + ".pdf", tmpFileBaseName + "-" + i.ToString() + ".pdf", false, i)) return false;
+                    }
                 } else {
-                    File.Delete(Path.Combine(workingDir, tmpFileBaseName + "-1.pdf"));
-                    File.Move(Path.Combine(workingDir, tmpFileBaseName + ".pdf"), Path.Combine(workingDir, tmpFileBaseName + "-1.pdf"));
-                    tempFilesDeleter.AddFile(tmpFileBaseName + "-1.pdf");
+                    if (!pdf2pdf_pdfium(tmpFileBaseName + ".pdf", tmpFileBaseName + "-1.pdf", pagelist)) return false;
                     page = 1;
                 }
                 return true;

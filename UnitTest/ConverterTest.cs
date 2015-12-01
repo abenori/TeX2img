@@ -68,7 +68,7 @@ namespace UnitTest {
                 Settings.Default.useLowResolution = false;
 
                 Settings.Default.useMagickFlag = false;
-                doGenerateTest(source, "no-antialias");
+                doGenerateTest(source, "no-antialias",bmpExts);
                 Settings.Default.useMagickFlag = true;
 
                 Settings.Default.keepPageSize = true;
@@ -81,6 +81,9 @@ namespace UnitTest {
                 Settings.Default.transparentPngFlag = false;
                 Settings.Default.keepPageSize = false;
 
+                Settings.Default.mergeOutputFiles = true;
+                doGenerateTest(source, "merge", new string[] { ".svg", ".pdf", ".tiff", ".gif" });
+                Settings.Default.mergeOutputFiles = false;
             }
         }
 
@@ -216,7 +219,7 @@ namespace UnitTest {
                 File.Copy(Path.Combine(WorkDir, pdf), Path.Combine(WorkDir, testfile + ".pdf"), true);
                 using (converter = new Converter(controller, Path.Combine(WorkDir, testfile + ".pdf"), Path.Combine(OutputDir, testfile + "-" + output + ext))) {
                     converter.Convert();
-                    if (expected.Item1.Count == 1) {
+                    if (expected.Item1.Count == 1 || Settings.Default.mergeOutputFiles) {
                         Assert.IsTrue(File.Exists(Path.Combine(OutputDir, testfile + "-" + output + ext)));
                     } else {
                         bool widthpos = (Settings.Default.leftMargin + Settings.Default.rightMargin > 0);
@@ -229,6 +232,7 @@ namespace UnitTest {
                             }
                         }
                     }
+
                 }
             }
             File.Delete(Path.Combine(WorkDir,pdf));
