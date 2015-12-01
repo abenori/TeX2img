@@ -100,7 +100,7 @@ namespace TeX2img {
             var tmpdir = Path.GetTempPath();
             var tmp = TempFilesDeleter.GetTempFileName(".pdf", tmpdir);
             tmp = Path.Combine(tmpdir, tmp);
-            using (var tmp_deleter = new TempFilesDeleter()) {
+            using (var tmp_deleter = new TempFilesDeleter(tmpdir)) {
                 tmp_deleter.AddFile(tmp);
                 using (var mupdf = new MuPDF(mudraw)) {
                     var doc = (int)mupdf.Execute("open_document", typeof(int), file);

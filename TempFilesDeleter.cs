@@ -6,7 +6,8 @@ using System.IO;
 
 namespace TeX2img {
     class TempFilesDeleter : IDisposable{
-        public TempFilesDeleter() { }
+        private string dir;
+        public TempFilesDeleter(string workingdir) { dir = workingdir; }
         public void Dispose() {
             if (Properties.Settings.Default.deleteTmpFileFlag) {
                 try {
@@ -26,9 +27,12 @@ namespace TeX2img {
         }
         private List<string> tmpFiles = new List<string>();
         private List<string> tmpTeXFiles = new List<string>();
-        public void AddFile(string file) { tmpFiles.Add(file); }
+        public void AddFile(string file) {
+            if (Path.IsPathRooted(file)) tmpFiles.Add(file);
+            else tmpFiles.Add(Path.Combine(dir, file));
+        }
         public void AddTeXFile(string file) {
-            var d = Path.GetDirectoryName(file);
+            var d = Path.IsPathRooted(file) ? Path.GetDirectoryName(file) : dir;
             var b = Path.GetFileNameWithoutExtension(file);
             tmpTeXFiles.Add(Path.Combine(d, b));
         }
