@@ -236,9 +236,9 @@
             this.GSUseepswriteCheckButton.AutoSize = true;
             this.GSUseepswriteCheckButton.Location = new System.Drawing.Point(11, 236);
             this.GSUseepswriteCheckButton.Name = "GSUseepswriteCheckButton";
-            this.GSUseepswriteCheckButton.Size = new System.Drawing.Size(390, 22);
+            this.GSUseepswriteCheckButton.Size = new System.Drawing.Size(344, 22);
             this.GSUseepswriteCheckButton.TabIndex = 12;
-            this.GSUseepswriteCheckButton.Text = "Ghostscript の DEVICE には epswrite を指定する";
+            this.GSUseepswriteCheckButton.Text = "バージョン 9.14 以前の Ghostscript を使う．";
             this.GSUseepswriteCheckButton.UseVisualStyleBackColor = true;
             // 
             // encodeComboBox

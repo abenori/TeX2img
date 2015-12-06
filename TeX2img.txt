@@ -313,4 +313,6 @@ https://pdfium.googlesource.com/pdfium/
     - BoundingBox の範囲内のみを塗ることにした．
     - PDF を中心とした変換を行うことにした．
     - SVG アニメーションの作成ができるようになった．
-    
+    - epswrite を使うかの設定を廃止し，9.14 以前の Ghostscript を使っているかに変更した．
+    - 併せて /gsdevice を /oldgs に変更．
+    - EMF 生成時に Ghostscript の .dashpath を施すことにした．

@@ -15,8 +15,8 @@ namespace UnitTest {
             dvi2pdf_test(testfile + ".dvi");
             pdfcrop_test(testfile + ".pdf");
             pdf2eps_test(testfile + ".pdf", Settings.Default.resolutionScale * 72);
-            eps2img_test(testfile + ".eps");
-            CallMethod(converter, "enlargeBB", testfile + ".eps", true);
+            //eps2img_test(testfile + ".eps");
+            //CallMethod(converter, "enlargeBB", testfile + ".eps", true);
             ps2pdf_test(testfile + ".eps");
             pdfpages_test(testfile + ".pdf");
             pdf2img_pdfium_test(testfile + ".pdf");

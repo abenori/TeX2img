@@ -25,10 +25,10 @@ namespace TeX2img {
             {"dvidriver=","DVI driver のパス",val =>Properties.Settings.Default.dvipdfmxPath=val,()=>Properties.Settings.Default.dvipdfmxPath},
             {"dvipdfmx=","/dvidriver と同じ（obsolete）",val =>Properties.Settings.Default.dvipdfmxPath=val},
             {"gs=","Ghostscript のパス",val => Properties.Settings.Default.gsPath = val,()=>Properties.Settings.Default.gsPath},
-            {"gsdevice=",
-                "Ghostscript の device（epswrite/eps2write）",
-                val => {Properties.Settings.Default.gsDevice = GetStringsFromArray("gsdevice",val,new string[]{"epswrite","eps2write"});},
-                ()=>Properties.Settings.Default.gsDevice
+            {"oldgs",
+                "9.14 以前の Ghostscript[-]",
+                val => {Properties.Settings.Default.gsDevice = (val != null) ? "epswrite" : "eps2write"; },
+                ()=>Properties.Settings.Default.gsDevice == "epswrite"
             },
             {"kanji=","文字コード（utf8/sjis/jis/euc/no)",val => {
                 string v = GetStringsFromArray("kanji", val, new string[] { "utf8", "sjis", "jis", "euc", "no" });

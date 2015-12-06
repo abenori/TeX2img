@@ -12,6 +12,7 @@ namespace TeX2img {
         IAsyncResult ReadStdOutputThread;
         string error_str;
         volatile bool error_occured = false;
+        object lockObj = new object();
         public MuPDF(string path) {
             process = new Process();
             process.StartInfo.FileName = path;
@@ -36,8 +37,10 @@ namespace TeX2img {
         public void ClearError() {
             error_occured = false;
             error_str = "";
-            StdInputBuf.Clear();
-            StdOutputBuf.Clear();
+            lock (lockObj) {
+                StdInputBuf.Clear();
+                StdOutputBuf.Clear();
+            }
         }
 
         public void Dispose() {
@@ -61,21 +64,24 @@ namespace TeX2img {
                     b = process.StandardOutput.BaseStream.ReadByte();
                 }
                 if (b == -1) return;
-                StdOutputBuf.Add((byte)b);
+                lock (lockObj) { StdOutputBuf.Add((byte)b); }
             }
         }
 
         string ReadLineSub() {
             List<byte> rv;
             for (int i = 0; i < StdOutputBuf.Count; ++i) {
-                var b = StdOutputBuf[i];
+                byte b;
+                b = StdOutputBuf[i];
                 if (b == '\r' || b == '\n') {
                     var j = i;
                     if (b == '\r') {
                         if (i + 1 < StdOutputBuf.Count && StdOutputBuf[i + 1] == '\n') ++i;
                     }
-                    rv = StdOutputBuf.GetRange(0, j);
-                    StdOutputBuf.RemoveRange(0, i + 1);
+                    lock (lockObj) {
+                        rv = StdOutputBuf.GetRange(0, j);
+                        StdOutputBuf.RemoveRange(0, i + 1);
+                    }
                     string buf = Encoding.UTF8.GetString(rv.ToArray());
                     return buf;
                     //return Encoding.UTF8.GetString(rv.ToArray());
@@ -105,8 +111,11 @@ namespace TeX2img {
             }
             if (StdOutputBuf.Count < size) System.Threading.Thread.Sleep(100);
             if (StdOutputBuf.Count < size) throw new TimeoutException(); ;
-            var buf = StdOutputBuf.GetRange(0, size);
-            StdOutputBuf.RemoveRange(0, size);
+            List<byte> buf;
+            lock (lockObj) {
+                buf = StdOutputBuf.GetRange(0, size);
+                StdOutputBuf.RemoveRange(0, size);
+            }
             ReadLine();
             return Encoding.UTF8.GetString(buf.ToArray());
         }
