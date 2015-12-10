@@ -173,6 +173,10 @@ namespace TeX2img {
                     var doc = (int)mupdf.Execute("open_document", typeof(int), Path.Combine(workingDir, inputPDFFileName));
                     if (doc == 0) return null;
                     foreach (var p in pages) {
+                        if (abort) {
+                            if (controller_ != null) controller_.appendOutput("処理を中断しました。\n");
+                            return null;
+                        }
                         int rotate = 0;
                         BoundingBox box = new BoundingBox(), media = new BoundingBox();
                         const int repeatTimes = 10;
@@ -1088,7 +1092,7 @@ namespace TeX2img {
                 bbs = readPDFBB(tmpFileBaseName + ".pdf", 1, page);
             }
             if (bbs == null) {
-                controller_.showError("BoundigBox の取得に失敗しました．");
+                if (!abort) controller_.showError("BoundigBox の取得に失敗しました．");
                 return false;
             }
 
@@ -1175,10 +1179,10 @@ namespace TeX2img {
                 return true;
             };
             generate_actions[".svg"] = () => {
-                if (!resize_pdf()) return false;
                 if (Properties.Settings.Default.outlinedText || (Properties.Settings.Default.mergeOutputFiles && page > 1)) {
                     if (!make_pdf_without_text()) return false;
                 }
+                if (!resize_pdf()) return false;
                 if (!pdf2img_mudraw(tmpFileBaseName + ".pdf", tmpFileBaseName + "-%d.svg", pagelist)) return false;
                 if (Properties.Settings.Default.deleteDisplaySize) {
                     foreach(var i in pagelist) {
@@ -1188,10 +1192,10 @@ namespace TeX2img {
                 return true;
             };
             generate_actions[".emf"] = () => {
-                if (!resize_pdf()) return false;
                 if (Properties.Settings.Default.outlinedText) {
                     if (!make_pdf_without_text()) return false;
                 }
+                if (!resize_pdf()) return false;
                 if (!dashtoline(tmpFileBaseName + ".pdf")) return false;
                 if (!pdf2img_pdfium(tmpFileBaseName + ".pdf", tmpFileBaseName + "-%d" + extension, pagelist)) return false;
                 return true;

@@ -72,8 +72,8 @@ namespace TeX2img {
             {"keep-page-size","ページサイズを維持[-]",val=>Properties.Settings.Default.keepPageSize=(val != null),()=>Properties.Settings.Default.keepPageSize},
             {"pagebox=",val=>Properties.Settings.Default.pagebox = GetStringsFromArray("pagebox",val,new string[]{"media","crop","bleed","trim","art"})},// hidden
             {"merge-output-files","PDF / TIFF ファイルを単一ファイルに[-]",val=>Properties.Settings.Default.mergeOutputFiles = (val != null),()=>Properties.Settings.Default.mergeOutputFiles},
-            {"animation-delay=",(double sec)=>{Properties.Settings.Default.animationDelay = (uint)(sec*100);}},// hidden
-            {"animation-loop=",(uint val)=>Properties.Settings.Default.animationLoop = val},// hidden
+            {"animation-delay=","アニメーションのディレイ（秒）",(double sec)=>{Properties.Settings.Default.animationDelay = (uint)(sec*100);},()=>Properties.Settings.Default.animationDelay/100m},
+            {"animation-loop=","アニメーションのループ回数（0で無限）",(uint val)=>Properties.Settings.Default.animationLoop = val,()=>Properties.Settings.Default.animationLoop},
             {"background-color=","背景色 指定例： FF0000 , red , \"255 0 0\"",val=> {
                 if(val.ToLower() == "transparent") {
                     Properties.Settings.Default.transparentPngFlag = true;

@@ -72,11 +72,14 @@ namespace TeX2img {
             transparentPngCheckBox.Checked = Properties.Settings.Default.transparentPngFlag;
             backgroundColor = Properties.Settings.Default.backgroundColor;
             SetbackgroundColorButtonTextANDColor();
+            KeepPageSizeCheckBox.Checked = Properties.Settings.Default.keepPageSize;
+
             useMagickCheckBox.Checked = Properties.Settings.Default.useMagickFlag;
             notOutllinedTextCheckBox.Checked = !Properties.Settings.Default.outlinedText;
             deleteDisplaySizeCheckBox.Checked = Properties.Settings.Default.deleteDisplaySize;
-            KeepPageSizeCheckBox.Checked = Properties.Settings.Default.keepPageSize;
             MergeOutputFilesCheckBox.Checked = Properties.Settings.Default.mergeOutputFiles;
+            animationDelayNumericUpDown.Value = Properties.Settings.Default.animationDelay / 100m;
+            animationLoopNumericUpDown.Value = Properties.Settings.Default.animationLoop;
 
             showOutputWindowCheckBox.Checked = Properties.Settings.Default.showOutputWindowFlag;
             previewCheckBox.Checked = Properties.Settings.Default.previewFlag;
@@ -145,11 +148,14 @@ namespace TeX2img {
 
             Properties.Settings.Default.backgroundColor = backgroundColor;
             Properties.Settings.Default.transparentPngFlag = transparentPngCheckBox.Checked;
+            Properties.Settings.Default.keepPageSize = KeepPageSizeCheckBox.Checked;
+
             Properties.Settings.Default.useMagickFlag = useMagickCheckBox.Checked;
             Properties.Settings.Default.outlinedText = !notOutllinedTextCheckBox.Checked;
             Properties.Settings.Default.deleteDisplaySize = deleteDisplaySizeCheckBox.Checked;
-            Properties.Settings.Default.keepPageSize = KeepPageSizeCheckBox.Checked;
             Properties.Settings.Default.mergeOutputFiles = MergeOutputFilesCheckBox.Checked;
+            Properties.Settings.Default.animationDelay = (uint)(animationDelayNumericUpDown.Value * 100m);
+            Properties.Settings.Default.animationLoop = (uint)animationLoopNumericUpDown.Value;
 
             Properties.Settings.Default.showOutputWindowFlag = showOutputWindowCheckBox.Checked;
             Properties.Settings.Default.previewFlag = previewCheckBox.Checked;
