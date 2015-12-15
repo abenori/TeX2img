@@ -402,6 +402,10 @@ namespace TeX2img {
         private bool pdf2eps(string inputFileName, string outputFileName, int resolution, int page, BoundingBoxPair origbb = null) {
             string arg;
             tempFilesDeleter.AddFile(outputFileName);
+            var tmppdf = TempFilesDeleter.GetTempFileName(".pdf", workingDir);
+            tempFilesDeleter.AddFile(tmppdf);
+            // あらかじめpdf2writeにかけておくと透明にちょっと強くなる
+            if (!pdf2pdf(inputFileName, tmppdf, resolution, page)) return false;
             using (var proc = GetProcess()) {
                 proc.StartInfo.FileName = setProcStartInfo(Properties.Settings.Default.gsPath, out arg);
                 if (proc.StartInfo.FileName == "") {
@@ -409,10 +413,10 @@ namespace TeX2img {
                     return false;
                 }
                 if (arg != "") arg += " ";
-                proc.StartInfo.Arguments = arg + "-dNOPAUSE -dBATCH -sDEVICE=" + Properties.Settings.Default.gsDevice + " -dFirstPage=" + page + " -dLastPage=" + page;
+                proc.StartInfo.Arguments = arg + "-dNOPAUSE -dBATCH -sDEVICE=" + Properties.Settings.Default.gsDevice + " -dFirstPage=1 -dLastPage=1";
                 if (IsNewGhostscript()) proc.StartInfo.Arguments += " -dNoOutputFonts";
                 else proc.StartInfo.Arguments += " -dNOCACHE";
-                proc.StartInfo.Arguments += " -dEPSCrop -sOutputFile=\"" + outputFileName + "\" -r" + resolution + " \"" + inputFileName + "\"";
+                proc.StartInfo.Arguments += " -dEPSCrop -sOutputFile=\"" + outputFileName + "\" -r" + resolution + " \"" + tmppdf + "\"";
 
                 try {
                     printCommandLine(proc);
@@ -446,8 +450,10 @@ namespace TeX2img {
             return gs_pdfwrite(String.Join(" ", filename.Select(d => "\"" + d + "\"").ToArray()), output, "-dEPSCrop", "EPS から PDF への変換", resolution,"");
         }
 
-        bool pdf2pdf(string input, string output, int resolution) {
-            return gs_pdfwrite("\"" + input + "\"", output, IsNewGhostscript() ? "-dNoOutputFonts" : "-dNOCACHE", "Ghostscript の実行", resolution, "");
+        bool pdf2pdf(string input, string output, int resolution, int page = 0) {
+			string pageopt = "";
+			if(page != 0) pageopt = " -dFirstPage=" + page.ToString() + " -dLastPage=" + page.ToString();
+            return gs_pdfwrite("\"" + input + "\"", output, (IsNewGhostscript() ? "-dNoOutputFonts" : "-dNOCACHE") + pageopt, "Ghostscript の実行", resolution, "");
         }
 
         bool dashtoline(string input) {
@@ -553,10 +559,11 @@ namespace TeX2img {
             return pdfcrop(inputFileName, outputFileName, use_bp, new List<int>() { page }, new List<BoundingBoxPair>() { origbb });
         }
 
-        // origbbには，GhostscriptのsDevice=bboxで得られた値を入れておく。（nullならばここで取得する。）
+        // origbbには，GhostscriptのsDevice=bboxで得られた値を入れておく。
         // 空ページはdeleteemptypages = trueならば消されるが，falseならばダミーのページが挿入される．
         // ついでに塗る．
-        bool pdfcrop(string inputFileName, string outputFileName, bool use_bp, List<int> pages, List<BoundingBoxPair> origbb, bool deleteemptypages = false) {
+        // crop = falseならば塗ることしかしない．
+        bool pdfcrop(string inputFileName, string outputFileName, bool use_bp, List<int> pages, List<BoundingBoxPair> origbb, bool deleteemptypages = false, bool crop = true) {
             var colorstr =
                 ((double)Properties.Settings.Default.backgroundColor.R / 255).ToString() + " " +
                 ((double)Properties.Settings.Default.backgroundColor.G / 255).ToString() + " " +
@@ -585,10 +592,6 @@ namespace TeX2img {
                     var box = bbBox[i];
                     if (!box.IsEmpty) {
                         var page = pages[i];
-                        fw.WriteLine(@"\pdfhorigin=" + (-box.Left).ToString() + @"bp\relax");
-                        fw.WriteLine(@"\pdfvorigin=" + box.Bottom.ToString() + @"bp\relax");
-                        fw.WriteLine(@"\pdfpagewidth=" + (box.Right - box.Left).ToString() + @"bp\relax");
-                        fw.WriteLine(@"\pdfpageheight=" + (box.Top - box.Bottom).ToString() + @"bp\relax");
                         fw.WriteLine(@"\pdfximage page " + page.ToString() + " mediabox{" + inputFileName + @"}");
                         fw.Write(@"\setbox0=\hbox{");
                         if (!Properties.Settings.Default.transparentPngFlag) {
@@ -597,7 +600,18 @@ namespace TeX2img {
                                 box.Width.ToString() + " " + box.Height.ToString() + " re f Q}");
                         }
                         fw.WriteLine(@"\pdfrefximage\pdflastximage}\relax");
-                        fw.WriteLine(@"\ht0=\pdfpageheight\relax");
+                        if (crop) {
+                            fw.WriteLine(@"\pdfhorigin=" + (-box.Left).ToString() + @"bp\relax");
+                            fw.WriteLine(@"\pdfvorigin=" + box.Bottom.ToString() + @"bp\relax");
+                            fw.WriteLine(@"\pdfpagewidth=" + (box.Right - box.Left).ToString() + @"bp\relax");
+                            fw.WriteLine(@"\pdfpageheight=" + (box.Top - box.Bottom).ToString() + @"bp\relax");
+                            fw.WriteLine(@"\ht0=\pdfpageheight\relax");
+                        } else {
+                            fw.WriteLine(@"\pdfhorigin=0pt\relax");
+                            fw.WriteLine(@"\pdfvorigin=0pt\relax");
+                            fw.WriteLine(@"\pdfpagewidth=\wd0\relax");
+                            fw.WriteLine(@"\pdfpageheight=\ht0\relax");
+                        }
                         fw.WriteLine(@"\shipout\box0\relax");
                     }
                 }
@@ -1117,25 +1131,28 @@ namespace TeX2img {
             if (Properties.Settings.Default.useLowResolution) gsresolution = 72 * Properties.Settings.Default.resolutionScale;
             else gsresolution = 20016;
 
-            Func<bool> resize_pdf = () => {
+            Func<bool,bool> modify_pdf = (bool resize) => {
                 var tmppdf = TempFilesDeleter.GetTempFileName(".pdf", workingDir);
                 tempFilesDeleter.AddFile(tmppdf);
                 File.Move(Path.Combine(workingDir, tmpFileBaseName + ".pdf"), Path.Combine(workingDir, tmppdf));
                 if (!pdfcrop(tmppdf, tmpFileBaseName + ".pdf",
                     vectorExtensions.Contains(extension) || Properties.Settings.Default.yohakuUnitBP,
-                    Enumerable.Range(1, page).ToList(), bbs, false))
+                    Enumerable.Range(1, page).ToList(), bbs, false, resize))
                     return false;
                 return true;
             };
 
+            // サイズ調整/背景塗りもする
             Func<bool> make_pdf_without_text = () => {
                 if (IsNewGhostscript()) {
+                    if (!modify_pdf(true)) return false;
                     // 新しい場合はpdfwrite
                     var tmppdf = TempFilesDeleter.GetTempFileName(".pdf", workingDir);
                     tempFilesDeleter.AddFile(tmppdf);
                     File.Move(Path.Combine(workingDir, tmpFileBaseName + ".pdf"), Path.Combine(workingDir, tmppdf));
                     if (!pdf2pdf(tmppdf, tmpFileBaseName + ".pdf", gsresolution)) return false;
                 } else {
+                    if (!modify_pdf(false)) return false;
                     // 古いときはeps経由
                     for (int i = 1; i <= page; ++i) {
                         if (emptyPages.Contains(i)) {
@@ -1153,8 +1170,7 @@ namespace TeX2img {
             generate_actions[".pdf"] = () => {
                 if (Properties.Settings.Default.outlinedText) {
                     if (!make_pdf_without_text()) return false;
-                }
-                if (!resize_pdf()) return false;
+                } else if (!modify_pdf(true)) return false;
                 if (!Properties.Settings.Default.mergeOutputFiles) {
                     foreach (var i in pagelist) {
                         if (!pdf2pdf_pdfium(tmpFileBaseName + ".pdf", tmpFileBaseName + "-" + i.ToString() + ".pdf", i)) return false;
@@ -1170,7 +1186,7 @@ namespace TeX2img {
                     var tmppdf = TempFilesDeleter.GetTempFileName(".pdf", workingDir);
                     tempFilesDeleter.AddFile(tmppdf);
                     File.Move(Path.Combine(workingDir, tmpFileBaseName + ".pdf"), Path.Combine(workingDir, tmppdf));
-                    if (!pdfcrop(tmppdf, tmpFileBaseName + ".pdf", true, Enumerable.Range(1, page).ToList(), bbs, false)) return false;
+                    if (!pdfcrop(tmppdf, tmpFileBaseName + ".pdf", true, Enumerable.Range(1, page).ToList(), bbs, false, false)) return false;
                 }
                 foreach (var i in pagelist) {
                     if (!pdf2eps(tmpFileBaseName + ".pdf", tmpFileBaseName + "-" + i + ".eps", gsresolution, i, bbs[i - 1])) return false;
@@ -1181,8 +1197,7 @@ namespace TeX2img {
             generate_actions[".svg"] = () => {
                 if (Properties.Settings.Default.outlinedText || (Properties.Settings.Default.mergeOutputFiles && page > 1)) {
                     if (!make_pdf_without_text()) return false;
-                }
-                if (!resize_pdf()) return false;
+                } else if (!modify_pdf(true)) return false;
                 if (!pdf2img_mudraw(tmpFileBaseName + ".pdf", tmpFileBaseName + "-%d.svg", pagelist)) return false;
                 if (Properties.Settings.Default.deleteDisplaySize) {
                     foreach(var i in pagelist) {
@@ -1194,8 +1209,7 @@ namespace TeX2img {
             generate_actions[".emf"] = () => {
                 if (Properties.Settings.Default.outlinedText) {
                     if (!make_pdf_without_text()) return false;
-                }
-                if (!resize_pdf()) return false;
+                }else if (!modify_pdf(true)) return false;
                 if (!dashtoline(tmpFileBaseName + ".pdf")) return false;
                 if (!pdf2img_pdfium(tmpFileBaseName + ".pdf", tmpFileBaseName + "-%d" + extension, pagelist)) return false;
                 return true;
@@ -1203,7 +1217,7 @@ namespace TeX2img {
             generate_actions[".wmf"] = generate_actions[".emf"];
 
             Func<string, bool> generate_bitmap = (ext) => {
-                if (!resize_pdf()) return false;
+                if (!modify_pdf(true)) return false;
                 foreach (var i in pagelist) {
                     if (!pdf2img(tmpFileBaseName + ".pdf", tmpFileBaseName + "-" + i + ext, i)) return false;
                 }
@@ -1222,7 +1236,7 @@ namespace TeX2img {
             };
             generate_actions[".gif"] = () => {
                 if (Properties.Settings.Default.transparentPngFlag) {
-                    if (!resize_pdf()) return false;
+                    if (!modify_pdf(true)) return false;
                     if (!pdf2img_pdfium(tmpFileBaseName + ".pdf", tmpFileBaseName + "-%d" + extension, pagelist)) return false;
                 } else {
                     if (!generate_bitmap(".png")) return false;
