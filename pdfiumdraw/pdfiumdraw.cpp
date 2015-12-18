@@ -1,3 +1,4 @@
+#define NOMINMAX 
 #include <Windows.h>
 #include <tchar.h>
 #include <string>
@@ -15,6 +16,7 @@
 #include <fpdf_edit.h>
 #include <fpdf_ppo.h>
 #include <fpdf_save.h>
+#include <algorithm>
 
 const int PDF = 0;
 const int EMF = 1;
@@ -37,10 +39,10 @@ struct Data {
 	string output;
 	int target = EMF;
 	int input_format = PDF;
-	int scale = 1;
+	int scale = 10;
 	vector<int> pages;
 	bool transparent = false;
-	float extent = 50;
+	float extent = 5;
 	RECT viewport;
 };
 
@@ -152,9 +154,12 @@ public:
 		if(p == nullptr)throw runtime_error("faild to open page " + to_string(pageNum + 1));
 		page = p;
 	}
-	~PDFPage() { ::FPDF_ClosePage(page); }
+	~PDFPage() { ::FPDF_ClosePage(page); page = nullptr; }
 	void Render(HDC hdc, int width, int height) {
 		::FPDF_RenderPage(hdc, page, 0, 0, width, height, 0, RENDER_FLAG);
+	}
+	void Render(HDC hdc, int x, int y, int width, int height) {
+		::FPDF_RenderPage(hdc, page, x, y, width, height, 0, RENDER_FLAG);
 	}
 	void Render(FPDF_BITMAP bitmap, int width, int height) {
 		::FPDF_RenderPageBitmap(bitmap, page, 0, 0, width, height, 0, RENDER_FLAG);
@@ -369,6 +374,65 @@ int WriteTIFF(const Data &d) {
 	return WriteIMG(d, "tiff");
 }
 
+int CALLBACK EnhMetaFileProc(HDC hdc, HANDLETABLE FAR *lpHTable, ENHMETARECORD FAR *lpEMFR, int nObj, LPARAM lpData) {
+	::PlayEnhMetaFileRecord(hdc, lpHTable, lpEMFR, nObj);
+	return TRUE;
+}
+
+void DrawEMF(HDC dc, PDFPage &page, int extent, int scale, bool transparent){
+	int width = static_cast<int>(page.GetWidth() * scale * extent) + 1;
+	int height = static_cast<int>(page.GetHeight() * scale * extent) + 1;
+	//int width = (int) (page.GetWidth() * 1000 * d.scale);
+	//int height = (int) (page.GetHeight() * 1000 * d.scale);
+	if(extent != 1){
+		::SetMapMode(dc, MM_ANISOTROPIC);
+		::SetWindowExtEx(dc, extent, extent, nullptr);
+	}
+	HRGN rgn = CreateRectRgn(0, 0, width, height);
+	::SelectClipRgn(dc, rgn);
+	RECT rc;
+	rc.left = 0; rc.top = 0; rc.bottom = height; rc.right = width;
+	if(transparent) {
+		::SetBkMode(dc, TRANSPARENT);
+		::FillRect(dc, &rc, (HBRUSH)::GetStockObject(NULL_BRUSH));
+	} else {
+		::SetBkMode(dc, OPAQUE);
+		::FillRect(dc, &rc, (HBRUSH)::GetStockObject(WHITE_BRUSH));
+	}
+	::GetClipBox(dc, &rc);
+	LONG poswidth = std::min(rc.right, static_cast<LONG>(width));
+	LONG posheight = std::min(rc.bottom, static_cast<LONG>(height));
+	int yokonum = (width - 1) / poswidth + 1;
+	int tatenum = (height - 1) / posheight + 1;
+	XFORM xform;
+	xform.eM11 = xform.eM22 = 1;
+	xform.eM12 = xform.eM21 = 0;
+	::SetGraphicsMode(dc, GM_ADVANCED);
+	for(int t = 0; t < tatenum; ++t){
+		for(int y = 0; y < yokonum; ++y){
+			HDC tmpdc = ::CreateEnhMetaFile(nullptr, nullptr, nullptr, nullptr);
+			if(extent != 1){
+				::SetMapMode(tmpdc, MM_ANISOTROPIC);
+				::SetWindowExtEx(tmpdc, extent, extent, nullptr);
+			}
+			rc.top = -t*posheight;
+			rc.bottom = height - t*posheight;
+			rc.left = -y*poswidth;
+			rc.right = width - y*poswidth;
+			::SetBkMode(tmpdc, TRANSPARENT);
+			::FillRect(tmpdc, &rc, (HBRUSH)::GetStockObject(NULL_BRUSH));
+			page.Render(tmpdc, -y*poswidth, -t*posheight, width, height);
+			HENHMETAFILE  meta = ::CloseEnhMetaFile(tmpdc);
+			xform.eDx = static_cast<float>(y*poswidth);
+			xform.eDy = static_cast<float>(t*posheight);
+			::SetWorldTransform(dc, &xform);
+			::EnumEnhMetaFile(dc, meta, (ENHMFENUMPROC)EnhMetaFileProc, nullptr, &rc);
+			::DeleteEnhMetaFile(meta);
+		}
+	}
+	::DeleteObject(rgn);
+}
+
 int WriteWMF(const Data &d){
 	string outputpre, outputpost;
 	GetOutputFileName(d.input, d.output, ".wmf", outputpre, outputpost);
@@ -378,29 +442,13 @@ int WriteWMF(const Data &d){
 	for(int i = 0; i < pages; ++i) {
 		if(!d.pages.empty() && find(d.pages.begin(), d.pages.end(), i) == d.pages.end())continue;
 		try {
-			PDFPage page(doc, i);
 			string outfile;
 			if((pages == 1 || d.pages.size() == 1) && d.output.find("%d") == string::npos)outfile = (d.output != "" ? d.output : GetDirectory(d.input) + "\\" + GetFileNameWithoutExtension(d.input) + ".wmf");
 			else outfile = outputpre + to_string(i + 1) + outputpost;
 			cout << "output: " << outfile << endl;
 			HDC dc = ::CreateEnhMetaFile(nullptr, nullptr, nullptr, nullptr);
-			float x = d.extent;
-			int width = static_cast<int>(page.GetWidth() * d.scale * x) + 1;
-			int height = static_cast<int>(page.GetHeight() * d.scale * x) + 1;
-			if((int)x != 1) {
-				::SetMapMode(dc, MM_ANISOTROPIC);
-				::SetWindowExtEx(dc, static_cast<int>(x), static_cast<int>(x), nullptr);
-			}
-			RECT rc;
-			rc.left = 0; rc.top = 0; rc.right = width; rc.bottom = height;
-			if(d.transparent) {
-				::SetBkMode(dc, TRANSPARENT);
-				::FillRect(dc, &rc, (HBRUSH)::GetStockObject(NULL_BRUSH));
-			} else {
-				::SetBkMode(dc, OPAQUE);
-				::FillRect(dc, &rc, (HBRUSH)::GetStockObject(WHITE_BRUSH));
-			}
-			page.Render(dc, width, height);
+			PDFPage page(doc, i);
+			DrawEMF(dc, page, static_cast<int>(d.extent), d.scale, d.transparent);
 			auto enhmeta = ::CloseEnhMetaFile(dc);
 			auto size = ::GetWinMetaFileBits(enhmeta, 0, nullptr, MM_ANISOTROPIC, dc);
 			vector<BYTE> buf;
@@ -427,55 +475,13 @@ int WriteEMF(const Data &d){
 	for(int i = 0; i < pages; ++i) {
 		if(!d.pages.empty() && find(d.pages.begin(), d.pages.end(), i) == d.pages.end())continue;
 		try {
-			PDFPage page(doc, i);
 			string outfile;
 			if((pages == 1 || d.pages.size() == 1) && d.output.find("%d") == string::npos)outfile = (d.output != "" ? d.output : GetDirectory(d.input) + "\\" + GetFileNameWithoutExtension(d.input) + ".emf");
 			else outfile = outputpre + to_string(i + 1) + outputpost;
 			cout << "output: " << outfile << endl;
 			HDC dc = ::CreateEnhMetaFile(nullptr, outfile.c_str(), nullptr, nullptr);
-			float x = d.extent;
-			int width = static_cast<int>(page.GetWidth() * d.scale * x) + 1;
-			int height = static_cast<int>(page.GetHeight() * d.scale * x) + 1;
-			//int width = (int) (page.GetWidth() * 1000 * d.scale);
-			//int height = (int) (page.GetHeight() * 1000 * d.scale);
-			if((int) x != 1) {
-				::SetMapMode(dc, MM_ANISOTROPIC);
-				::SetWindowExtEx(dc, static_cast<int>(x), static_cast<int>(x), nullptr);
-			}
-			//::SetGraphicsMode(dc, GM_ADVANCED);
-			//XFORM form = {0, 0, 0, 0, 0, 0};
-			//form.eM11 = 1 / x; form.eM22 = 1 / x;
-			//int r;
-			//r = ::SetWorldTransform(dc, &form);
-			//FS_MATRIX mat = {0, 0, 0, 0, 0, 0};
-			//mat.a = x; mat.d = x;
-			//FS_RECTF rect = {0, 0, 0, 0};
-			//rect.left = 0; rect.right = width; rect.bottom = height; rect.top = 0;
-			//r = FPDFPage_TransFormWithClip(page.page, &mat, &rect);
-			/*
-			HRGN rgn = CreateRectRgn(0, 0, width, height);
-			::SelectClipRgn(dc, rgn);
-			::DeleteObject(rgn);
-			*/
-			RECT rc;
-			rc.left = 0; rc.top = 0; rc.right = width; rc.bottom = height;
-			if(d.transparent) {
-				::SetBkMode(dc, TRANSPARENT);
-				::FillRect(dc, &rc, (HBRUSH)::GetStockObject(NULL_BRUSH));
-			} else {
-				::SetBkMode(dc, OPAQUE);
-				::FillRect(dc, &rc, (HBRUSH)::GetStockObject(WHITE_BRUSH));
-			}
-			page.Render(dc, width, height);
-			/*
-			LOGBRUSH lb;
-			lb.lbColor = RGB(0, 0, 0);
-			lb.lbStyle = BS_SOLID;
-			DWORD dash[2] = {width / 100, width / 100};
-			auto pen = ::ExtCreatePen(PS_GEOMETRIC | PS_USERSTYLE | PS_ENDCAP_FLAT, 1, &lb, 2, dash);
-			::SelectObject(dc, pen);
-			MoveToEx(dc, 0, height*x / 2, nullptr);
-			LineTo(dc, width*x, height*x / 2);*/
+			PDFPage page(doc, i);
+			DrawEMF(dc, page, static_cast<int>(d.extent), d.scale, d.transparent);
 			::DeleteEnhMetaFile(::CloseEnhMetaFile(dc));
 		}
 		catch(runtime_error e) {
