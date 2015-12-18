@@ -44,6 +44,15 @@
             this.dvipdfmxOpenFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.gsOpenFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.eachImageSettingTab = new System.Windows.Forms.TabPage();
+            this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.animationLoopNumericUpDown = new System.Windows.Forms.NumericUpDown();
+            this.animationDelayNumericUpDown = new System.Windows.Forms.NumericUpDown();
+            this.label20 = new System.Windows.Forms.Label();
+            this.label19 = new System.Windows.Forms.Label();
+            this.MergeOutputFilesCheckBox = new System.Windows.Forms.CheckBox();
+            this.deleteDisplaySizeCheckBox = new System.Windows.Forms.CheckBox();
+            this.useMagickCheckBox = new System.Windows.Forms.CheckBox();
+            this.notOutllinedTextCheckBox = new System.Windows.Forms.CheckBox();
             this.EditorSettingTab = new System.Windows.Forms.TabPage();
             this.acceptTabCheckBox = new System.Windows.Forms.CheckBox();
             this.tabWidthNumericUpDown = new System.Windows.Forms.NumericUpDown();
@@ -77,6 +86,23 @@
             this.previewCheckBox = new System.Windows.Forms.CheckBox();
             this.deleteTmpFilesCheckBox = new System.Windows.Forms.CheckBox();
             this.OutputImgSettingTab = new System.Windows.Forms.TabPage();
+            this.backgroundColorButton = new System.Windows.Forms.Button();
+            this.label18 = new System.Windows.Forms.Label();
+            this.transparentPngCheckBox = new System.Windows.Forms.CheckBox();
+            this.KeepPageSizeCheckBox = new System.Windows.Forms.CheckBox();
+            this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.label9 = new System.Windows.Forms.Label();
+            this.radioButtonbp = new System.Windows.Forms.RadioButton();
+            this.radioButtonpx = new System.Windows.Forms.RadioButton();
+            this.bottomMarginUpDown = new System.Windows.Forms.NumericUpDown();
+            this.rightMarginUpDown = new System.Windows.Forms.NumericUpDown();
+            this.label5 = new System.Windows.Forms.Label();
+            this.label6 = new System.Windows.Forms.Label();
+            this.leftMarginUpDown = new System.Windows.Forms.NumericUpDown();
+            this.topMarginUpDown = new System.Windows.Forms.NumericUpDown();
+            this.label7 = new System.Windows.Forms.Label();
+            this.resolutionScaleUpDown = new System.Windows.Forms.NumericUpDown();
+            this.label8 = new System.Windows.Forms.Label();
             this.BasicSettingTab = new System.Windows.Forms.TabPage();
             this.GuessPathButton = new System.Windows.Forms.Button();
             this.label16 = new System.Windows.Forms.Label();
@@ -97,33 +123,10 @@
             this.platexBrowseButton = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
             this.SettingTab = new System.Windows.Forms.TabControl();
-            this.MergeOutputFilesCheckBox = new System.Windows.Forms.CheckBox();
-            this.deleteDisplaySizeCheckBox = new System.Windows.Forms.CheckBox();
-            this.useMagickCheckBox = new System.Windows.Forms.CheckBox();
-            this.notOutllinedTextCheckBox = new System.Windows.Forms.CheckBox();
-            this.groupBox2 = new System.Windows.Forms.GroupBox();
-            this.label19 = new System.Windows.Forms.Label();
-            this.label20 = new System.Windows.Forms.Label();
-            this.animationDelayNumericUpDown = new System.Windows.Forms.NumericUpDown();
-            this.animationLoopNumericUpDown = new System.Windows.Forms.NumericUpDown();
-            this.backgroundColorButton = new System.Windows.Forms.Button();
-            this.label18 = new System.Windows.Forms.Label();
-            this.transparentPngCheckBox = new System.Windows.Forms.CheckBox();
-            this.KeepPageSizeCheckBox = new System.Windows.Forms.CheckBox();
-            this.groupBox3 = new System.Windows.Forms.GroupBox();
-            this.label9 = new System.Windows.Forms.Label();
-            this.radioButtonbp = new System.Windows.Forms.RadioButton();
-            this.radioButtonpx = new System.Windows.Forms.RadioButton();
-            this.bottomMarginUpDown = new System.Windows.Forms.NumericUpDown();
-            this.rightMarginUpDown = new System.Windows.Forms.NumericUpDown();
-            this.label5 = new System.Windows.Forms.Label();
-            this.label6 = new System.Windows.Forms.Label();
-            this.leftMarginUpDown = new System.Windows.Forms.NumericUpDown();
-            this.topMarginUpDown = new System.Windows.Forms.NumericUpDown();
-            this.label7 = new System.Windows.Forms.Label();
-            this.resolutionScaleUpDown = new System.Windows.Forms.NumericUpDown();
-            this.label8 = new System.Windows.Forms.Label();
             this.eachImageSettingTab.SuspendLayout();
+            this.groupBox2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.animationLoopNumericUpDown)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.animationDelayNumericUpDown)).BeginInit();
             this.EditorSettingTab.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.tabWidthNumericUpDown)).BeginInit();
             this.showGroupBox.SuspendLayout();
@@ -131,18 +134,15 @@
             this.AfterCompilingTab.SuspendLayout();
             this.groupBox4.SuspendLayout();
             this.OutputImgSettingTab.SuspendLayout();
-            this.BasicSettingTab.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.LaTeXCompileNumbernumUpDown)).BeginInit();
-            this.SettingTab.SuspendLayout();
-            this.groupBox2.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.animationDelayNumericUpDown)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.animationLoopNumericUpDown)).BeginInit();
             this.groupBox3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.bottomMarginUpDown)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.rightMarginUpDown)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.leftMarginUpDown)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.topMarginUpDown)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.resolutionScaleUpDown)).BeginInit();
+            this.BasicSettingTab.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.LaTeXCompileNumbernumUpDown)).BeginInit();
+            this.SettingTab.SuspendLayout();
             this.SuspendLayout();
             // 
             // OKButton
@@ -199,6 +199,98 @@
             this.eachImageSettingTab.TabIndex = 4;
             this.eachImageSettingTab.Text = "画像ごとの設定";
             this.eachImageSettingTab.UseVisualStyleBackColor = true;
+            // 
+            // groupBox2
+            // 
+            this.groupBox2.Controls.Add(this.animationLoopNumericUpDown);
+            this.groupBox2.Controls.Add(this.animationDelayNumericUpDown);
+            this.groupBox2.Controls.Add(this.label20);
+            this.groupBox2.Controls.Add(this.label19);
+            this.groupBox2.Location = new System.Drawing.Point(42, 134);
+            this.groupBox2.Name = "groupBox2";
+            this.groupBox2.Size = new System.Drawing.Size(574, 100);
+            this.groupBox2.TabIndex = 4;
+            this.groupBox2.TabStop = false;
+            this.groupBox2.Text = "アニメーション設定（SVG）";
+            // 
+            // animationLoopNumericUpDown
+            // 
+            this.animationLoopNumericUpDown.Location = new System.Drawing.Point(244, 58);
+            this.animationLoopNumericUpDown.Name = "animationLoopNumericUpDown";
+            this.animationLoopNumericUpDown.Size = new System.Drawing.Size(120, 25);
+            this.animationLoopNumericUpDown.TabIndex = 1;
+            // 
+            // animationDelayNumericUpDown
+            // 
+            this.animationDelayNumericUpDown.DecimalPlaces = 2;
+            this.animationDelayNumericUpDown.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            131072});
+            this.animationDelayNumericUpDown.Location = new System.Drawing.Point(244, 29);
+            this.animationDelayNumericUpDown.Name = "animationDelayNumericUpDown";
+            this.animationDelayNumericUpDown.Size = new System.Drawing.Size(120, 25);
+            this.animationDelayNumericUpDown.TabIndex = 0;
+            // 
+            // label20
+            // 
+            this.label20.AutoSize = true;
+            this.label20.Location = new System.Drawing.Point(16, 60);
+            this.label20.Name = "label20";
+            this.label20.Size = new System.Drawing.Size(182, 18);
+            this.label20.TabIndex = 1;
+            this.label20.Text = "繰り返し回数（0で無限）";
+            // 
+            // label19
+            // 
+            this.label19.AutoSize = true;
+            this.label19.Location = new System.Drawing.Point(16, 31);
+            this.label19.Name = "label19";
+            this.label19.Size = new System.Drawing.Size(170, 18);
+            this.label19.TabIndex = 0;
+            this.label19.Text = "フレーム間ディレイ（秒）";
+            // 
+            // MergeOutputFilesCheckBox
+            // 
+            this.MergeOutputFilesCheckBox.AutoSize = true;
+            this.MergeOutputFilesCheckBox.Location = new System.Drawing.Point(22, 106);
+            this.MergeOutputFilesCheckBox.Name = "MergeOutputFilesCheckBox";
+            this.MergeOutputFilesCheckBox.Size = new System.Drawing.Size(322, 22);
+            this.MergeOutputFilesCheckBox.TabIndex = 3;
+            this.MergeOutputFilesCheckBox.Text = "単一ファイルで出力 (PDF / TIFF /SVG)";
+            this.MergeOutputFilesCheckBox.UseVisualStyleBackColor = true;
+            // 
+            // deleteDisplaySizeCheckBox
+            // 
+            this.deleteDisplaySizeCheckBox.AutoSize = true;
+            this.deleteDisplaySizeCheckBox.Location = new System.Drawing.Point(22, 78);
+            this.deleteDisplaySizeCheckBox.Name = "deleteDisplaySizeCheckBox";
+            this.deleteDisplaySizeCheckBox.Size = new System.Drawing.Size(237, 22);
+            this.deleteDisplaySizeCheckBox.TabIndex = 2;
+            this.deleteDisplaySizeCheckBox.Text = "寸法情報を削除する（SVG）";
+            this.deleteDisplaySizeCheckBox.UseVisualStyleBackColor = true;
+            // 
+            // useMagickCheckBox
+            // 
+            this.useMagickCheckBox.AutoSize = true;
+            this.useMagickCheckBox.Location = new System.Drawing.Point(22, 20);
+            this.useMagickCheckBox.Margin = new System.Windows.Forms.Padding(4);
+            this.useMagickCheckBox.Name = "useMagickCheckBox";
+            this.useMagickCheckBox.Size = new System.Drawing.Size(429, 22);
+            this.useMagickCheckBox.TabIndex = 0;
+            this.useMagickCheckBox.Text = "アンチエイリアス処理する（JPEG / PNG / BMP / TIFF）";
+            this.useMagickCheckBox.UseVisualStyleBackColor = true;
+            // 
+            // notOutllinedTextCheckBox
+            // 
+            this.notOutllinedTextCheckBox.AutoSize = true;
+            this.notOutllinedTextCheckBox.Location = new System.Drawing.Point(22, 50);
+            this.notOutllinedTextCheckBox.Name = "notOutllinedTextCheckBox";
+            this.notOutllinedTextCheckBox.Size = new System.Drawing.Size(220, 22);
+            this.notOutllinedTextCheckBox.TabIndex = 1;
+            this.notOutllinedTextCheckBox.Text = "テキストを保持する（PDF）";
+            this.notOutllinedTextCheckBox.UseVisualStyleBackColor = true;
             // 
             // EditorSettingTab
             // 
@@ -587,6 +679,182 @@
             this.OutputImgSettingTab.Text = "出力画像設定";
             this.OutputImgSettingTab.UseVisualStyleBackColor = true;
             // 
+            // backgroundColorButton
+            // 
+            this.backgroundColorButton.BackColor = System.Drawing.Color.White;
+            this.backgroundColorButton.Location = new System.Drawing.Point(107, 239);
+            this.backgroundColorButton.Name = "backgroundColorButton";
+            this.backgroundColorButton.Size = new System.Drawing.Size(75, 28);
+            this.backgroundColorButton.TabIndex = 8;
+            this.backgroundColorButton.UseVisualStyleBackColor = false;
+            this.backgroundColorButton.Click += new System.EventHandler(this.backgroundColorButton_Click);
+            // 
+            // label18
+            // 
+            this.label18.AutoSize = true;
+            this.label18.Location = new System.Drawing.Point(27, 243);
+            this.label18.Name = "label18";
+            this.label18.Size = new System.Drawing.Size(74, 18);
+            this.label18.TabIndex = 7;
+            this.label18.Text = "背景色...";
+            // 
+            // transparentPngCheckBox
+            // 
+            this.transparentPngCheckBox.AutoSize = true;
+            this.transparentPngCheckBox.Checked = true;
+            this.transparentPngCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.transparentPngCheckBox.Location = new System.Drawing.Point(194, 241);
+            this.transparentPngCheckBox.Margin = new System.Windows.Forms.Padding(4);
+            this.transparentPngCheckBox.Name = "transparentPngCheckBox";
+            this.transparentPngCheckBox.Size = new System.Drawing.Size(322, 22);
+            this.transparentPngCheckBox.TabIndex = 9;
+            this.transparentPngCheckBox.Text = "透過（可能な場合，不可能なら白背景）";
+            this.transparentPngCheckBox.UseVisualStyleBackColor = true;
+            this.transparentPngCheckBox.Click += new System.EventHandler(this.transparentPngCheckBox_CheckedChanged);
+            // 
+            // KeepPageSizeCheckBox
+            // 
+            this.KeepPageSizeCheckBox.AutoSize = true;
+            this.KeepPageSizeCheckBox.Location = new System.Drawing.Point(27, 208);
+            this.KeepPageSizeCheckBox.Name = "KeepPageSizeCheckBox";
+            this.KeepPageSizeCheckBox.Size = new System.Drawing.Size(201, 22);
+            this.KeepPageSizeCheckBox.TabIndex = 6;
+            this.KeepPageSizeCheckBox.Text = "ページサイズを維持する";
+            this.KeepPageSizeCheckBox.UseVisualStyleBackColor = true;
+            // 
+            // groupBox3
+            // 
+            this.groupBox3.Controls.Add(this.label9);
+            this.groupBox3.Controls.Add(this.radioButtonbp);
+            this.groupBox3.Controls.Add(this.radioButtonpx);
+            this.groupBox3.Location = new System.Drawing.Point(27, 142);
+            this.groupBox3.Name = "groupBox3";
+            this.groupBox3.Size = new System.Drawing.Size(577, 58);
+            this.groupBox3.TabIndex = 5;
+            this.groupBox3.TabStop = false;
+            this.groupBox3.Text = "余白の単位（JPEG / PNG / BMP / TIFF）";
+            // 
+            // label9
+            // 
+            this.label9.AutoSize = true;
+            this.label9.Location = new System.Drawing.Point(181, 28);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(314, 18);
+            this.label9.TabIndex = 2;
+            this.label9.Text = "（PDF / EPS / EMF / SVG は bp で固定）";
+            // 
+            // radioButtonbp
+            // 
+            this.radioButtonbp.AutoSize = true;
+            this.radioButtonbp.Location = new System.Drawing.Point(91, 26);
+            this.radioButtonbp.Name = "radioButtonbp";
+            this.radioButtonbp.Size = new System.Drawing.Size(51, 22);
+            this.radioButtonbp.TabIndex = 1;
+            this.radioButtonbp.TabStop = true;
+            this.radioButtonbp.Text = "bp";
+            this.radioButtonbp.UseVisualStyleBackColor = true;
+            // 
+            // radioButtonpx
+            // 
+            this.radioButtonpx.AutoSize = true;
+            this.radioButtonpx.Location = new System.Drawing.Point(22, 26);
+            this.radioButtonpx.Name = "radioButtonpx";
+            this.radioButtonpx.Size = new System.Drawing.Size(50, 22);
+            this.radioButtonpx.TabIndex = 0;
+            this.radioButtonpx.TabStop = true;
+            this.radioButtonpx.Text = "px";
+            this.radioButtonpx.UseVisualStyleBackColor = true;
+            // 
+            // bottomMarginUpDown
+            // 
+            this.bottomMarginUpDown.Location = new System.Drawing.Point(322, 106);
+            this.bottomMarginUpDown.Margin = new System.Windows.Forms.Padding(4);
+            this.bottomMarginUpDown.Name = "bottomMarginUpDown";
+            this.bottomMarginUpDown.Size = new System.Drawing.Size(93, 25);
+            this.bottomMarginUpDown.TabIndex = 4;
+            // 
+            // rightMarginUpDown
+            // 
+            this.rightMarginUpDown.Location = new System.Drawing.Point(484, 82);
+            this.rightMarginUpDown.Margin = new System.Windows.Forms.Padding(4);
+            this.rightMarginUpDown.Name = "rightMarginUpDown";
+            this.rightMarginUpDown.Size = new System.Drawing.Size(93, 25);
+            this.rightMarginUpDown.TabIndex = 3;
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(274, 108);
+            this.label5.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(35, 18);
+            this.label5.TabIndex = 20;
+            this.label5.Text = "下：";
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(274, 62);
+            this.label6.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(35, 18);
+            this.label6.TabIndex = 18;
+            this.label6.Text = "上：";
+            // 
+            // leftMarginUpDown
+            // 
+            this.leftMarginUpDown.Location = new System.Drawing.Point(161, 81);
+            this.leftMarginUpDown.Margin = new System.Windows.Forms.Padding(4);
+            this.leftMarginUpDown.Name = "leftMarginUpDown";
+            this.leftMarginUpDown.Size = new System.Drawing.Size(93, 25);
+            this.leftMarginUpDown.TabIndex = 2;
+            // 
+            // topMarginUpDown
+            // 
+            this.topMarginUpDown.Location = new System.Drawing.Point(322, 59);
+            this.topMarginUpDown.Margin = new System.Windows.Forms.Padding(4);
+            this.topMarginUpDown.Name = "topMarginUpDown";
+            this.topMarginUpDown.Size = new System.Drawing.Size(93, 25);
+            this.topMarginUpDown.TabIndex = 1;
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(24, 84);
+            this.label7.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(115, 18);
+            this.label7.TabIndex = 14;
+            this.label7.Text = "余白    　　左：";
+            // 
+            // resolutionScaleUpDown
+            // 
+            this.resolutionScaleUpDown.Location = new System.Drawing.Point(240, 24);
+            this.resolutionScaleUpDown.Margin = new System.Windows.Forms.Padding(4);
+            this.resolutionScaleUpDown.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.resolutionScaleUpDown.Name = "resolutionScaleUpDown";
+            this.resolutionScaleUpDown.Size = new System.Drawing.Size(110, 25);
+            this.resolutionScaleUpDown.TabIndex = 0;
+            this.resolutionScaleUpDown.Value = new decimal(new int[] {
+            10,
+            0,
+            0,
+            0});
+            // 
+            // label8
+            // 
+            this.label8.AutoSize = true;
+            this.label8.Location = new System.Drawing.Point(24, 28);
+            this.label8.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(187, 18);
+            this.label8.TabIndex = 12;
+            this.label8.Text = "解像度レベル（1～100）：";
+            // 
             // BasicSettingTab
             // 
             this.BasicSettingTab.Controls.Add(this.GuessPathButton);
@@ -820,272 +1088,6 @@
             this.SettingTab.Size = new System.Drawing.Size(683, 503);
             this.SettingTab.TabIndex = 0;
             // 
-            // MergeOutputFilesCheckBox
-            // 
-            this.MergeOutputFilesCheckBox.AutoSize = true;
-            this.MergeOutputFilesCheckBox.Location = new System.Drawing.Point(22, 106);
-            this.MergeOutputFilesCheckBox.Name = "MergeOutputFilesCheckBox";
-            this.MergeOutputFilesCheckBox.Size = new System.Drawing.Size(322, 22);
-            this.MergeOutputFilesCheckBox.TabIndex = 3;
-            this.MergeOutputFilesCheckBox.Text = "単一ファイルで出力 (PDF / TIFF /SVG)";
-            this.MergeOutputFilesCheckBox.UseVisualStyleBackColor = true;
-            // 
-            // deleteDisplaySizeCheckBox
-            // 
-            this.deleteDisplaySizeCheckBox.AutoSize = true;
-            this.deleteDisplaySizeCheckBox.Location = new System.Drawing.Point(22, 78);
-            this.deleteDisplaySizeCheckBox.Name = "deleteDisplaySizeCheckBox";
-            this.deleteDisplaySizeCheckBox.Size = new System.Drawing.Size(237, 22);
-            this.deleteDisplaySizeCheckBox.TabIndex = 2;
-            this.deleteDisplaySizeCheckBox.Text = "寸法情報を削除する（SVG）";
-            this.deleteDisplaySizeCheckBox.UseVisualStyleBackColor = true;
-            // 
-            // useMagickCheckBox
-            // 
-            this.useMagickCheckBox.AutoSize = true;
-            this.useMagickCheckBox.Location = new System.Drawing.Point(22, 20);
-            this.useMagickCheckBox.Margin = new System.Windows.Forms.Padding(4);
-            this.useMagickCheckBox.Name = "useMagickCheckBox";
-            this.useMagickCheckBox.Size = new System.Drawing.Size(429, 22);
-            this.useMagickCheckBox.TabIndex = 0;
-            this.useMagickCheckBox.Text = "アンチエイリアス処理する（JPEG / PNG / BMP / TIFF）";
-            this.useMagickCheckBox.UseVisualStyleBackColor = true;
-            // 
-            // notOutllinedTextCheckBox
-            // 
-            this.notOutllinedTextCheckBox.AutoSize = true;
-            this.notOutllinedTextCheckBox.Location = new System.Drawing.Point(22, 50);
-            this.notOutllinedTextCheckBox.Name = "notOutllinedTextCheckBox";
-            this.notOutllinedTextCheckBox.Size = new System.Drawing.Size(220, 22);
-            this.notOutllinedTextCheckBox.TabIndex = 1;
-            this.notOutllinedTextCheckBox.Text = "テキストを保持する（PDF）";
-            this.notOutllinedTextCheckBox.UseVisualStyleBackColor = true;
-            // 
-            // groupBox2
-            // 
-            this.groupBox2.Controls.Add(this.animationLoopNumericUpDown);
-            this.groupBox2.Controls.Add(this.animationDelayNumericUpDown);
-            this.groupBox2.Controls.Add(this.label20);
-            this.groupBox2.Controls.Add(this.label19);
-            this.groupBox2.Location = new System.Drawing.Point(42, 134);
-            this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(574, 100);
-            this.groupBox2.TabIndex = 4;
-            this.groupBox2.TabStop = false;
-            this.groupBox2.Text = "アニメーション設定（SVG）";
-            // 
-            // label19
-            // 
-            this.label19.AutoSize = true;
-            this.label19.Location = new System.Drawing.Point(16, 31);
-            this.label19.Name = "label19";
-            this.label19.Size = new System.Drawing.Size(170, 18);
-            this.label19.TabIndex = 0;
-            this.label19.Text = "フレーム間ディレイ（秒）";
-            // 
-            // label20
-            // 
-            this.label20.AutoSize = true;
-            this.label20.Location = new System.Drawing.Point(16, 60);
-            this.label20.Name = "label20";
-            this.label20.Size = new System.Drawing.Size(182, 18);
-            this.label20.TabIndex = 1;
-            this.label20.Text = "繰り返し回数（0で無限）";
-            // 
-            // animationDelayNumericUpDown
-            // 
-            this.animationDelayNumericUpDown.DecimalPlaces = 2;
-            this.animationDelayNumericUpDown.Increment = new decimal(new int[] {
-            1,
-            0,
-            0,
-            131072});
-            this.animationDelayNumericUpDown.Location = new System.Drawing.Point(244, 29);
-            this.animationDelayNumericUpDown.Name = "animationDelayNumericUpDown";
-            this.animationDelayNumericUpDown.Size = new System.Drawing.Size(120, 25);
-            this.animationDelayNumericUpDown.TabIndex = 0;
-            // 
-            // animationLoopNumericUpDown
-            // 
-            this.animationLoopNumericUpDown.Location = new System.Drawing.Point(244, 58);
-            this.animationLoopNumericUpDown.Name = "animationLoopNumericUpDown";
-            this.animationLoopNumericUpDown.Size = new System.Drawing.Size(120, 25);
-            this.animationLoopNumericUpDown.TabIndex = 1;
-            // 
-            // backgroundColorButton
-            // 
-            this.backgroundColorButton.BackColor = System.Drawing.Color.White;
-            this.backgroundColorButton.Location = new System.Drawing.Point(107, 239);
-            this.backgroundColorButton.Name = "backgroundColorButton";
-            this.backgroundColorButton.Size = new System.Drawing.Size(75, 28);
-            this.backgroundColorButton.TabIndex = 8;
-            this.backgroundColorButton.UseVisualStyleBackColor = false;
-            // 
-            // label18
-            // 
-            this.label18.AutoSize = true;
-            this.label18.Location = new System.Drawing.Point(27, 243);
-            this.label18.Name = "label18";
-            this.label18.Size = new System.Drawing.Size(74, 18);
-            this.label18.TabIndex = 7;
-            this.label18.Text = "背景色...";
-            // 
-            // transparentPngCheckBox
-            // 
-            this.transparentPngCheckBox.AutoSize = true;
-            this.transparentPngCheckBox.Checked = true;
-            this.transparentPngCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.transparentPngCheckBox.Location = new System.Drawing.Point(194, 241);
-            this.transparentPngCheckBox.Margin = new System.Windows.Forms.Padding(4);
-            this.transparentPngCheckBox.Name = "transparentPngCheckBox";
-            this.transparentPngCheckBox.Size = new System.Drawing.Size(322, 22);
-            this.transparentPngCheckBox.TabIndex = 9;
-            this.transparentPngCheckBox.Text = "透過（可能な場合，不可能なら白背景）";
-            this.transparentPngCheckBox.UseVisualStyleBackColor = true;
-            // 
-            // KeepPageSizeCheckBox
-            // 
-            this.KeepPageSizeCheckBox.AutoSize = true;
-            this.KeepPageSizeCheckBox.Location = new System.Drawing.Point(27, 208);
-            this.KeepPageSizeCheckBox.Name = "KeepPageSizeCheckBox";
-            this.KeepPageSizeCheckBox.Size = new System.Drawing.Size(201, 22);
-            this.KeepPageSizeCheckBox.TabIndex = 6;
-            this.KeepPageSizeCheckBox.Text = "ページサイズを維持する";
-            this.KeepPageSizeCheckBox.UseVisualStyleBackColor = true;
-            // 
-            // groupBox3
-            // 
-            this.groupBox3.Controls.Add(this.label9);
-            this.groupBox3.Controls.Add(this.radioButtonbp);
-            this.groupBox3.Controls.Add(this.radioButtonpx);
-            this.groupBox3.Location = new System.Drawing.Point(27, 142);
-            this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(577, 58);
-            this.groupBox3.TabIndex = 5;
-            this.groupBox3.TabStop = false;
-            this.groupBox3.Text = "余白の単位（JPEG / PNG / BMP / TIFF）";
-            // 
-            // label9
-            // 
-            this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(181, 28);
-            this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(314, 18);
-            this.label9.TabIndex = 2;
-            this.label9.Text = "（PDF / EPS / EMF / SVG は bp で固定）";
-            // 
-            // radioButtonbp
-            // 
-            this.radioButtonbp.AutoSize = true;
-            this.radioButtonbp.Location = new System.Drawing.Point(91, 26);
-            this.radioButtonbp.Name = "radioButtonbp";
-            this.radioButtonbp.Size = new System.Drawing.Size(51, 22);
-            this.radioButtonbp.TabIndex = 1;
-            this.radioButtonbp.TabStop = true;
-            this.radioButtonbp.Text = "bp";
-            this.radioButtonbp.UseVisualStyleBackColor = true;
-            // 
-            // radioButtonpx
-            // 
-            this.radioButtonpx.AutoSize = true;
-            this.radioButtonpx.Location = new System.Drawing.Point(22, 26);
-            this.radioButtonpx.Name = "radioButtonpx";
-            this.radioButtonpx.Size = new System.Drawing.Size(50, 22);
-            this.radioButtonpx.TabIndex = 0;
-            this.radioButtonpx.TabStop = true;
-            this.radioButtonpx.Text = "px";
-            this.radioButtonpx.UseVisualStyleBackColor = true;
-            // 
-            // bottomMarginUpDown
-            // 
-            this.bottomMarginUpDown.Location = new System.Drawing.Point(322, 106);
-            this.bottomMarginUpDown.Margin = new System.Windows.Forms.Padding(4);
-            this.bottomMarginUpDown.Name = "bottomMarginUpDown";
-            this.bottomMarginUpDown.Size = new System.Drawing.Size(93, 25);
-            this.bottomMarginUpDown.TabIndex = 4;
-            // 
-            // rightMarginUpDown
-            // 
-            this.rightMarginUpDown.Location = new System.Drawing.Point(484, 82);
-            this.rightMarginUpDown.Margin = new System.Windows.Forms.Padding(4);
-            this.rightMarginUpDown.Name = "rightMarginUpDown";
-            this.rightMarginUpDown.Size = new System.Drawing.Size(93, 25);
-            this.rightMarginUpDown.TabIndex = 3;
-            // 
-            // label5
-            // 
-            this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(274, 108);
-            this.label5.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(35, 18);
-            this.label5.TabIndex = 20;
-            this.label5.Text = "下：";
-            // 
-            // label6
-            // 
-            this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(274, 62);
-            this.label6.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(35, 18);
-            this.label6.TabIndex = 18;
-            this.label6.Text = "上：";
-            // 
-            // leftMarginUpDown
-            // 
-            this.leftMarginUpDown.Location = new System.Drawing.Point(161, 81);
-            this.leftMarginUpDown.Margin = new System.Windows.Forms.Padding(4);
-            this.leftMarginUpDown.Name = "leftMarginUpDown";
-            this.leftMarginUpDown.Size = new System.Drawing.Size(93, 25);
-            this.leftMarginUpDown.TabIndex = 2;
-            // 
-            // topMarginUpDown
-            // 
-            this.topMarginUpDown.Location = new System.Drawing.Point(322, 59);
-            this.topMarginUpDown.Margin = new System.Windows.Forms.Padding(4);
-            this.topMarginUpDown.Name = "topMarginUpDown";
-            this.topMarginUpDown.Size = new System.Drawing.Size(93, 25);
-            this.topMarginUpDown.TabIndex = 1;
-            // 
-            // label7
-            // 
-            this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(24, 84);
-            this.label7.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(115, 18);
-            this.label7.TabIndex = 14;
-            this.label7.Text = "余白    　　左：";
-            // 
-            // resolutionScaleUpDown
-            // 
-            this.resolutionScaleUpDown.Location = new System.Drawing.Point(240, 24);
-            this.resolutionScaleUpDown.Margin = new System.Windows.Forms.Padding(4);
-            this.resolutionScaleUpDown.Minimum = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.resolutionScaleUpDown.Name = "resolutionScaleUpDown";
-            this.resolutionScaleUpDown.Size = new System.Drawing.Size(110, 25);
-            this.resolutionScaleUpDown.TabIndex = 0;
-            this.resolutionScaleUpDown.Value = new decimal(new int[] {
-            10,
-            0,
-            0,
-            0});
-            // 
-            // label8
-            // 
-            this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(24, 28);
-            this.label8.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(187, 18);
-            this.label8.TabIndex = 12;
-            this.label8.Text = "解像度レベル（1～100）：";
-            // 
             // SettingForm
             // 
             this.AcceptButton = this.OKButton;
@@ -1105,6 +1107,10 @@
             this.Text = "オプション";
             this.eachImageSettingTab.ResumeLayout(false);
             this.eachImageSettingTab.PerformLayout();
+            this.groupBox2.ResumeLayout(false);
+            this.groupBox2.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.animationLoopNumericUpDown)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.animationDelayNumericUpDown)).EndInit();
             this.EditorSettingTab.ResumeLayout(false);
             this.EditorSettingTab.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.tabWidthNumericUpDown)).EndInit();
@@ -1118,14 +1124,6 @@
             this.groupBox4.PerformLayout();
             this.OutputImgSettingTab.ResumeLayout(false);
             this.OutputImgSettingTab.PerformLayout();
-            this.BasicSettingTab.ResumeLayout(false);
-            this.BasicSettingTab.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.LaTeXCompileNumbernumUpDown)).EndInit();
-            this.SettingTab.ResumeLayout(false);
-            this.groupBox2.ResumeLayout(false);
-            this.groupBox2.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.animationDelayNumericUpDown)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.animationLoopNumericUpDown)).EndInit();
             this.groupBox3.ResumeLayout(false);
             this.groupBox3.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.bottomMarginUpDown)).EndInit();
@@ -1133,6 +1131,10 @@
             ((System.ComponentModel.ISupportInitialize)(this.leftMarginUpDown)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.topMarginUpDown)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.resolutionScaleUpDown)).EndInit();
+            this.BasicSettingTab.ResumeLayout(false);
+            this.BasicSettingTab.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.LaTeXCompileNumbernumUpDown)).EndInit();
+            this.SettingTab.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }

@@ -317,4 +317,4 @@ https://pdfium.googlesource.com/pdfium/
     - 併せて /gsdevice を /oldgs に変更．
     - EMF 生成時に Ghostscript の .dashpath を施すことにした．
     - eps2write 直前に pdfwrite を施すことにした．
-
+    - pdfiumdraw にパターンが含まれる PDF ファイルを渡すと固まっていたのを修正．
