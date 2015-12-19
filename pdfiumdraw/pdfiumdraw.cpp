@@ -72,6 +72,7 @@ void ShowUsage() {
 	//cout << "  --merge: merge output files (PDF -> PDF only)" << endl;
 	cout << "  --scale: specify scale" << endl;
 	cout << "  --transparent: output transparent file (if possible)" << endl;
+	cout << "  --backcolor=<color>: specify background color (e.g. FFFFFF)" << endl;
 	cout << "  --output=<file>: specify output file name (%d for the page number)" << endl;
 	cout << "  --pages=<page>: specify output page (e.g. 1,5-9,10)" << endl;
 //	cout << "  --viewport=<left>,<top>,<right>,<bottom>: specify viewport" << endl;
@@ -227,7 +228,7 @@ wstring ToUnicode(const string &str) {
 	return wstring(&buf[0]);
 }
 
-void *GetBitmapByGDI(PDFPage &page, HBITMAP &bitmap, const BITMAPINFOHEADER &infohead){
+void *GetBitmapByGDI(PDFPage &page, HBITMAP &bitmap, const BITMAPINFOHEADER &infohead, COLORREF backcolor){
 	void *buf;
 	int width = abs(infohead.biWidth);
 	int height = abs(infohead.biHeight);
@@ -241,17 +242,19 @@ void *GetBitmapByGDI(PDFPage &page, HBITMAP &bitmap, const BITMAPINFOHEADER &inf
 	auto savebitmap = (HBITMAP)::SelectObject(bitmapdc.dc, bitmap);
 	RECT rc;
 	rc.left = 0; rc.top = 0; rc.right = width; rc.bottom = height;
-	::FillRect(bitmapdc.dc, &rc, (HBRUSH)::GetStockObject(WHITE_BRUSH));
+	HBRUSH brush = ::CreateSolidBrush(backcolor);
+	::FillRect(bitmapdc.dc, &rc, brush);
+	::DeleteObject(brush);
 	page.Render(bitmapdc.dc, width, height);
 	bitmap = (HBITMAP)::SelectObject(bitmapdc.dc, savebitmap);
 	return buf;
 }
 
-void *GetBitmapByPDFBITMAP(PDFPage &page, FPDF_BITMAP &bitmap, const BITMAPINFOHEADER &infohead,bool transparent){
+void *GetBitmapByPDFBITMAP(PDFPage &page, FPDF_BITMAP &bitmap, const BITMAPINFOHEADER &infohead,bool transparent, COLORREF backcolor){
 	int width = abs(infohead.biWidth);
 	int height = abs(infohead.biHeight);
 	bitmap = ::FPDFBitmap_Create(width, height, transparent ? TRUE : FALSE);
-	::FPDFBitmap_FillRect(bitmap, 0, 0, width, height, 0x00FFFFFF);
+	::FPDFBitmap_FillRect(bitmap, 0, 0, width, height, backcolor);
 	page.Render(bitmap, width, height);
 	return ::FPDFBitmap_GetBuffer(bitmap);
 }
@@ -337,9 +340,9 @@ int WriteIMG(const Data &d,string imgtype) {
 			PDFiumBitmap pdfbitmap;
 			int stride = width * 4;
 			if(d.use_gdi) {
-				buf = GetBitmapByGDI(page, bitmap.bitmap, infohead);
+				buf = GetBitmapByGDI(page, bitmap.bitmap, infohead, d.backcolor);
 			} else {
-				buf = GetBitmapByPDFBITMAP(page, pdfbitmap.bitmap, infohead,d.transparent);
+				buf = GetBitmapByPDFBITMAP(page, pdfbitmap.bitmap, infohead, d.transparent, d.backcolor);
 				stride = ::FPDFBitmap_GetStride(pdfbitmap.bitmap);
 			}
 			ComPtr<IWICImagingFactory> factory;
