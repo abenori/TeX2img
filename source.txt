@@ -1,6 +1,6 @@
 ソースについて
 
-Visual Studio 2013 で作っています．
+Visual Studio 2015 で作っています．
 Azuki エディタコンポーネント
 http://sgry.b.sourceforge.jp/
 を用いていますので，リンク先を参考に必要ファイルをダウンロード後，適切に設定してください．
