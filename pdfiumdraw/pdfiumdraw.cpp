@@ -44,6 +44,7 @@ struct Data {
 	bool transparent = false;
 	float extent = 5;
 	RECT viewport;
+	COLORREF backcolor = RGB(255, 255, 255);
 };
 
 /** ÉyÅ[ÉWî‘çÜÇÃàµÇ¢
@@ -379,7 +380,7 @@ int CALLBACK EnhMetaFileProc(HDC hdc, HANDLETABLE FAR *lpHTable, ENHMETARECORD F
 	return TRUE;
 }
 
-void DrawEMF(HDC dc, PDFPage &page, int extent, int scale, bool transparent){
+void DrawEMF(HDC dc, PDFPage &page, int extent, int scale, bool transparent, COLORREF background){
 	int width = static_cast<int>(page.GetWidth() * scale * extent) + 1;
 	int height = static_cast<int>(page.GetHeight() * scale * extent) + 1;
 	//int width = (int) (page.GetWidth() * 1000 * d.scale);
@@ -397,11 +398,13 @@ void DrawEMF(HDC dc, PDFPage &page, int extent, int scale, bool transparent){
 		::FillRect(dc, &rc, (HBRUSH)::GetStockObject(NULL_BRUSH));
 	} else {
 		::SetBkMode(dc, OPAQUE);
-		::FillRect(dc, &rc, (HBRUSH)::GetStockObject(WHITE_BRUSH));
+		auto brush = ::CreateSolidBrush(background);
+		::FillRect(dc, &rc, brush);
+		::DeleteObject(brush);
 	}
 	::GetClipBox(dc, &rc);
-	LONG poswidth = std::min(rc.right, static_cast<LONG>(width));
-	LONG posheight = std::min(rc.bottom, static_cast<LONG>(height));
+	LONG poswidth = std::min(rc.right, static_cast<LONG>(width)) - 10;
+	LONG posheight = std::min(rc.bottom, static_cast<LONG>(height)) - 10;
 	int yokonum = (width - 1) / poswidth + 1;
 	int tatenum = (height - 1) / posheight + 1;
 	XFORM xform;
@@ -410,6 +413,7 @@ void DrawEMF(HDC dc, PDFPage &page, int extent, int scale, bool transparent){
 	::SetGraphicsMode(dc, GM_ADVANCED);
 	for(int t = 0; t < tatenum; ++t){
 		for(int y = 0; y < yokonum; ++y){
+			//cout << "t = " << t << ", y = " << y << endl;
 			HDC tmpdc = ::CreateEnhMetaFile(nullptr, nullptr, nullptr, nullptr);
 			if(extent != 1){
 				::SetMapMode(tmpdc, MM_ANISOTROPIC);
@@ -448,7 +452,7 @@ int WriteWMF(const Data &d){
 			cout << "output: " << outfile << endl;
 			HDC dc = ::CreateEnhMetaFile(nullptr, nullptr, nullptr, nullptr);
 			PDFPage page(doc, i);
-			DrawEMF(dc, page, static_cast<int>(d.extent), d.scale, d.transparent);
+			DrawEMF(dc, page, static_cast<int>(d.extent), d.scale, d.transparent, d.backcolor);
 			auto enhmeta = ::CloseEnhMetaFile(dc);
 			auto size = ::GetWinMetaFileBits(enhmeta, 0, nullptr, MM_ANISOTROPIC, dc);
 			vector<BYTE> buf;
@@ -481,7 +485,7 @@ int WriteEMF(const Data &d){
 			cout << "output: " << outfile << endl;
 			HDC dc = ::CreateEnhMetaFile(nullptr, outfile.c_str(), nullptr, nullptr);
 			PDFPage page(doc, i);
-			DrawEMF(dc, page, static_cast<int>(d.extent), d.scale, d.transparent);
+			DrawEMF(dc, page, static_cast<int>(d.extent), d.scale, d.transparent, d.backcolor);
 			::DeleteEnhMetaFile(::CloseEnhMetaFile(dc));
 		}
 		catch(runtime_error e) {
@@ -705,6 +709,13 @@ int main(int argc, char *argv[]) {
 			else if(arg.find("--extent=") == 0)current_data.extent = static_cast<float>(std::atoi(arg.substr(string("--extent=").length()).c_str()));
 			else if(arg.find("--output=") == 0) current_data.output = arg.substr(string("--output=").length());
 			else if(arg.find("--box=") == 0) box = arg.substr(string("--box=").length());
+			else if(arg.find("--backcolor=") == 0){
+				int len = ::lstrlen("--backcolor=");
+				int r = std::stoi(arg.substr(len, 2), nullptr, 16);
+				int g = std::stoi(arg.substr(len + 2, 2), nullptr, 16);
+				int b = std::stoi(arg.substr(len + 4, 2), nullptr, 16);
+				current_data.backcolor = RGB(r, g, b);
+			}
 			else if(arg.find("--viewport=") == 0) {
 				auto viewport = split(arg.substr(string("--viewport=").length()), ',');
 				if(viewport.size() == 4) {
@@ -737,6 +748,7 @@ int main(int argc, char *argv[]) {
 					current_data.output = "";
 					current_data.pages.clear();
 					current_data.viewport = RECT{0, 0, 0, 0};
+					current_data.backcolor = RGB(255, 255, 255);
 				}
 			}
 		}
