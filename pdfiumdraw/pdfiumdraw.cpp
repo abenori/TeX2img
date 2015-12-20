@@ -402,12 +402,16 @@ void DrawEMF(HDC dc, PDFPage &page, int extent, int scale, bool transparent, COL
 	} else {
 		::SetBkMode(dc, OPAQUE);
 		auto brush = ::CreateSolidBrush(background);
+		rc.bottom += 2 * extent;
+		rc.right += 2 * extent;
 		::FillRect(dc, &rc, brush);
 		::DeleteObject(brush);
 	}
 	::GetClipBox(dc, &rc);
-	LONG poswidth = std::min(rc.right, static_cast<LONG>(width)) - 10;
-	LONG posheight = std::min(rc.bottom, static_cast<LONG>(height)) - 10;
+	LONG poswidth = std::min(rc.right, static_cast<LONG>(width));
+	if(poswidth < width)poswidth -= 10;// ‚Â‚È‚¬–Ú‚ðì‚Á‚Ä‚¨‚­
+	LONG posheight = std::min(rc.bottom, static_cast<LONG>(height));
+	if(posheight < height)posheight -= 10;
 	int yokonum = (width - 1) / poswidth + 1;
 	int tatenum = (height - 1) / posheight + 1;
 	XFORM xform;
@@ -713,11 +717,14 @@ int main(int argc, char *argv[]) {
 			else if(arg.find("--output=") == 0) current_data.output = arg.substr(string("--output=").length());
 			else if(arg.find("--box=") == 0) box = arg.substr(string("--box=").length());
 			else if(arg.find("--backcolor=") == 0){
-				int len = ::lstrlen("--backcolor=");
-				int r = std::stoi(arg.substr(len, 2), nullptr, 16);
-				int g = std::stoi(arg.substr(len + 2, 2), nullptr, 16);
-				int b = std::stoi(arg.substr(len + 4, 2), nullptr, 16);
-				current_data.backcolor = RGB(r, g, b);
+				try{
+					int len = ::lstrlen("--backcolor=");
+					int r = std::stoi(arg.substr(len, 2), nullptr, 16);
+					int g = std::stoi(arg.substr(len + 2, 2), nullptr, 16);
+					int b = std::stoi(arg.substr(len + 4, 2), nullptr, 16);
+					current_data.backcolor = RGB(r, g, b);
+				}
+				catch(exception e){ cout << "failed to analyze color format: " << e.what() << endl; return -1; }
 			}
 			else if(arg.find("--viewport=") == 0) {
 				auto viewport = split(arg.substr(string("--viewport=").length()), ',');

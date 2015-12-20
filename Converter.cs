@@ -758,7 +758,7 @@ namespace TeX2img {
                 if (type == "emf") {
                     proc.StartInfo.Arguments = "--scale=10 --extent=5 ";
                     if (!Properties.Settings.Default.transparentPngFlag)
-                        proc.StartInfo.Arguments += "--backcolor=" + String.Format("{0:X}{1:X}{2:X}",
+                        proc.StartInfo.Arguments += "--backcolor=" + String.Format("{0:X2}{1:X2}{2:X2}",
                             Properties.Settings.Default.backgroundColor.R,
                             Properties.Settings.Default.backgroundColor.G,
                             Properties.Settings.Default.backgroundColor.B) + " ";
@@ -1139,11 +1139,11 @@ namespace TeX2img {
             Func<bool, bool,bool> modify_pdf = (bool paint, bool resize) => {
                 var tmppdf = TempFilesDeleter.GetTempFileName(".pdf", workingDir);
                 tempFilesDeleter.AddFile(tmppdf);
-                File.Move(Path.Combine(workingDir, tmpFileBaseName + ".pdf"), Path.Combine(workingDir, tmppdf));
-                if (!pdfcrop(tmppdf, tmpFileBaseName + ".pdf",
+                if (!pdfcrop(tmpFileBaseName + ".pdf", tmppdf,
                     vectorExtensions.Contains(extension) || Properties.Settings.Default.yohakuUnitBP,
                     Enumerable.Range(1, page).ToList(), bbs, paint, false, resize))
                     return false;
+                tmpFileBaseName = Path.GetFileNameWithoutExtension(tmppdf);
                 return true;
             };
 
@@ -1154,8 +1154,8 @@ namespace TeX2img {
                     // 新しい場合はpdfwrite
                     var tmppdf = TempFilesDeleter.GetTempFileName(".pdf", workingDir);
                     tempFilesDeleter.AddFile(tmppdf);
-                    File.Move(Path.Combine(workingDir, tmpFileBaseName + ".pdf"), Path.Combine(workingDir, tmppdf));
-                    if (!pdf2pdf(tmppdf, tmpFileBaseName + ".pdf", gsresolution)) return false;
+                    if (!pdf2pdf(tmpFileBaseName + ".pdf", tmppdf, gsresolution)) return false;
+                    tmpFileBaseName = Path.GetFileNameWithoutExtension(tmppdf);
                 } else {
                     if (!modify_pdf(paint, false)) return false;
                     // 古いときはeps経由
@@ -1174,8 +1174,8 @@ namespace TeX2img {
             var generate_actions = new Dictionary<string, Func<bool>>();
             generate_actions[".pdf"] = () => {
                 if (Properties.Settings.Default.outlinedText) {
-                    if (!make_pdf_without_text(true)) return false;
-                } else if (!modify_pdf(true, true)) return false;
+                    if (!make_pdf_without_text(!Properties.Settings.Default.transparentPngFlag)) return false;
+                } else if (!modify_pdf(!Properties.Settings.Default.transparentPngFlag, true)) return false;
                 if (!Properties.Settings.Default.mergeOutputFiles) {
                     foreach (var i in pagelist) {
                         if (!pdf2pdf_pdfium(tmpFileBaseName + ".pdf", tmpFileBaseName + "-" + i.ToString() + ".pdf", i)) return false;
@@ -1190,9 +1190,9 @@ namespace TeX2img {
                 if (!Properties.Settings.Default.transparentPngFlag) {
                     var tmppdf = TempFilesDeleter.GetTempFileName(".pdf", workingDir);
                     tempFilesDeleter.AddFile(tmppdf);
-                    File.Move(Path.Combine(workingDir, tmpFileBaseName + ".pdf"), Path.Combine(workingDir, tmppdf));
                     // ここではサイズ調整をしない
-                    if (!pdfcrop(tmppdf, tmpFileBaseName + ".pdf", true, Enumerable.Range(1, page).ToList(), bbs, true, false, false)) return false;
+                    if (!pdfcrop(tmpFileBaseName + ".pdf", tmppdf, true, Enumerable.Range(1, page).ToList(), bbs, true, false, false)) return false;
+                    tmpFileBaseName = Path.GetFileNameWithoutExtension(tmppdf);
                 }
                 foreach (var i in pagelist) {
                     if (!pdf2eps(tmpFileBaseName + ".pdf", tmpFileBaseName + "-" + i + ".eps", gsresolution, i, bbs[i - 1])) return false;
@@ -1202,8 +1202,8 @@ namespace TeX2img {
             };
             generate_actions[".svg"] = () => {
                 if (Properties.Settings.Default.outlinedText || (Properties.Settings.Default.mergeOutputFiles && page > 1)) {
-                    if (!make_pdf_without_text(true)) return false;
-                } else if (!modify_pdf(true, true)) return false;
+                    if (!make_pdf_without_text(!Properties.Settings.Default.transparentPngFlag)) return false;
+                } else if (!modify_pdf(!Properties.Settings.Default.transparentPngFlag, true)) return false;
                 if (!pdf2img_mudraw(tmpFileBaseName + ".pdf", tmpFileBaseName + "-%d.svg", pagelist)) return false;
                 if (Properties.Settings.Default.deleteDisplaySize) {
                     foreach(var i in pagelist) {
@@ -1223,7 +1223,7 @@ namespace TeX2img {
             generate_actions[".wmf"] = generate_actions[".emf"];
 
             Func<string, bool> generate_bitmap = (ext) => {
-                if (!modify_pdf(true, true)) return false;
+                if (!modify_pdf(!Properties.Settings.Default.transparentPngFlag, true)) return false;
                 foreach (var i in pagelist) {
                     if (!pdf2img(tmpFileBaseName + ".pdf", tmpFileBaseName + "-" + i + ext, i)) return false;
                 }
@@ -1242,7 +1242,7 @@ namespace TeX2img {
             };
             generate_actions[".gif"] = () => {
                 if (Properties.Settings.Default.transparentPngFlag) {
-                    if (!modify_pdf(true, true)) return false;
+                    if (!modify_pdf(false, true)) return false;
                     if (!pdf2img_pdfium(tmpFileBaseName + ".pdf", tmpFileBaseName + "-%d" + extension, pagelist)) return false;
                 } else {
                     if (!generate_bitmap(".png")) return false;
