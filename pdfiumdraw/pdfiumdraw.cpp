@@ -50,10 +50,10 @@ struct Data {
 /** ページ番号の扱い
 --pages=1,3 --output=out.pdf
 の時，
-* 出力がPDFでなければout1.pdfとout3.pdfを出力する．
+* 出力がPDFでなければout1.emfとout3.emfを出力する．
 * 出力がPDFならば全2ページのout.pdfを出力する．
 --output=out-%d.pdfならば
-* 出力がPDFでなければout-1.pdfとout-3.pdfを出力する．
+* 出力がPDFでなければout-1.emfとout-3.emfを出力する．
 * 出力がPDFならば全2ページのout-%d.pdfを出力する．
 
 ややこしいので--pdfは隠しオプション．
@@ -383,6 +383,7 @@ int CALLBACK EnhMetaFileProc(HDC hdc, HANDLETABLE FAR *lpHTable, ENHMETARECORD F
 	return TRUE;
 }
 
+// ところどころでの縦横の調整は根拠無し
 void DrawEMF(HDC dc, PDFPage &page, int extent, int scale, bool transparent, COLORREF background){
 	int width = static_cast<int>(page.GetWidth() * scale * extent) + 1;
 	int height = static_cast<int>(page.GetHeight() * scale * extent) + 1;
@@ -395,6 +396,8 @@ void DrawEMF(HDC dc, PDFPage &page, int extent, int scale, bool transparent, COL
 	HRGN rgn = CreateRectRgn(0, 0, width, height);
 	::SelectClipRgn(dc, rgn);
 	RECT rc;
+	::GetClipBox(dc, &rc);
+	int tmpscale = std::max((int)(width / rc.bottom) + 1, (int)(height / rc.right) + 1);
 	rc.left = 0; rc.top = 0; rc.bottom = height; rc.right = width;
 	if(transparent) {
 		::SetBkMode(dc, TRANSPARENT);
@@ -402,45 +405,25 @@ void DrawEMF(HDC dc, PDFPage &page, int extent, int scale, bool transparent, COL
 	} else {
 		::SetBkMode(dc, OPAQUE);
 		auto brush = ::CreateSolidBrush(background);
-		rc.bottom += 2 * extent;
-		rc.right += 2 * extent;
+		rc.bottom += 4 * extent;
+		rc.right += 4 * extent;
 		::FillRect(dc, &rc, brush);
 		::DeleteObject(brush);
 	}
-	::GetClipBox(dc, &rc);
-	LONG poswidth = std::min(rc.right, static_cast<LONG>(width));
-	if(poswidth < width)poswidth -= 10;// つなぎ目を作っておく
-	LONG posheight = std::min(rc.bottom, static_cast<LONG>(height));
-	if(posheight < height)posheight -= 10;
-	int yokonum = (width - 1) / poswidth + 1;
-	int tatenum = (height - 1) / posheight + 1;
-	XFORM xform;
-	xform.eM11 = xform.eM22 = 1;
-	xform.eM12 = xform.eM21 = 0;
-	::SetGraphicsMode(dc, GM_ADVANCED);
-	for(int t = 0; t < tatenum; ++t){
-		for(int y = 0; y < yokonum; ++y){
-			//cout << "t = " << t << ", y = " << y << endl;
-			HDC tmpdc = ::CreateEnhMetaFile(nullptr, nullptr, nullptr, nullptr);
-			if(extent != 1){
-				::SetMapMode(tmpdc, MM_ANISOTROPIC);
-				::SetWindowExtEx(tmpdc, extent, extent, nullptr);
-			}
-			rc.top = -t*posheight;
-			rc.bottom = height - t*posheight;
-			rc.left = -y*poswidth;
-			rc.right = width - y*poswidth;
-			::SetBkMode(tmpdc, TRANSPARENT);
-			::FillRect(tmpdc, &rc, (HBRUSH)::GetStockObject(NULL_BRUSH));
-			page.Render(tmpdc, -y*poswidth, -t*posheight, width, height);
-			HENHMETAFILE  meta = ::CloseEnhMetaFile(tmpdc);
-			xform.eDx = static_cast<float>(y*poswidth);
-			xform.eDy = static_cast<float>(t*posheight);
-			::SetWorldTransform(dc, &xform);
-			::EnumEnhMetaFile(dc, meta, (ENHMFENUMPROC)EnhMetaFileProc, nullptr, &rc);
-			::DeleteEnhMetaFile(meta);
-		}
+
+	HDC tmpdc = ::CreateEnhMetaFile(nullptr, nullptr, nullptr, nullptr);
+	if(extent != 1){
+		::SetMapMode(tmpdc, MM_ANISOTROPIC);
+		::SetWindowExtEx(tmpdc, extent*tmpscale, extent*tmpscale, nullptr);
 	}
+	rc.left = 0; rc.top = 0; rc.bottom = height - 2 * extent*tmpscale; rc.right = width - 2 * extent*tmpscale;
+	::SetBkMode(tmpdc, TRANSPARENT);
+	::FillRect(tmpdc, &rc, (HBRUSH)::GetStockObject(NULL_BRUSH));
+	page.Render(tmpdc, 0, 0, width, height);
+	HENHMETAFILE  meta = ::CloseEnhMetaFile(tmpdc);
+	rc.left = 0; rc.top = 0; rc.bottom = height - extent*tmpscale; rc.right = width - extent*tmpscale;
+	::EnumEnhMetaFile(dc, meta, (ENHMFENUMPROC)EnhMetaFileProc, nullptr, &rc);
+	::DeleteEnhMetaFile(meta);
 	::DeleteObject(rgn);
 }
 
@@ -641,7 +624,7 @@ std::vector<std::string> split(const std::string &str, char sep) {
 	return v;
 }
 
-vector<int> AnalyePageFormat(string &str) {
+vector<int> AnalyzePageFormat(string &str) {
 	auto pformats = split(str, ',');
 	vector<int> rv;
 	for(auto &&format : pformats) {
@@ -708,7 +691,7 @@ int main(int argc, char *argv[]) {
 			else if(arg == "--merge")merge = true;
 			else if(arg.find("--pages=") == 0) {
 				try {
-					auto pages = AnalyePageFormat(arg.substr(string("--pages=").length()));
+					auto pages = AnalyzePageFormat(arg.substr(string("--pages=").length()));
 					for(auto p : pages)current_data.pages.push_back(p - 1);
 				}
 				catch(exception e) { cout << "failed to analyze page format: " << e.what() << endl; return -1; }
