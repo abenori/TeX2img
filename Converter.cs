@@ -756,7 +756,7 @@ namespace TeX2img {
             using (var proc = GetProcess()) {
                 proc.StartInfo.FileName = Path.Combine(GetToolsPath(), "pdfiumdraw.exe");
                 if (type == "emf") {
-                    proc.StartInfo.Arguments = "--scale=10 --extent=5 ";
+                    proc.StartInfo.Arguments = "--extent=50 ";
                     if (!Properties.Settings.Default.transparentPngFlag)
                         proc.StartInfo.Arguments += "--backcolor=" + String.Format("{0:X2}{1:X2}{2:X2}",
                             Properties.Settings.Default.backgroundColor.R,

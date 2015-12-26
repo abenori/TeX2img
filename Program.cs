@@ -188,7 +188,7 @@ namespace TeX2img {
             for (int i = 0; i < files.Count / 2; ++i) {
                 var chkconv = new Converter(null, files[2 * i], files[2 * i + 1]);
                 if (!chkconv.CheckInputFormat()) {
-                    err += "ファイル " + files[2 * i + 1] + " の拡張子は .tex ではありません。\n";
+                    err += "ファイル " + files[2 * i] + " の拡張子は .tex ではありません。\n";
                 }
                 if (!File.Exists(files[2 * i])) {
                     err += "ファイル " + files[2 * i] + " は見つかりませんでした。";

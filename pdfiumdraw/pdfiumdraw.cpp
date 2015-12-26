@@ -39,10 +39,10 @@ struct Data {
 	string output;
 	int target = EMF;
 	int input_format = PDF;
-	int scale = 10;
+	int scale = 1;
 	vector<int> pages;
 	bool transparent = false;
-	float extent = 5;
+	float extent = 50;
 	RECT viewport;
 	COLORREF backcolor = RGB(255, 255, 255);
 };
@@ -410,7 +410,6 @@ void DrawEMF(HDC dc, PDFPage &page, int extent, int scale, bool transparent, COL
 		::FillRect(dc, &rc, brush);
 		::DeleteObject(brush);
 	}
-
 	HDC tmpdc = ::CreateEnhMetaFile(nullptr, nullptr, nullptr, nullptr);
 	if(extent != 1){
 		::SetMapMode(tmpdc, MM_ANISOTROPIC);
