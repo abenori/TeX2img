@@ -211,7 +211,7 @@
             this.groupBox2.Size = new System.Drawing.Size(574, 100);
             this.groupBox2.TabIndex = 4;
             this.groupBox2.TabStop = false;
-            this.groupBox2.Text = "アニメーション設定（SVG）";
+            this.groupBox2.Text = "アニメーション設定（SVG(Z)）";
             // 
             // animationLoopNumericUpDown
             // 
@@ -256,9 +256,9 @@
             this.MergeOutputFilesCheckBox.AutoSize = true;
             this.MergeOutputFilesCheckBox.Location = new System.Drawing.Point(22, 106);
             this.MergeOutputFilesCheckBox.Name = "MergeOutputFilesCheckBox";
-            this.MergeOutputFilesCheckBox.Size = new System.Drawing.Size(322, 22);
+            this.MergeOutputFilesCheckBox.Size = new System.Drawing.Size(342, 22);
             this.MergeOutputFilesCheckBox.TabIndex = 3;
-            this.MergeOutputFilesCheckBox.Text = "単一ファイルで出力 (PDF / TIFF /SVG)";
+            this.MergeOutputFilesCheckBox.Text = "単一ファイルで出力 (PDF / TIFF /SVG(Z))";
             this.MergeOutputFilesCheckBox.UseVisualStyleBackColor = true;
             // 
             // deleteDisplaySizeCheckBox
@@ -287,9 +287,9 @@
             this.notOutllinedTextCheckBox.AutoSize = true;
             this.notOutllinedTextCheckBox.Location = new System.Drawing.Point(22, 50);
             this.notOutllinedTextCheckBox.Name = "notOutllinedTextCheckBox";
-            this.notOutllinedTextCheckBox.Size = new System.Drawing.Size(220, 22);
+            this.notOutllinedTextCheckBox.Size = new System.Drawing.Size(293, 22);
             this.notOutllinedTextCheckBox.TabIndex = 1;
-            this.notOutllinedTextCheckBox.Text = "テキストを保持する（PDF）";
+            this.notOutllinedTextCheckBox.Text = "テキストを保持する（PDF / SVG(Z)）";
             this.notOutllinedTextCheckBox.UseVisualStyleBackColor = true;
             // 
             // EditorSettingTab
@@ -739,9 +739,9 @@
             this.label9.AutoSize = true;
             this.label9.Location = new System.Drawing.Point(181, 28);
             this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(314, 18);
+            this.label9.Size = new System.Drawing.Size(334, 18);
             this.label9.TabIndex = 2;
-            this.label9.Text = "（PDF / EPS / EMF / SVG は bp で固定）";
+            this.label9.Text = "（PDF / EPS / EMF / SVG(Z) は bp で固定）";
             // 
             // radioButtonbp
             // 

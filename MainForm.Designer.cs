@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            Sgry.Azuki.FontInfo fontInfo1 = new Sgry.Azuki.FontInfo();
+            Sgry.Azuki.FontInfo fontInfo2 = new Sgry.Azuki.FontInfo();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.FileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -85,7 +85,7 @@
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Padding = new System.Windows.Forms.Padding(10, 3, 0, 3);
-            this.menuStrip1.Size = new System.Drawing.Size(1115, 33);
+            this.menuStrip1.Size = new System.Drawing.Size(1115, 35);
             this.menuStrip1.TabIndex = 0;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -97,14 +97,14 @@
             this.ExportToolStripMenuItem,
             this.ExitToolStripMenuItem});
             this.FileToolStripMenuItem.Name = "FileToolStripMenuItem";
-            this.FileToolStripMenuItem.Size = new System.Drawing.Size(99, 27);
+            this.FileToolStripMenuItem.Size = new System.Drawing.Size(93, 29);
             this.FileToolStripMenuItem.Text = "ファイル(&F)";
             // 
             // GenerateEPSToolStripMenuItem
             // 
             this.GenerateEPSToolStripMenuItem.Name = "GenerateEPSToolStripMenuItem";
             this.GenerateEPSToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.T)));
-            this.GenerateEPSToolStripMenuItem.Size = new System.Drawing.Size(296, 28);
+            this.GenerateEPSToolStripMenuItem.Size = new System.Drawing.Size(298, 30);
             this.GenerateEPSToolStripMenuItem.Text = "画像ファイル生成(&T)";
             this.GenerateEPSToolStripMenuItem.Click += new System.EventHandler(this.GenerateButton_Click);
             // 
@@ -112,7 +112,7 @@
             // 
             this.ImportToolStripMenuItem.Name = "ImportToolStripMenuItem";
             this.ImportToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.O)));
-            this.ImportToolStripMenuItem.Size = new System.Drawing.Size(296, 28);
+            this.ImportToolStripMenuItem.Size = new System.Drawing.Size(298, 30);
             this.ImportToolStripMenuItem.Text = "インポート(&O)";
             this.ImportToolStripMenuItem.Click += new System.EventHandler(this.ImportToolStripMenuItem_Click);
             // 
@@ -120,7 +120,7 @@
             // 
             this.ExportToolStripMenuItem.Name = "ExportToolStripMenuItem";
             this.ExportToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S)));
-            this.ExportToolStripMenuItem.Size = new System.Drawing.Size(296, 28);
+            this.ExportToolStripMenuItem.Size = new System.Drawing.Size(298, 30);
             this.ExportToolStripMenuItem.Text = "エクスポート(&S)";
             this.ExportToolStripMenuItem.Click += new System.EventHandler(this.ExportToolStripMenuItem_Click);
             // 
@@ -128,7 +128,7 @@
             // 
             this.ExitToolStripMenuItem.Name = "ExitToolStripMenuItem";
             this.ExitToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.W)));
-            this.ExitToolStripMenuItem.Size = new System.Drawing.Size(296, 28);
+            this.ExitToolStripMenuItem.Size = new System.Drawing.Size(298, 30);
             this.ExitToolStripMenuItem.Text = "終了(&X)";
             this.ExitToolStripMenuItem.Click += new System.EventHandler(this.ExitCToolStripMenuItem_Click);
             // 
@@ -139,7 +139,7 @@
             this.showOutputWindowToolStripMenuItem,
             this.色入力ToolStripMenuItem});
             this.表示VToolStripMenuItem.Name = "表示VToolStripMenuItem";
-            this.表示VToolStripMenuItem.Size = new System.Drawing.Size(86, 27);
+            this.表示VToolStripMenuItem.Size = new System.Drawing.Size(81, 29);
             this.表示VToolStripMenuItem.Text = "表示(&V)";
             // 
             // showPreambleWindowToolStripMenuItem
@@ -147,7 +147,7 @@
             this.showPreambleWindowToolStripMenuItem.Name = "showPreambleWindowToolStripMenuItem";
             this.showPreambleWindowToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)(((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Shift) 
             | System.Windows.Forms.Keys.P)));
-            this.showPreambleWindowToolStripMenuItem.Size = new System.Drawing.Size(406, 28);
+            this.showPreambleWindowToolStripMenuItem.Size = new System.Drawing.Size(403, 30);
             this.showPreambleWindowToolStripMenuItem.Text = "プリアンブル設定ウィンドウ(&P)";
             this.showPreambleWindowToolStripMenuItem.Click += new System.EventHandler(this.showPreambleWindowToolStripMenuItem_Click);
             // 
@@ -156,7 +156,7 @@
             this.showOutputWindowToolStripMenuItem.Name = "showOutputWindowToolStripMenuItem";
             this.showOutputWindowToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)(((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Shift) 
             | System.Windows.Forms.Keys.O)));
-            this.showOutputWindowToolStripMenuItem.Size = new System.Drawing.Size(406, 28);
+            this.showOutputWindowToolStripMenuItem.Size = new System.Drawing.Size(403, 30);
             this.showOutputWindowToolStripMenuItem.Text = "出力ウィンドウ(&O)";
             this.showOutputWindowToolStripMenuItem.Click += new System.EventHandler(this.showOutputWindowToolStripMenuItem_Click);
             // 
@@ -165,7 +165,7 @@
             this.色入力ToolStripMenuItem.Name = "色入力ToolStripMenuItem";
             this.色入力ToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)(((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Shift) 
             | System.Windows.Forms.Keys.C)));
-            this.色入力ToolStripMenuItem.Size = new System.Drawing.Size(406, 28);
+            this.色入力ToolStripMenuItem.Size = new System.Drawing.Size(403, 30);
             this.色入力ToolStripMenuItem.Text = "色入力補助";
             this.色入力ToolStripMenuItem.Click += new System.EventHandler(this.ColorInputHelperToolStripMenuItem_Click);
             // 
@@ -174,14 +174,14 @@
             this.SettingToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.オプションOToolStripMenuItem});
             this.SettingToolStripMenuItem.Name = "SettingToolStripMenuItem";
-            this.SettingToolStripMenuItem.Size = new System.Drawing.Size(92, 27);
+            this.SettingToolStripMenuItem.Size = new System.Drawing.Size(83, 29);
             this.SettingToolStripMenuItem.Text = "ツール(&T)";
             // 
             // オプションOToolStripMenuItem
             // 
             this.オプションOToolStripMenuItem.Name = "オプションOToolStripMenuItem";
             this.オプションOToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.E)));
-            this.オプションOToolStripMenuItem.Size = new System.Drawing.Size(259, 28);
+            this.オプションOToolStripMenuItem.Size = new System.Drawing.Size(258, 30);
             this.オプションOToolStripMenuItem.Text = "オプション...(&O)";
             this.オプションOToolStripMenuItem.Click += new System.EventHandler(this.SettingToolStripMenuItem_Click);
             // 
@@ -190,13 +190,13 @@
             this.ヘルプHToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.AboutToolStripMenuItem});
             this.ヘルプHToolStripMenuItem.Name = "ヘルプHToolStripMenuItem";
-            this.ヘルプHToolStripMenuItem.Size = new System.Drawing.Size(95, 27);
+            this.ヘルプHToolStripMenuItem.Size = new System.Drawing.Size(91, 29);
             this.ヘルプHToolStripMenuItem.Text = "ヘルプ(&H)";
             // 
             // AboutToolStripMenuItem
             // 
             this.AboutToolStripMenuItem.Name = "AboutToolStripMenuItem";
-            this.AboutToolStripMenuItem.Size = new System.Drawing.Size(229, 28);
+            this.AboutToolStripMenuItem.Size = new System.Drawing.Size(233, 30);
             this.AboutToolStripMenuItem.Text = "バージョン情報...(&A)";
             this.AboutToolStripMenuItem.Click += new System.EventHandler(this.AboutToolStripMenuItem_Click);
             // 
@@ -236,10 +236,10 @@
             this.sourceTextBox.DrawsEofMark = true;
             this.sourceTextBox.FirstVisibleLine = 0;
             this.sourceTextBox.Font = new System.Drawing.Font("ＭＳ ゴシック", 12F);
-            fontInfo1.Name = "ＭＳ ゴシック";
-            fontInfo1.Size = 12;
-            fontInfo1.Style = System.Drawing.FontStyle.Regular;
-            this.sourceTextBox.FontInfo = fontInfo1;
+            fontInfo2.Name = "ＭＳ ゴシック";
+            fontInfo2.Size = 12;
+            fontInfo2.Style = System.Drawing.FontStyle.Regular;
+            this.sourceTextBox.FontInfo = fontInfo2;
             this.sourceTextBox.ForeColor = System.Drawing.Color.Black;
             this.sourceTextBox.HighlightsCurrentLine = false;
             this.sourceTextBox.Location = new System.Drawing.Point(26, 57);
@@ -272,64 +272,64 @@
             this.toolStripSeparator2,
             this.SelectAll});
             this.sourceTextBoxMenu.Name = "sourceTextBoxMenu";
-            this.sourceTextBoxMenu.Size = new System.Drawing.Size(177, 212);
+            this.sourceTextBoxMenu.Size = new System.Drawing.Size(187, 226);
             // 
             // Undo
             // 
             this.Undo.Name = "Undo";
-            this.Undo.Size = new System.Drawing.Size(176, 28);
+            this.Undo.Size = new System.Drawing.Size(186, 30);
             this.Undo.Text = "元に戻す(&U)";
             this.Undo.Click += new System.EventHandler(this.Undo_Click);
             // 
             // Redo
             // 
             this.Redo.Name = "Redo";
-            this.Redo.Size = new System.Drawing.Size(176, 28);
+            this.Redo.Size = new System.Drawing.Size(186, 30);
             this.Redo.Text = "やり直し(&Y)";
             this.Redo.Click += new System.EventHandler(this.Redo_Click);
             // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(173, 6);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(183, 6);
             // 
             // Cut
             // 
             this.Cut.Name = "Cut";
-            this.Cut.Size = new System.Drawing.Size(176, 28);
+            this.Cut.Size = new System.Drawing.Size(186, 30);
             this.Cut.Text = "切り取り(&T)";
             this.Cut.Click += new System.EventHandler(this.Cut_Click);
             // 
             // Copy
             // 
             this.Copy.Name = "Copy";
-            this.Copy.Size = new System.Drawing.Size(176, 28);
+            this.Copy.Size = new System.Drawing.Size(186, 30);
             this.Copy.Text = "コピー(&C)";
             this.Copy.Click += new System.EventHandler(this.Copy_Click);
             // 
             // Paste
             // 
             this.Paste.Name = "Paste";
-            this.Paste.Size = new System.Drawing.Size(176, 28);
+            this.Paste.Size = new System.Drawing.Size(186, 30);
             this.Paste.Text = "貼り付け(&P)";
             this.Paste.Click += new System.EventHandler(this.Paste_Click);
             // 
             // Delete
             // 
             this.Delete.Name = "Delete";
-            this.Delete.Size = new System.Drawing.Size(176, 28);
+            this.Delete.Size = new System.Drawing.Size(186, 30);
             this.Delete.Text = "削除(&D)";
             this.Delete.Click += new System.EventHandler(this.Delete_Click);
             // 
             // toolStripSeparator2
             // 
             this.toolStripSeparator2.Name = "toolStripSeparator2";
-            this.toolStripSeparator2.Size = new System.Drawing.Size(173, 6);
+            this.toolStripSeparator2.Size = new System.Drawing.Size(183, 6);
             // 
             // SelectAll
             // 
             this.SelectAll.Name = "SelectAll";
-            this.SelectAll.Size = new System.Drawing.Size(176, 28);
+            this.SelectAll.Size = new System.Drawing.Size(186, 30);
             this.SelectAll.Text = "全て選択(&A)";
             this.SelectAll.Click += new System.EventHandler(this.SelectAll_Click);
             // 
@@ -404,7 +404,7 @@
             this.groupBox2.Size = new System.Drawing.Size(1075, 69);
             this.groupBox2.TabIndex = 2;
             this.groupBox2.TabStop = false;
-            this.groupBox2.Text = "出力先ファイル（拡張子 .eps / .png / .jpg / .pdf / .svg / .emf /.bmp ）";
+            this.groupBox2.Text = "出力先ファイル（拡張子 .eps / .png / .jpg / .pdf / .svg(z) / .emf /.bmp ）";
             // 
             // OutputBrowseButton
             // 
@@ -446,9 +446,7 @@
             // 
             this.saveFileDialog1.DefaultExt = "eps";
             this.saveFileDialog1.FileName = "equation.eps";
-            this.saveFileDialog1.Filter = "EPSファイル (*.eps)|*.eps|JPEGファイル (*.jpg)|*.jpg|PNGファイル (*.png)|*.png|PDFファイル (*.pdf" +
-    ")|*.pdf|EMFファイル (*.emf)|*.emf|SVGファイル (*.svg)|*.svg|BMPファイル (*.bmp)|*.bmp|すべてのファ" +
-    "イル (*.*)|*.*";
+            this.saveFileDialog1.Filter = resources.GetString("saveFileDialog1.Filter");
             // 
             // openFileDialog1
             // 

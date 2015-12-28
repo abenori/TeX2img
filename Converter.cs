@@ -18,7 +18,7 @@ namespace TeX2img {
         #region プロパティ，コンストラクタetc...
         // 拡張子たち
         public static readonly string[] bmpExtensions = new string[] { ".jpg", ".png", ".bmp", ".gif", ".tiff" };
-        public static readonly string[] vectorExtensions = new string[] { ".eps", ".pdf", ".emf", ".wmf", ".svg" };
+        public static readonly string[] vectorExtensions = new string[] { ".eps", ".pdf", ".emf", ".wmf", ".svg", ".svgz" };
         public static string[] imageExtensions {
             get { return bmpExtensions.Concat(vectorExtensions).ToArray(); }
         }
@@ -1200,6 +1200,7 @@ namespace TeX2img {
                 }
                 return true;
             };
+            // extensionは内部で使わない
             generate_actions[".svg"] = () => {
                 if (Properties.Settings.Default.outlinedText || (Properties.Settings.Default.mergeOutputFiles && page > 1)) {
                     if (!make_pdf_without_text(!Properties.Settings.Default.transparentPngFlag)) return false;
@@ -1208,6 +1209,31 @@ namespace TeX2img {
                 if (Properties.Settings.Default.deleteDisplaySize) {
                     foreach(var i in pagelist) {
                         DeleteHeightAndWidthFromSVGFile(tmpFileBaseName + "-" + i.ToString() + ".svg");
+                    }
+                }
+                if (Properties.Settings.Default.mergeOutputFiles && page > 1) {
+                    var temp = TempFilesDeleter.GetTempFileName(".svg", workingDir);
+                    var temp1 = Path.GetFileNameWithoutExtension(temp) + "-1.svg";
+                    tempFilesDeleter.AddFile(temp1);
+                    if(svgconcat(pagelist.Select(d=>tmpFileBaseName + "-" + d.ToString() + ".svg").ToList(), temp1, Properties.Settings.Default.animationDelay, Properties.Settings.Default.animationLoop)) {
+                        page = 1;
+                        tmpFileBaseName = Path.GetFileNameWithoutExtension(temp);
+                    } else warnngs.Add("画像の結合に失敗しました。");
+                }
+                return true;
+            };
+            generate_actions[".svgz"] = () => {
+                if (!generate_actions[".svg"]()) return false;
+                for(int i = 1; i <= page; ++i) {
+                    if(File.Exists(Path.Combine(workingDir,tmpFileBaseName + "-" + i.ToString() + ".svg"))) {
+                        tempFilesDeleter.AddFile(tmpFileBaseName + "-" + i.ToString() + ".svgz");
+                        using (var ins = new FileStream(Path.Combine(workingDir, tmpFileBaseName + "-" + i.ToString() + ".svg"), FileMode.Open))
+                        using (var outs = new FileStream(Path.Combine(workingDir, tmpFileBaseName + "-" + i.ToString() + ".svgz"), FileMode.Create))
+                        using (var gzip = new System.IO.Compression.GZipStream(outs, System.IO.Compression.CompressionMode.Compress)) {
+                            var bytes = new byte[ins.Length];
+                            ins.Read(bytes, 0, (int)ins.Length);
+                            gzip.Write(bytes, 0, (int)ins.Length);
+                        }
                     }
                 }
                 return true;
@@ -1238,6 +1264,14 @@ namespace TeX2img {
                 foreach (var i in pagelist) {
                     if (!img2img_pdfium(tmpFileBaseName + "-" + i + ".png", tmpFileBaseName + "-" + i + extension)) return false;
                 }
+                if (Properties.Settings.Default.mergeOutputFiles && page > 1) {
+                    var temp = TempFilesDeleter.GetTempFileName(".tiff", workingDir);
+                    var temp1 = Path.GetFileNameWithoutExtension(temp) + "-1.tiff";
+                    if(tiffconcat(pagelist.Select(d => tmpFileBaseName + "-" + d.ToString() + ".tiff").ToList(), temp1)){ 
+                        page = 1;
+                        tmpFileBaseName = Path.GetFileNameWithoutExtension(temp);
+                    } else warnngs.Add("画像の結合に失敗しました。");
+                }
                 return true;
             };
             generate_actions[".gif"] = () => {
@@ -1250,48 +1284,28 @@ namespace TeX2img {
                         if (!img2img_pdfium(tmpFileBaseName + "-" + i + ".png", tmpFileBaseName + "-" + i + extension)) return false;
                     }
                 }
+                if (Properties.Settings.Default.mergeOutputFiles && page > 1) {
+                    var temp = TempFilesDeleter.GetTempFileName(".gif", workingDir);
+                    var temp1 = Path.GetFileNameWithoutExtension(temp) + "-1.gif";
+                    if (gifconcat(pagelist.Select(d => tmpFileBaseName + "-" + d.ToString() + ".gif").ToList(), temp1, Properties.Settings.Default.animationDelay, Properties.Settings.Default.animationLoop)) {
+                        page = 1;
+                        tmpFileBaseName = Path.GetFileNameWithoutExtension(temp);
+                    } else warnngs.Add("画像の結合に失敗しました。");
+                }
                 return true;
             };
 
-            if (!generate_actions[extension]()) return false;
+            try {
+                if (!generate_actions[extension]()) return false;
+            }
+            // 適当．後で考える．
+            catch(Exception e) {
+                warnngs.Add(e.Message);
+            }
 
             string outputDirectory = Path.GetDirectoryName(outputFilePath);
             if (outputDirectory != "" && !Directory.Exists(outputDirectory)) {
                 Directory.CreateDirectory(outputDirectory);
-            }
-
-            // 複数ファイルをまとめる．
-            if (Properties.Settings.Default.mergeOutputFiles && page > 1) {
-                var files = new List<string>();
-                var tempfile = TempFilesDeleter.GetTempFileName(extension, workingDir);
-                for (int i = 1; i <= page; ++i) {
-                    string generatedFile = tmpFileBaseName + "-" + i + extension;
-                    if (File.Exists(Path.Combine(workingDir, generatedFile))) files.Add(generatedFile);
-                }
-                bool? merged = null;
-                switch (extension) {
-                case ".tiff": merged = tiffconcat(files, tempfile); break;
-                case ".gif": merged = gifconcat(files, tempfile, Properties.Settings.Default.animationDelay, Properties.Settings.Default.animationLoop); break;
-                case ".svg": merged = svgconcat(files, tempfile, Properties.Settings.Default.animationDelay, Properties.Settings.Default.animationLoop); break;
-                default: break;
-                }
-                if (merged != null) {
-                    if (merged.Value) {
-                        try {
-                            File.Delete(Path.Combine(workingDir, tmpFileBaseName + "-1" + extension));
-                            File.Move(Path.Combine(workingDir, tempfile), Path.Combine(workingDir, tmpFileBaseName + "-1" + extension));
-                        }
-                        catch (UnauthorizedAccessException) {
-                            if (controller_ != null) controller_.showUnauthorizedError(outputFilePath);
-                            return false;
-                        }
-                        catch (IOException) {
-                            if (controller_ != null) controller_.showIOError(outputFilePath);
-                            return false;
-                        }
-                        page = 1;
-                    } else warnngs.Add("画像の結合に失敗しました。");
-                }
             }
 
             // 出力ファイルをターゲットディレクトリにコピー
