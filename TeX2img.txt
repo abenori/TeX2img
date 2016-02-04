@@ -31,6 +31,7 @@ TeX2imgc.exe は CUI モードで動かすためのラッパです．TeX2img.exe
  > TeX2imgc.exe [Options] Input Output [Input Output...]
 です．各種設定項目は TeX2img のそれを受け継ぎますが，変換後のプレビューのみ必ず行わないようになります．行いたい場合はオプション /preview を指定してください．
 
+
 ## 制限
 * 大きな EMF を作ると一部の塗りが現れない場合があります．これは今現在は仕様ということにさせてください．将来的に解決策が見つかれば対処します．
 
@@ -62,7 +63,7 @@ TeX2img.exe input output
 /dvidriver=<VAL>         DVI driver のパス
 /dvipdfmx=<VAL>          /dvidriver と同じ（obsolete）
 /gs=<VAL>                Ghostscript のパス
-/gsdevice=<VAL>          Ghostscript の device（epswrite/eps2write）
+/oldgs[-]                9.14 以前の Ghostscript
 /kanji=<VAL>             文字コード（utf8/sjis/jis/euc/no)
 /guess-compile[-]        LaTeX ソースコンパイル回数を推定
 /num=<NUM>               LaTeX ソースコンパイルの（最大）回数
