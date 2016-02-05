@@ -231,7 +231,7 @@ rv["pLaTeX"] = @"%latex: platex
 %dvidriver: dvipdfmx
 \documentclass[fleqn,papersize,dvipdfmx]{jsarticle}
 \usepackage{amsmath,amssymb}
-\usepackage{color}
+\usepackage{xcolor}
 \pagestyle{empty}
 ";
 
@@ -239,14 +239,14 @@ rv["upLaTeX"] = @"%latex: uplatex
 %dvidriver: dvipdfmx
 \documentclass[fleqn,papersize,uplatex,dvipdfmx]{jsarticle}
 \usepackage{amsmath,amssymb}
-\usepackage{color}
+\usepackage{xcolor}
 \pagestyle{empty}
 ";
 
 rv["pdfLaTeX"] = @"%latex: pdflatex
 \documentclass[fleqn]{article}
 \usepackage{amsmath,amssymb}
-\usepackage{color}
+\usepackage{xcolor}
 \pagestyle{empty}
 ";
 
@@ -254,14 +254,14 @@ rv["XeLaTeX（和文）"] = @"%latex: xelatex
 \documentclass[fleqn]{bxjsarticle}
 \usepackage{zxjatype}
 \usepackage{amsmath,amssymb}
-\usepackage{color}
+\usepackage{xcolor}
 \pagestyle{empty}
 ";
 
 rv["LuaLaTeX（和文）"] = @"%latex: lualatex
 \documentclass[fleqn]{ltjsarticle}
 \usepackage{amsmath,amssymb}
-\usepackage{color}
+\usepackage{xcolor}
 \pagestyle{empty}
 ";
 
@@ -269,7 +269,7 @@ rv["LaTeX + dvips"] = @"%latex: latex
 %dvidriver: dvips
 \documentclass[fleqn,dvips]{article}
 \usepackage{amsmath,amssymb}
-\usepackage{graphicx,color}
+\usepackage{graphicx,xcolor}
 \pagestyle{empty}
 ";
 
