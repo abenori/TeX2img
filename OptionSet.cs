@@ -5,7 +5,7 @@ using System.Text;
 using System.IO;
 
 namespace TeX2img {
-    public class OptionSet : NDesk.Options.OptionSet {
+    public class OptionSet : Mono.Options.OptionSet {
         Dictionary<string, Func<string>> default_values = new Dictionary<string, Func<string>>();
         public OptionSet Add<T>(string prototype, string description, Action<T> action, T defval) {
             return Add(prototype, description, action, new Func<T>(() => defval));
@@ -30,22 +30,22 @@ namespace TeX2img {
         // 次でエラーを出すようにする
         // "option"の指定の時に--option=abc
         // "option="の指定の時に--option-
-        protected override bool Parse(string argument, NDesk.Options.OptionContext c) {
+        protected override bool Parse(string argument, Mono.Options.OptionContext c) {
             if(c.Option == null) {
                 string f, n, s, v;
                 if(!GetOptionParts(argument, out f, out n, out s, out v)) return false;
                 if(Contains(n)) {
                     var p = this[n];
-                    if(v != null && p.OptionValueType == NDesk.Options.OptionValueType.None) {
+                    if(v != null && p.OptionValueType == Mono.Options.OptionValueType.None) {
                         // メッセージはさぼり
-                        throw new NDesk.Options.OptionException(c.OptionSet.MessageLocalizer(""), f + n);
+                        throw new Mono.Options.OptionException(c.OptionSet.MessageLocalizer(""), f + n);
                     }
                 } else {
                     string rn;
                     if(n.Length >= 1 && (n[n.Length - 1] == '-' || n[n.Length - 1] == '+') && Contains((rn = n.Substring(0, n.Length - 1)))) {
                         var p = this[rn];
-                        if(p.OptionValueType == NDesk.Options.OptionValueType.Required) {
-                            throw new NDesk.Options.OptionException(c.OptionSet.MessageLocalizer("An argument is required for the option '" + f + rn + "'"), f + rn);
+                        if(p.OptionValueType == Mono.Options.OptionValueType.Required) {
+                            throw new Mono.Options.OptionException(c.OptionSet.MessageLocalizer("An argument is required for the option '" + f + rn + "'"), f + rn);
                         }
                     }
                 }
@@ -64,8 +64,8 @@ namespace TeX2img {
                     if(oh.Description.EndsWith("[-]")) {
                         minus_exist = true;
                         length += 3;
-                    } else if(oh.OptionValueType == NDesk.Options.OptionValueType.Optional) length += 7;
-                    else if(oh.OptionValueType == NDesk.Options.OptionValueType.Required) length += 5;
+                    } else if(oh.OptionValueType == Mono.Options.OptionValueType.Optional) length += 7;
+                    else if(oh.OptionValueType == Mono.Options.OptionValueType.Required) length += 5;
                     maxlength = Math.Max(maxlength, length);
                 }
             }
@@ -76,8 +76,8 @@ namespace TeX2img {
                     if(oh.GetType().ToString().EndsWith("[System.Int32]")) valtype = "NUM";
                     string opstr = "/" + oh.GetNames()[0];
                     string desc = oh.Description.Replace("\n", "\n" + new string(' ', maxlength + 1));
-                    if(oh.OptionValueType == NDesk.Options.OptionValueType.Optional) opstr += "[=<" + valtype + ">]";
-                    else if(oh.OptionValueType == NDesk.Options.OptionValueType.Required) opstr += "=<" + valtype + ">";
+                    if(oh.OptionValueType == Mono.Options.OptionValueType.Optional) opstr += "[=<" + valtype + ">]";
+                    else if(oh.OptionValueType == Mono.Options.OptionValueType.Required) opstr += "=<" + valtype + ">";
                     else if(desc.EndsWith("[-]")) {
                         // 説明文の最後が[-]なものは，否定が可能なオプション．/helpではオプション名の最後に表示する．
                         opstr += "[-]";

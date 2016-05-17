@@ -56,17 +56,17 @@ namespace TeX2img {
                         Properties.Settings.Default.topMargin = Int32.Parse(list[1]);
                         Properties.Settings.Default.rightMargin = Int32.Parse(list[2]);
                         Properties.Settings.Default.bottomMargin = Int32.Parse(list[3]);
-                    }else throw new NDesk.Options.OptionException("余白の指定が不正です．","margins");
+                    }else throw new Mono.Options.OptionException("余白の指定が不正です．","margins");
                 }
                 catch(FormatException e) {
-                    throw new NDesk.Options.OptionException(e.Message,"margins");
+                    throw new Mono.Options.OptionException(e.Message,"margins");
                 }
             } },
             {"unit=","余白の単位（bp/px）",val => {
                 switch(val){
                 case "bp": Properties.Settings.Default.yohakuUnitBP = true; return;
                 case "px": Properties.Settings.Default.yohakuUnitBP = false; return;
-                default: throw new NDesk.Options.OptionException("bp, px のいずれかを指定してください。", "unit");
+                default: throw new Mono.Options.OptionException("bp, px のいずれかを指定してください。", "unit");
                 }
             },()=>Properties.Settings.Default.yohakuUnitBP ? "bp" : "px"},
             {"keep-page-size","ページサイズを維持[-]",val=>Properties.Settings.Default.keepPageSize=(val != null),()=>Properties.Settings.Default.keepPageSize},
@@ -88,13 +88,13 @@ namespace TeX2img {
                 }catch(Exception) { }
                 var list = val.Split(new char[] { ' ' }).ToList();
                 list.RemoveAll((s) => (s == ""));
-                if(list.Count == 1)throw new NDesk.Options.OptionException("認識できない色名です：" + val,"background-color");
+                if(list.Count == 1)throw new Mono.Options.OptionException("認識できない色名です：" + val,"background-color");
                 try {
                     if(list.Count != 3)throw new Exception("入力が不正です．");
                     Properties.Settings.Default.backgroundColor = System.Drawing.Color.FromArgb(0,
                         Int32.Parse(list[0]),Int32.Parse(list[1]),Int32.Parse(list[2]));
                 }
-                catch(Exception e) {throw new NDesk.Options.OptionException(e.Message,"background-color"); }
+                catch(Exception e) {throw new Mono.Options.OptionException(e.Message,"background-color"); }
             },()=> {var c = Properties.Settings.Default.backgroundColor;
                 var r = String.Format("{0,2:X2}{1,2:X2}{2,2:X2}",c.R,c.G,c.B);
                 if(c.IsNamedColor)r += " (" + c.Name + ")";
@@ -114,7 +114,7 @@ namespace TeX2img {
             {"savesettings","設定の保存を行う[-]",val => Properties.Settings.Default.SaveSettings = (val != null),()=>Properties.Settings.Default.SaveSettings},
             {"quiet","Quiet モード[-]",val => quiet = (val != null),()=>quiet},
             {"timeout=","タイムアウト時間を設定（秒）", (int val) => {
-                if(val <= 0) throw new NDesk.Options.OptionException("タイムアウト時間は 0 より大きい値を指定してください。", "timeout");
+                if(val <= 0) throw new Mono.Options.OptionException("タイムアウト時間は 0 より大きい値を指定してください。", "timeout");
                 Properties.Settings.Default.timeOut = val * 1000;
             },()=>Properties.Settings.Default.timeOut/1000 + " 秒"},
             // TODO: defaultに対応するオプションがあった方がよい？
@@ -122,7 +122,7 @@ namespace TeX2img {
                 switch(val) {
                 case "nonstop": Properties.Settings.Default.batchMode = Properties.Settings.BatchMode.NonStop; break;
                 case "stop": Properties.Settings.Default.batchMode = Properties.Settings.BatchMode.Stop; break;
-                default: throw new NDesk.Options.OptionException("stop, nonstop のいずれかを指定してください。", "batch");
+                default: throw new Mono.Options.OptionException("stop, nonstop のいずれかを指定してください。", "batch");
                 }
             },()=>{
                 switch(Properties.Settings.Default.batchMode){
@@ -138,7 +138,7 @@ namespace TeX2img {
 
         static string GetStringsFromArray(string optionname, string val, string[] possibleargs) {
             if (possibleargs.Contains(val)) return val;
-            throw new NDesk.Options.OptionException(String.Join(", ", possibleargs) + " のいずれかを指定してください。", optionname);
+            throw new Mono.Options.OptionException(String.Join(", ", possibleargs) + " のいずれかを指定してください。", optionname);
         }
 
         static int TeX2imgMain(List<string> cmds) {
@@ -146,7 +146,7 @@ namespace TeX2img {
             // オプション解析
             List<string> files;
             try { files = options.Parse(cmds); }
-            catch (NDesk.Options.OptionException e) {
+            catch (Mono.Options.OptionException e) {
                 if (e.OptionName != null) {
                     var msg = "オプション " + e.OptionName + " への入力が不正です";
                     if (e.Message != "") msg += "：" + e.Message;
