@@ -331,3 +331,9 @@ https://pdfium.googlesource.com/pdfium/
 * 1.7.1（2016/02/05）
     - SVGZ 形式に対応．
     - 出力される PDF のバージョンが 1.7 と高いものになっていたのを修正．
+
+* 1.7.2
+    - テンプレートの color パッケージを xcolor パッケージに変更．
+    - NDesk.Options → Mono.Options （NuGetから）
+    - pdfium をアップデート．
+

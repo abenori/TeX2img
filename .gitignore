@@ -161,3 +161,22 @@ $RECYCLE.BIN/
 
 # Mac desktop service store files
 .DS_Store
+/Mono.Options/Options.cs
+/packages/Mono.Options.1.1
+/TeX2imgc/TeX2imgc.exe.config
+/UnitTest/test.tex
+/UnitTest/nogirigiri.png
+/UnitTest/girigiri2.txt
+/UnitTest/girigiri.png
+/UnitTest/equation2.txt
+/UnitTest/chk.bat
+/UnitTest/BBbmp.cs
+/UnitTest/bb.txt
+/tex2img.lua
+/packages.config
+/MainForm.cs.orig
+/Color.txt
+/tex2img_generate.tex
+/tex2img_generate.synctex.gz
+/tex2img_generate.dvi
+/TeX2img.VC.db

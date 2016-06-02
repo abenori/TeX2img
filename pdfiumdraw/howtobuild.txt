@@ -1,6 +1,28 @@
-pdfium is needed.
+pdfium is needed. For building pdfium, follow https://pdfium.googlesource.com/pdfium/
 
+The directories for the building are assumed to be debug/release. Configurations are:
+
+For debug:
+
+    is_debug = true
+    pdf_enable_xfa = false
+    pdf_enable_v8 = false
+    pdf_is_standalone = false
+    treat_warnings_as_errors = false
+    host_cpu="x86"
+
+For release
+
+    is_debug = false
+    enable_iterator_debugging = false
+    pdf_enable_xfa = false
+    pdf_enable_v8 = false
+    pdf_is_standalone = false
+    treat_warnings_as_errors = false
+    host_cpu="x86"
+
+Finaly,
 * add "pdfium\public" to the include directories
-* add "pdfium\build" to the library directories
+* add "pdfium" to the library directories
 
 
