@@ -33,10 +33,12 @@ namespace TeX2imgc {
                 if(m.Success) proc.StartInfo.Arguments += Environment.CommandLine.Substring(m.Length);
                 //else proc.StartInfo.Arguments += Environment.CommandLine;
                 proc.StartInfo.RedirectStandardOutput = true;
+                proc.StartInfo.RedirectStandardError = true;
                 proc.StartInfo.RedirectStandardInput = true;
                 proc.StartInfo.CreateNoWindow = true;
                 proc.StartInfo.UseShellExecute = false;
                 proc.OutputDataReceived += ((s, e) => Console.WriteLine(e.Data));
+                proc.ErrorDataReceived += ((s, e) => Console.Error.WriteLine(e.Data));
                 if(!proc.Start()) {
                     Console.WriteLine("TeX2img.exe の実行に失敗しました．");
                     Environment.ExitCode = -1;
@@ -55,6 +57,7 @@ namespace TeX2imgc {
                 WriteStandardInputThread.IsBackground = true;
                 WriteStandardInputThread.Start(proc.StandardInput);
                 proc.BeginOutputReadLine();
+                proc.BeginErrorReadLine();
                 proc.WaitForExit();
                 Environment.ExitCode = proc.ExitCode;
                 WriteStandardInputThread.Abort();
