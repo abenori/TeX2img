@@ -156,6 +156,9 @@ namespace mudraw {
 			documents.push_back(d);
 			return documents.size();
 		}
+		int version_document(int document) {
+			return documents[document - 1]->version;
+		}
 		int load_page(int document, int page) {
 			auto docptr = documents[document - 1];
 			auto p = ::pdf_load_page(docptr, page);

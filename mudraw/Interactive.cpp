@@ -83,7 +83,9 @@ namespace mudraw {
 					int doc = Read<int>();
 					int page = Read<int>();
 					Write(load_page(doc, page));
-				} else if(func == "count_pages")Write(count_pages(Read<int>()));
+				}
+				else if(func == "version_document")Write(version_document(Read<int>()));
+				else if(func == "count_pages")Write(count_pages(Read<int>()));
 				else if(func == "bound_page")Write(bound_page(Read<int>()));
 				else if(func == "annot_type") Write(fz_annot_type_to_str(annot_type(Read<int>())));
 				else if(func == "first_annot") Write(first_annot(Read<int>()));
@@ -94,54 +96,65 @@ namespace mudraw {
 					int page = Read<int>();
 					auto type = Read<string>();
 					Write(create_annot(page, str_to_fz_annot_type(type)));
-				} else if(func == "set_text_annot_position") {
+				}
+				else if(func == "set_text_annot_position") {
 					int annot = Read<int>();
 					int x = Read<int>();
 					int y = Read<int>();
 					set_text_annot_position(annot, x, y);
 					cout << endl;
-				} else if(func == "set_annot_contents") {
+				}
+				else if(func == "set_annot_contents") {
 					int annot = Read<int>();
 					auto contents = Read<string>();
 					set_annot_contents(annot, contents);
 					cout << endl;
-				} else if(func == "set_annot_flag") {
+				}
+				else if(func == "set_annot_flag") {
 					int annot = Read<int>();
 					int flag = Read<int>();
 					set_annot_flag(annot, flag);
 					cout << endl;
-				} else if(func == "create_document"){
-                    Write(create_document());
-				} else if(func == "write_document") {
+				}
+				else if(func == "create_document") {
+					Write(create_document());
+				}
+				else if(func == "write_document") {
 					auto doc = Read<int>();
 					auto file = Read<string>();
 					write_document(doc, file);
 					cout << endl;
-				} else if(func == "insert_page") {
+				}
+				else if(func == "insert_page") {
 					int doc = Read<int>();
 					int page = Read<int>();
 					int at = Read<int>();
 					insert_page(doc, page, at);
 					cout << endl;
-				} else if(func == "delete_page") {
+				}
+				else if(func == "delete_page") {
 					int doc = Read<int>();
 					int number = Read<int>();
 					delete_page(doc, number);
 					cout << endl;
-				} else if(func == "delete_page_range") {
+				}
+				else if(func == "delete_page_range") {
 					int doc = Read<int>();
 					int start = Read<int>();
 					int end = Read<int>();
 					delete_page_range(doc, start, end);
 					cout << endl;
-				} else if(func == "free_all"){
+				}
+				else if(func == "free_all") {
 					free_all();
 					cout << endl;
-				} else if(func == "pdfbox_page"){
+				}
+				else if(func == "pdfbox_page") {
 					int page = Read<int>();
 					string boxname = Read<string>();
 					Write(pdfbox_page(page, boxname));
-				} else if(func == "rotate_page")Write(rotate_page(Read<int>()));
+				}
+				else if(func == "rotate_page")Write(rotate_page(Read<int>()));
 				else fz_throw(context, 1, ("function " + func + " is not defined").c_str());
 			}
 			fz_catch(context) {

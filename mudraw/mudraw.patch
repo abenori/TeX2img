@@ -1,11 +1,10 @@
-diff -u -r mupdf_orig/mupdf/source/tools/mudraw.c mupdf/mupdf/source/tools/mudraw.c
---- mupdf_orig/mupdf/source/tools/mudraw.c	2015-09-29 11:34:06 +0000
-+++ mupdf/mupdf/source/tools/mudraw.c	2015-10-01 15:35:35 +0000
+--- mupdf_orig/source/tools/mudraw.c	Fri Oct 30 05:06:14 2015
++++ mupdf/source/tools/mudraw.c	Mon Jun 13 00:13:01 2016
 @@ -826,6 +826,15 @@
  	return &p[1];
  }
  
-+int Interactive();
++int Interactive(int argc, char **argv);
 +int InteractiveCheck(int argc, char **argv) {
 +	int i = 0;
 +	for (i = 0; i < argc; ++i) {
@@ -17,14 +16,14 @@ diff -u -r mupdf_orig/mupdf/source/tools/mudraw.c mupdf/mupdf/source/tools/mudra
  int main(int argc, char **argv)
  {
  	char *password = "";
-@@ -834,6 +843,10 @@
+@@ -833,6 +842,10 @@
+ 	int c;
  	fz_context *ctx;
  	fz_alloc_context alloc_ctx = { NULL, trace_malloc, trace_realloc, trace_free };
- 
-+	if (InteractiveCheck(argc, argv)) {
-+		return Interactive();
-+	}
 +
++	if (InteractiveCheck(argc, argv)) {
++		return Interactive(argc, argv);
++	}
+ 
  	fz_var(doc);
  
- 	while ((c = fz_getopt(argc, argv, "lo:F:p:r:R:b:c:dgmTtx5G:Iw:h:fiMB:")) != -1)
