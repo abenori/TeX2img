@@ -21,8 +21,8 @@
 ## 動作条件
 * Windows Vista 以降．
 * .NET Framework 3.5 以降．
-* 適切な TeX ディストリビューション（W32TeX か TeX Live を推奨）がインストールされていて，pdftex が使えること．
-* Ghostscript がインストールされ，使えること．（TeX Live 内のものでも利用可能です．）
+* 適切な TeX ディストリビューション（W32TeX か TeX Live を推奨）がインストールされていて，適切な LaTeX エンジンと dvi ドライバ，および pdftex が使えること．
+* Ghostscript (Version 9以上を推奨) がインストールされ，使えること．（TeX Live 内のものでも利用可能です．）
 
 
 ## インストール
