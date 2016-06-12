@@ -435,6 +435,7 @@ namespace TeX2img {
                 BoundingBoxPair bb;
                 if (origbb == null) bb = readPDFBB(inputFileName, page);
                 else bb = origbb;
+                if (bb == null) return false;
                 Func<BoundingBox, BoundingBox> bbfunc = (b) => bb.bb;
                 Func<BoundingBox, BoundingBox> hiresbbfunc = (b) => bb.hiresbb;
                 rewriteBB(outputFileName, bbfunc, hiresbbfunc);
@@ -582,6 +583,7 @@ namespace TeX2img {
                 } else {
                     bb = origbb[i];
                 }
+                if (bb == null) return false;
                 var rect = AddMargineToBoundingBox(bb.hiresbb, use_bp);
                 if (rect.IsEmpty && !deleteemptypages) rect = new BoundingBox(0, 0, 10, 10);// dummy
                 bbBox.Add(rect);
