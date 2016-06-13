@@ -443,28 +443,28 @@ namespace TeX2img {
             return true;
         }
 
-        bool ps2pdf(string filename, string output) {
-            return gs_pdfwrite("\"" + filename + "\"", output, "", "PS から PDF への変換", 0, "");
+        bool ps2pdf(string filename, string output, int version = -1) {
+            return gs_pdfwrite("\"" + filename + "\"", output, "", "PS から PDF への変換", 0, version, "");
         }
 
-        bool eps2pdf(List<string> filename, string output, int resolution) {
-            return gs_pdfwrite(String.Join(" ", filename.Select(d => "\"" + d + "\"").ToArray()), output, "-dEPSCrop", "EPS から PDF への変換", resolution,"");
+        bool eps2pdf(List<string> filename, string output, int resolution, int version) {
+            return gs_pdfwrite(String.Join(" ", filename.Select(d => "\"" + d + "\"").ToArray()), output, "-dEPSCrop", "EPS から PDF への変換", resolution, version, "");
         }
 
-        bool pdf2pdf(string input, string output, int resolution, int page = 0) {
+        bool pdf2pdf(string input, string output, int resolution, int version, int page = 0) {
 			string pageopt = "";
 			if(page != 0) pageopt = " -dFirstPage=" + page.ToString() + " -dLastPage=" + page.ToString();
-            return gs_pdfwrite("\"" + input + "\"", output, (IsNewGhostscript() ? "-dNoOutputFonts" : "-dNOCACHE") + pageopt, "Ghostscript の実行", resolution, "");
+            return gs_pdfwrite("\"" + input + "\"", output, (IsNewGhostscript() ? "-dNoOutputFonts" : "-dNOCACHE") + pageopt, "Ghostscript の実行", resolution, version, "");
         }
 
-        bool dashtoline(string input) {
+        bool dashtoline(string input, int version) {
             var tmppdf = TempFilesDeleter.GetTempFileName(".pdf", workingDir);
             tempFilesDeleter.AddFile(tmppdf);
             File.Move(Path.Combine(workingDir, input), Path.Combine(workingDir, tmppdf));
-            return gs_pdfwrite("\"" + tmppdf + "\"", input, "", "Ghostscript の実行", 0, "/oldstroke /stroke load def /stroke {.dashpath [] 0 setdash oldstroke} def");
+            return gs_pdfwrite("\"" + tmppdf + "\"", input, "", "Ghostscript の実行", 0, version, "/oldstroke /stroke load def /stroke {.dashpath [] 0 setdash oldstroke} def");
         }
 
-        bool gs_pdfwrite(string input, string output, string option, string msg, int resolution, string cmd) {
+        bool gs_pdfwrite(string input, string output, string option, string msg, int resolution, int version, string cmd) {
             using (var proc = GetProcess()) {
                 string arg;
                 proc.StartInfo.FileName = setProcStartInfo(Properties.Settings.Default.gsPath, out arg);
@@ -473,6 +473,7 @@ namespace TeX2img {
                     return false;
                 }
                 proc.StartInfo.Arguments = arg + "-dNOPAUSE -dBATCH -sDEVICE=pdfwrite -dAutoRotatePages=/None ";
+                if (version > 0) proc.StartInfo.Arguments += "-dCompatibilityLevel=1." + (version - 10).ToString() + " ";
                 if (resolution > 0) proc.StartInfo.Arguments += "-r" + resolution.ToString() + " ";
                 if (option != "") proc.StartInfo.Arguments += option + " ";
                 proc.StartInfo.Arguments += "-sOutputFile=\"" + output + "\" -c \".setpdfwrite";
@@ -556,15 +557,15 @@ namespace TeX2img {
         #endregion
 
         #region pdftex
-        bool pdfcrop(string inputFileName, string outputFileName, bool use_bp, int page = 1, BoundingBoxPair origbb = null) {
-            return pdfcrop(inputFileName, outputFileName, use_bp, new List<int>() { page }, new List<BoundingBoxPair>() { origbb });
+        bool pdfcrop(string inputFileName, string outputFileName, bool use_bp, int page = 1, BoundingBoxPair origbb = null, int version = -1) {
+            return pdfcrop(inputFileName, outputFileName, use_bp, new List<int>() { page }, new List<BoundingBoxPair>() { origbb }, true, true, true, version);
         }
 
         // origbbには，GhostscriptのsDevice=bboxで得られた値を入れておく。
         // 空ページはdeleteemptypages = trueならば消されるが，falseならばダミーのページが挿入される．
         // ついでに塗る．
         // crop = falseならば塗ることしかしない．
-        bool pdfcrop(string inputFileName, string outputFileName, bool use_bp, List<int> pages, List<BoundingBoxPair> origbb, bool drawback = true, bool deleteemptypages = false, bool crop = true) {
+        bool pdfcrop(string inputFileName, string outputFileName, bool use_bp, List<int> pages, List<BoundingBoxPair> origbb, bool drawback = true, bool deleteemptypages = false, bool crop = true, int version = -1) {
             var colorstr =
                 ((double)Properties.Settings.Default.backgroundColor.R / 255).ToString() + " " +
                 ((double)Properties.Settings.Default.backgroundColor.G / 255).ToString() + " " +
@@ -590,6 +591,7 @@ namespace TeX2img {
             }
             using (var fw = new StreamWriter(Path.Combine(workingDir, tmpfile))) {
                 fw.WriteLine(@"\pdfoutput=1\relax");
+                if (version != -1) fw.WriteLine(@"\pdfminorversion=" + (version - 10).ToString() + @"\relax");
                 for (int i = 0; i < pages.Count; ++i) {
                     var box = bbBox[i];
                     if (!box.IsEmpty) {
@@ -1099,8 +1101,8 @@ namespace TeX2img {
             }
 
             // ページ数を取得
-            int page = pdfpages(Path.Combine(workingDir, tmpFileBaseName + ".pdf"));
-            if (page == -1) {
+            int page, version;
+            if (!pdfinfo(Path.Combine(workingDir, tmpFileBaseName + ".pdf"), out page, out version)) {
                 controller_.showError("生成された PDF のページ数の取得に失敗．");
                 return false;
             }
@@ -1143,7 +1145,7 @@ namespace TeX2img {
                 tempFilesDeleter.AddFile(tmppdf);
                 if (!pdfcrop(tmpFileBaseName + ".pdf", tmppdf,
                     vectorExtensions.Contains(extension) || Properties.Settings.Default.yohakuUnitBP,
-                    Enumerable.Range(1, page).ToList(), bbs, paint, false, resize))
+                    Enumerable.Range(1, page).ToList(), bbs, paint, false, resize, version))
                     return false;
                 tmpFileBaseName = Path.GetFileNameWithoutExtension(tmppdf);
                 return true;
@@ -1156,7 +1158,7 @@ namespace TeX2img {
                     // 新しい場合はpdfwrite
                     var tmppdf = TempFilesDeleter.GetTempFileName(".pdf", workingDir);
                     tempFilesDeleter.AddFile(tmppdf);
-                    if (!pdf2pdf(tmpFileBaseName + ".pdf", tmppdf, gsresolution)) return false;
+                    if (!pdf2pdf(tmpFileBaseName + ".pdf", tmppdf, gsresolution, version)) return false;
                     tmpFileBaseName = Path.GetFileNameWithoutExtension(tmppdf);
                 } else {
                     if (!modify_pdf(paint, false)) return false;
@@ -1168,7 +1170,7 @@ namespace TeX2img {
                             if (!pdf2eps(tmpFileBaseName + ".pdf", tmpFileBaseName + "-" + i + ".eps", gsresolution, i, bbs[i - 1])) return false;
                         }
                     }
-                    if (!eps2pdf(Enumerable.Range(1, page).Select(d => tmpFileBaseName + "-" + d + ".eps").ToList(), tmpFileBaseName + ".pdf", gsresolution)) return false;
+                    if (!eps2pdf(Enumerable.Range(1, page).Select(d => tmpFileBaseName + "-" + d + ".eps").ToList(), tmpFileBaseName + ".pdf", gsresolution, version)) return false;
                 }
                 return true;
             };
@@ -1244,7 +1246,7 @@ namespace TeX2img {
                 if (Properties.Settings.Default.outlinedText) {
                     if (!make_pdf_without_text(false)) return false;
                 }else if (!modify_pdf(false, true)) return false;
-                if (!dashtoline(tmpFileBaseName + ".pdf")) return false;
+                if (!dashtoline(tmpFileBaseName + ".pdf", version)) return false;
                 if (!pdf2img_pdfium(tmpFileBaseName + ".pdf", tmpFileBaseName + "-%d" + extension, pagelist)) return false;
                 return true;
             };
@@ -1386,15 +1388,18 @@ namespace TeX2img {
             return true;
         }
 
-        #region PDFページ数
-        int pdfpages(string file) {
+        #region PDF情報
+        bool pdfinfo(string file, out int page, out int version) {
+            page = -1;version = -1;
             using (var mupdf = new MuPDF(Path.Combine(GetToolsPath(), "mudraw.exe"))) {
                 try {
                     int doc = (int)mupdf.Execute("open_document", typeof(int), Path.Combine(workingDir, file));
                     const int repeatTimes = 10;
                     for (int i = 1; i <= repeatTimes; ++i) {
                         try {
-                            return (int)mupdf.Execute("count_pages", typeof(int), doc);
+                            if (page == -1) page = (int)mupdf.Execute("count_pages", typeof(int), doc);
+                            if (version == -1) version = (int)mupdf.Execute("version_document", typeof(int), doc);
+                            return true;
                         }
                         catch (Exception) {
                             mupdf.ClearError();
@@ -1406,11 +1411,12 @@ namespace TeX2img {
 #if DEBUG
                     if (controller_ != null) controller_.appendOutput("PDFページ数取得に失敗：" + e.Message);
 #endif
-                    return -1;
+                    return false;
                 }
             }
-            return -1;
+            return false;
         }
+
         #endregion
 
         #region ユーティリティー的な
