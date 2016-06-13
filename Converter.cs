@@ -399,13 +399,14 @@ namespace TeX2img {
 
         #region Ghostscript使う系
         // origbbには，GhostscriptのsDevice=bboxで得られた値を入れておく。（nullならばここで取得する。）
-        private bool pdf2eps(string inputFileName, string outputFileName, int resolution, int page, BoundingBoxPair origbb = null) {
+        // versionはinputFileNameのpdfバージョン
+        private bool pdf2eps(string inputFileName, string outputFileName, int resolution, int page, int version, BoundingBoxPair origbb = null) {
             string arg;
             tempFilesDeleter.AddFile(outputFileName);
             var tmppdf = TempFilesDeleter.GetTempFileName(".pdf", workingDir);
             tempFilesDeleter.AddFile(tmppdf);
             // あらかじめpdf2writeにかけておくと透明にちょっと強くなる
-            if (!pdf2pdf(inputFileName, tmppdf, resolution, page)) return false;
+            if (!pdf2pdf(inputFileName, tmppdf, resolution, version, page)) return false;
             using (var proc = GetProcess()) {
                 proc.StartInfo.FileName = setProcStartInfo(Properties.Settings.Default.gsPath, out arg);
                 if (proc.StartInfo.FileName == "") {
@@ -1167,7 +1168,7 @@ namespace TeX2img {
                         if (emptyPages.Contains(i)) {
                             make_dummyeps(tmpFileBaseName + "-" + i + ".eps");
                         } else {
-                            if (!pdf2eps(tmpFileBaseName + ".pdf", tmpFileBaseName + "-" + i + ".eps", gsresolution, i, bbs[i - 1])) return false;
+                            if (!pdf2eps(tmpFileBaseName + ".pdf", tmpFileBaseName + "-" + i + ".eps", gsresolution, i, version, bbs[i - 1])) return false;
                         }
                     }
                     if (!eps2pdf(Enumerable.Range(1, page).Select(d => tmpFileBaseName + "-" + d + ".eps").ToList(), tmpFileBaseName + ".pdf", gsresolution, version)) return false;
@@ -1199,7 +1200,7 @@ namespace TeX2img {
                     tmpFileBaseName = Path.GetFileNameWithoutExtension(tmppdf);
                 }
                 foreach (var i in pagelist) {
-                    if (!pdf2eps(tmpFileBaseName + ".pdf", tmpFileBaseName + "-" + i + ".eps", gsresolution, i, bbs[i - 1])) return false;
+                    if (!pdf2eps(tmpFileBaseName + ".pdf", tmpFileBaseName + "-" + i + ".eps", gsresolution, i, version, bbs[i - 1])) return false;
                     enlargeBB(tmpFileBaseName + "-" + i + ".eps");
                 }
                 return true;
