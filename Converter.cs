@@ -217,8 +217,8 @@ namespace TeX2img {
                 }
             }
             catch (Exception e) {
-#if DEBUG
                 if (controller_ != null) controller_.appendOutput(e.Message + "\n");
+#if DEBUG
                 System.Diagnostics.Debug.WriteLine(e.StackTrace);
 #endif
                 return null;
@@ -1409,9 +1409,7 @@ namespace TeX2img {
                     }
                 }
                 catch (Exception e) {
-#if DEBUG
                     if (controller_ != null) controller_.appendOutput("PDFページ数取得に失敗：" + e.Message);
-#endif
                     return false;
                 }
             }
