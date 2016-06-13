@@ -604,7 +604,6 @@ namespace UnitTest {
                     }
                 }
                 return c;
-                return obj.GetType().GetMethod(func, System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic, null, types, modifilers).Invoke(obj, args);
             }
         }
 
