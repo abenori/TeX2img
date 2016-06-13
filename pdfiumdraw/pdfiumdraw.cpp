@@ -545,8 +545,9 @@ int WritePDF(const vector<tuple<string, vector<int>>> &files, string output) {
 	int pdfversion = 0;
 	for (auto &&f : files) {
 		PDFDoc doc(get<0>(f));
-		if (pdfversion == 0) {
-			if (!::FPDF_GetFileVersion(doc.doc, &pdfversion))pdfversion = 0;
+		int tmppdfversion;
+		if (::FPDF_GetFileVersion(doc.doc, &tmppdfversion)) {
+			pdfversion = std::max(pdfversion, tmppdfversion);
 		}
 		if (get<1>(f).empty()) {
 			int pagecount = doc.GetPageCount();
