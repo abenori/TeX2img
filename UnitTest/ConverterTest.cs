@@ -13,16 +13,16 @@ namespace UnitTest {
         void doEachTest() {
             tex2dvi_test(testfile + ".tex");
             dvi2pdf_test(testfile + ".dvi");
-            pdfcrop_test(testfile + ".pdf");
-            pdf2eps_test(testfile + ".pdf", Settings.Default.resolutionScale * 72);
+            pdfcrop_test(testfile + ".pdf", 15);
+            pdf2eps_test(testfile + ".pdf", Settings.Default.resolutionScale * 72, 15);
             //eps2img_test(testfile + ".eps");
             //CallMethod(converter, "enlargeBB", testfile + ".eps", true);
-            ps2pdf_test(testfile + ".eps");
+            ps2pdf_test(testfile + ".eps", 15);
             pdfpages_test(testfile + ".pdf");
             pdf2img_pdfium_test(testfile + ".pdf");
             Settings.Default.dvipdfmxPath = "dvips";
             dvi2ps_test(testfile + ".dvi");
-            ps2pdf_test(testfile + ".ps");
+            ps2pdf_test(testfile + ".ps", 15);
         }
         [TestMethod]
         public void generateTest() {
@@ -96,7 +96,10 @@ namespace UnitTest {
                 BeforeTest();
                 tex2dvi_test(testfile + ".tex");
                 dvi2pdf_test(testfile + ".dvi");
-                int page = (int)CallMethod(converter, "pdfpages", Path.Combine(OutputDir, "dvi2pdf.pdf"));
+                var pageref = new ByRefType(typeof(int));
+                var versionref = new ByRefType(typeof(int));
+                CallMethod(converter, "pdfinfo", Path.Combine(OutputDir, "dvi2pdf.pdf"), pageref, versionref);
+                int page =(int)pageref.val, version =(int)versionref.val;
                 AfterTest();
                 var orighiresbb = GetPDFBB("dvi2pdf.pdf", 1, page);
                 var origbb = GetPDFBB("dvi2pdf.pdf", 1, page, false);
@@ -202,7 +205,10 @@ namespace UnitTest {
             using (converter = new Converter(controller, Path.Combine(WorkDir, testfile + ".tex"), Path.Combine(OutputDir, testfile + "-" + output + ".pdf"))) {
                 tex2dvi_test(testfile + ".tex");
                 dvi2pdf_test(testfile + ".dvi");
-                var page = (int)CallMethod(converter, "pdfpages", Path.Combine(OutputDir, pdf));
+                var pageref = new ByRefType(typeof(int));
+                var versionref = new ByRefType(typeof(int));
+                CallMethod(converter, "pdfinfo", Path.Combine(OutputDir, pdf), pageref, versionref);
+                int page = (int)pageref.val, version = (int)versionref.val;
                 if (Settings.Default.keepPageSize) {
                     expected = new Tuple<List<Size>, List<Size>>(
                         GetPDFBox(pdf, Enumerable.Range(1, page).ToList(), false),
@@ -307,42 +313,45 @@ namespace UnitTest {
             File.Copy(Path.Combine(WorkDir, ps), Path.Combine(OutputDir, "dvi2ps.ps"), true);
         }
 
-        void ps2pdf_test(string file) {
+        void ps2pdf_test(string file, int version) {
             Debug.WriteLine("TEST: ps2pdf");
             string pdf = Path.ChangeExtension(file, ".pdf");
             File.Delete(Path.Combine(WorkDir, pdf));
-            CallMethod(converter, "ps2pdf", file, pdf);
+            CallMethod(converter, "ps2pdf", file, pdf, version);
             Assert.IsTrue(File.Exists(Path.Combine(WorkDir, pdf)));
             File.Copy(Path.Combine(WorkDir, pdf), Path.Combine(OutputDir, "ps2pdf.pdf"), true);
         }
 
-        void pdf2eps_test(string file, int resolution) {
+        void pdf2eps_test(string file, int resolution, int version) {
             Debug.WriteLine("TEST: pdf2eps");
             string eps = Path.ChangeExtension(file, ".eps");
             File.Delete(Path.Combine(WorkDir, eps));
-            CallMethod(converter, "pdf2eps", file, Path.ChangeExtension(file, ".eps"), resolution, 1, null);
+            CallMethod(converter, "pdf2eps", file, Path.ChangeExtension(file, ".eps"), resolution, 1, version, null);
             Assert.IsTrue(File.Exists(Path.Combine(WorkDir, eps)));
             File.Copy(Path.Combine(WorkDir, Path.ChangeExtension(file, ".eps")), Path.Combine(OutputDir, "pdf2eps.eps"), true);
         }
 
         void pdfpages_test(string file) {
             Debug.WriteLine("TEST: pdfpages");
-            int page = (int) CallMethod(converter, "pdfpages", file);
-            System.Diagnostics.Debug.WriteLine("pdfpages: " + page.ToString());
+            var pageref = new ByRefType(typeof(int));
+            var versionref = new ByRefType(typeof(int));
+            CallMethod(converter, "pdfinfo", file, pageref, versionref);
+            int page = (int)pageref.val, version = (int)versionref.val;
+            System.Diagnostics.Debug.WriteLine("pdfinfo: page = " + page.ToString() + ", version = " + version.ToString());
             using(var fs = new StreamWriter(Path.Combine(OutputDir, "pdfpages.txt"))) {
                 fs.WriteLine(page.ToString());
             }
         }
 
-        void pdfcrop_test(string file) {
+        void pdfcrop_test(string file, int version) {
             Debug.WriteLine("TEST: pdfcrop");
             string cropped = Path.GetFileNameWithoutExtension(file) + "-crop.pdf";
             File.Delete(Path.Combine(WorkDir, cropped));
-            CallMethod(converter, "pdfcrop", file, cropped, true, 1, new NullArgument(typeof(BoundingBoxPair)));
+            CallMethod(converter, "pdfcrop", file, cropped, true, 1, new NullArgument(typeof(BoundingBoxPair)), version);
             Assert.IsTrue(File.Exists(Path.Combine(WorkDir, cropped)));
             File.Copy(Path.Combine(WorkDir, cropped), Path.Combine(OutputDir, "pdfcrop-usebp.pdf"), true);
             File.Delete(Path.Combine(WorkDir, cropped));
-            CallMethod(converter, "pdfcrop", file, cropped, false, 1, new NullArgument(typeof(BoundingBoxPair)));
+            CallMethod(converter, "pdfcrop", file, cropped, false, 1, new NullArgument(typeof(BoundingBoxPair)), version);
             Assert.IsTrue(File.Exists(Path.Combine(WorkDir, cropped)));
             File.Copy(Path.Combine(WorkDir, cropped), Path.Combine(OutputDir, "pdfcrop-nonusebp.pdf"), true);
         }
@@ -398,7 +407,10 @@ namespace UnitTest {
             tex2dvi_test(source);
             dvi2pdf_test(Path.ChangeExtension(source, ".dvi"));
             var pdf = "dvi2pdf.pdf";
-            int page = (int) CallMethod(converter, "pdfpages", Path.Combine(OutputDir, pdf));
+            var pageref = new ByRefType(typeof(int));
+            var versionref = new ByRefType(typeof(int));
+            CallMethod(converter, "pdfinfo", Path.Combine(OutputDir, pdf), pageref, versionref);
+            int page = (int)pageref.val, version = (int)versionref.val;
             if(Settings.Default.keepPageSize) {
                 return new Tuple<List<Size>, List<Size>>(
                     GetPDFBox(pdf, Enumerable.Range(1, page).ToList(), false),
@@ -550,6 +562,11 @@ namespace UnitTest {
                 type = Type.GetType(name);
             }
         }
+        class ByRefType {
+            public Type type;
+            public object val;
+            public ByRefType(Type t) { type = t; val = Activator.CreateInstance(t); }
+        }
 
         //string BoundingBoxPairTypeName = "TeX2img.Converter+BoundingBoxPair, TeX2img, Version=1.5.5.0, Culture=neutral, PublicKeyToken=null";
         //string BoundingBoxPairTypeName = "TeX2img.Converter+BoundingBoxPair, TeX2img";
@@ -558,15 +575,35 @@ namespace UnitTest {
                 return obj.GetType().GetMethod(func, System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic).Invoke(obj, args);
             } else {
                 var types = new Type[args.Length];
+                var realargs = new object[args.Length];
                 var modifilers = new System.Reflection.ParameterModifier[args.Length];
                 for(int i = 0 ; i < args.Length ; ++i) {
-                    var arg = args[i] as NullArgument;
-                    if(arg != null) {
-                        types[i] = arg.type;
-                        args[i] = null;
-                    } else types[i] = args[i].GetType();
+                    var arg1 = args[i] as NullArgument;
+                    if (arg1 != null) {
+                        types[i] = arg1.type;
+                        realargs[i] = null;
+                    } else {
+                        var arg2 = args[i] as ByRefType;
+                        if (arg2 != null) {
+                            types[i] = arg2.type.MakeByRefType();
+                            realargs[i] = arg2.val;
+                        } else {
+                            types[i] = args[i].GetType();
+                            realargs[i] = args[i];
+                        }
+                    }
                     modifilers[i] = new System.Reflection.ParameterModifier();
                 }
+                var a = obj.GetType();
+                var b = a.GetMethod(func, System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic, null, types, modifilers);
+                var c = b.Invoke(obj, realargs);
+                for(int i = 0; i < realargs.Length; ++i) {
+                    var reftype = args[i] as ByRefType;
+                    if(reftype != null) {
+                        reftype.val = realargs[i];
+                    }
+                }
+                return c;
                 return obj.GetType().GetMethod(func, System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic, null, types, modifilers).Invoke(obj, args);
             }
         }
