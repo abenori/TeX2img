@@ -8,7 +8,7 @@ namespace TeX2img {
     class MuPDF : IDisposable {
         Process process;
         List<byte> StdInputBuf = new List<byte>(), StdOutputBuf = new List<byte>();
-        Action ReadStdOutputAction; 
+        Action ReadStdOutputAction;
         IAsyncResult ReadStdOutputThread;
         string error_str;
         volatile bool error_occured = false;
@@ -47,7 +47,7 @@ namespace TeX2img {
             WriteLine("quit");
             process.WaitForExit(1000);
             if (!process.HasExited) process.Kill();
-            for(int i = 0; i < 10; ++i) {
+            for (int i = 0; i < 10; ++i) {
                 if (ReadStdOutputThread.IsCompleted) break;
                 System.Threading.Thread.Sleep(i < 5 ? 1 : 10);
             }
@@ -58,7 +58,7 @@ namespace TeX2img {
         void ReadFromStdOutput() {
             while (true) {
                 var b = process.StandardOutput.BaseStream.ReadByte();
-                if(b == -1) {
+                if (b == -1) {
                     if (process.HasExited) return;
                     process.WaitForExit(100);
                     b = process.StandardOutput.BaseStream.ReadByte();
@@ -91,7 +91,7 @@ namespace TeX2img {
         }
 
         string ReadLine() {
-            for(int i = 0; i < 25; ++i) {
+            for (int i = 0; i < 25; ++i) {
                 if (error_occured) throw new Exception(error_str);
                 var s = ReadLineSub();
                 if (s != null) return s;
@@ -168,34 +168,27 @@ namespace TeX2img {
         }
 
         public void Execute(string func, params object[] inputs) {
-            Execute(func, new Type[] { }, inputs);
+            ExecuteAction(func, inputs);
             var s = ReadLine();
         }
 
-        public object Execute(string func,Type type,params object[] inputs) {
-            return Execute(func, new Type[] { type }, inputs)[0];
+        public T Execute<T>(string func, params object[] inputs) {
+            ExecuteAction(func, inputs);
+            object rv;
+            if (typeof(T) == typeof(string)) rv = ReadString();
+            else if (typeof(T) == typeof(int)) rv = ReadInt();
+            else if (typeof(T) == typeof(BoundingBox)) rv = ReadBoundingBox();
+            else throw new System.NotImplementedException();
+            return (T)rv;
         }
 
-        public object[] Execute(string func,Type[] types, params object[] inputs) {
+        void ExecuteAction(string func, params object[] inputs) {
             WriteLine(func);
-            foreach(var o in inputs) {
+            foreach (var o in inputs) {
                 if (o.GetType() == typeof(string)) Write((string)o);
                 else if (o.GetType() == typeof(int)) Write((int)o);
                 else throw new System.NotImplementedException();
             }
-            var rv = new object[types.Length];
-            for(int i = 0; i < 5; ++i) {
-                if (StdOutputBuf.Count != 0) break;
-                System.Threading.Thread.Sleep(1);
-            }
-            for(int i = 0; i < types.Length; ++i) {
-                if (types[i] == typeof(string)) rv[i] = ReadString();
-                else if (types[i] == typeof(int)) rv[i] = ReadInt();
-                else if (types[i] == typeof(BoundingBox)) rv[i] = ReadBoundingBox();
-                else throw new System.NotImplementedException();
-            }
-            return rv;
         }
-
     }
 }

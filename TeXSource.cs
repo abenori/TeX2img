@@ -103,11 +103,11 @@ namespace TeX2img {
             using (var tmp_deleter = new TempFilesDeleter(tmpdir)) {
                 tmp_deleter.AddFile(tmp);
                 using (var mupdf = new MuPDF(mudraw)) {
-                    var doc = (int)mupdf.Execute("open_document", typeof(int), file);
+                    var doc = mupdf.Execute<int>("open_document", file);
                     if (doc == 0) return;
-                    var page = (int)mupdf.Execute("load_page", typeof(int), doc, 0);
+                    var page = mupdf.Execute<int>("load_page", doc, 0);
                     if (page == 0) return;
-                    var annot = (int)mupdf.Execute("create_annot", typeof(int), page, "Text");
+                    var annot = mupdf.Execute<int>("create_annot", page, "Text");
                     if (annot == 0) return;
                     mupdf.Execute("set_annot_contents", annot, ChangeReturnCode(PDFsrcHead + System.Environment.NewLine + text, "\n"));
                     mupdf.Execute("set_annot_flag", annot, 35);
@@ -123,23 +123,23 @@ namespace TeX2img {
         static string PDFRead(string file) {
             var srcHead = PDFsrcHead + System.Environment.NewLine;
             using (var mupdf = new MuPDF(mudraw)) {
-                var doc = (int)mupdf.Execute("open_document", typeof(int), file);
+                var doc = mupdf.Execute<int>("open_document", file);
                 if (doc == 0) return null;
-                var page = (int)mupdf.Execute("load_page", typeof(int), doc, 0);
+                var page = mupdf.Execute<int>("load_page", doc, 0);
                 if (page == 0) return null;
-                var annot = (int)mupdf.Execute("first_annot", typeof(int), page);
+                var annot = mupdf.Execute<int>("first_annot", page);
                 while (annot != 0) {
-                    var rect = (BoundingBox)mupdf.Execute("bound_annot", typeof(BoundingBox), annot);
+                    var rect = mupdf.Execute<BoundingBox>("bound_annot", annot);
                     if(rect.Width == 0 && rect.Height == 0) { 
-                        if ((string)mupdf.Execute("annot_type", typeof(string), annot) == "Text") {
-                            var text = (string)mupdf.Execute("annot_contents", typeof(string), annot);
+                        if (mupdf.Execute<string>("annot_type", annot) == "Text") {
+                            var text = mupdf.Execute<string>("annot_contents", annot);
                             text = ChangeReturnCode(text);
                             if (text.StartsWith(srcHead)) {
                                 return text.Substring(srcHead.Length);
                             }
                         }
                     }
-                    annot = (int)mupdf.Execute("next_annot", typeof(int), annot);
+                    annot = mupdf.Execute<int>("next_annot", annot);
                 }
             }
             return null;

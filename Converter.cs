@@ -170,7 +170,7 @@ namespace TeX2img {
                 using (var mupdf = new MuPDF(Path.Combine(GetToolsPath(), "mudraw.exe"))) {
                     if (controller_ != null) controller_.appendOutput("Getting the size of PDFBox...\n");
                     var rv = new List<BoundingBoxPair>();
-                    var doc = (int)mupdf.Execute("open_document", typeof(int), Path.Combine(workingDir, inputPDFFileName));
+                    var doc = mupdf.Execute<int>("open_document", Path.Combine(workingDir, inputPDFFileName));
                     if (doc == 0) return null;
                     foreach (var p in pages) {
                         if (abort) {
@@ -182,10 +182,10 @@ namespace TeX2img {
                         const int repeatTimes = 10;
                         for (int i = 1; i <= repeatTimes; ++i) {
                             try {
-                                var page = (int)mupdf.Execute("load_page", typeof(int), doc, p - 1);
-                                media = (BoundingBox)mupdf.Execute("pdfbox_page", typeof(BoundingBox), page, "media");
-                                box = (BoundingBox)mupdf.Execute("pdfbox_page", typeof(BoundingBox), page, boxname);
-                                rotate = (int)mupdf.Execute("rotate_page", typeof(int), page);
+                                var page = mupdf.Execute<int>("load_page", doc, p - 1);
+                                media = mupdf.Execute< BoundingBox>("pdfbox_page", page, "media");
+                                box = mupdf.Execute<BoundingBox>("pdfbox_page", page, boxname);
+                                rotate = mupdf.Execute<int>("rotate_page", page);
                                 break;
                             }
                             catch (Exception) {
@@ -1394,12 +1394,12 @@ namespace TeX2img {
             page = -1;version = -1;
             using (var mupdf = new MuPDF(Path.Combine(GetToolsPath(), "mudraw.exe"))) {
                 try {
-                    int doc = (int)mupdf.Execute("open_document", typeof(int), Path.Combine(workingDir, file));
+                    int doc = mupdf.Execute<int>("open_document", Path.Combine(workingDir, file));
                     const int repeatTimes = 10;
                     for (int i = 1; i <= repeatTimes; ++i) {
                         try {
-                            if (page == -1) page = (int)mupdf.Execute("count_pages", typeof(int), doc);
-                            if (version == -1) version = (int)mupdf.Execute("version_document", typeof(int), doc);
+                            if (page == -1) page = mupdf.Execute<int>("count_pages", doc);
+                            if (version == -1) version = mupdf.Execute<int>("version_document", doc);
                             return true;
                         }
                         catch (Exception) {
