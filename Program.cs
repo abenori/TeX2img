@@ -101,7 +101,7 @@ namespace TeX2img {
                 if(c.IsNamedColor)r += " (" + c.Name + ")";
                 if(Properties.Settings.Default.transparentPngFlag)r += " " + Properties.Resources.TRANSPARENT + " or " + Properties.Resources.WHITE;
                 return r; } },
-            {"transparent",Properties.Resources.CMDLINE_TRANSPARENT,val=>Properties.Settings.Default.transparentPngFlag= (val != null) ,()=>Properties.Settings.Default.transparentPngFlag},
+            {"transparent",Properties.Resources.CMDLINE_TRANSPARENT + "[-]",val=>Properties.Settings.Default.transparentPngFlag= (val != null) ,()=>Properties.Settings.Default.transparentPngFlag},
             { "with-text",Properties.Resources.CMDLINE_WITH_TEXT + "[-]",val =>Properties.Settings.Default.outlinedText = !(val != null),()=>!Properties.Settings.Default.outlinedText},
             {"delete-display-size",Properties.Resources.CMDLINE_DELETE_DISPLAY_SIZE + "[-]",val => Properties.Settings.Default.deleteDisplaySize = (val != null),()=>Properties.Settings.Default.deleteDisplaySize},
             {"antialias",Properties.Resources.CMDLINE_ANTIALIAS + "[-]",val => Properties.Settings.Default.useMagickFlag = (val != null),()=>Properties.Settings.Default.useMagickFlag},
