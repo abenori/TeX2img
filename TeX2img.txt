@@ -29,7 +29,9 @@
 http://www.math.sci.hokudai.ac.jp/~abenori/soft/index.html#TEX2IMG からダウンロードしてください．
 解凍後出てくる TeX2img.exe をダブルクリックすれば起動します．初回に platex.exe などの場所を推定しますが，推定に失敗した場合は，メニューの「ツール(T)」→「オプション... (O) Ctrl+E」から設定をしてください．
 TeX2imgc.exe は CUI モードで動かすためのラッパです．TeX2img.exe と同じフォルダに置いてください．使い方は
- > TeX2imgc.exe [Options] Input Output [Input Output...]
+
+	> TeX2imgc.exe [Options] Input Output [Input Output...]
+
 です．各種設定項目は TeX2img のそれを受け継ぎますが，変換後のプレビューのみ必ず行わないようになります．行いたい場合はオプション /preview を指定してください．
 
 
@@ -59,49 +61,52 @@ TeX2img.exe または TeX2imgc.exe が受けつけるオプションです．な
 TeX2img.exe input output
 とすると起動直後に変換が行われます．
 
-latex=<VAL>             LaTeX のパス
-dvidriver=<VAL>         DVI driver のパス
-gs=<VAL>                Ghostscript のパス
-oldgs[-]                9.14 以前の Ghostscript
-kanji=<VAL>             文字コード（utf8/sjis/jis/euc/no)
-guess-compile[-]        LaTeX ソースコンパイル回数を推定
-num=<NUM>               LaTeX ソースコンパイルの（最大）回数
-resolution=<NUM>        解像度レベル
-left-margin=<NUM>       左余白
-top-margin=<NUM>        上余白
-right-margin=<NUM>      右余白
-bottom-margin=<NUM>     下余白
-margins=<VAL>           余白（一括/左右 上下/左 上 右 下）
-unit=<VAL>              余白の単位（bp/px）
-keep-page-size[-]       ページサイズを維持
-merge-output-files[-]   PDF / TIFF / SVG(Z) ファイルを単一ファイルに
-animation-delay=<VAL>   アニメーションのディレイ（秒）
-animation-loop=<VAL>    アニメーションのループ回数（0で無限）
-background-color=<VAL>  背景色 指定例： FF0000 , red , "255 0 0"
-transparent             透過
-with-text[-]            PDF / SVG(Z) のテキスト情報を保持
-delete-display-size[-]  SVG の表示寸法を削除
-antialias[-]            アンチエイリアス処理
-low-resolution[-]       低解像度で処理
-ignore-errors[-]        少々のエラーは無視
-delete-tmpfiles[-]      一時ファイルを削除
-preview[-]              生成ファイルを開く
-embed-source[-]         ソース情報を生成ファイルに保存
-copy-to-clipboard[-]    生成ファイルをクリップボードにコピー
-workingdir=<VAL>        作業ディレクトリ（tmp/file/current）
-savesettings[-]         設定の保存を行う
-quiet[-]                Quiet モード
-timeout=<NUM>           タイムアウト時間を設定（秒）
-batch=<VAL>             Batch モード（stop/nonstop）
-exit                    設定の保存のみを行い終了する
-load-defaults           現在の設定をデフォルトに戻す
-help                    このメッセージを表示する
-version                 バージョン情報を表示する
-language=<VAL>          Language (system/ja/en)
+	/latex=<VAL>             LaTeX のパス
+	/dvidriver=<VAL>         DVI driver のパス
+	/gs=<VAL>                Ghostscript のパス
+	/oldgs[-]                9.14 以前の Ghostscript
+	/kanji=<VAL>             文字コード（utf8/sjis/jis/euc/no)
+	/guess-compile[-]        LaTeX ソースコンパイル回数を推定
+	/num=<NUM>               LaTeX ソースコンパイルの（最大）回数
+	/resolution=<NUM>        解像度レベル
+	/left-margin=<NUM>       左余白
+	/top-margin=<NUM>        上余白
+	/right-margin=<NUM>      右余白
+	/bottom-margin=<NUM>     下余白
+	/margins=<VAL>           余白（一括/左右 上下/左 上 右 下）
+	/unit=<VAL>              余白の単位（bp/px）
+	/keep-page-size[-]       ページサイズを維持
+	/merge-output-files[-]   PDF / TIFF / SVG(Z) ファイルを単一ファイルに
+	/animation-delay=<VAL>   アニメーションのディレイ（秒）
+	/animation-loop=<VAL>    アニメーションのループ回数（0で無限）
+	/background-color=<VAL>  背景色 指定例： FF0000 , red , "255 0 0"
+	/transparent             透過
+	/with-text[-]            PDF / SVG(Z) のテキスト情報を保持
+	/delete-display-size[-]  SVG の表示寸法を削除
+	/antialias[-]            アンチエイリアス処理
+	/low-resolution[-]       低解像度で処理
+	/ignore-errors[-]        少々のエラーは無視
+	/delete-tmpfiles[-]      一時ファイルを削除
+	/preview[-]              生成ファイルを開く
+	/embed-source[-]         ソース情報を生成ファイルに保存
+	/copy-to-clipboard[-]    生成ファイルをクリップボードにコピー
+	/workingdir=<VAL>        作業ディレクトリ（tmp/file/current）
+	/savesettings[-]         設定の保存を行う
+	/quiet[-]                Quiet モード
+	/timeout=<NUM>           タイムアウト時間を設定（秒）
+	/batch=<VAL>             Batch モード（stop/nonstop）
+	/exit                    設定の保存のみを行い終了する
+	/load-defaults           現在の設定をデフォルトに戻す
+	/help                    このメッセージを表示する
+	/version                 バージョン情報を表示する
+	/language=<VAL>          Language (system/ja/en)
 
 [-] はオプションの否定を意味します．たとえば /guess-compile- と指定すると，コンパイル回数の推定を行わなくなります．複数回指定された場合は最後のものが優先されます．
+
 各種オプションは後に指定されたものが優先されます．例えば
-  tex2imgc /transparent- /transparent a.tex a.png
+
+	tex2imgc /transparent- /transparent a.tex a.png
+
 とすると透過 png が作成されます．特に /load-defaults は全ての設定を既定に戻すので，それ以前のオプションがほぼ全て無効になります．このオプションは最初につけるとよいでしょう．
 
 
@@ -128,6 +133,7 @@ https://pdfium.googlesource.com/pdfium/
 ## ライセンス
 修正 BSD ライセンスです．詳しくは license.txt を参照してください．
 なお，用いているライブラリなどのライセンスは以下の通りです．
+
 * Azuki エディタコンポーネント Azuki.dll は zlib ライセンス．
 * NDesk.Options は MIT ライセンス．
 * Gauche は修正 BSD ライセンス．

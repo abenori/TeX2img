@@ -14,7 +14,7 @@ This generates the images with the following formats from the TeX source code:
 * BMP
 * EMF
 
-This was originally developed by Yusuke Terada (until Version 1.2).
+This was originally made by Yusuke Terada (until Version 1.2).
 
 ## Requirement
 * Windows Vista or later.
@@ -24,10 +24,13 @@ This was originally developed by Yusuke Terada (until Version 1.2).
 
 ## How to install
 Download from http://www.math.sci.hokudai.ac.jp/~abenori/soft/index.html#TEX2IMG
+
 Just extract and double click "TeX2img.exe". At the first time, TeX2img try to get paths of pdflatex.exe etc. If it is not correct, please set them from [Tools(T)] -> [Options...(O)]
 
-TeX2imgc.exe is a wrapper program to execute TeX2img with the console. You can use via
- > TeX2imgc.exe [Options] Input Output [Input Output...]
+TeX2imgc.exe is a wrapper program to execute TeX2img with the console.
+
+	> TeX2imgc.exe [Options] Input Output [Input Output...]
+
 Each settings are inherited from those of TeXX2img except preview after compiling.
 
 
@@ -46,49 +49,50 @@ Example："C:\w32tex\bin\platex.exe" --guess-input-enc
 ## Options
 The following are the options for TeX2img.exe or TeX2imgc.exe.
 
-latex=<VAL>             Set path for latex
-dvidriver=<VAL>         Set path for dvi driver
-gs=<VAL>                Set path for Ghostscript
-oldgs[-]                Ghostscript is before version 9.14
-kanji=<VAL>             Character code (utf8/sjis/jis/euc/no)
-guess-compile[-]        Guess compile
-num=<NUM>               (maximum) number of times for LaTeX
-resolution=<NUM>        Resolution level
-left-margin=<NUM>       Left margin
-top-margin=<NUM>        Top margin
-right-margin=<NUM>      Right margin
-bottom-margin=<NUM>     Bottom margin
-margins=<VAL>           Margins (all / leftright topbottom / left top right bottom)
-unit=<VAL>              Unit of margins ( bp/px )
-keep-page-size[-]       Keep the original page size
-merge-output-files[-]   Make a single file (PDF / TIFF /SVG(Z))
-animation-delay=<VAL>   Delay of animation (sec)
-animation-loop=<VAL>    Loop count of animation (0 =infinity)
-background-color=<VAL>  Background color (ex: FF0000, red, "255 0 0")
-transparent             Transparent
-with-text[-]            Keep original text information (PDF / SVG(Z))
-delete-display-size[-]  Remove <width> and <height> (SVG(Z))
-antialias[-]            Anti-aliasing
-low-resolution[-]       Generate images with low resolution
-ignore-errors[-]        Force conversion by ignoring nonfatal errors
-delete-tmpfiles[-]      Delete temporary files after compiling
-preview[-]              Preview after compiling
-embed-source[-]         Embed the source in output image files
-copy-to-clipboard[-]    Copy generated files to the clipboard
-workingdir=<VAL>        Working folder (tmp/file/current)
-savesettings[-]         Save settings
-quiet[-]                Quiet mode
-timeout=<NUM>           Time out period (seconds)
-batch=<VAL>             Batch mode (stop/nonstop)
-exit                    Save settings and exit
-load-defaults           Load default settings
-help                    Show this message
-version                 Show version information
-language=<VAL>          Language (system/ja/en)
+	/latex=<VAL>             Set path for latex
+	/dvidriver=<VAL>         Set path for dvi driver
+	/gs=<VAL>                Set path for Ghostscript
+	/oldgs[-]                Ghostscript is before version 9.14
+	/kanji=<VAL>             Character code (utf8/sjis/jis/euc/no)
+	/guess-compile[-]        Guess compile
+	/num=<NUM>               (maximum) number of times for LaTeX
+	/resolution=<NUM>        Resolution level
+	/left-margin=<NUM>       Left margin
+	/top-margin=<NUM>        Top margin
+	/right-margin=<NUM>      Right margin
+	/bottom-margin=<NUM>     Bottom margin
+	/margins=<VAL>           Margins (all / leftright topbottom / left top right bottom)
+	/unit=<VAL>              Unit of margins ( bp/px )
+	/keep-page-size[-]       Keep the original page size
+	/merge-output-files[-]   Make a single file (PDF / TIFF /SVG(Z))
+	/animation-delay=<VAL>   Delay of animation (sec)
+	/animation-loop=<VAL>    Loop count of animation (0 =infinity)
+	/background-color=<VAL>  Background color (ex: FF0000, red, "255 0 0")
+	/transparent             Transparent
+	/with-text[-]            Keep original text information (PDF / SVG(Z))
+	/delete-display-size[-]  Remove <width> and <height> (SVG(Z))
+	/antialias[-]            Anti-aliasing
+	/low-resolution[-]       Generate images with low resolution
+	/ignore-errors[-]        Force conversion by ignoring nonfatal errors
+	/delete-tmpfiles[-]      Delete temporary files after compiling
+	/preview[-]              Preview after compiling
+	/embed-source[-]         Embed the source in output image files
+	/copy-to-clipboard[-]    Copy generated files to the clipboard
+	/workingdir=<VAL>        Working folder (tmp/file/current)
+	/savesettings[-]         Save settings
+	/quiet[-]                Quiet mode
+	/timeout=<NUM>           Time out period (seconds)
+	/batch=<VAL>             Batch mode (stop/nonstop)
+	/exit                    Save settings and exit
+	/load-defaults           Load default settings
+	/help                    Show this message
+	/version                 Show version information
+	/language=<VAL>          Language (system/ja/en)
 
 [-] means negation. For example. /guess-compile- means that TeX2img does not guess the compiling.
+
 If you specify several options, TeX2img takes the last one. For example
-  tex2imgc /transparent- /transparent a.tex a.png
+	tex2imgc /transparent- /transparent a.tex a.png
 will generate transparent png file. Especially, because /load-defaults makes all settings default ones, the options before /load-defaults are ignored. The option /load-defaults should be the first.
 
 ## Reference
@@ -97,7 +101,7 @@ http://island.geocities.jp/loveinequality/
 
 
 ## Acknowledgments
-* Originally it is developed by Yusuke Terada.
+* Originally it is made by Yusuke Terada.
 * Azuki text editor engine is used.
 http://sgry.b.sourceforge.jp/
 * To parse the command line, NDesk.Options is used.
@@ -112,12 +116,14 @@ https://pdfium.googlesource.com/pdfium/
 
 ## license
 See license.txt. For the libraries:
+
 * Azuki text editor engine: zlib license.
 * NDesk.Options: MIT license.
 * Gauche: modified BSD license.
 * mudraw: GPL v3 license.
 * PDFium: modified BSD license.
 * pdfiumdraw: modified BSD license.
+
 For the detail, see the pages of each library.
 
 
