@@ -80,7 +80,7 @@ TeX2img.exe input output
 	/animation-delay=<VAL>   アニメーションのディレイ（秒）
 	/animation-loop=<VAL>    アニメーションのループ回数（0で無限）
 	/background-color=<VAL>  背景色 指定例： FF0000 , red , "255 0 0"
-	/transparent             透過
+	/transparent[-]          透過
 	/with-text[-]            PDF / SVG(Z) のテキスト情報を保持
 	/delete-display-size[-]  SVG の表示寸法を削除
 	/antialias[-]            アンチエイリアス処理

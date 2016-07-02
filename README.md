@@ -31,7 +31,7 @@ TeX2imgc.exe is a wrapper program to execute TeX2img with the console.
 
 	> TeX2imgc.exe [Options] Input Output [Input Output...]
 
-Each settings are inherited from those of TeXX2img except preview after compiling.
+Each settings are inherited from those of TeX2img except preview after compiling.
 
 
 
@@ -68,7 +68,7 @@ The following are the options for TeX2img.exe or TeX2imgc.exe.
 	/animation-delay=<VAL>   Delay of animation (sec)
 	/animation-loop=<VAL>    Loop count of animation (0 =infinity)
 	/background-color=<VAL>  Background color (ex: FF0000, red, "255 0 0")
-	/transparent             Transparent
+	/transparent[-]          Transparent
 	/with-text[-]            Keep original text information (PDF / SVG(Z))
 	/delete-display-size[-]  Remove <width> and <height> (SVG(Z))
 	/antialias[-]            Anti-aliasing
