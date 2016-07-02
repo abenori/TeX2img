@@ -84,7 +84,7 @@ namespace TeX2img {
                         desc = desc.Substring(0, desc.Length - 3);
                     }
                     if(default_values.ContainsKey(oh.Prototype)) {
-                        desc += "（現在：" + default_values[oh.Prototype]().ToString() + "）";
+                        desc += " " + String.Format(Properties.Resources.CMDLINE_HELP_CURRENT, default_values[oh.Prototype]().ToString());
                     }
                     output.WriteLine("  " + opstr + new string(' ', maxlength - opstr.Length) + desc);
                 }

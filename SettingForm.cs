@@ -12,6 +12,7 @@ using System.Diagnostics;
 namespace TeX2img {
     public partial class SettingForm : Form {
         DataTable EncodeComboboxData = new DataTable();
+        DataTable LanguageComboboxData = new DataTable();
         public SettingForm() {
             InitializeComponent();
 
@@ -19,10 +20,10 @@ namespace TeX2img {
             EncodeComboboxData.Columns.Add("DATA", typeof(string));
             EncodeComboboxData.Columns.Add("SHOW", typeof(string));
             row = EncodeComboboxData.NewRow();
-            row["DATA"] = "_utf8"; row["SHOW"] = "指定しない（入力 UTF-8 ）";
+            row["DATA"] = "_utf8"; row["SHOW"] = String.Format(Properties.Resources.NOT_SPECIFY_ENCODE, "UTF-8");
             EncodeComboboxData.Rows.Add(row);
             row = EncodeComboboxData.NewRow();
-            row["DATA"] = "_sjis"; row["SHOW"] = "指定しない（入力 Shift_JIS ）";
+            row["DATA"] = "_sjis"; row["SHOW"] = String.Format(Properties.Resources.NOT_SPECIFY_ENCODE, "Shift_JIS");
             EncodeComboboxData.Rows.Add(row);
             row = EncodeComboboxData.NewRow();
             row["DATA"] = "utf8"; row["SHOW"] = "UTF-8";
@@ -43,8 +44,42 @@ namespace TeX2img {
             encodeComboBox.DisplayMember = "SHOW";
             encodeComboBox.ValueMember = "DATA";
 
-            for(int i = 0 ; i < FontColorListView.Items.Count ; ++i) {
-                var val = Properties.Settings.Default.editorFontColor[FontColorListView.Items[i].Text];
+            LanguageComboboxData.Columns.Add("DATA", typeof(string));
+            LanguageComboboxData.Columns.Add("SHOW", typeof(string));
+
+            var cultures =  System.Globalization.CultureInfo.GetCultures(System.Globalization.CultureTypes.AllCultures);
+            bool en = false, ja = false;
+            foreach (var c in cultures) {
+                if (c.Name == "en-US") en = true;
+                if (c.Name == "ja-JP") ja = true;
+            }
+
+            row = LanguageComboboxData.NewRow();
+            row["DATA"] = ""; row["SHOW"] = "System default";
+            LanguageComboboxData.Rows.Add(row);
+            if (en) {
+                row = LanguageComboboxData.NewRow();
+                row["DATA"] = "en-US"; row["SHOW"] = "English";
+                LanguageComboboxData.Rows.Add(row);
+            }
+            if (ja) {
+                row = LanguageComboboxData.NewRow();
+                row["DATA"] = "ja-JP"; row["SHOW"] = "日本語";
+                LanguageComboboxData.Rows.Add(row);
+            }
+            LanguageComboboxData.AcceptChanges();
+            languageComboBox.DataSource = LanguageComboboxData;
+            languageComboBox.DisplayMember = "SHOW";
+            languageComboBox.ValueMember = "DATA";
+
+            var FontColorListViewItemsNames = new string[] { "テキスト", "選択範囲", "コントロールシークエンス", "コメント", "$", "中 / 大括弧", "改行，EOF", "対応する括弧", "空白" };
+            for(int i = 0; i < FontColorListView.Items.Count; ++i) {
+                FontColorListView.Items[i].Name = FontColorListViewItemsNames[i];
+            }
+
+
+            for (int i = 0 ; i < FontColorListView.Items.Count ; ++i) {
+                var val = Properties.Settings.Default.editorFontColor[(string)FontColorListView.Items[i].Name];
                 FontColorListView.Items[i].ForeColor = val.Font;
                 FontColorListView.Items[i].BackColor = val.Back;
             }
@@ -58,6 +93,7 @@ namespace TeX2img {
             dvipdfmxTextBox.Text = Properties.Settings.Default.dvipdfmxPath;
             gsTextBox.Text = Properties.Settings.Default.gsPath;
             encodeComboBox.SelectedValue = Properties.Settings.Default.encode;
+            languageComboBox.SelectedValue = Properties.Settings.Default.language;
             GSUseepswriteCheckButton.Checked = (Properties.Settings.Default.gsDevice == "epswrite");
             UseLowResolutionCheckBox.Checked = Properties.Settings.Default.useLowResolution;
             GuessLaTeXCompileCheckBox.Checked = Properties.Settings.Default.guessLaTeXCompile;
@@ -139,7 +175,7 @@ namespace TeX2img {
             Properties.Settings.Default.encode = (string) encodeComboBox.SelectedValue;
             Properties.Settings.Default.LaTeXCompileMaxNumber = (int) LaTeXCompileNumbernumUpDown.Value;
             Properties.Settings.Default.guessLaTeXCompile = GuessLaTeXCompileCheckBox.Checked;
-
+            
             Properties.Settings.Default.resolutionScale = (int) (resolutionScaleUpDown.Value);
             Properties.Settings.Default.leftMargin = leftMarginUpDown.Value;
             Properties.Settings.Default.topMargin = topMarginUpDown.Value;
@@ -179,6 +215,17 @@ namespace TeX2img {
             Properties.Settings.Default.editorAcceptTab = acceptTabCheckBox.Checked;
             Properties.Settings.Default.editorTabWidth = (int) tabWidthNumericUpDown.Value;
 
+            if (Properties.Settings.Default.language != (string)languageComboBox.SelectedValue) {
+                Properties.Settings.Default.language = (string)languageComboBox.SelectedValue;
+                if(Properties.Settings.Default.language == "ja-JP" ||
+                    (Properties.Settings.Default.language == "" && Properties.Settings.SystemDefaultCaltureInfo.Name == "ja-JP")) {
+                    MessageBox.Show("言語の変更は TeX2img の再起動後に反映されます。");
+                }else {
+                    MessageBox.Show("For the change of the language, close TeX2img and execute again.");
+                }
+            }
+
+
             Properties.Settings.Default.Save();
 
             this.Close();
@@ -187,7 +234,7 @@ namespace TeX2img {
         private void openTmpFolderButton_Click(object sender, EventArgs e) {
             try { Process.Start(Path.GetTempPath()); }
             catch(Exception) {
-                MessageBox.Show("作業フォルダ\n" + Path.GetTempPath() + "\nを開けませんでした．環境変数 TMP 及び TEMP を確認してください．");
+                MessageBox.Show(String.Format(Properties.Resources.CANNOT_OPEN_WORKDIR, Path.GetTempPath()));
             }
         }
 
@@ -204,13 +251,13 @@ namespace TeX2img {
         string GetFontString(Font f) {
             int fontsize = (int) f.Size;
             if(f.Size - fontsize > 0.5) ++fontsize;
-            return f.Name + " " + fontsize + " pt" + (f.Bold ? " 太字" : "") + (f.Italic ? " 斜体" : "");
+            return f.Name + " " + fontsize + " pt" + (f.Bold ? " " + Properties.Resources.BOLD : "") + (f.Italic ? " " + Properties.Resources.ITALIC : "");
         }
 
         private void FontColorListView_SelectedIndexChanged(object sender, EventArgs e) {
             if(FontColorListView.SelectedIndices.Count == 0) return;
-            string item = FontColorListView.SelectedItems[0].Text;
-            FontColorGroup.Text = item;
+            string item = FontColorListView.SelectedItems[0].Name;
+            FontColorGroup.Text = FontColorListView.SelectedItems[0].Text;
             FontColorButton.BackColor = Properties.Settings.Default.editorFontColor[item].Font;
             BackColorButton.BackColor = Properties.Settings.Default.editorFontColor[item].Back;
             if(item == "改行，EOF" || item == "空白") BackColorButton.Enabled = false;
@@ -219,7 +266,7 @@ namespace TeX2img {
 
         private void FontColorButton_Click(object sender, EventArgs e) {
             if(FontColorListView.SelectedIndices.Count == 0) return;
-            string item = FontColorListView.SelectedItems[0].Text;
+            string item = FontColorListView.SelectedItems[0].Name;
             using(ColorDialog cd = new ColorDialog()) {
                 cd.CustomColors = (int[]) Properties.Settings.Default.ColorDialogCustomColors.Clone();
                 cd.Color = Properties.Settings.Default.editorFontColor[item].Font;
@@ -234,7 +281,7 @@ namespace TeX2img {
 
         private void BackColorButton_Click(object sender, EventArgs e) {
             if(FontColorListView.SelectedIndices.Count == 0) return;
-            string item = FontColorListView.SelectedItems[0].Text;
+            string item = FontColorListView.SelectedItems[0].Name;
             using(ColorDialog cd = new ColorDialog()) {
                 cd.Color = Properties.Settings.Default.editorFontColor[item].Back;
                 cd.CustomColors = (int[]) Properties.Settings.Default.ColorDialogCustomColors.Clone();
@@ -244,7 +291,7 @@ namespace TeX2img {
                     FontColorListView.SelectedItems[0].BackColor = cd.Color;
                     if(item == "テキスト") {
                         for(int i = 0 ; i < FontColorListView.Items.Count ; ++i) {
-                            if(FontColorListView.Items[i].Text == "改行，EOF" || FontColorListView.Items[i].Text == "空白") {
+                            if(FontColorListView.Items[i].Name == "改行，EOF" || FontColorListView.Items[i].Name == "空白") {
                                 FontColorListView.Items[i].BackColor = cd.Color;
                             }
                         }
@@ -268,7 +315,7 @@ namespace TeX2img {
             if(dvipdfmx == "") errs.Add("DVI driver");
             if(gs == "") errs.Add("Ghostscript");
             var err = String.Join(", ", errs.ToArray());
-            if(err != "") MessageBox.Show(err + " の推定に失敗しました．", "TeX2img");
+            if (err != "") MessageBox.Show(String.Format(Properties.Resources.FAIL_GUESS, err), "TeX2img");
         }
 
         private void AdvancedGuess_Click(object sender, EventArgs e) {
@@ -307,7 +354,7 @@ namespace TeX2img {
         private void SetbackgroundColorButtonTextANDColor() {
             //backgroundColorButton.Enabled = !transparentPngCheckBox.Checked;
             if (transparentPngCheckBox.Checked) {
-                backgroundColorButton.Text = "透過";
+                backgroundColorButton.Text = Properties.Resources.TRANSPARENT;
                 backgroundColorButton.BackColor = Color.White;
             } else {
                 backgroundColorButton.Text = "";

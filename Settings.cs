@@ -7,7 +7,9 @@ namespace TeX2img.Properties {
     //  SettingsLoaded イベントは、設定値が読み込まれた後に発生します。
     //  SettingsSaving イベントは、設定値が保存される前に発生します。
     internal sealed partial class Settings {
-
+        static Settings() {
+            SystemDefaultCaltureInfo = System.Threading.Thread.CurrentThread.CurrentCulture;
+        }
         public Settings() {
             // // 設定の保存と変更のイベント ハンドラーを追加するには、以下の行のコメントを解除します:
             //
@@ -68,7 +70,12 @@ namespace TeX2img.Properties {
         }
 
         public override void Save() {
-            if(SaveSettings) base.Save();
+            if (!SaveSettings) {
+                var lang = language;
+                base.Reload();
+                language = lang;
+            }
+            base.Save();
         }
 
         public void ReloadDefaults() {
@@ -100,7 +107,12 @@ namespace TeX2img.Properties {
             if(r == -1) return Converter.which(name);
             else return "\"" + Converter.which(name.Substring(0, r)) + "\"" + name.Substring(r);
         }
-        public string GuessPlatexPath(string hint,string def = "platex") {
+        public string GuessPlatexPath(string hint) {
+            string def = "latex";
+            if (System.Threading.Thread.CurrentThread.CurrentCulture.Name == "ja-JP") def = "platex";
+            return GuessPlatexPath(hint, def);
+        }
+        public string GuessPlatexPath(string hint,string def) {
             return FindPathWithHint("compiler|latex", hint, def);
         }
         public string GuessPlatexPath() {
@@ -227,6 +239,8 @@ namespace TeX2img.Properties {
             var rv = new System.Collections.Generic.Dictionary<string, string>();
 
             #region デフォルトテンプレート
+            bool ja = (System.Threading.Thread.CurrentThread.CurrentCulture.Name == "ja-JP");
+if (ja) { 
 rv["pLaTeX"] = @"%latex: platex
 %dvidriver: dvipdfmx
 \documentclass[fleqn,papersize,dvipdfmx]{jsarticle}
@@ -242,6 +256,7 @@ rv["upLaTeX"] = @"%latex: uplatex
 \usepackage{xcolor}
 \pagestyle{empty}
 ";
+}
 
 rv["pdfLaTeX"] = @"%latex: pdflatex
 \documentclass[fleqn]{article}
@@ -250,6 +265,7 @@ rv["pdfLaTeX"] = @"%latex: pdflatex
 \pagestyle{empty}
 ";
 
+if (ja) {
 rv["XeLaTeX（和文）"] = @"%latex: xelatex
 \documentclass[fleqn]{bxjsarticle}
 \usepackage{zxjatype}
@@ -264,7 +280,7 @@ rv["LuaLaTeX（和文）"] = @"%latex: lualatex
 \usepackage{xcolor}
 \pagestyle{empty}
 ";
-
+}
 rv["LaTeX + dvips"] = @"%latex: latex
 %dvidriver: dvips
 \documentclass[fleqn,dvips]{article}
@@ -273,6 +289,7 @@ rv["LaTeX + dvips"] = @"%latex: latex
 \pagestyle{empty}
 ";
 
+if (ja) { 
 rv["pLaTeX + dvips"] = @"%latex: platex
 %dvidriver: dvips
 \documentclass[fleqn,papersize,dvips]{jsarticle}
@@ -288,8 +305,25 @@ rv["upLaTeX + dvips"] = @"%latex: uplatex
 \usepackage{graphicx,color}
 \pagestyle{empty}
 ";
+}
             #endregion
             return rv;
+        }
+
+        public static System.Globalization.CultureInfo SystemDefaultCaltureInfo;
+        public static void SetLanguage(string lang) {
+            if (lang == "") {
+                System.Threading.Thread.CurrentThread.CurrentCulture = SystemDefaultCaltureInfo;
+            }else {
+                var cultures = System.Globalization.CultureInfo.GetCultures(System.Globalization.CultureTypes.AllCultures);
+                foreach(var c in cultures) {
+                    if (c.Name == lang) {
+                        System.Threading.Thread.CurrentThread.CurrentUICulture = c;System.Threading.Thread.CurrentThread.CurrentUICulture = c;
+                        System.Threading.Thread.CurrentThread.CurrentCulture = c;
+                        return;
+                    }
+                }
+            }
         }
     }
 }

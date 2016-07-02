@@ -131,6 +131,9 @@
     <Compile Include="SupportInputColorDialog.cs">
       <SubType>Component</SubType>
     </Compile>
+    <EmbeddedResource Include="AboutDialog.ja-JP.resx">
+      <DependentUpon>AboutDialog.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="AboutDialog.resx">
       <DependentUpon>AboutDialog.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -138,16 +141,28 @@
     <EmbeddedResource Include="InputComboDialog.resx">
       <DependentUpon>InputComboDialog.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="MainForm.ja-JP.resx">
+      <DependentUpon>MainForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="ManageTemplateDialog.ja-JP.resx">
+      <DependentUpon>ManageTemplateDialog.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="ManageTemplateDialog.resx">
       <DependentUpon>ManageTemplateDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="OutputForm.ja-JP.resx">
+      <DependentUpon>OutputForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="OutputForm.resx">
       <DependentUpon>OutputForm.cs</DependentUpon>
       <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="PreambleForm.ja-JP.resx">
+      <DependentUpon>PreambleForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="PreambleForm.resx">
       <DependentUpon>PreambleForm.cs</DependentUpon>
@@ -179,6 +194,10 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Properties\Resources.ja-JP.resx" />
+    <EmbeddedResource Include="SettingForm.ja-JP.resx">
+      <DependentUpon>SettingForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="SettingForm.resx">
       <DependentUpon>SettingForm.cs</DependentUpon>
       <SubType>Designer</SubType>

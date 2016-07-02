@@ -29,8 +29,8 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            Sgry.Azuki.FontInfo fontInfo2 = new Sgry.Azuki.FontInfo();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
+            Sgry.Azuki.FontInfo fontInfo1 = new Sgry.Azuki.FontInfo();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.FileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.GenerateEPSToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -68,6 +68,7 @@
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.convertWorker = new System.ComponentModel.BackgroundWorker();
+            this.TeXsourceSaveFileDialog = new System.Windows.Forms.SaveFileDialog();
             this.menuStrip1.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.sourceTextBoxMenu.SuspendLayout();
@@ -76,156 +77,118 @@
             // 
             // menuStrip1
             // 
+            resources.ApplyResources(this.menuStrip1, "menuStrip1");
             this.menuStrip1.ImageScalingSize = new System.Drawing.Size(24, 24);
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.FileToolStripMenuItem,
             this.表示VToolStripMenuItem,
             this.SettingToolStripMenuItem,
             this.ヘルプHToolStripMenuItem});
-            this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Padding = new System.Windows.Forms.Padding(10, 3, 0, 3);
-            this.menuStrip1.Size = new System.Drawing.Size(1115, 35);
-            this.menuStrip1.TabIndex = 0;
-            this.menuStrip1.Text = "menuStrip1";
             // 
             // FileToolStripMenuItem
             // 
+            resources.ApplyResources(this.FileToolStripMenuItem, "FileToolStripMenuItem");
             this.FileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.GenerateEPSToolStripMenuItem,
             this.ImportToolStripMenuItem,
             this.ExportToolStripMenuItem,
             this.ExitToolStripMenuItem});
             this.FileToolStripMenuItem.Name = "FileToolStripMenuItem";
-            this.FileToolStripMenuItem.Size = new System.Drawing.Size(93, 29);
-            this.FileToolStripMenuItem.Text = "ファイル(&F)";
             // 
             // GenerateEPSToolStripMenuItem
             // 
+            resources.ApplyResources(this.GenerateEPSToolStripMenuItem, "GenerateEPSToolStripMenuItem");
             this.GenerateEPSToolStripMenuItem.Name = "GenerateEPSToolStripMenuItem";
-            this.GenerateEPSToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.T)));
-            this.GenerateEPSToolStripMenuItem.Size = new System.Drawing.Size(298, 30);
-            this.GenerateEPSToolStripMenuItem.Text = "画像ファイル生成(&T)";
             this.GenerateEPSToolStripMenuItem.Click += new System.EventHandler(this.GenerateButton_Click);
             // 
             // ImportToolStripMenuItem
             // 
+            resources.ApplyResources(this.ImportToolStripMenuItem, "ImportToolStripMenuItem");
             this.ImportToolStripMenuItem.Name = "ImportToolStripMenuItem";
-            this.ImportToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.O)));
-            this.ImportToolStripMenuItem.Size = new System.Drawing.Size(298, 30);
-            this.ImportToolStripMenuItem.Text = "インポート(&O)";
             this.ImportToolStripMenuItem.Click += new System.EventHandler(this.ImportToolStripMenuItem_Click);
             // 
             // ExportToolStripMenuItem
             // 
+            resources.ApplyResources(this.ExportToolStripMenuItem, "ExportToolStripMenuItem");
             this.ExportToolStripMenuItem.Name = "ExportToolStripMenuItem";
-            this.ExportToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S)));
-            this.ExportToolStripMenuItem.Size = new System.Drawing.Size(298, 30);
-            this.ExportToolStripMenuItem.Text = "エクスポート(&S)";
             this.ExportToolStripMenuItem.Click += new System.EventHandler(this.ExportToolStripMenuItem_Click);
             // 
             // ExitToolStripMenuItem
             // 
+            resources.ApplyResources(this.ExitToolStripMenuItem, "ExitToolStripMenuItem");
             this.ExitToolStripMenuItem.Name = "ExitToolStripMenuItem";
-            this.ExitToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.W)));
-            this.ExitToolStripMenuItem.Size = new System.Drawing.Size(298, 30);
-            this.ExitToolStripMenuItem.Text = "終了(&X)";
             this.ExitToolStripMenuItem.Click += new System.EventHandler(this.ExitCToolStripMenuItem_Click);
             // 
             // 表示VToolStripMenuItem
             // 
+            resources.ApplyResources(this.表示VToolStripMenuItem, "表示VToolStripMenuItem");
             this.表示VToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.showPreambleWindowToolStripMenuItem,
             this.showOutputWindowToolStripMenuItem,
             this.色入力ToolStripMenuItem});
             this.表示VToolStripMenuItem.Name = "表示VToolStripMenuItem";
-            this.表示VToolStripMenuItem.Size = new System.Drawing.Size(81, 29);
-            this.表示VToolStripMenuItem.Text = "表示(&V)";
             // 
             // showPreambleWindowToolStripMenuItem
             // 
+            resources.ApplyResources(this.showPreambleWindowToolStripMenuItem, "showPreambleWindowToolStripMenuItem");
             this.showPreambleWindowToolStripMenuItem.Name = "showPreambleWindowToolStripMenuItem";
-            this.showPreambleWindowToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)(((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Shift) 
-            | System.Windows.Forms.Keys.P)));
-            this.showPreambleWindowToolStripMenuItem.Size = new System.Drawing.Size(403, 30);
-            this.showPreambleWindowToolStripMenuItem.Text = "プリアンブル設定ウィンドウ(&P)";
             this.showPreambleWindowToolStripMenuItem.Click += new System.EventHandler(this.showPreambleWindowToolStripMenuItem_Click);
             // 
             // showOutputWindowToolStripMenuItem
             // 
+            resources.ApplyResources(this.showOutputWindowToolStripMenuItem, "showOutputWindowToolStripMenuItem");
             this.showOutputWindowToolStripMenuItem.Name = "showOutputWindowToolStripMenuItem";
-            this.showOutputWindowToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)(((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Shift) 
-            | System.Windows.Forms.Keys.O)));
-            this.showOutputWindowToolStripMenuItem.Size = new System.Drawing.Size(403, 30);
-            this.showOutputWindowToolStripMenuItem.Text = "出力ウィンドウ(&O)";
             this.showOutputWindowToolStripMenuItem.Click += new System.EventHandler(this.showOutputWindowToolStripMenuItem_Click);
             // 
             // 色入力ToolStripMenuItem
             // 
+            resources.ApplyResources(this.色入力ToolStripMenuItem, "色入力ToolStripMenuItem");
             this.色入力ToolStripMenuItem.Name = "色入力ToolStripMenuItem";
-            this.色入力ToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)(((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Shift) 
-            | System.Windows.Forms.Keys.C)));
-            this.色入力ToolStripMenuItem.Size = new System.Drawing.Size(403, 30);
-            this.色入力ToolStripMenuItem.Text = "色入力補助";
             this.色入力ToolStripMenuItem.Click += new System.EventHandler(this.ColorInputHelperToolStripMenuItem_Click);
             // 
             // SettingToolStripMenuItem
             // 
+            resources.ApplyResources(this.SettingToolStripMenuItem, "SettingToolStripMenuItem");
             this.SettingToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.オプションOToolStripMenuItem});
             this.SettingToolStripMenuItem.Name = "SettingToolStripMenuItem";
-            this.SettingToolStripMenuItem.Size = new System.Drawing.Size(83, 29);
-            this.SettingToolStripMenuItem.Text = "ツール(&T)";
             // 
             // オプションOToolStripMenuItem
             // 
+            resources.ApplyResources(this.オプションOToolStripMenuItem, "オプションOToolStripMenuItem");
             this.オプションOToolStripMenuItem.Name = "オプションOToolStripMenuItem";
-            this.オプションOToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.E)));
-            this.オプションOToolStripMenuItem.Size = new System.Drawing.Size(258, 30);
-            this.オプションOToolStripMenuItem.Text = "オプション...(&O)";
             this.オプションOToolStripMenuItem.Click += new System.EventHandler(this.SettingToolStripMenuItem_Click);
             // 
             // ヘルプHToolStripMenuItem
             // 
+            resources.ApplyResources(this.ヘルプHToolStripMenuItem, "ヘルプHToolStripMenuItem");
             this.ヘルプHToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.AboutToolStripMenuItem});
             this.ヘルプHToolStripMenuItem.Name = "ヘルプHToolStripMenuItem";
-            this.ヘルプHToolStripMenuItem.Size = new System.Drawing.Size(91, 29);
-            this.ヘルプHToolStripMenuItem.Text = "ヘルプ(&H)";
             // 
             // AboutToolStripMenuItem
             // 
+            resources.ApplyResources(this.AboutToolStripMenuItem, "AboutToolStripMenuItem");
             this.AboutToolStripMenuItem.Name = "AboutToolStripMenuItem";
-            this.AboutToolStripMenuItem.Size = new System.Drawing.Size(233, 30);
-            this.AboutToolStripMenuItem.Text = "バージョン情報...(&A)";
             this.AboutToolStripMenuItem.Click += new System.EventHandler(this.AboutToolStripMenuItem_Click);
             // 
             // groupBox1
             // 
-            this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+            resources.ApplyResources(this.groupBox1, "groupBox1");
             this.groupBox1.Controls.Add(this.sourceTextBox);
             this.groupBox1.Controls.Add(this.InputFileBrowseButton);
             this.groupBox1.Controls.Add(this.inputFileNameTextBox);
             this.groupBox1.Controls.Add(this.InputFromFileRadioButton);
             this.groupBox1.Controls.Add(this.InputFromTextboxRadioButton);
-            this.groupBox1.Location = new System.Drawing.Point(20, 40);
-            this.groupBox1.Margin = new System.Windows.Forms.Padding(5, 4, 5, 4);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Padding = new System.Windows.Forms.Padding(5, 4, 5, 4);
-            this.groupBox1.Size = new System.Drawing.Size(1075, 432);
-            this.groupBox1.TabIndex = 1;
             this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "入力設定";
             // 
             // sourceTextBox
             // 
             this.sourceTextBox.AcceptsTab = false;
+            resources.ApplyResources(this.sourceTextBox, "sourceTextBox");
             this.sourceTextBox.AllowDrop = true;
-            this.sourceTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
             this.sourceTextBox.BackColor = System.Drawing.SystemColors.Window;
             this.sourceTextBox.ContextMenuStrip = this.sourceTextBoxMenu;
             this.sourceTextBox.Cursor = System.Windows.Forms.Cursors.IBeam;
@@ -235,23 +198,18 @@
             | Sgry.Azuki.DrawingOption.HighlightsMatchedBracket)));
             this.sourceTextBox.DrawsEofMark = true;
             this.sourceTextBox.FirstVisibleLine = 0;
-            this.sourceTextBox.Font = new System.Drawing.Font("ＭＳ ゴシック", 12F);
-            fontInfo2.Name = "ＭＳ ゴシック";
-            fontInfo2.Size = 12;
-            fontInfo2.Style = System.Drawing.FontStyle.Regular;
-            this.sourceTextBox.FontInfo = fontInfo2;
+            fontInfo1.Name = "ＭＳ ゴシック";
+            fontInfo1.Size = 12;
+            fontInfo1.Style = System.Drawing.FontStyle.Regular;
+            this.sourceTextBox.FontInfo = fontInfo1;
             this.sourceTextBox.ForeColor = System.Drawing.Color.Black;
             this.sourceTextBox.HighlightsCurrentLine = false;
-            this.sourceTextBox.Location = new System.Drawing.Point(26, 57);
-            this.sourceTextBox.Margin = new System.Windows.Forms.Padding(5, 4, 5, 4);
             this.sourceTextBox.Name = "sourceTextBox";
             this.sourceTextBox.ScrollPos = new System.Drawing.Point(0, 0);
             this.sourceTextBox.ScrollsBeyondLastLine = false;
             this.sourceTextBox.ShowsDirtBar = false;
             this.sourceTextBox.ShowsHScrollBar = false;
             this.sourceTextBox.ShowsLineNumber = false;
-            this.sourceTextBox.Size = new System.Drawing.Size(1047, 293);
-            this.sourceTextBox.TabIndex = 3;
             this.sourceTextBox.TabWidth = 4;
             this.sourceTextBox.ViewType = Sgry.Azuki.ViewType.WrappedProportional;
             this.sourceTextBox.ViewWidth = 4097;
@@ -260,6 +218,7 @@
             // 
             // sourceTextBoxMenu
             // 
+            resources.ApplyResources(this.sourceTextBoxMenu, "sourceTextBoxMenu");
             this.sourceTextBoxMenu.ImageScalingSize = new System.Drawing.Size(24, 24);
             this.sourceTextBoxMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.Undo,
@@ -272,173 +231,115 @@
             this.toolStripSeparator2,
             this.SelectAll});
             this.sourceTextBoxMenu.Name = "sourceTextBoxMenu";
-            this.sourceTextBoxMenu.Size = new System.Drawing.Size(187, 226);
             // 
             // Undo
             // 
+            resources.ApplyResources(this.Undo, "Undo");
             this.Undo.Name = "Undo";
-            this.Undo.Size = new System.Drawing.Size(186, 30);
-            this.Undo.Text = "元に戻す(&U)";
             this.Undo.Click += new System.EventHandler(this.Undo_Click);
             // 
             // Redo
             // 
+            resources.ApplyResources(this.Redo, "Redo");
             this.Redo.Name = "Redo";
-            this.Redo.Size = new System.Drawing.Size(186, 30);
-            this.Redo.Text = "やり直し(&Y)";
             this.Redo.Click += new System.EventHandler(this.Redo_Click);
             // 
             // toolStripSeparator1
             // 
+            resources.ApplyResources(this.toolStripSeparator1, "toolStripSeparator1");
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(183, 6);
             // 
             // Cut
             // 
+            resources.ApplyResources(this.Cut, "Cut");
             this.Cut.Name = "Cut";
-            this.Cut.Size = new System.Drawing.Size(186, 30);
-            this.Cut.Text = "切り取り(&T)";
             this.Cut.Click += new System.EventHandler(this.Cut_Click);
             // 
             // Copy
             // 
+            resources.ApplyResources(this.Copy, "Copy");
             this.Copy.Name = "Copy";
-            this.Copy.Size = new System.Drawing.Size(186, 30);
-            this.Copy.Text = "コピー(&C)";
             this.Copy.Click += new System.EventHandler(this.Copy_Click);
             // 
             // Paste
             // 
+            resources.ApplyResources(this.Paste, "Paste");
             this.Paste.Name = "Paste";
-            this.Paste.Size = new System.Drawing.Size(186, 30);
-            this.Paste.Text = "貼り付け(&P)";
             this.Paste.Click += new System.EventHandler(this.Paste_Click);
             // 
             // Delete
             // 
+            resources.ApplyResources(this.Delete, "Delete");
             this.Delete.Name = "Delete";
-            this.Delete.Size = new System.Drawing.Size(186, 30);
-            this.Delete.Text = "削除(&D)";
             this.Delete.Click += new System.EventHandler(this.Delete_Click);
             // 
             // toolStripSeparator2
             // 
+            resources.ApplyResources(this.toolStripSeparator2, "toolStripSeparator2");
             this.toolStripSeparator2.Name = "toolStripSeparator2";
-            this.toolStripSeparator2.Size = new System.Drawing.Size(183, 6);
             // 
             // SelectAll
             // 
+            resources.ApplyResources(this.SelectAll, "SelectAll");
             this.SelectAll.Name = "SelectAll";
-            this.SelectAll.Size = new System.Drawing.Size(186, 30);
-            this.SelectAll.Text = "全て選択(&A)";
             this.SelectAll.Click += new System.EventHandler(this.SelectAll_Click);
             // 
             // InputFileBrowseButton
             // 
-            this.InputFileBrowseButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.InputFileBrowseButton.Enabled = false;
-            this.InputFileBrowseButton.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-            this.InputFileBrowseButton.Location = new System.Drawing.Point(945, 392);
-            this.InputFileBrowseButton.Margin = new System.Windows.Forms.Padding(5, 4, 5, 4);
+            resources.ApplyResources(this.InputFileBrowseButton, "InputFileBrowseButton");
             this.InputFileBrowseButton.Name = "InputFileBrowseButton";
-            this.InputFileBrowseButton.Size = new System.Drawing.Size(112, 28);
-            this.InputFileBrowseButton.TabIndex = 6;
-            this.InputFileBrowseButton.Text = "参照...";
             this.InputFileBrowseButton.UseVisualStyleBackColor = true;
             this.InputFileBrowseButton.Click += new System.EventHandler(this.InputFileBrowseButton_Click);
             // 
             // inputFileNameTextBox
             // 
+            resources.ApplyResources(this.inputFileNameTextBox, "inputFileNameTextBox");
             this.inputFileNameTextBox.AllowDrop = true;
-            this.inputFileNameTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.inputFileNameTextBox.Enabled = false;
-            this.inputFileNameTextBox.Location = new System.Drawing.Point(10, 392);
-            this.inputFileNameTextBox.Margin = new System.Windows.Forms.Padding(5, 4, 5, 4);
             this.inputFileNameTextBox.Name = "inputFileNameTextBox";
-            this.inputFileNameTextBox.Size = new System.Drawing.Size(919, 25);
-            this.inputFileNameTextBox.TabIndex = 5;
             this.inputFileNameTextBox.DragDrop += new System.Windows.Forms.DragEventHandler(this.inputFileNameTextBox_DragDrop);
             this.inputFileNameTextBox.DragEnter += new System.Windows.Forms.DragEventHandler(this.TextBox_DragEnter);
             // 
             // InputFromFileRadioButton
             // 
-            this.InputFromFileRadioButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.InputFromFileRadioButton.AutoSize = true;
-            this.InputFromFileRadioButton.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-            this.InputFromFileRadioButton.Location = new System.Drawing.Point(10, 361);
-            this.InputFromFileRadioButton.Margin = new System.Windows.Forms.Padding(5, 4, 5, 4);
+            resources.ApplyResources(this.InputFromFileRadioButton, "InputFromFileRadioButton");
             this.InputFromFileRadioButton.Name = "InputFromFileRadioButton";
-            this.InputFromFileRadioButton.Size = new System.Drawing.Size(244, 22);
-            this.InputFromFileRadioButton.TabIndex = 4;
-            this.InputFromFileRadioButton.Text = "TeX ソースファイルを読み込む";
             this.InputFromFileRadioButton.UseVisualStyleBackColor = true;
             this.InputFromFileRadioButton.Click += new System.EventHandler(this.setEnabled);
             // 
             // InputFromTextboxRadioButton
             // 
-            this.InputFromTextboxRadioButton.AutoSize = true;
+            resources.ApplyResources(this.InputFromTextboxRadioButton, "InputFromTextboxRadioButton");
             this.InputFromTextboxRadioButton.Checked = global::TeX2img.Properties.Settings.Default.inputFromTextBox;
             this.InputFromTextboxRadioButton.DataBindings.Add(new System.Windows.Forms.Binding("Checked", global::TeX2img.Properties.Settings.Default, "inputFromTextBox", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
-            this.InputFromTextboxRadioButton.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-            this.InputFromTextboxRadioButton.Location = new System.Drawing.Point(10, 27);
-            this.InputFromTextboxRadioButton.Margin = new System.Windows.Forms.Padding(5, 4, 5, 4);
             this.InputFromTextboxRadioButton.Name = "InputFromTextboxRadioButton";
-            this.InputFromTextboxRadioButton.Size = new System.Drawing.Size(553, 22);
-            this.InputFromTextboxRadioButton.TabIndex = 1;
             this.InputFromTextboxRadioButton.TabStop = true;
-            this.InputFromTextboxRadioButton.Text = "TeX コードを直接入力（ \\begin{document} ～ \\end{document} の内部 ）";
             this.InputFromTextboxRadioButton.UseVisualStyleBackColor = true;
             this.InputFromTextboxRadioButton.CheckedChanged += new System.EventHandler(this.setEnabled);
             // 
             // groupBox2
             // 
-            this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+            resources.ApplyResources(this.groupBox2, "groupBox2");
             this.groupBox2.Controls.Add(this.OutputBrowseButton);
             this.groupBox2.Controls.Add(this.outputFileNameTextBox);
-            this.groupBox2.Location = new System.Drawing.Point(20, 482);
-            this.groupBox2.Margin = new System.Windows.Forms.Padding(5, 4, 5, 4);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Padding = new System.Windows.Forms.Padding(5, 4, 5, 4);
-            this.groupBox2.Size = new System.Drawing.Size(1075, 69);
-            this.groupBox2.TabIndex = 2;
             this.groupBox2.TabStop = false;
-            this.groupBox2.Text = "出力先ファイル（拡張子 .eps / .png / .jpg / .pdf / .svg(z) / .emf /.bmp ）";
             // 
             // OutputBrowseButton
             // 
-            this.OutputBrowseButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.OutputBrowseButton.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-            this.OutputBrowseButton.Location = new System.Drawing.Point(945, 27);
-            this.OutputBrowseButton.Margin = new System.Windows.Forms.Padding(5, 4, 5, 4);
+            resources.ApplyResources(this.OutputBrowseButton, "OutputBrowseButton");
             this.OutputBrowseButton.Name = "OutputBrowseButton";
-            this.OutputBrowseButton.Size = new System.Drawing.Size(112, 28);
-            this.OutputBrowseButton.TabIndex = 1;
-            this.OutputBrowseButton.Text = "参照...";
             this.OutputBrowseButton.UseVisualStyleBackColor = true;
             this.OutputBrowseButton.Click += new System.EventHandler(this.OutputBrowseButton_Click);
             // 
             // outputFileNameTextBox
             // 
-            this.outputFileNameTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.outputFileNameTextBox.Location = new System.Drawing.Point(10, 27);
-            this.outputFileNameTextBox.Margin = new System.Windows.Forms.Padding(5, 4, 5, 4);
+            resources.ApplyResources(this.outputFileNameTextBox, "outputFileNameTextBox");
             this.outputFileNameTextBox.Name = "outputFileNameTextBox";
-            this.outputFileNameTextBox.Size = new System.Drawing.Size(919, 25);
-            this.outputFileNameTextBox.TabIndex = 0;
             // 
             // GenerateButton
             // 
-            this.GenerateButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.GenerateButton.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-            this.GenerateButton.Location = new System.Drawing.Point(881, 564);
-            this.GenerateButton.Margin = new System.Windows.Forms.Padding(5, 4, 5, 4);
+            resources.ApplyResources(this.GenerateButton, "GenerateButton");
             this.GenerateButton.Name = "GenerateButton";
-            this.GenerateButton.Size = new System.Drawing.Size(212, 45);
-            this.GenerateButton.TabIndex = 3;
-            this.GenerateButton.Text = "画像ファイル生成";
             this.GenerateButton.UseVisualStyleBackColor = true;
             this.GenerateButton.Click += new System.EventHandler(this.GenerateButton_Click);
             // 
@@ -446,34 +347,33 @@
             // 
             this.saveFileDialog1.DefaultExt = "eps";
             this.saveFileDialog1.FileName = "equation.eps";
-            this.saveFileDialog1.Filter = resources.GetString("saveFileDialog1.Filter");
+            resources.ApplyResources(this.saveFileDialog1, "saveFileDialog1");
             // 
             // openFileDialog1
             // 
             this.openFileDialog1.DefaultExt = "tex";
             this.openFileDialog1.FileName = "openFileDialog1";
-            this.openFileDialog1.Filter = "TeXソースファイル (*.tex)|*.tex|すべてのファイル (*.*)|*.*";
+            resources.ApplyResources(this.openFileDialog1, "openFileDialog1");
             // 
             // convertWorker
             // 
             this.convertWorker.DoWork += new System.ComponentModel.DoWorkEventHandler(this.convertWorker_DoWork);
             this.convertWorker.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.convertWorker_RunWorkerCompleted);
             // 
+            // TeXsourceSaveFileDialog
+            // 
+            resources.ApplyResources(this.TeXsourceSaveFileDialog, "TeXsourceSaveFileDialog");
+            // 
             // MainForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(10F, 18F);
+            resources.ApplyResources(this, "$this");
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1115, 622);
             this.Controls.Add(this.GenerateButton);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.menuStrip1);
-            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MainMenuStrip = this.menuStrip1;
-            this.Margin = new System.Windows.Forms.Padding(5, 4, 5, 4);
             this.Name = "MainForm";
-            this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
-            this.Text = "TeX2img";
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
             this.groupBox1.ResumeLayout(false);
@@ -525,6 +425,7 @@
         private System.Windows.Forms.ToolStripMenuItem ImportToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem ExportToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem 色入力ToolStripMenuItem;
+        private System.Windows.Forms.SaveFileDialog TeXsourceSaveFileDialog;
     }
 }
 

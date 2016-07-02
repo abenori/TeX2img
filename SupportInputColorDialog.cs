@@ -60,7 +60,7 @@ namespace TeX2img {
                 GetControlRect(hWnd, dlg, out rect);
                 PInvoke.MoveWindow(dlg, rect.Left, rect.Top, rect.Right - rect.Left, (rect.Bottom - rect.Top) / 2-2, true);
                 // その下にテキストのサンプル
-                dlg = PInvoke.CreateWindowEx(0,"EDIT","サンプル",
+                dlg = PInvoke.CreateWindowEx(0,"EDIT",Properties.Resources.SAMPLE,
                     PInvoke.WindowStyles.WS_CHILD | PInvoke.WindowStyles.WS_VISIBLE | PInvoke.WindowStyles.WS_BORDER | PInvoke.WindowStyles.ES_CENTER,
                     rect.Left,(rect.Top + rect.Bottom)/2+4,rect.Right - rect.Left,(rect.Bottom - rect.Top)/2-2,
                     hWnd,new IntPtr(ID_CURRENTTEXTCOLOR),Marshal.GetHINSTANCE(System.Reflection.Assembly.GetExecutingAssembly().ManifestModule), IntPtr.Zero);

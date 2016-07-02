@@ -174,7 +174,7 @@ namespace TeX2img {
                     if (doc == 0) return null;
                     foreach (var p in pages) {
                         if (abort) {
-                            if (controller_ != null) controller_.appendOutput("処理を中断しました。\n");
+                            if (controller_ != null) controller_.appendOutput(Properties.Resources.STOPCONVERTMSG + "\n");
                             return null;
                         }
                         int rotate = 0;
@@ -271,7 +271,7 @@ namespace TeX2img {
 
                 try {
                     printCommandLine(proc);
-                    ReadOutputs(proc, "BoundingBox の取得", s => { System.Diagnostics.Debug.WriteLine(s); }, err_read);
+                    ReadOutputs(proc, Properties.Resources.GET_BOUNDINGBOX, s => { System.Diagnostics.Debug.WriteLine(s); }, err_read);
                     if (controller_ != null) controller_.appendOutput("\n");
                     if (rv.Count != lastpage - firstpage + 1) return null;
                     else return rv;
@@ -306,7 +306,9 @@ namespace TeX2img {
             ProcessStartInfo startinfo = GetProcessStartInfo();
             startinfo.FileName = setProcStartInfo(Properties.Settings.Default.platexPath, out arg);
             if (Properties.Settings.Default.platexPath == "") {
-                if (controller_ != null) controller_.showPathError("platex.exe", "TeX ディストリビューション（platex）");
+                string latex = "pdflatex";
+                if (System.Threading.Thread.CurrentThread.CurrentCulture.Name == "ja-JP") latex = "platex";
+                if (controller_ != null) controller_.showPathError(latex, String.Format(Properties.Resources.TEX_DISTRIBUTION, latex));
                 return false;
             }
             startinfo.Arguments = arg;
@@ -326,7 +328,7 @@ namespace TeX2img {
                         using (var proc = GetProcess()) {
                             proc.StartInfo = startinfo;
                             printCommandLine(proc);
-                            ReadOutputs(proc, "TeX ソースのコンパイル");
+                            ReadOutputs(proc, Properties.Resources.COMPILE_TEX);
                             if (proc.ExitCode != 0) {
                                 if (!Properties.Settings.Default.ignoreErrorFlag) {
                                     if (controller_ != null) controller_.showGenerateError();
@@ -344,7 +346,7 @@ namespace TeX2img {
                         using (var proc = GetProcess()) {
                             proc.StartInfo = startinfo;
                             printCommandLine(proc);
-                            ReadOutputs(proc, "TeX ソースのコンパイル");
+                            ReadOutputs(proc, Properties.Resources.COMPILE_TEX);
                             if (proc.ExitCode != 0) {
                                 if (!Properties.Settings.Default.ignoreErrorFlag) {
                                     if (controller_ != null) controller_.showGenerateError();
@@ -358,7 +360,9 @@ namespace TeX2img {
                 }
             }
             catch (Win32Exception) {
-                if (controller_ != null) controller_.showPathError(startinfo.FileName, "TeX ディストリビューション（platex）");
+                string latex = "pdflatex";
+                if (System.Threading.Thread.CurrentThread.CurrentCulture.Name == "ja-JP") latex = "platex";
+                if (controller_ != null) controller_.showPathError(startinfo.FileName, String.Format(Properties.Resources.TEX_DISTRIBUTION, latex));
                 return false;
             }
             catch (TimeoutException) { return false; }
@@ -372,7 +376,7 @@ namespace TeX2img {
             using (var proc = GetProcess()) {
                 proc.StartInfo.FileName = setProcStartInfo(Properties.Settings.Default.dvipdfmxPath, out arg);
                 if (Properties.Settings.Default.dvipdfmxPath == "") {
-                    if (controller_ != null) controller_.showPathError("dvipdfmx.exe", "TeX ディストリビューション（dvipdfmx）");
+                    if (controller_ != null) controller_.showPathError("dvipdfmx.exe", String.Format(Properties.Resources.TEX_DISTRIBUTION, "dvipdfmx"));
                     return false;
                 }
                 //proc.StartInfo.Arguments = arg + " -vv -o " + baseName + ".pdf " + baseName + ".dvi";
@@ -381,10 +385,10 @@ namespace TeX2img {
                 try {
                     // 出力は何故か標準エラー出力から出てくる
                     printCommandLine(proc);
-                    ReadOutputs(proc, "DVI から PDF への変換");
+                    ReadOutputs(proc, Properties.Resources.DVITOPDF);
                 }
                 catch (Win32Exception) {
-                    if (controller_ != null) controller_.showPathError(proc.StartInfo.FileName, "TeX ディストリビューション（dvipdfmx）");
+                    if (controller_ != null) controller_.showPathError(proc.StartInfo.FileName, String.Format(Properties.Resources.TEX_DISTRIBUTION, "dvipdfmx"));
                     return false;
                 }
                 catch (TimeoutException) { return false; }
@@ -421,10 +425,10 @@ namespace TeX2img {
 
                 try {
                     printCommandLine(proc);
-                    ReadOutputs(proc, "PDF から EPS への変換");
+                    ReadOutputs(proc, Properties.Resources.PDFTOEPS);
                 }
                 catch (Win32Exception) {
-                    if (controller_ != null) controller_.showPathError(Properties.Settings.Default.gsPath, "Ghostscript ");
+                    if (controller_ != null) controller_.showPathError(Properties.Settings.Default.gsPath, "Ghostscript");
                     return false;
                 }
                 catch (TimeoutException) { return false; }
@@ -445,24 +449,24 @@ namespace TeX2img {
         }
 
         bool ps2pdf(string filename, string output, int version = -1) {
-            return gs_pdfwrite("\"" + filename + "\"", output, "", "PS から PDF への変換", 0, version, "");
+            return gs_pdfwrite("\"" + filename + "\"", output, "", Properties.Resources.PSTOPDF, 0, version, "");
         }
 
         bool eps2pdf(List<string> filename, string output, int resolution, int version) {
-            return gs_pdfwrite(String.Join(" ", filename.Select(d => "\"" + d + "\"").ToArray()), output, "-dEPSCrop", "EPS から PDF への変換", resolution, version, "");
+            return gs_pdfwrite(String.Join(" ", filename.Select(d => "\"" + d + "\"").ToArray()), output, "-dEPSCrop", Properties.Resources.EPSTOPDF, resolution, version, "");
         }
 
         bool pdf2pdf(string input, string output, int resolution, int version, int page = 0) {
 			string pageopt = "";
 			if(page != 0) pageopt = " -dFirstPage=" + page.ToString() + " -dLastPage=" + page.ToString();
-            return gs_pdfwrite("\"" + input + "\"", output, (IsNewGhostscript() ? "-dNoOutputFonts" : "-dNOCACHE") + pageopt, "Ghostscript の実行", resolution, version, "");
+            return gs_pdfwrite("\"" + input + "\"", output, (IsNewGhostscript() ? "-dNoOutputFonts" : "-dNOCACHE") + pageopt, Properties.Resources.EXEC_GS, resolution, version, "");
         }
 
         bool dashtoline(string input, int version) {
             var tmppdf = TempFilesDeleter.GetTempFileName(".pdf", workingDir);
             tempFilesDeleter.AddFile(tmppdf);
             File.Move(Path.Combine(workingDir, input), Path.Combine(workingDir, tmppdf));
-            return gs_pdfwrite("\"" + tmppdf + "\"", input, "", "Ghostscript の実行", 0, version, "/oldstroke /stroke load def /stroke {.dashpath [] 0 setdash oldstroke} def");
+            return gs_pdfwrite("\"" + tmppdf + "\"", input, "", Properties.Resources.EXEC_GS, 0, version, "/oldstroke /stroke load def /stroke {.dashpath [] 0 setdash oldstroke} def");
         }
 
         bool gs_pdfwrite(string input, string output, string option, string msg, int resolution, int version, string cmd) {
@@ -530,7 +534,7 @@ namespace TeX2img {
                     "-sOutputFile=\"" + output + "\" \"" + input + "\"";
                 try {
                     printCommandLine(proc);
-                    ReadOutputs(proc, "Ghostscript の実行");
+                    ReadOutputs(proc, Properties.Resources.EXEC_GS);
                 }
                 catch (Win32Exception) {
                     if (controller_ != null) controller_.showPathError(proc.StartInfo.FileName, "Ghostscript ");
@@ -627,10 +631,10 @@ namespace TeX2img {
                 proc.StartInfo.Arguments = "-no-shell-escape -interaction=nonstopmode \"" + tmpfile + "\"";
                 try {
                     printCommandLine(proc);
-                    ReadOutputs(proc, "pdftex の実行 ");
+                    ReadOutputs(proc, Properties.Resources.EXEC_PDFTEX);
                 }
                 catch (Win32Exception) {
-                    if (controller_ != null) controller_.showPathError("pdftex.exe", "TeX ディストリビューション");
+                    if (controller_ != null) controller_.showPathError("pdftex.exe", String.Format(Properties.Resources.TEX_DISTRIBUTION,"pdftex"));
                     return false;
                 }
                 catch (TimeoutException) { return false; }
@@ -699,7 +703,7 @@ namespace TeX2img {
                 if (pages.Count > 0) proc.StartInfo.Arguments += " " + String.Join(",", pages.Select(d => d.ToString()).ToArray());
                 try {
                     printCommandLine(proc);
-                    ReadOutputs(proc, "mudraw の実行");
+                    ReadOutputs(proc, Properties.Resources.EXEC_MUDRAW);
                 }
                 catch (Win32Exception) {
                     if (controller_ != null) controller_.showToolError("mudraw.exe");
@@ -776,7 +780,7 @@ namespace TeX2img {
                     "--output=\"" + outputFileName + "\" \"" + inputFilename + "\"";
                 try {
                     printCommandLine(proc);
-                    ReadOutputs(proc, "pdfiumdraw の実行");
+                    ReadOutputs(proc, Properties.Resources.EXEC_PDFIUMDRAW);
                 }
                 catch (Win32Exception) {
                     if (controller_ != null) controller_.showToolError("pdfiumdraw.exe");
@@ -826,7 +830,7 @@ namespace TeX2img {
                     " --output=\"" + output + "\" \"" + input + "\"";
                 try {
                     printCommandLine(proc);
-                    ReadOutputs(proc, "pdfiumdraw の実行");
+                    ReadOutputs(proc, Properties.Resources.EXEC_PDFIUMDRAW);
                 }
                 catch (Win32Exception) {
                     if (controller_ != null) controller_.showToolError("pdfiumdraw.exe");
@@ -852,7 +856,7 @@ namespace TeX2img {
                     " --output=\"" + outputFileName + "\" \"" + inputFileName + "\"";
                 try {
                     printCommandLine(proc);
-                    ReadOutputs(proc, "pdfiumdraw の実行");
+                    ReadOutputs(proc, Properties.Resources.EXEC_PDFIUMDRAW);
                 }
                 catch (Win32Exception) {
                     if (controller_ != null) controller_.showToolError("pdfiumdraw.exe");
@@ -886,7 +890,7 @@ namespace TeX2img {
                     }
                 }
                 if (ici == null) {
-                    if (controller_ != null) controller_.appendOutput("TIFF 結合時にエラー：ImageCodeInfo が見付かりませんでした。");
+                    if (controller_ != null) controller_.appendOutput(Properties.Resources.FAIL_CONCAT_IMAGES);
                     return false;
                 }
                 var bitmaps = files.Select(f => new System.Drawing.Bitmap(Path.Combine(workingDir, f))).ToList();
@@ -1104,7 +1108,7 @@ namespace TeX2img {
             // ページ数を取得
             int page, version;
             if (!pdfinfo(Path.Combine(workingDir, tmpFileBaseName + ".pdf"), out page, out version)) {
-                controller_.showError("生成された PDF のページ数の取得に失敗．");
+                controller_.showError(Properties.Resources.FAIL_PDFPAGES);
                 return false;
             }
 
@@ -1116,7 +1120,7 @@ namespace TeX2img {
                 bbs = readPDFBB(tmpFileBaseName + ".pdf", 1, page);
             }
             if (bbs == null) {
-                if (!abort) controller_.showError("BoundigBox の取得に失敗しました．");
+                if (!abort) controller_.showError(Properties.Resources.FAIL_GETBOUNDINGBOX);
                 return false;
             }
 
@@ -1125,15 +1129,15 @@ namespace TeX2img {
             for (int i = 1; i <= page; ++i) {
                 if (bbs[i - 1].bb.IsEmpty) {
                     if (Properties.Settings.Default.leftMargin + Properties.Settings.Default.rightMargin == 0 || Properties.Settings.Default.topMargin + Properties.Settings.Default.bottomMargin == 0) {
-                        warnngs.Add(i.ToString() + " ページ目が空ページだったため画像生成をスキップしました。");
+                        warnngs.Add(String.Format(Properties.Resources.SKIPPED_BACAUSE_EMPTY, i));
                         emptyPages.Add(i);
                     } else {
-                        warnngs.Add(i.ToString() + " ページ目が空ページでした。");
+                        warnngs.Add(String.Format(Properties.Resources.EMPTYMSG, i));
                     }
                 }
             }
             if (emptyPages.Count == page) {
-                controller_.appendOutput("全てのページから空ページでした。");
+                controller_.appendOutput(Properties.Resources.ALLPAGE_EMPTYMSG);
                 return false;
             }
             var pagelist = Enumerable.Range(1, page).Where(i => !emptyPages.Contains(i)).ToList();
@@ -1223,7 +1227,7 @@ namespace TeX2img {
                     if(svgconcat(pagelist.Select(d=>tmpFileBaseName + "-" + d.ToString() + ".svg").ToList(), temp1, Properties.Settings.Default.animationDelay, Properties.Settings.Default.animationLoop)) {
                         page = 1;
                         tmpFileBaseName = Path.GetFileNameWithoutExtension(temp);
-                    } else warnngs.Add("画像の結合に失敗しました。");
+                    } else warnngs.Add(Properties.Resources.FAIL_CONCAT_IMAGES);
                 }
                 return true;
             };
@@ -1275,7 +1279,7 @@ namespace TeX2img {
                     if(tiffconcat(pagelist.Select(d => tmpFileBaseName + "-" + d.ToString() + ".tiff").ToList(), temp1)){ 
                         page = 1;
                         tmpFileBaseName = Path.GetFileNameWithoutExtension(temp);
-                    } else warnngs.Add("画像の結合に失敗しました。");
+                    } else warnngs.Add(Properties.Resources.FAIL_CONCAT_IMAGES);
                 }
                 return true;
             };
@@ -1295,7 +1299,7 @@ namespace TeX2img {
                     if (gifconcat(pagelist.Select(d => tmpFileBaseName + "-" + d.ToString() + ".gif").ToList(), temp1, Properties.Settings.Default.animationDelay, Properties.Settings.Default.animationLoop)) {
                         page = 1;
                         tmpFileBaseName = Path.GetFileNameWithoutExtension(temp);
-                    } else warnngs.Add("画像の結合に失敗しました。");
+                    } else warnngs.Add(Properties.Resources.FAIL_CONCAT_IMAGES);
                 }
                 return true;
             };
@@ -1409,7 +1413,7 @@ namespace TeX2img {
                     }
                 }
                 catch (Exception e) {
-                    if (controller_ != null) controller_.appendOutput("PDFページ数取得に失敗：" + e.Message);
+                    if (controller_ != null) controller_.appendOutput(Properties.Resources.FAIL_PDFPAGES + "\n" + e.Message);
                     return false;
                 }
             }
@@ -1623,10 +1627,7 @@ namespace TeX2img {
                             // プロセスからの読み取りを一時中断するためのlock。
                             // でないと特にCUI時にメッセージが混ざってわけがわからなくなる。
                             lock (syncObj) {
-                                kill = !controller_.askYesorNo(
-                                    freezemsg + "に時間がかかっているようです。\n" +
-                                    "フリーズしている可能性もありますが，このまま実行を続けますか？\n" +
-                                    "続けない場合は，現在実行中のプログラムを強制終了します。");
+                                kill = !controller_.askYesorNo(String.Format(Properties.Resources.FREEZMSG, freezemsg));
                             }
                         } else kill = (Properties.Settings.Default.batchMode == Properties.Settings.BatchMode.Stop);
                     }
@@ -1637,7 +1638,7 @@ namespace TeX2img {
                             System.Threading.Thread.Sleep(500);
                             abort = true;
                         }
-                        if (controller_ != null) controller_.appendOutput("処理を中断しました。\n");
+                        if (controller_ != null) controller_.appendOutput(Properties.Resources.STOPCONVERTMSG + "\n");
                         readThread.EndInvoke(ReadStdOutThread);
                         readThread.EndInvoke(ReadStdErrThread);
                         throw new System.TimeoutException();

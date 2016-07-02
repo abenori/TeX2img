@@ -9,11 +9,11 @@ namespace TeX2img {
         public CUIOutput() { }
 
         public void showPathError(string exeName, string necessary) {
-            Console.WriteLine(exeName + " を起動することができませんでした。\n" + necessary + "がインストールされているか，\n" + exeName + " のパスの設定が正しいかどうか，\n確認してください。");
+            Console.WriteLine(String.Format(Properties.Resources.PATHERROR, exeName, necessary));
         }
 
         public void showExtensionError(string file) {
-            Console.WriteLine(file + ": ファイルの拡張子が不正です。");
+            Console.WriteLine(String.Format(Properties.Resources.INVALID_EXTENSION, file));
         }
 
         public void appendOutput(string log) {
@@ -21,22 +21,18 @@ namespace TeX2img {
         }
 
         public void showGenerateError() {
-            Console.WriteLine("画像生成に失敗しました。\nソースコードにエラーがないか確認してください。");
-        }
-
-        public void showImageMagickError() {
-            Console.WriteLine("ImageMagick がインストールされていないため，画像変換ができませんでした。\nImageMagick を別途インストールしてください。\nインストールされている場合は，パスが通っているかどうか確認してください。");
+            Console.WriteLine(Properties.Resources.GENERATEERROR);
         }
 
         public void scrollOutputTextBoxToEnd() {
         }
 
         public void showUnauthorizedError(string filePath) {
-            Console.WriteLine(filePath + "\nに上書き保存できませんでした。\n一度このファイルを削除してから再試行してください。");
+            Console.WriteLine(String.Format(Properties.Resources.AUTHORIZEDERROR, filePath));
         }
 
         public void showIOError(string filePath) {
-            Console.WriteLine(filePath + "\nが他のアプリケーション開かれているため生成できませんでした。\nこのファイルを開いているアプリケーションを閉じて再試行してください。");
+            Console.WriteLine(String.Format(Properties.Resources.IOERROR, filePath));
         }
 
         public void showError(string msg) {
@@ -51,7 +47,7 @@ namespace TeX2img {
                 case "y": return true;
                 case "n": return false;
                 default:
-                    Console.WriteLine("y または n を入力してください。");
+                    Console.WriteLine(Properties.Resources.PUSHYORN);
                     break;
                 }
             }
@@ -59,11 +55,11 @@ namespace TeX2img {
 
         public void showToolError(string tool) {
             var path = System.IO.Path.Combine(Converter.ShortToolPath, tool);
-            Console.WriteLine(path + @" を起動することができませんでした。" + "\n付属の " + path + " フォルダを消さないでください。");
+            Console.WriteLine(String.Format(Properties.Resources.TOOLERROR, path, Converter.ShortToolPath));
         }
 
         public void errorIgnoredWarning() {
-            Console.WriteLine("コンパイルエラーを無視して画像化を強行しました。\n結果は期待と異なる可能性があります。\nソースを修正しエラーを解決することを推奨します。");
+            Console.WriteLine(Properties.Resources.IGNOREDERRORWARNING);
         }
     }
 }

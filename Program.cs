@@ -19,31 +19,32 @@ namespace TeX2img {
         static bool version = false;
         static bool help = false;
 
-        static OptionSet options = new OptionSet(){
-            {"latex=","LaTeX のパス", val => Properties.Settings.Default.platexPath=val,()=>Properties.Settings.Default.platexPath},
-            {"platex=","/latex と同じ（obsolete）", val => Properties.Settings.Default.platexPath=val},
-            {"dvidriver=","DVI driver のパス",val =>Properties.Settings.Default.dvipdfmxPath=val,()=>Properties.Settings.Default.dvipdfmxPath},
-            {"dvipdfmx=","/dvidriver と同じ（obsolete）",val =>Properties.Settings.Default.dvipdfmxPath=val},
-            {"gs=","Ghostscript のパス",val => Properties.Settings.Default.gsPath = val,()=>Properties.Settings.Default.gsPath},
+        static OptionSet GetOptiontSet() {
+            return new OptionSet(){
+            {"latex=",Properties.Resources.CMDLINE_LATEX, val => Properties.Settings.Default.platexPath=val,()=>Properties.Settings.Default.platexPath},
+            {"platex=",val => Properties.Settings.Default.platexPath=val},
+            {"dvidriver=",Properties.Resources.CMDLINE_DVIDRIVER,val =>Properties.Settings.Default.dvipdfmxPath=val,()=>Properties.Settings.Default.dvipdfmxPath},
+            {"dvipdfmx=",val =>Properties.Settings.Default.dvipdfmxPath=val},
+            {"gs=",Properties.Resources.CMDLINE_GS,val => Properties.Settings.Default.gsPath = val,()=>Properties.Settings.Default.gsPath},
             {"oldgs",
-                "9.14 以前の Ghostscript[-]",
+                Properties.Resources.CMDLINE_OLDGS + "[-]",
                 val => {Properties.Settings.Default.gsDevice = (val != null) ? "epswrite" : "eps2write"; },
                 ()=>Properties.Settings.Default.gsDevice == "epswrite"
             },
-            {"kanji=","文字コード（utf8/sjis/jis/euc/no)",val => {
+            {"kanji=",Properties.Resources.CMDLINE_KANJI,val => {
                 string v = GetStringsFromArray("kanji", val, new string[] { "utf8", "sjis", "jis", "euc", "no" });
                 if(v == "no"){
                     if(Properties.Settings.Default.encode != "_sjis") Properties.Settings.Default.encode = "_utf8";
                 }else Properties.Settings.Default.encode = val;
             },()=>Properties.Settings.Default.encode.StartsWith("_") ? "no" : Properties.Settings.Default.encode},
-            {"guess-compile","LaTeX ソースコンパイル回数を推定[-]",val => Properties.Settings.Default.guessLaTeXCompile = (val != null),()=>Properties.Settings.Default.guessLaTeXCompile},
-            {"num=","LaTeX ソースコンパイルの（最大）回数",(int val) => {Properties.Settings.Default.LaTeXCompileMaxNumber = val;},()=>Properties.Settings.Default.LaTeXCompileMaxNumber},
-            {"resolution=","解像度レベル",(int val) => Properties.Settings.Default.resolutionScale = val,()=>Properties.Settings.Default.resolutionScale},
-            {"left-margin=","左余白",(int val) => Properties.Settings.Default.leftMargin = val,()=>Properties.Settings.Default.leftMargin},
-            {"top-margin=","上余白",(int val) => Properties.Settings.Default.topMargin = val,()=>Properties.Settings.Default.topMargin},
-            {"right-margin=","右余白",(int val) => Properties.Settings.Default.rightMargin = val,()=>Properties.Settings.Default.rightMargin},
-            {"bottom-margin=","下余白",(int val) => Properties.Settings.Default.bottomMargin = val,()=>Properties.Settings.Default.bottomMargin},
-            {"margins=","余白（一括/左右 上下/左 上 右 下）",val=>{
+            {"guess-compile",Properties.Resources.CMDLINE_GUESS_COMPILE + "[-]",val => Properties.Settings.Default.guessLaTeXCompile = (val != null),()=>Properties.Settings.Default.guessLaTeXCompile},
+            {"num=",Properties.Resources.CMDLINE_NUM,(int val) => {Properties.Settings.Default.LaTeXCompileMaxNumber = val;},()=>Properties.Settings.Default.LaTeXCompileMaxNumber},
+            {"resolution=",Properties.Resources.CMDLINE_RESOLUTION,(int val) => Properties.Settings.Default.resolutionScale = val,()=>Properties.Settings.Default.resolutionScale},
+            {"left-margin=",Properties.Resources.CMDLINE_LEFT_MARGIN,(int val) => Properties.Settings.Default.leftMargin = val,()=>Properties.Settings.Default.leftMargin},
+            {"top-margin=",Properties.Resources.CMDLINE_TOP_MARGIN,(int val) => Properties.Settings.Default.topMargin = val,()=>Properties.Settings.Default.topMargin},
+            {"right-margin=",Properties.Resources.CMDLINE_RIGHT_MARGIN,(int val) => Properties.Settings.Default.rightMargin = val,()=>Properties.Settings.Default.rightMargin},
+            {"bottom-margin=",Properties.Resources.CMDLINE_BOTTOM_MARGIN,(int val) => Properties.Settings.Default.bottomMargin = val,()=>Properties.Settings.Default.bottomMargin},
+            {"margins=",Properties.Resources.CMDLINE_MARGINS,val=>{
                 var list = val.Split(new char[] { ' ' }).ToList();
                 list.RemoveAll((s) => (s == ""));
                 try {
@@ -56,25 +57,25 @@ namespace TeX2img {
                         Properties.Settings.Default.topMargin = Int32.Parse(list[1]);
                         Properties.Settings.Default.rightMargin = Int32.Parse(list[2]);
                         Properties.Settings.Default.bottomMargin = Int32.Parse(list[3]);
-                    }else throw new Mono.Options.OptionException("余白の指定が不正です．","margins");
+                    }else throw new Mono.Options.OptionException(Properties.Resources.CMDLINE_ERROR_INVALID_MARGIN,"margins");
                 }
                 catch(FormatException e) {
                     throw new Mono.Options.OptionException(e.Message,"margins");
                 }
             } },
-            {"unit=","余白の単位（bp/px）",val => {
+            {"unit=",Properties.Resources.CMDLINE_UNIT,val => {
                 switch(val){
                 case "bp": Properties.Settings.Default.yohakuUnitBP = true; return;
                 case "px": Properties.Settings.Default.yohakuUnitBP = false; return;
-                default: throw new Mono.Options.OptionException("bp, px のいずれかを指定してください。", "unit");
+                default: throw new Mono.Options.OptionException(Properties.Resources.CMDLINE_ERROR_INVALID_UNIT, "unit");
                 }
             },()=>Properties.Settings.Default.yohakuUnitBP ? "bp" : "px"},
-            {"keep-page-size","ページサイズを維持[-]",val=>Properties.Settings.Default.keepPageSize=(val != null),()=>Properties.Settings.Default.keepPageSize},
+            {"keep-page-size",Properties.Resources.CMDLINE_KEEP_PAGE_SIZE + "[-]",val=>Properties.Settings.Default.keepPageSize=(val != null),()=>Properties.Settings.Default.keepPageSize},
             {"pagebox=",val=>Properties.Settings.Default.pagebox = GetStringsFromArray("pagebox",val,new string[]{"media","crop","bleed","trim","art"})},// hidden
-            {"merge-output-files","PDF / TIFF ファイルを単一ファイルに[-]",val=>Properties.Settings.Default.mergeOutputFiles = (val != null),()=>Properties.Settings.Default.mergeOutputFiles},
-            {"animation-delay=","アニメーションのディレイ（秒）",(double sec)=>{Properties.Settings.Default.animationDelay = (uint)(sec*100);},()=>Properties.Settings.Default.animationDelay/100m},
-            {"animation-loop=","アニメーションのループ回数（0で無限）",(uint val)=>Properties.Settings.Default.animationLoop = val,()=>Properties.Settings.Default.animationLoop},
-            {"background-color=","背景色 指定例： FF0000 , red , \"255 0 0\"",val=> {
+            {"merge-output-files",Properties.Resources.CMDLINE_MERGE_OUTPUT_FILES + "[-]",val=>Properties.Settings.Default.mergeOutputFiles = (val != null),()=>Properties.Settings.Default.mergeOutputFiles},
+            {"animation-delay=",Properties.Resources.CMDLINE_ANIMATION_DELAY,(double sec)=>{Properties.Settings.Default.animationDelay = (uint)(sec*100);},()=>Properties.Settings.Default.animationDelay/100m},
+            {"animation-loop=",Properties.Resources.CMDLINE_ANIMATION_LOOP,(uint val)=>Properties.Settings.Default.animationLoop = val,()=>Properties.Settings.Default.animationLoop},
+            {"background-color=",Properties.Resources.CMDLINE_BACKGROUND_COLOR,val=> {
                 if(val.ToLower() == "transparent") {
                     Properties.Settings.Default.transparentPngFlag = true;
                 }
@@ -88,9 +89,9 @@ namespace TeX2img {
                 }catch(Exception) { }
                 var list = val.Split(new char[] { ' ' }).ToList();
                 list.RemoveAll((s) => (s == ""));
-                if(list.Count == 1)throw new Mono.Options.OptionException("認識できない色名です：" + val,"background-color");
+                if(list.Count == 1)throw new Mono.Options.OptionException(String.Format(Properties.Resources.INVALID_COLOR_NAME,val),"background-color");
                 try {
-                    if(list.Count != 3)throw new Exception("入力が不正です．");
+                    if(list.Count != 3)throw new Exception(Properties.Resources.INVALID_INPUT);
                     Properties.Settings.Default.backgroundColor = System.Drawing.Color.FromArgb(0,
                         Int32.Parse(list[0]),Int32.Parse(list[1]),Int32.Parse(list[2]));
                 }
@@ -98,31 +99,31 @@ namespace TeX2img {
             },()=> {var c = Properties.Settings.Default.backgroundColor;
                 var r = String.Format("{0,2:X2}{1,2:X2}{2,2:X2}",c.R,c.G,c.B);
                 if(c.IsNamedColor)r += " (" + c.Name + ")";
-                if(Properties.Settings.Default.transparentPngFlag)r += " 透過 or 白";
+                if(Properties.Settings.Default.transparentPngFlag)r += " " + Properties.Resources.TRANSPARENT + " or " + Properties.Resources.WHITE;
                 return r; } },
-            {"transparent","透過",val=>Properties.Settings.Default.transparentPngFlag= (val != null) ,()=>Properties.Settings.Default.transparentPngFlag},
-            { "with-text","PDF のテキスト情報を保持[-]",val =>Properties.Settings.Default.outlinedText = !(val != null),()=>!Properties.Settings.Default.outlinedText},
-            {"delete-display-size","SVG の表示寸法を削除[-]",val => Properties.Settings.Default.deleteDisplaySize = (val != null),()=>Properties.Settings.Default.deleteDisplaySize},
-            {"antialias","アンチエイリアス処理[-]",val => Properties.Settings.Default.useMagickFlag = (val != null),()=>Properties.Settings.Default.useMagickFlag},
-            {"low-resolution","低解像度で処理[-]",val => Properties.Settings.Default.useLowResolution = (val!= null),()=>Properties.Settings.Default.useLowResolution},
-            {"ignore-errors","少々のエラーは無視[-]",val => Properties.Settings.Default.ignoreErrorFlag = (val != null),()=>Properties.Settings.Default.ignoreErrorFlag},
-            {"delete-tmpfiles","一時ファイルを削除[-]",val => Properties.Settings.Default.deleteTmpFileFlag = (val != null),()=>Properties.Settings.Default.deleteTmpFileFlag},
-            {"preview","生成ファイルを開く[-]",val => preview = (val != null),()=>preview==null?false:preview.Value},
-            {"embed-source","ソース情報を生成ファイルに保存[-]",val => Properties.Settings.Default.embedTeXSource = (val != null),()=>Properties.Settings.Default.embedTeXSource},
-            {"copy-to-clipboard","生成ファイルをクリップボードにコピー[-]",val =>  Properties.Settings.Default.setFileToClipBoard = (val != null),()=>Properties.Settings.Default.setFileToClipBoard},
-            {"workingdir=","作業ディレクトリ（tmp/file/current）",val=> Properties.Settings.Default.workingDirectory = GetStringsFromArray("workingdir", val, new string[] { "tmp","file","current" }),()=>Properties.Settings.Default.workingDirectory },
-            {"savesettings","設定の保存を行う[-]",val => Properties.Settings.Default.SaveSettings = (val != null),()=>Properties.Settings.Default.SaveSettings},
-            {"quiet","Quiet モード[-]",val => quiet = (val != null),()=>quiet},
-            {"timeout=","タイムアウト時間を設定（秒）", (int val) => {
-                if(val <= 0) throw new Mono.Options.OptionException("タイムアウト時間は 0 より大きい値を指定してください。", "timeout");
+            {"transparent",Properties.Resources.CMDLINE_TRANSPARENT,val=>Properties.Settings.Default.transparentPngFlag= (val != null) ,()=>Properties.Settings.Default.transparentPngFlag},
+            { "with-text",Properties.Resources.CMDLINE_WITH_TEXT + "[-]",val =>Properties.Settings.Default.outlinedText = !(val != null),()=>!Properties.Settings.Default.outlinedText},
+            {"delete-display-size",Properties.Resources.CMDLINE_DELETE_DISPLAY_SIZE + "[-]",val => Properties.Settings.Default.deleteDisplaySize = (val != null),()=>Properties.Settings.Default.deleteDisplaySize},
+            {"antialias",Properties.Resources.CMDLINE_ANTIALIAS + "[-]",val => Properties.Settings.Default.useMagickFlag = (val != null),()=>Properties.Settings.Default.useMagickFlag},
+            {"low-resolution",Properties.Resources.CMDLINE_LOW_RESOLUTION + "[-]",val => Properties.Settings.Default.useLowResolution = (val!= null),()=>Properties.Settings.Default.useLowResolution},
+            {"ignore-errors",Properties.Resources.CMDLINE_IGNORE_ERRORS + "[-]",val => Properties.Settings.Default.ignoreErrorFlag = (val != null),()=>Properties.Settings.Default.ignoreErrorFlag},
+            {"delete-tmpfiles",Properties.Resources.CMDLINE_DELETE_TMPFILES + "[-]",val => Properties.Settings.Default.deleteTmpFileFlag = (val != null),()=>Properties.Settings.Default.deleteTmpFileFlag},
+            {"preview",Properties.Resources.CMDLINE_PREVIEW + "[-]",val => preview = (val != null),()=>preview==null?false:preview.Value},
+            {"embed-source",Properties.Resources.CMDLINE_EMBED_SOURCE + "[-]",val => Properties.Settings.Default.embedTeXSource = (val != null),()=>Properties.Settings.Default.embedTeXSource},
+            {"copy-to-clipboard",Properties.Resources.CMDLINE_COPY_TO_CLIPBOARD + "[-]",val =>  Properties.Settings.Default.setFileToClipBoard = (val != null),()=>Properties.Settings.Default.setFileToClipBoard},
+            {"workingdir=",Properties.Resources.CMDLINE_WORKINGDIR,val=> Properties.Settings.Default.workingDirectory = GetStringsFromArray("workingdir", val, new string[] { "tmp","file","current" }),()=>Properties.Settings.Default.workingDirectory },
+            {"savesettings",Properties.Resources.CMDLINE_SAVESETTINGS + "[-]",val => Properties.Settings.Default.SaveSettings = (val != null),()=>Properties.Settings.Default.SaveSettings},
+            {"quiet",Properties.Resources.CMDLINE_QUIET + "[-]",val => quiet = (val != null),()=>quiet},
+            {"timeout=",Properties.Resources.CMDLINE_TIMEOUT, (int val) => {
+                if(val <= 0) throw new Mono.Options.OptionException(Properties.Resources.CMDLINE_ERROR_INVALID_TIMEOUT, "timeout");
                 Properties.Settings.Default.timeOut = val * 1000;
-            },()=>Properties.Settings.Default.timeOut/1000 + " 秒"},
+            },()=>Properties.Settings.Default.timeOut/1000 + " " + Properties.Resources.SECONDS},
             // TODO: defaultに対応するオプションがあった方がよい？
-            {"batch=","Batch モード（stop/nonstop）", val => {
+            {"batch=",Properties.Resources.CMDLINE_BATCH, val => {
                 switch(val) {
                 case "nonstop": Properties.Settings.Default.batchMode = Properties.Settings.BatchMode.NonStop; break;
                 case "stop": Properties.Settings.Default.batchMode = Properties.Settings.BatchMode.Stop; break;
-                default: throw new Mono.Options.OptionException("stop, nonstop のいずれかを指定してください。", "batch");
+                default: throw new Mono.Options.OptionException(Properties.Resources.CMDLINE_ERROR_INVALID_BATCHTYPE, "batch");
                 }
             },()=>{
                 switch(Properties.Settings.Default.batchMode){
@@ -130,28 +131,39 @@ namespace TeX2img {
                 case Properties.Settings.BatchMode.Stop: return "stop";
                 default: return "deafult";
             }}},
-            {"exit","設定の保存のみを行い終了する", val => {exit = true;}},
-            {"load-defaults","現在の設定をデフォルトに戻す",val => {if(val != null)Properties.Settings.Default.ReloadDefaults();}},
-            {"help","このメッセージを表示する",val => {help = true;}},
-            {"version","バージョン情報を表示する",val => {version = true;}}
+            {"exit",Properties.Resources.CMDLINE_EXIT, val => {exit = true;}},
+            {"load-defaults",Properties.Resources.CMDLINE_LOAD_DEFAULTS,val => {if(val != null)Properties.Settings.Default.ReloadDefaults();}},
+            {"help",Properties.Resources.CMDLINE_HELP,val => {help = true;}},
+            {"version",Properties.Resources.CMDLINE_VERSION,val => {version = true;}},
+            {"language=", "Language (system/ja/en)",val => {
+                switch(val) {
+                    case "system": Properties.Settings.Default.language = "";break;
+                    case "ja": Properties.Settings.Default.language = "ja-JP";break;
+                    case "en": Properties.Settings.Default.language = "en-US";break;
+                    default:throw new Mono.Options.OptionException("","language");
+                }
+                Properties.Settings.SetLanguage(Properties.Settings.Default.language);
+            } }
         };
+        }
 
         static string GetStringsFromArray(string optionname, string val, string[] possibleargs) {
             if (possibleargs.Contains(val)) return val;
-            throw new Mono.Options.OptionException(String.Join(", ", possibleargs) + " のいずれかを指定してください。", optionname);
+            throw new Mono.Options.OptionException(String.Format(Properties.Resources.NOTPOSSIBLEARG, String.Join(", ", possibleargs)), optionname);
         }
 
         static int TeX2imgMain(List<string> cmds) {
             Properties.Settings.Default.SaveSettings = !nogui;
             // オプション解析
             List<string> files;
+            var options = GetOptiontSet();
             try { files = options.Parse(cmds); }
             catch (Mono.Options.OptionException e) {
                 if (e.OptionName != null) {
-                    var msg = "オプション " + e.OptionName + " への入力が不正です";
+                    var msg = String.Format(Properties.Resources.INVALID_INPUT_TO_OPTION, e.OptionName);
                     if (e.Message != "") msg += "：" + e.Message;
                     else msg += "。";
-                    msg += "\nTeX2img" + (nogui ? "c" : "") + ".exe /help によるヘルプを参照してください。";
+                    msg += "\n" + String.Format(Properties.Resources.SEEHELPMSG, "TeX2img" + (nogui ? "c" : "") + ".exe /help");
                     if (nogui) Console.WriteLine(msg);
                     else MessageBox.Show(msg, "TeX2img");
                 }
@@ -170,7 +182,7 @@ namespace TeX2img {
             }
             // CUIモードの引数なしはエラー
             if (nogui && files.Count == 0) {
-                Console.WriteLine("引数がありません。\n");
+                Console.WriteLine(Properties.Resources.NOARGUMENT + "\n");
                 ShowHelp();
                 return -1;
             }
@@ -188,20 +200,20 @@ namespace TeX2img {
             for (int i = 0; i < files.Count / 2; ++i) {
                 var chkconv = new Converter(null, files[2 * i], files[2 * i + 1]);
                 if (!chkconv.CheckInputFormat()) {
-                    err += "ファイル " + files[2 * i] + " の拡張子は .tex ではありません。\n";
+                    err += String.Format(Properties.Resources.INVALID_EXTENSION, files[2 * i]) + "\n";
                 }
                 if (!File.Exists(files[2 * i])) {
-                    err += "ファイル " + files[2 * i] + " は見つかりませんでした。";
-                    if (files[2 * i].StartsWith("-") || files[2 * i].StartsWith("/")) err += "オプション名のミスの可能性もあります。";
+                    err += String.Format(Properties.Resources.NOTEXIST, files[2 * i]);
+                    if (files[2 * i].StartsWith("-") || files[2 * i].StartsWith("/")) err += Properties.Resources.MAY_BE_OPTION;
                     err += "\n";
                 }
                 if (!chkconv.CheckFormat()) {
-                    err += "ファイル " + files[2 * i + 1] + " の拡張子は " + String.Join("/", Converter.imageExtensions) + " のいずれでもありません。\n";
+                    err += String.Format(Properties.Resources.INVALID_EXTENSION, files[2 * i + 1]) + "\n";
                 }
             }
             if (files.Count % 2 != 0) {
-                err += "ファイル " + files[files.Count - 1] + " に対応する出力ファイルが指定されていません。";
-                if (files[files.Count - 1].StartsWith("-") || files[files.Count - 1].StartsWith("/")) err += "オプション名のミスの可能性もあります。";
+                err += String.Format(Properties.Resources.NOOUTPUT_FILE, files[files.Count - 1]);
+                if (files[files.Count - 1].StartsWith("-") || files[files.Count - 1].StartsWith("/")) err += Properties.Resources.MAY_BE_OPTION;
                 err += "\n";
             }
             if (err != "") {
@@ -237,6 +249,10 @@ namespace TeX2img {
             }
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
+            // ロケール
+            if(Properties.Settings.Default.language != "") {
+                Properties.Settings.SetLanguage(Properties.Settings.Default.language);
+            }
 
             // コマンドライン解析
             var cmds = new List<string>(Environment.GetCommandLineArgs());
@@ -264,7 +280,7 @@ namespace TeX2img {
             chkfiles = chkfiles.Where(f => !File.Exists(Path.Combine(mydir, f))).ToList();
             string chkfile_errmsg = null;
             if (chkfiles.Count != 0) {
-                chkfile_errmsg = "以下のファイルが見つからないため，起動することができませんでした。\n" + String.Join("\n", chkfiles.ToArray());
+                chkfile_errmsg = Properties.Resources.NOSYSTEMFILE + "\n" + String.Join("\n", chkfiles.ToArray());
             }
             if (chkfile_errmsg != null) {
                 if (nogui) Console.WriteLine(chkfile_errmsg);
@@ -281,11 +297,7 @@ namespace TeX2img {
             // メイン
 #if DEBUG
             int exitcode;
-            try { exitcode = TeX2imgMain(cmds); }
-            catch (Exception e) {
-                Console.WriteLine(e.Message + e.StackTrace.ToString());
-                throw;
-            }
+            exitcode = TeX2imgMain(cmds);
 #else
             var exitcode = TeX2imgMain(cmds);
 #endif
@@ -300,14 +312,14 @@ namespace TeX2img {
                 if (Properties.Settings.Default.gsPath == "") Properties.Settings.Default.gsPath = Properties.Settings.Default.GuessGsPath();
                 if (Properties.Settings.Default.platexPath == "" || Properties.Settings.Default.dvipdfmxPath == "" || Properties.Settings.Default.gsPath == "") {
                     if (!nomsg) {
-                        var msg = "LaTeX / DVI driver / Ghostscript のパス設定に失敗しました。\n環境設定画面で手動で設定してください。";
+                        var msg = Properties.Resources.FAIL_INIT_PATH;
                         if (nogui) Console.WriteLine(msg + "\n");
                         else MessageBox.Show(msg, "TeX2img");
                         (new SettingForm()).ShowDialog();
                     }
                 } else {
                     if (!nomsg) {
-                        var msg = String.Format("TeX 関連プログラムのパスを\n {0}\n {1}\n {2}\nに設定しました。\n違っている場合は環境設定画面で手動で変更してください。", Properties.Settings.Default.platexPath, Properties.Settings.Default.dvipdfmxPath, Properties.Settings.Default.gsPath);
+                        var msg = String.Format(Properties.Resources.INIT_PATH, Properties.Settings.Default.platexPath, Properties.Settings.Default.dvipdfmxPath, Properties.Settings.Default.gsPath);
                         if (nogui) Console.WriteLine(msg + "\n");
                         else MessageBox.Show(msg, "TeX2img");
                     }
@@ -326,14 +338,14 @@ namespace TeX2img {
         static int CUIExec(bool q, List<string> files) {
             IOutputController Output = new CUIOutput(q);
             if (files.Count == 0) {
-                Console.WriteLine("入力ファイルが存在しません。");
+                Console.WriteLine(Properties.Resources.NOINPUTFILE);
                 return -5;
             }
             try {
                 Directory.CreateDirectory(Path.GetTempPath());
             }
             catch (Exception) {
-                Console.WriteLine("一時フォルダ\n" + Path.GetTempPath() + "の作成に失敗しました。環境変数 TMP 及び TEMP を確認してください。");
+                Console.WriteLine(String.Format(Properties.Resources.FAIL_TMPFOLDER, Path.GetTempPath()));
                 return -7;
             }
 
@@ -348,7 +360,7 @@ namespace TeX2img {
                 else dir = Path.GetTempPath();
                 string tmpTeXFileName = TempFilesDeleter.GetTempFileName(Path.GetExtension(file), dir);
                 if (tmpTeXFileName == null) {
-                    Console.WriteLine("一時ファイル名の決定に失敗しました。作業フォルダ：\n" + Path.GetTempPath() + "\nを確認してください。");
+                    Console.WriteLine(String.Format(Properties.Resources.FAIL_TMPFILE, Path.GetTempPath()));
                     return -6;
                 }
                 tmpTeXFileName = Path.Combine(dir, tmpTeXFileName);
@@ -378,8 +390,9 @@ namespace TeX2img {
 
         static void ShowHelp() {
             StringWriter sw = new StringWriter();
+            var options = GetOptiontSet();
             options.WriteOptionDescriptions(sw);
-            var msg = "使い方：TeX2img" + (nogui ? "c" : "") + ".exe [Options] Input Output\n\n" + sw.ToString();
+            var msg = Properties.Resources.USAGE + "：TeX2img" + (nogui ? "c" : "") + ".exe [Options] Input Output\n\n" + sw.ToString();
             //if(msg.EndsWith("\n")) msg = msg.Remove(msg.Length - 1);
             if (nogui) Console.WriteLine(msg);
             else MessageBox.Show(msg, "TeX2img");
