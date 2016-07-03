@@ -117,36 +117,113 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <assembly alias="mscorlib" name="mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="TemplateListBox.ItemHeight" type="System.Int32, mscorlib">
+    <value>12</value>
+  </data>
+  <assembly alias="System.Drawing" name="System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  <data name="TemplateListBox.Location" type="System.Drawing.Point, System.Drawing">
+    <value>7, 8</value>
+  </data>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="TemplateListBox.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>2, 2, 2, 2</value>
+  </data>
+  <data name="TemplateListBox.Size" type="System.Drawing.Size, System.Drawing">
+    <value>132, 172</value>
+  </data>
+  <data name="DeleteButton.Location" type="System.Drawing.Point, System.Drawing">
+    <value>154, 59</value>
+  </data>
+  <data name="DeleteButton.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>2, 2, 2, 2</value>
+  </data>
+  <data name="DeleteButton.Size" type="System.Drawing.Size, System.Drawing">
+    <value>127, 23</value>
+  </data>
   <data name="DeleteButton.Text" xml:space="preserve">
     <value>削除</value>
+  </data>
+  <data name="ShowButton.Location" type="System.Drawing.Point, System.Drawing">
+    <value>154, 86</value>
+  </data>
+  <data name="ShowButton.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>2, 2, 2, 2</value>
+  </data>
+  <data name="ShowButton.Size" type="System.Drawing.Size, System.Drawing">
+    <value>127, 22</value>
   </data>
   <data name="ShowButton.Text" xml:space="preserve">
     <value>中身を表示</value>
   </data>
+  <data name="OKButton.Location" type="System.Drawing.Point, System.Drawing">
+    <value>154, 155</value>
+  </data>
+  <data name="OKButton.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>2, 2, 2, 2</value>
+  </data>
+  <data name="OKButton.Size" type="System.Drawing.Size, System.Drawing">
+    <value>61, 24</value>
+  </data>
+  <data name="Cancel_Button.Location" type="System.Drawing.Point, System.Drawing">
+    <value>219, 155</value>
+  </data>
+  <data name="Cancel_Button.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>2, 2, 2, 2</value>
+  </data>
+  <data name="Cancel_Button.Size" type="System.Drawing.Size, System.Drawing">
+    <value>62, 24</value>
+  </data>
   <data name="Cancel_Button.Text" xml:space="preserve">
     <value>キャンセル</value>
+  </data>
+  <data name="BackToDefaultButton.Location" type="System.Drawing.Point, System.Drawing">
+    <value>154, 112</value>
+  </data>
+  <data name="BackToDefaultButton.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>2, 2, 2, 2</value>
+  </data>
+  <data name="BackToDefaultButton.Size" type="System.Drawing.Size, System.Drawing">
+    <value>127, 24</value>
   </data>
   <data name="BackToDefaultButton.Text" xml:space="preserve">
     <value>デフォルトに戻す  ▶</value>
   </data>
+  <data name="AddNewButton.Location" type="System.Drawing.Point, System.Drawing">
+    <value>154, 8</value>
+  </data>
+  <data name="AddNewButton.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>2, 2, 2, 2</value>
+  </data>
+  <data name="AddNewButton.Size" type="System.Drawing.Size, System.Drawing">
+    <value>127, 21</value>
+  </data>
   <data name="AddNewButton.Text" xml:space="preserve">
     <value>テンプレートの追加  ▶</value>
+  </data>
+  <data name="SaveButton.Location" type="System.Drawing.Point, System.Drawing">
+    <value>154, 33</value>
+  </data>
+  <data name="SaveButton.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>2, 2, 2, 2</value>
+  </data>
+  <data name="SaveButton.Size" type="System.Drawing.Size, System.Drawing">
+    <value>127, 23</value>
   </data>
   <data name="SaveButton.Text" xml:space="preserve">
     <value>テンプレートの上書き ▶</value>
   </data>
-  <assembly alias="System.Drawing" name="System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="AddTemplateContextMenu.Size" type="System.Drawing.Size, System.Drawing">
-    <value>268, 64</value>
+    <value>221, 48</value>
   </data>
   <data name="fromCurrentPreambleToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>267, 30</value>
+    <value>220, 22</value>
   </data>
   <data name="fromCurrentPreambleToolStripMenuItem.Text" xml:space="preserve">
     <value>現在のプリアンブルから...</value>
   </data>
   <data name="fromFileToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>267, 30</value>
+    <value>220, 22</value>
   </data>
   <data name="fromFileToolStripMenuItem.Text" xml:space="preserve">
     <value>ファイルから...</value>
@@ -158,19 +235,25 @@
     <value>読み込むソースファイルを指定してください。</value>
   </data>
   <data name="restoreDefaultTemplatesToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>296, 30</value>
+    <value>232, 22</value>
   </data>
   <data name="restoreDefaultTemplatesToolStripMenuItem.Text" xml:space="preserve">
     <value>初期テンプレート内容を復元</value>
   </data>
   <data name="initializeTheListToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>296, 30</value>
+    <value>232, 22</value>
   </data>
   <data name="initializeTheListToolStripMenuItem.Text" xml:space="preserve">
     <value>一覧の初期化</value>
   </data>
   <data name="backToDefaultContextMenu.Size" type="System.Drawing.Size, System.Drawing">
-    <value>297, 97</value>
+    <value>233, 70</value>
+  </data>
+  <data name="$this.AutoScaleDimensions" type="System.Drawing.SizeF, System.Drawing">
+    <value>6, 12</value>
+  </data>
+  <data name="$this.ClientSize" type="System.Drawing.Size, System.Drawing">
+    <value>289, 187</value>
   </data>
   <data name="$this.Icon" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>

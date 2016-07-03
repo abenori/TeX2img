@@ -113,11 +113,13 @@
             // 
             resources.ApplyResources(this.fromCurrentPreambleToolStripMenuItem, "fromCurrentPreambleToolStripMenuItem");
             this.fromCurrentPreambleToolStripMenuItem.Name = "fromCurrentPreambleToolStripMenuItem";
+            this.fromCurrentPreambleToolStripMenuItem.Click += new System.EventHandler(this.fromCurrentPreambleToolStripMenuItem_Click);
             // 
             // fromFileToolStripMenuItem
             // 
             resources.ApplyResources(this.fromFileToolStripMenuItem, "fromFileToolStripMenuItem");
             this.fromFileToolStripMenuItem.Name = "fromFileToolStripMenuItem";
+            this.fromFileToolStripMenuItem.Click += new System.EventHandler(this.fromFileToolStripMenuItem_Click);
             // 
             // openTeXSourceDialog
             // 
@@ -136,11 +138,13 @@
             // 
             resources.ApplyResources(this.restoreDefaultTemplatesToolStripMenuItem, "restoreDefaultTemplatesToolStripMenuItem");
             this.restoreDefaultTemplatesToolStripMenuItem.Name = "restoreDefaultTemplatesToolStripMenuItem";
+            this.restoreDefaultTemplatesToolStripMenuItem.Click += new System.EventHandler(this.restoreDefaultTemplatesToolStripMenuItem_Click);
             // 
             // initializeTheListToolStripMenuItem
             // 
             resources.ApplyResources(this.initializeTheListToolStripMenuItem, "initializeTheListToolStripMenuItem");
             this.initializeTheListToolStripMenuItem.Name = "initializeTheListToolStripMenuItem";
+            this.initializeTheListToolStripMenuItem.Click += new System.EventHandler(this.initializeTheListToolStripMenuItem_Click);
             // 
             // ManageTemplateDialog
             // 

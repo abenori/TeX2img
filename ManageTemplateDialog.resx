@@ -117,13 +117,6 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <assembly alias="System.Drawing" name="System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
-  <data name="Cancel_Button.Size" type="System.Drawing.Size, System.Drawing">
-    <value>103, 36</value>
-  </data>
-  <data name="&gt;&gt;DeleteButton.ZOrder" xml:space="preserve">
-    <value>8</value>
-  </data>
   <data name="AddNewButton.Text" xml:space="preserve">
     <value>Add template  ▶</value>
   </data>
@@ -140,6 +133,7 @@
   <data name="Cancel_Button.Text" xml:space="preserve">
     <value>Cancel</value>
   </data>
+  <assembly alias="System.Drawing" name="System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="fromFileToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
     <value>290, 30</value>
   </data>
@@ -148,6 +142,9 @@
   </data>
   <data name="fromCurrentPreambleToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
     <value>290, 30</value>
+  </data>
+  <data name="&gt;&gt;openTeXSourceDialog.Name" xml:space="preserve">
+    <value>openTeXSourceDialog</value>
   </data>
   <data name="&gt;&gt;fromFileToolStripMenuItem.Name" xml:space="preserve">
     <value>fromFileToolStripMenuItem</value>
@@ -160,9 +157,6 @@
   </data>
   <data name="&gt;&gt;Cancel_Button.Name" xml:space="preserve">
     <value>Cancel_Button</value>
-  </data>
-  <data name="&gt;&gt;ShowButton.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;fromFileToolStripMenuItem.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
@@ -180,8 +174,8 @@
   <data name="Cancel_Button.TabIndex" type="System.Int32, mscorlib">
     <value>7</value>
   </data>
-  <data name="&gt;&gt;OKButton.Parent" xml:space="preserve">
-    <value>$this</value>
+  <data name="$this.AutoScaleDimensions" type="System.Drawing.SizeF, System.Drawing">
+    <value>10, 18</value>
   </data>
   <data name="&gt;&gt;BackToDefaultButton.Name" xml:space="preserve">
     <value>BackToDefaultButton</value>
@@ -249,6 +243,9 @@
   <data name="&gt;&gt;SaveButton.Name" xml:space="preserve">
     <value>SaveButton</value>
   </data>
+  <data name="SaveButton.Size" type="System.Drawing.Size, System.Drawing">
+    <value>212, 34</value>
+  </data>
   <data name="BackToDefaultButton.Size" type="System.Drawing.Size, System.Drawing">
     <value>212, 36</value>
   </data>
@@ -257,9 +254,6 @@
   </data>
   <data name="SaveButton.Location" type="System.Drawing.Point, System.Drawing">
     <value>257, 50</value>
-  </data>
-  <data name="&gt;&gt;AddTemplateContextMenu.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ContextMenuStrip, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="AddTemplateContextMenu.Size" type="System.Drawing.Size, System.Drawing">
     <value>291, 64</value>
@@ -282,11 +276,8 @@
   <data name="DeleteButton.Location" type="System.Drawing.Point, System.Drawing">
     <value>257, 88</value>
   </data>
-  <data name="AddNewButton.Size" type="System.Drawing.Size, System.Drawing">
-    <value>212, 32</value>
-  </data>
-  <data name="&gt;&gt;$this.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Form, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="ShowButton.Text" xml:space="preserve">
+    <value>Show template</value>
   </data>
   <data name="ShowButton.Location" type="System.Drawing.Point, System.Drawing">
     <value>257, 129</value>
@@ -309,9 +300,6 @@
   <data name="&gt;&gt;SaveButton.Parent" xml:space="preserve">
     <value>$this</value>
   </data>
-  <data name="$this.AutoScaleDimensions" type="System.Drawing.SizeF, System.Drawing">
-    <value>10, 18</value>
-  </data>
   <data name="DeleteButton.TabIndex" type="System.Int32, mscorlib">
     <value>4</value>
   </data>
@@ -329,6 +317,9 @@
   </data>
   <data name="&gt;&gt;restoreDefaultTemplatesToolStripMenuItem.Name" xml:space="preserve">
     <value>restoreDefaultTemplatesToolStripMenuItem</value>
+  </data>
+  <data name="backToDefaultContextMenu.Size" type="System.Drawing.Size, System.Drawing">
+    <value>301, 64</value>
   </data>
   <data name="&gt;&gt;DeleteButton.Parent" xml:space="preserve">
     <value>$this</value>
@@ -5110,7 +5101,7 @@
   <data name="&gt;&gt;OKButton.ZOrder" xml:space="preserve">
     <value>6</value>
   </data>
-  <data name="&gt;&gt;TemplateListBox.Parent" xml:space="preserve">
+  <data name="&gt;&gt;OKButton.Parent" xml:space="preserve">
     <value>$this</value>
   </data>
   <data name="SaveButton.TabIndex" type="System.Int32, mscorlib">
@@ -5122,14 +5113,20 @@
   <data name="&gt;&gt;backToDefaultContextMenu.Type" xml:space="preserve">
     <value>System.Windows.Forms.ContextMenuStrip, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="$this.Text" xml:space="preserve">
-    <value>Manage Templates</value>
+  <data name="&gt;&gt;fromCurrentPreambleToolStripMenuItem.Name" xml:space="preserve">
+    <value>fromCurrentPreambleToolStripMenuItem</value>
+  </data>
+  <data name="&gt;&gt;DeleteButton.ZOrder" xml:space="preserve">
+    <value>8</value>
   </data>
   <data name="&gt;&gt;OKButton.Type" xml:space="preserve">
     <value>System.Windows.Forms.Button, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;restoreDefaultTemplatesToolStripMenuItem.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="OKButton.Text" xml:space="preserve">
+    <value>OK</value>
   </data>
   <data name="&gt;&gt;TemplateListBox.ZOrder" xml:space="preserve">
     <value>9</value>
@@ -5143,11 +5140,11 @@
   <data name="&gt;&gt;OKButton.Name" xml:space="preserve">
     <value>OKButton</value>
   </data>
-  <data name="ShowButton.Text" xml:space="preserve">
-    <value>Show template</value>
+  <data name="&gt;&gt;TemplateListBox.Parent" xml:space="preserve">
+    <value>$this</value>
   </data>
-  <data name="backToDefaultContextMenu.Size" type="System.Drawing.Size, System.Drawing">
-    <value>301, 64</value>
+  <data name="Cancel_Button.Size" type="System.Drawing.Size, System.Drawing">
+    <value>103, 36</value>
   </data>
   <data name="&gt;&gt;Cancel_Button.ZOrder" xml:space="preserve">
     <value>5</value>
@@ -5155,32 +5152,38 @@
   <data name="&gt;&gt;openTeXSourceDialog.Type" xml:space="preserve">
     <value>System.Windows.Forms.OpenFileDialog, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="ShowButton.TabIndex" type="System.Int32, mscorlib">
-    <value>5</value>
+  <data name="$this.Text" xml:space="preserve">
+    <value>Manage Templates</value>
   </data>
   <data name="restoreDefaultTemplatesToolStripMenuItem.Text" xml:space="preserve">
     <value>Restore default templates</value>
   </data>
-  <data name="&gt;&gt;fromCurrentPreambleToolStripMenuItem.Name" xml:space="preserve">
-    <value>fromCurrentPreambleToolStripMenuItem</value>
+  <data name="&gt;&gt;AddTemplateContextMenu.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ContextMenuStrip, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="ShowButton.TabIndex" type="System.Int32, mscorlib">
+    <value>5</value>
   </data>
   <data name="$this.ClientSize" type="System.Drawing.Size, System.Drawing">
     <value>482, 280</value>
   </data>
-  <data name="OKButton.Text" xml:space="preserve">
-    <value>OK</value>
+  <data name="&gt;&gt;$this.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Form, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="$this.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>2, 2, 2, 2</value>
   </data>
   <data name="&gt;&gt;BackToDefaultButton.Type" xml:space="preserve">
     <value>System.Windows.Forms.Button, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="SaveButton.Size" type="System.Drawing.Size, System.Drawing">
-    <value>212, 34</value>
+  <data name="AddNewButton.Size" type="System.Drawing.Size, System.Drawing">
+    <value>212, 32</value>
   </data>
   <data name="&gt;&gt;DeleteButton.Type" xml:space="preserve">
     <value>System.Windows.Forms.Button, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;openTeXSourceDialog.Name" xml:space="preserve">
-    <value>openTeXSourceDialog</value>
+  <data name="&gt;&gt;ShowButton.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;TemplateListBox.Name" xml:space="preserve">
     <value>TemplateListBox</value>
