@@ -311,19 +311,27 @@ rv["upLaTeX + dvips"] = @"%latex: uplatex
         }
 
         public static System.Globalization.CultureInfo SystemDefaultCaltureInfo;
+        public static System.Globalization.CultureInfo CurrentCulture;
         public static void SetLanguage(string lang) {
             if (lang == "") {
                 System.Threading.Thread.CurrentThread.CurrentCulture = SystemDefaultCaltureInfo;
-            }else {
+                System.Threading.Thread.CurrentThread.CurrentUICulture = SystemDefaultCaltureInfo;
+                CurrentCulture = SystemDefaultCaltureInfo;
+            } else {
                 var cultures = System.Globalization.CultureInfo.GetCultures(System.Globalization.CultureTypes.AllCultures);
                 foreach(var c in cultures) {
                     if (c.Name == lang) {
-                        System.Threading.Thread.CurrentThread.CurrentUICulture = c;System.Threading.Thread.CurrentThread.CurrentUICulture = c;
+                        System.Threading.Thread.CurrentThread.CurrentUICulture = c;
                         System.Threading.Thread.CurrentThread.CurrentCulture = c;
+                        CurrentCulture = c;
                         return;
                     }
                 }
             }
+        }
+        public static void SetCurrentLanguage() {
+            System.Threading.Thread.CurrentThread.CurrentCulture = CurrentCulture;
+            System.Threading.Thread.CurrentThread.CurrentUICulture = CurrentCulture;
         }
     }
 }

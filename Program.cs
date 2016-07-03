@@ -161,8 +161,7 @@ namespace TeX2img {
             catch (Mono.Options.OptionException e) {
                 if (e.OptionName != null) {
                     var msg = String.Format(Properties.Resources.INVALID_INPUT_TO_OPTION, e.OptionName);
-                    if (e.Message != "") msg += "：" + e.Message;
-                    else msg += "。";
+                    if (e.Message != "") msg += " : " + e.Message;
                     msg += "\n" + String.Format(Properties.Resources.SEEHELPMSG, "TeX2img" + (nogui ? "c" : "") + ".exe /help");
                     if (nogui) Console.WriteLine(msg);
                     else MessageBox.Show(msg, "TeX2img");
@@ -250,9 +249,7 @@ namespace TeX2img {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             // ロケール
-            if(Properties.Settings.Default.language != "") {
-                Properties.Settings.SetLanguage(Properties.Settings.Default.language);
-            }
+            Properties.Settings.SetLanguage(Properties.Settings.Default.language);
 
             // コマンドライン解析
             var cmds = new List<string>(Environment.GetCommandLineArgs());
@@ -392,7 +389,7 @@ namespace TeX2img {
             StringWriter sw = new StringWriter();
             var options = GetOptiontSet();
             options.WriteOptionDescriptions(sw);
-            var msg = Properties.Resources.USAGE + "：TeX2img" + (nogui ? "c" : "") + ".exe [Options] Input Output\n\n" + sw.ToString();
+            var msg = Properties.Resources.USAGE + ": TeX2img" + (nogui ? "c" : "") + ".exe [Options] Input Output\n\n" + sw.ToString();
             //if(msg.EndsWith("\n")) msg = msg.Remove(msg.Length - 1);
             if (nogui) Console.WriteLine(msg);
             else MessageBox.Show(msg, "TeX2img");

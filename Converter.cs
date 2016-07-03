@@ -1603,6 +1603,7 @@ namespace TeX2img {
             proc.Start();
             object syncObj = new object();
             var readThread = new Action<StreamReader, Action<string>>((sr, action) => {
+                Properties.Settings.SetCurrentLanguage();
                 try {
                     while (!sr.EndOfStream) {
                         if (abort) return;

@@ -56,6 +56,7 @@ namespace TeX2img {
         }
 
         void ReadFromStdOutput() {
+			Properties.Settings.SetCurrentLanguage();
             while (true) {
                 var b = process.StandardOutput.BaseStream.ReadByte();
                 if (b == -1) {

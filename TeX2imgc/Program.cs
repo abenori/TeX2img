@@ -40,7 +40,7 @@ namespace TeX2imgc {
                 proc.OutputDataReceived += ((s, e) => Console.WriteLine(e.Data));
                 proc.ErrorDataReceived += ((s, e) => Console.Error.WriteLine(e.Data));
                 if(!proc.Start()) {
-                    Console.WriteLine("TeX2img.exe の実行に失敗しました．");
+                    Console.WriteLine("Cannot execute TeX2img.exe.");
                     Environment.ExitCode = -1;
                     return;
                 }

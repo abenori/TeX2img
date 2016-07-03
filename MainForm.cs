@@ -285,6 +285,7 @@ namespace TeX2img {
 
         Converter converter = null;// 実行中でなければnull
         private void convertWorker_DoWork(object sender, DoWorkEventArgs e) {
+            Properties.Settings.SetCurrentLanguage();
             try {
                 Directory.CreateDirectory(Path.GetTempPath());
             }

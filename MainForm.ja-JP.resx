@@ -262,6 +262,9 @@
   <data name="InputFromTextboxRadioButton.Text" xml:space="preserve">
     <value>TeX コードを直接入力（ \begin{document} ～ \end{document} の内部 ）</value>
   </data>
+  <data name="groupBox1.Text" xml:space="preserve">
+    <value>入力設定</value>
+  </data>
   <data name="OutputBrowseButton.Text" xml:space="preserve">
     <value>参照...</value>
   </data>
