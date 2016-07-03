@@ -118,10 +118,12 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="AUTHORIZEDERROR" xml:space="preserve">
-    <value>{0}\nに保存できませんでした。</value>
+    <value>{0}
+に保存できませんでした。</value>
   </data>
   <data name="GENERATEERROR" xml:space="preserve">
-    <value>画像生成に失敗しました。\nソースコードにエラーがないか確認してください。</value>
+    <value>画像生成に失敗しました。
+ソースコードにエラーがないか確認してください。</value>
   </data>
   <data name="INVALID_EXTENSION" xml:space="preserve">
     <value>{0}: ファイルの拡張子が不正です。</value>
@@ -130,19 +132,29 @@
     <value>以下のファイルが見つからないため，起動することができませんでした。</value>
   </data>
   <data name="PATHERROR" xml:space="preserve">
-    <value>{0} を起動することができませんでした。\n {1} のパスの設定が正しいかどうか，\n確認してください。</value>
+    <value>{0} を起動することができませんでした。
+{1} のパスの設定が正しいかどうか，確認してください。</value>
   </data>
   <data name="IOERROR" xml:space="preserve">
-    <value>{0}\nが他のアプリケーション開かれているため生成できませんでした。\nこのファイルを開いているアプリケーションを閉じて再試行してください。</value>
+    <value>{0}
+が他のアプリケーション開かれているため生成できませんでした。
+このファイルを開いているアプリケーションを閉じて再試行してください。</value>
   </data>
   <data name="ANALYZESOURCEERROR" xml:space="preserve">
-    <value>TeX ソースファイルの解析に失敗しました。\n\\begin{document} や \\end{document} 等が正しく入力されているか確認してください。</value>
+    <value>TeX ソースファイルの解析に失敗しました。
+\begin{document} や \end{document} 等が正しく入力されているか確認してください。</value>
   </data>
   <data name="CHECK_ENCODEMSG" xml:space="preserve">
-    <value>設定されている文字コードは\n{0}\nですが，読み込まれるファイルは\n{1}\nと推定されました。推定の\n{0}\nを用いてもよろしいですか？</value>
+    <value>設定されている文字コードは
+{0}
+ですが，読み込まれるファイルは
+{1}
+と推定されました。推定の
+{0}を用いてもよろしいですか？</value>
   </data>
   <data name="DETECTERROR" xml:space="preserve">
-    <value>エラーが発生しました。しばらくしてからもう一度試してみてください。\n{0}</value>
+    <value>エラーが発生しました。しばらくしてからもう一度試してみてください。
+{0}</value>
   </data>
   <data name="EMBED_IS_ONLY_NTFS" xml:space="preserve">
     <value>NTFS ファイルシステム以外ではソースファイルの埋め込みはサポートされていません。</value>
@@ -154,28 +166,36 @@
     <value>失敗</value>
   </data>
   <data name="FAIL_OPEN" xml:space="preserve">
-    <value>{0}\nが開けません．</value>
+    <value>{0}
+が開けません．</value>
   </data>
   <data name="FAIL_TMPFILE" xml:space="preserve">
     <value>一時ファイルの生成に失敗しました。作業フォルダ {0} を確認してください．</value>
   </data>
   <data name="FAIL_TMPFOLDER" xml:space="preserve">
-    <value>一時フォルダ\n{0}\nの作成に失敗しました。環境変数 TMP 及び TEMP を確認してください。</value>
+    <value>一時フォルダ
+{0}
+の作成に失敗しました。環境変数 TMP 及び TEMP を確認してください。</value>
   </data>
   <data name="IGNOREDERRORWARNING" xml:space="preserve">
-    <value>コンパイルエラーを無視して画像化を強行しました。\n結果は期待と異なる可能性があります。\nソースを修正しエラーを解決することを推奨します。</value>
+    <value>コンパイルエラーを無視して画像化を強行しました。
+結果は期待と異なる可能性があります。
+ソースを修正しエラーを解決することを推奨します。</value>
   </data>
   <data name="IMPORTDIALOG_FILTER" xml:space="preserve">
     <value>TeX ソースファイル (*.tex)|*.tex|画像ファイル ({0})|{1}|全てのファイル (*.*)|*.*</value>
   </data>
   <data name="IMPORTMSG" xml:space="preserve">
-    <value>ファイルをインポートします。\n現在のプリアンブル及び編集中のソースは破棄されます。\nよろしいですか？</value>
+    <value>ファイルをインポートします。
+現在のプリアンブル及び編集中のソースは破棄されます。
+よろしいですか？</value>
   </data>
   <data name="NOTEXIST" xml:space="preserve">
     <value>{0}が存在しません。</value>
   </data>
   <data name="NO_EMBEDDED_SOURCE" xml:space="preserve">
-    <value>{0}\nにはソース情報がないようです。</value>
+    <value>{0}
+にはソース情報がないようです。</value>
   </data>
   <data name="ONLY_INPUTMODE" xml:space="preserve">
     <value>TeX コード直接入力時のみ利用可能です。</value>
@@ -187,7 +207,8 @@
     <value>中断</value>
   </data>
   <data name="TOOLERROR" xml:space="preserve">
-    <value>"{0} を起動することができませんでした。\n付属の {1} フォルダを消さないでください。</value>
+    <value>"{0} を起動することができませんでした。
+付属の {1} フォルダを消さないでください。</value>
   </data>
   <data name="WARNING" xml:space="preserve">
     <value>警告</value>
@@ -229,7 +250,9 @@
     <value>生成された PDF のページ数の取得に失敗。</value>
   </data>
   <data name="FREEZMSG" xml:space="preserve">
-    <value>{0} に時間がかかっているようです。\nフリーズしている可能性もありますが，このまま実行を続けますか？\n続けない場合は，現在実行中のプログラムを強制終了します。</value>
+    <value>{0} に時間がかかっているようです。
+フリーズしている可能性もありますが，このまま実行を続けますか？
+続けない場合は，現在実行中のプログラムを強制終了します。</value>
   </data>
   <data name="GET_BOUNDINGBOX" xml:space="preserve">
     <value>BoundingBox の取得</value>
@@ -256,10 +279,13 @@
     <value>太字</value>
   </data>
   <data name="CANNOT_OPEN_WORKDIR" xml:space="preserve">
-    <value>作業フォルダ\n{0}\nを開けませんでした．環境変数 TMP 及び TEMP を確認してください．</value>
+    <value>作業フォルダ
+{0}
+を開けませんでした．環境変数 TMP 及び TEMP を確認してください．</value>
   </data>
   <data name="CHANGE_CURRENTPREAMBLE" xml:space="preserve">
-    <value>現在のプリアンブルを以下の内容に変更します。よろしいですか？\n{0}</value>
+    <value>現在のプリアンブルを以下の内容に変更します。よろしいですか？
+{0}</value>
   </data>
   <data name="DELETEMSG" xml:space="preserve">
     <value>{0} を削除します。よろしいですか？</value>
@@ -301,16 +327,20 @@
     <value>{0} に現在のプリアンブルを上書きします。よろしいですか？</value>
   </data>
   <data name="RESTORETEMPLATEMSG" xml:space="preserve">
-    <value>{0}\nの中身を元に戻します。よろしいですか？</value>
+    <value>{0}
+の中身を元に戻します。よろしいですか？</value>
   </data>
   <data name="RESTORETEMPLATE_COMPLETEMSG" xml:space="preserve">
-    <value>{0}\nの中身を元に戻し，それ以外を削除します。よろしいですか？</value>
+    <value>{0}
+の中身を元に戻し，それ以外を削除します。よろしいですか？</value>
   </data>
   <data name="SAVE_CURRENT_PREAMBLE" xml:space="preserve">
     <value>現在のプリアンブルを保存</value>
   </data>
   <data name="SHOWTEMPLATEMSG" xml:space="preserve">
-    <value>{0} の中身は次の通りです。\n\n{1}</value>
+    <value>{0} の中身は次の通りです。
+
+{1}</value>
   </data>
   <data name="TRANSPARENT" xml:space="preserve">
     <value>透過</value>
@@ -448,10 +478,16 @@
     <value>（現在：{0}）</value>
   </data>
   <data name="FAIL_INIT_PATH" xml:space="preserve">
-    <value>LaTeX / DVI driver / Ghostscript のパス設定に失敗しました。\n環境設定画面で手動で設定してください。</value>
+    <value>LaTeX / DVI driver / Ghostscript のパス設定に失敗しました。
+環境設定画面で手動で設定してください。</value>
   </data>
   <data name="INIT_PATH" xml:space="preserve">
-    <value>TeX 関連プログラムのパスを\n {0}\n {1}\n {2}\nに設定しました。\n違っている場合は環境設定画面で手動で変更してください。</value>
+    <value>TeX 関連プログラムのパスを
+ {0}
+ {1}
+ {2}
+ に設定しました。
+ 違っている場合は環境設定画面で手動で変更してください。</value>
   </data>
   <data name="INVALID_COLOR_NAME" xml:space="preserve">
     <value>認識できない色名です：{0}</value>

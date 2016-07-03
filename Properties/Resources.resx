@@ -118,7 +118,8 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="AUTHORIZEDERROR" xml:space="preserve">
-    <value>Cannot write \n{0}</value>
+    <value>Cannot write 
+{0}</value>
   </data>
   <data name="GENERATEERROR" xml:space="preserve">
     <value>Failed to generate the image. Please check the source code.</value>
@@ -130,19 +131,22 @@
     <value>Since the following files are not found, TeX2img cannot executed.</value>
   </data>
   <data name="PATHERROR" xml:space="preserve">
-    <value>Cannot execute {0}.\nCheck the path of {1}.</value>
+    <value>Cannot execute {0}.
+Check the path of {1}.</value>
   </data>
   <data name="IOERROR" xml:space="preserve">
     <value>Failed to generate because {0} is opened by another application.{1} Please close the application and retry.</value>
   </data>
   <data name="ANALYZESOURCEERROR" xml:space="preserve">
-    <value>Failed to analyze the source file.\nPlease check \\begin{document}, \\end{document} etc.</value>
+    <value>Failed to analyze the source file.
+Please check \\begin{document}, \\end{document} etc.</value>
   </data>
   <data name="CHECK_ENCODEMSG" xml:space="preserve">
     <value>The current character code is {0}, but the file seems to be with {1}. Do you want to use {0}?</value>
   </data>
   <data name="DETECTERROR" xml:space="preserve">
-    <value>An error is detected. Please retry.\n{0}</value>
+    <value>An error is detected. Please retry.
+{0}</value>
   </data>
   <data name="EMBED_IS_ONLY_NTFS" xml:space="preserve">
     <value>Embedding the source code is only supported with the NTFS file system.</value>
@@ -157,13 +161,18 @@
     <value>Cannot open {0}.</value>
   </data>
   <data name="FAIL_TMPFILE" xml:space="preserve">
-    <value>Failed to make a temporary file. Please check the folder\n{0}</value>
+    <value>Failed to make a temporary file. Please check the folder
+{0}</value>
   </data>
   <data name="FAIL_TMPFOLDER" xml:space="preserve">
-    <value>Failed to make a temporary folder\n{0}\nPlease check TMP and TEMP.</value>
+    <value>Failed to make a temporary folder
+{0}
+Please check TMP and TEMP.</value>
   </data>
   <data name="IGNOREDERRORWARNING" xml:space="preserve">
-    <value>Some errors are ignored.\nThe result might be not as expected.\nCheck the source again.</value>
+    <value>Some errors are ignored.
+The result might be not as expected.
+Check the source again.</value>
   </data>
   <data name="IMPORTDIALOG_FILTER" xml:space="preserve">
     <value>TeX source (*.tex)|*.tex|Image files ({0})|{1}|All files (*.*)|*.*</value>
@@ -187,7 +196,8 @@
     <value>Stop</value>
   </data>
   <data name="TOOLERROR" xml:space="preserve">
-    <value>Failed to execute {0}.\nDon't delete the folder {1}.</value>
+    <value>Failed to execute {0}.
+Don't delete the folder {1}.</value>
   </data>
   <data name="WARNING" xml:space="preserve">
     <value>Warning</value>
@@ -229,7 +239,9 @@
     <value>Fail to get total pdf pages.</value>
   </data>
   <data name="FREEZMSG" xml:space="preserve">
-    <value>It is taking a long time for {0}.\nThe program may be freezing. Do you want to continue?\nIf it is not continued, it will be killed.</value>
+    <value>It is taking a long time for {0}.
+The program may be freezing. Do you want to continue?
+If it is not continued, it will be killed.</value>
   </data>
   <data name="GET_BOUNDINGBOX" xml:space="preserve">
     <value>Get BoundingBox</value>
@@ -259,7 +271,8 @@
     <value>Fail to open the working folder {0}, please check TMP and TEMP.</value>
   </data>
   <data name="CHANGE_CURRENTPREAMBLE" xml:space="preserve">
-    <value>Change the current preamble to the following:\n{0}</value>
+    <value>Change the current preamble to the following:
+{0}</value>
   </data>
   <data name="DELETEMSG" xml:space="preserve">
     <value>{0} will be deleted.</value>
@@ -310,7 +323,9 @@
     <value>Save the current preamble</value>
   </data>
   <data name="SHOWTEMPLATEMSG" xml:space="preserve">
-    <value>The template {0} is:\n\n{1}</value>
+    <value>The template {0} is:
+
+{1}</value>
   </data>
   <data name="TRANSPARENT" xml:space="preserve">
     <value>Transparent</value>
@@ -451,7 +466,11 @@
     <value>Faile to guess paths of LaTeX / DVI driver / Ghostscript. Please set them manually.</value>
   </data>
   <data name="INIT_PATH" xml:space="preserve">
-    <value>Set paths as\n{0}\n{1}\n{2}\nIf they are not correct, please set them manually.</value>
+    <value>Set paths as
+{0}
+{1}
+{2}
+If they are not correct, please set them manually.</value>
   </data>
   <data name="INVALID_COLOR_NAME" xml:space="preserve">
     <value>Invalid color name: {0}</value>
