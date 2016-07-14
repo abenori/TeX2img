@@ -118,7 +118,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="AUTHORIZEDERROR" xml:space="preserve">
-    <value>Cannot write 
+    <value>Cannot write
 {0}</value>
   </data>
   <data name="GENERATEERROR" xml:space="preserve">
@@ -135,10 +135,10 @@
 Check the path of {1}.</value>
   </data>
   <data name="IOERROR" xml:space="preserve">
-    <value>Failed to generate because {0} is opened by another application.{1} Please close the application and retry.</value>
+    <value>Generating Failed because {0} is opened by another application.{1} Please close the application and retry.</value>
   </data>
   <data name="ANALYZESOURCEERROR" xml:space="preserve">
-    <value>Failed to analyze the source file.
+    <value>Parsing of the source file failed.
 Please check \\begin{document}, \\end{document} etc.</value>
   </data>
   <data name="CHECK_ENCODEMSG" xml:space="preserve">
@@ -178,7 +178,7 @@ Check the source again.</value>
     <value>TeX source (*.tex)|*.tex|Image files ({0})|{1}|All files (*.*)|*.*</value>
   </data>
   <data name="IMPORTMSG" xml:space="preserve">
-    <value>The file will be imported. The current preamble and the source will be remoevd.</value>
+    <value>Are you sure you want to replace the current preamble and source with the imported file? The current preamble and the source will be remoevd.</value>
   </data>
   <data name="NOTEXIST" xml:space="preserve">
     <value>{0} does not exist.</value>
@@ -275,7 +275,7 @@ If it is not continued, it will be killed.</value>
 {0}</value>
   </data>
   <data name="DELETEMSG" xml:space="preserve">
-    <value>{0} will be deleted.</value>
+    <value>Are you sure you want to delete {0}?</value>
   </data>
   <data name="DETECT_RECOMMENDED_PATH" xml:space="preserve">
     <value>The following paths are suggested as a suitable to the template. Do you want to change?{0}</value>
@@ -308,16 +308,16 @@ If it is not continued, it will be killed.</value>
     <value>no (input: {0})</value>
   </data>
   <data name="OVERWRITEMSG" xml:space="preserve">
-    <value>{0} exists. Overwrite?</value>
+    <value>{0} exists. Do you wan to overwrite?</value>
   </data>
   <data name="OVERWRITETEMPLATEMSG" xml:space="preserve">
-    <value>The template {0} will be overwrited by the current preamble.</value>
+    <value>Are you sure you want to overwrite the template {0} with the current preamble?</value>
   </data>
   <data name="RESTORETEMPLATEMSG" xml:space="preserve">
-    <value>The templates {0} will be restored.</value>
+    <value>Are you sure you wan to restore the templates {0}?</value>
   </data>
   <data name="RESTORETEMPLATE_COMPLETEMSG" xml:space="preserve">
-    <value>The templates {0} wil be restored and the other templates will be deleted.</value>
+    <value>Are you sure you wan to restore the templates {0} and remove other templates?</value>
   </data>
   <data name="SAVE_CURRENT_PREAMBLE" xml:space="preserve">
     <value>Save the current preamble</value>
