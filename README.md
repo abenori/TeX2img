@@ -2,7 +2,7 @@
 
 (C) Yusuke Terada and Noriyuki Abe http://www.math.sci.hokudai.ac.jp/~abenori/
 
-（日本語のドキュメントは TeX2img.txt をご覧ください．）
+（日本語のドキュメントは [TeX2img.txt](./TeX2img.txt) をご覧ください．）
 
 ## What is TeX2img?
 This generates the images with the following formats from the TeX source code:
@@ -116,7 +116,7 @@ https://pdfium.googlesource.com/pdfium/
 
 
 ## license
-See license.txt. For the libraries:
+See [license.txt](./license.txt). For the libraries:
 
 * Azuki text editor engine: zlib license.
 * NDesk.Options: MIT license.
