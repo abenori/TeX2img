@@ -2,6 +2,8 @@
 
 (C) Yusuke Terada and Noriyuki Abe http://www.math.sci.hokudai.ac.jp/~abenori/
 
+（日本語のドキュメントは TeX2img.txt をご覧ください．）
+
 ## What is TeX2img?
 This generates the images with the following formats from the TeX source code:
 
@@ -16,7 +18,7 @@ This generates the images with the following formats from the TeX source code:
 
 This was originally made by Yusuke Terada (until Version 1.2).
 
-## Requirement
+## Requirements
 * Windows Vista or later.
 * .NET Framework 3.5 or later.
 * TeX distribution (W32TeX or TeX Live is recommended), especially pdftex.
@@ -31,8 +33,7 @@ TeX2imgc.exe is a wrapper program to execute TeX2img with the console.
 
 	> TeX2imgc.exe [Options] Input Output [Input Output...]
 
-Each settings are inherited from those of TeX2img except preview after compiling.
-
+Each property are inherited from those of TeX2img except preview after compiling (always false).
 
 
 ## Tips

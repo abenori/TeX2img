@@ -2,6 +2,8 @@
 
 (C) Yusuke Terada and Noriyuki Abe http://www.math.sci.hokudai.ac.jp/~abenori/
 
+(For the English document, see README.md.)
+
 ## これは何？
 入力した TeX ソースコードを TeX でコンパイルして，次のような形式の画像で出力するアプリケーションです．
 
