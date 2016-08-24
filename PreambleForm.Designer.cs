@@ -76,6 +76,7 @@
             // 
             // preambleTextBoxMenu
             // 
+            resources.ApplyResources(this.preambleTextBoxMenu, "preambleTextBoxMenu");
             this.preambleTextBoxMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.Undo,
             this.Redo,
@@ -87,58 +88,57 @@
             this.toolStripSeparator2,
             this.SelectAll});
             this.preambleTextBoxMenu.Name = "sourceTextBoxMenu";
-            resources.ApplyResources(this.preambleTextBoxMenu, "preambleTextBoxMenu");
             // 
             // Undo
             // 
-            this.Undo.Name = "Undo";
             resources.ApplyResources(this.Undo, "Undo");
+            this.Undo.Name = "Undo";
             this.Undo.Click += new System.EventHandler(this.Undo_Click);
             // 
             // Redo
             // 
-            this.Redo.Name = "Redo";
             resources.ApplyResources(this.Redo, "Redo");
+            this.Redo.Name = "Redo";
             this.Redo.Click += new System.EventHandler(this.Redo_Click);
             // 
             // toolStripSeparator1
             // 
-            this.toolStripSeparator1.Name = "toolStripSeparator1";
             resources.ApplyResources(this.toolStripSeparator1, "toolStripSeparator1");
+            this.toolStripSeparator1.Name = "toolStripSeparator1";
             // 
             // Cut
             // 
-            this.Cut.Name = "Cut";
             resources.ApplyResources(this.Cut, "Cut");
+            this.Cut.Name = "Cut";
             this.Cut.Click += new System.EventHandler(this.Cut_Click);
             // 
             // Copy
             // 
-            this.Copy.Name = "Copy";
             resources.ApplyResources(this.Copy, "Copy");
+            this.Copy.Name = "Copy";
             this.Copy.Click += new System.EventHandler(this.Copy_Click);
             // 
             // Paste
             // 
-            this.Paste.Name = "Paste";
             resources.ApplyResources(this.Paste, "Paste");
+            this.Paste.Name = "Paste";
             this.Paste.Click += new System.EventHandler(this.Paste_Click);
             // 
             // Delete
             // 
-            this.Delete.Name = "Delete";
             resources.ApplyResources(this.Delete, "Delete");
+            this.Delete.Name = "Delete";
             this.Delete.Click += new System.EventHandler(this.Delete_Click);
             // 
             // toolStripSeparator2
             // 
-            this.toolStripSeparator2.Name = "toolStripSeparator2";
             resources.ApplyResources(this.toolStripSeparator2, "toolStripSeparator2");
+            this.toolStripSeparator2.Name = "toolStripSeparator2";
             // 
             // SelectAll
             // 
-            this.SelectAll.Name = "SelectAll";
             resources.ApplyResources(this.SelectAll, "SelectAll");
+            this.SelectAll.Name = "SelectAll";
             this.SelectAll.Click += new System.EventHandler(this.SelectAll_Click);
             // 
             // TemplateButon
