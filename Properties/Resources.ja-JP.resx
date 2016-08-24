@@ -306,7 +306,7 @@
     <value>斜体</value>
   </data>
   <data name="MANAGE_TEMPLATES" xml:space="preserve">
-    <value>ンプレートの管理</value>
+    <value>テンプレートの管理</value>
   </data>
   <data name="NOTSELECTED_DELETETEMPLATE" xml:space="preserve">
     <value>削除するテンプレートを選択してください。</value>

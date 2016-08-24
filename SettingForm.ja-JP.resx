@@ -129,6 +129,12 @@
   <data name="gsOpenFileDialog.Filter" xml:space="preserve">
     <value>gswin32c.exe|gswin32c.exe|プログラム (*.exe;*.bat)|*.exe;*.bat|全てのファイル (*.*)|*.*</value>
   </data>
+  <data name="eachImageSettingTab.Text" xml:space="preserve">
+    <value>画像形式ごとの設定</value>
+  </data>
+  <data name="groupBox2.Text" xml:space="preserve">
+    <value>アニメーション設定（SVG(Z)）</value>
+  </data>
   <assembly alias="System.Drawing" name="System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="label20.Size" type="System.Drawing.Size, System.Drawing">
     <value>126, 12</value>
@@ -141,9 +147,6 @@
   </data>
   <data name="label19.Text" xml:space="preserve">
     <value>フレーム間ディレイ（秒）</value>
-  </data>
-  <data name="groupBox2.Text" xml:space="preserve">
-    <value>アニメーション設定（SVG(Z)）</value>
   </data>
   <data name="MergeOutputFilesCheckBox.Size" type="System.Drawing.Size, System.Drawing">
     <value>236, 16</value>
@@ -169,8 +172,8 @@
   <data name="notOutllinedTextCheckBox.Text" xml:space="preserve">
     <value>テキスト保持する（PDF / SVG(Z)）</value>
   </data>
-  <data name="eachImageSettingTab.Text" xml:space="preserve">
-    <value>画像形式ごとの設定</value>
+  <data name="EditorSettingTab.Text" xml:space="preserve">
+    <value>エディタの設定</value>
   </data>
   <data name="acceptTabCheckBox.Size" type="System.Drawing.Size, System.Drawing">
     <value>127, 16</value>
@@ -186,6 +189,9 @@
   </data>
   <data name="label17.Text" xml:space="preserve">
     <value>タブ幅</value>
+  </data>
+  <data name="showGroupBox.Text" xml:space="preserve">
+    <value>表示</value>
   </data>
   <data name="drawFullWidthSpaceCheckBox.Size" type="System.Drawing.Size, System.Drawing">
     <value>72, 16</value>
@@ -216,9 +222,6 @@
   </data>
   <data name="drawSpaceCheckBox.Text" xml:space="preserve">
     <value>半角空白</value>
-  </data>
-  <data name="showGroupBox.Text" xml:space="preserve">
-    <value>表示</value>
   </data>
   <data name="label15.Size" type="System.Drawing.Size, System.Drawing">
     <value>219, 12</value>
@@ -413,8 +416,17 @@
   <data name="label11.Text" xml:space="preserve">
     <value>フォント設定</value>
   </data>
-  <data name="EditorSettingTab.Text" xml:space="preserve">
-    <value>エディタの設定</value>
+  <data name="AfterCompilingTab.Text" xml:space="preserve">
+    <value>コンパイル後処理</value>
+  </data>
+  <data name="groupBox4.Size" type="System.Drawing.Size, System.Drawing">
+    <value>352, 80</value>
+  </data>
+  <data name="groupBox4.Text" xml:space="preserve">
+    <value>作業ディレクトリ</value>
+  </data>
+  <data name="workDir_CurrentRadioButton.Location" type="System.Drawing.Point, System.Drawing">
+    <value>4, 57</value>
   </data>
   <data name="workDir_CurrentRadioButton.Size" type="System.Drawing.Size, System.Drawing">
     <value>93, 16</value>
@@ -442,9 +454,6 @@
   </data>
   <data name="openTmpFolderButton.Text" xml:space="preserve">
     <value>一時フォルダを開く...</value>
-  </data>
-  <data name="groupBox4.Text" xml:space="preserve">
-    <value>作業ディレクトリ</value>
   </data>
   <data name="setFileToClipboardCheckBox.Size" type="System.Drawing.Size, System.Drawing">
     <value>224, 16</value>
@@ -476,9 +485,6 @@
   <data name="deleteTmpFilesCheckBox.Text" xml:space="preserve">
     <value>コンパイル後作業ファイルを削除する（推奨）</value>
   </data>
-  <data name="AfterCompilingTab.Text" xml:space="preserve">
-    <value>コンパイル後処理</value>
-  </data>
   <data name="label4.Location" type="System.Drawing.Point, System.Drawing">
     <value>269, 56</value>
   </data>
@@ -490,6 +496,9 @@
   </data>
   <data name="backgroundColorButton.Location" type="System.Drawing.Point, System.Drawing">
     <value>72, 159</value>
+  </data>
+  <data name="backgroundColorButton.Size" type="System.Drawing.Size, System.Drawing">
+    <value>44, 19</value>
   </data>
   <data name="label18.Size" type="System.Drawing.Size, System.Drawing">
     <value>45, 12</value>
@@ -511,12 +520,6 @@
   </data>
   <data name="KeepPageSizeCheckBox.Text" xml:space="preserve">
     <value>ページサイズを維持する</value>
-  </data>
-  <data name="label9.Size" type="System.Drawing.Size, System.Drawing">
-    <value>233, 12</value>
-  </data>
-  <data name="label9.Text" xml:space="preserve">
-    <value>（PDF / EPS / EMF / SVG(Z)  は bp で固定)</value>
   </data>
   <data name="groupBox3.Text" xml:space="preserve">
     <value>余白の単位（JPEG / PNG / BMP / TIFF）</value>
@@ -553,6 +556,15 @@
   </data>
   <data name="OutputImgSettingTab.Text" xml:space="preserve">
     <value>出力画像設定</value>
+  </data>
+  <data name="label9.Size" type="System.Drawing.Size, System.Drawing">
+    <value>233, 12</value>
+  </data>
+  <data name="label9.Text" xml:space="preserve">
+    <value>（PDF / EPS / EMF / SVG(Z)  は bp で固定)</value>
+  </data>
+  <data name="BasicSettingTab.Text" xml:space="preserve">
+    <value>基本設定</value>
   </data>
   <data name="languageComboBox.Location" type="System.Drawing.Point, System.Drawing">
     <value>71, 232</value>
@@ -610,9 +622,6 @@
   </data>
   <data name="platexBrowseButton.Text" xml:space="preserve">
     <value>参照...</value>
-  </data>
-  <data name="BasicSettingTab.Text" xml:space="preserve">
-    <value>基本設定</value>
   </data>
   <data name="$this.Icon" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>

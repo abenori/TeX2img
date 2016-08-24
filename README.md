@@ -97,7 +97,7 @@ If you specify several options, TeX2img takes the last one. For example
 will generate transparent png file. Especially, because /load-defaults makes all settings default ones, the options before /load-defaults are ignored. The option /load-defaults should be the first.
 
 ## Reference
-* The webpage of Yusuke Terada (original developer of TeX2img)
+* Webpage of Yusuke Terada (original developer of TeX2img)
 http://island.geocities.jp/loveinequality/
 
 
@@ -107,8 +107,8 @@ http://island.geocities.jp/loveinequality/
 http://sgry.b.sourceforge.jp/
 * To parse the command line, NDesk.Options is used.
 http://www.ndesk.org/Options
-* To guess Japanese character code, Tex2img uses the (C# version of) routine in Gauch.
-http://practical-scheme.net/gauche/index-j.html
+* To guess Japanese character code, Tex2img uses a (C# version of) routine in Gauch.
+http://practical-scheme.net/gauche/index.html
 * TeX2img uses mudraw (with modifications).
 http://www.mupdf.com/
 * pdfiumdraw uses PDFium.
@@ -125,7 +125,7 @@ See [license.txt](./license.txt). For the libraries:
 * PDFium: modified BSD license.
 * pdfiumdraw: modified BSD license.
 
-For the detail, see the pages of each library.
+For the detail, see the site of each library.
 
 
 ## History (after 2.0)
