@@ -10,6 +10,7 @@ For debug:
     pdf_is_standalone = false
     treat_warnings_as_errors = false
     host_cpu="x86"
+    is_component_build = false
 
 For release
 
