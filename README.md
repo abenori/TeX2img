@@ -94,7 +94,7 @@ The following are the options for TeX2img.exe or TeX2imgc.exe.
 
 If you specify several options, TeX2img takes the last one. For example
 	tex2imgc /transparent- /transparent a.tex a.png
-will generate transparent png file. Especially, because /load-defaults makes all settings default ones, the options before /load-defaults are ignored. The option /load-defaults should be the first.
+will generate transparent png file. In particular, because /load-defaults makes all settings default ones, the options before /load-defaults are ignored. The option /load-defaults should be the first.
 
 ## Reference
 * Webpage of Yusuke Terada (original developer of TeX2img)
@@ -107,7 +107,7 @@ http://island.geocities.jp/loveinequality/
 http://sgry.b.sourceforge.jp/
 * To parse the command line, NDesk.Options is used.
 http://www.ndesk.org/Options
-* To guess Japanese character code, Tex2img uses a (C# version of) routine in Gauch.
+* To guess Japanese character code, TeX2img uses a (C# version of) routine in Gauch.
 http://practical-scheme.net/gauche/index.html
 * TeX2img uses mudraw (with modifications).
 http://www.mupdf.com/
@@ -133,3 +133,6 @@ For the detail, see the site of each library.
     - Add English resources.
     - Add option /language
     - Options /platex and /dvipdfmx are now hidden.
+*2.0.1
+    - Fix typos in Japanese resources.
+    - Update PDFium

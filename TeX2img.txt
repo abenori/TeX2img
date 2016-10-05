@@ -347,8 +347,12 @@ https://pdfium.googlesource.com/pdfium/
     - NDesk.Options → Mono.Options （NuGetから）
     - pdfium をアップデート．
     - PDF のバージョンを極力維持するようにした．
+
 * 2.0.0
     - 英語リソースを追加．
     - オプション /language を追加．
     - /platex および /dvipdfmx を隠しオプションとした．（オプション自身はまだ有効．）
 
+* 2.0.1
+    - 日本語リソースのミスを修正．
+    - pdfium をアップデート．

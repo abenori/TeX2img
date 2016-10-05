@@ -70,12 +70,7 @@ namespace TeX2img.Properties {
         }
 
         public override void Save() {
-            if (!SaveSettings) {
-                var lang = language;
-                base.Reload();
-                language = lang;
-            }
-            base.Save();
+            if (SaveSettings) base.Save();
         }
 
         public void ReloadDefaults() {
@@ -330,8 +325,10 @@ rv["upLaTeX + dvips"] = @"%latex: uplatex
             }
         }
         public static void SetCurrentLanguage() {
-            System.Threading.Thread.CurrentThread.CurrentCulture = CurrentCulture;
-            System.Threading.Thread.CurrentThread.CurrentUICulture = CurrentCulture;
+            if (CurrentCulture != null) {
+                System.Threading.Thread.CurrentThread.CurrentCulture = CurrentCulture;
+                System.Threading.Thread.CurrentThread.CurrentUICulture = CurrentCulture;
+            }
         }
     }
 }
