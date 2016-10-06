@@ -134,6 +134,6 @@ For the detail, see the site of each library.
     - Add option /language
     - Options /platex and /dvipdfmx are now hidden.
 
-*2.0.1
+* 2.0.1
     - Fix typos in Japanese resources.
     - Update PDFium
