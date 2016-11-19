@@ -386,13 +386,17 @@ int CALLBACK EnhMetaFileProc(HDC hdc, HANDLETABLE FAR *lpHTable, ENHMETARECORD F
 	return TRUE;
 }
 
-// Ç∆Ç±ÇÎÇ«Ç±ÇÎÇ≈ÇÃècâ°ÇÃí≤êÆÇÕç™ãíñ≥Çµ
 void DrawEMF(HDC dc, PDFPage &page, int extent, int scale, bool transparent, COLORREF background) {
+//	cout << "PDF: width = " << page.GetWidth() << ", height = " << page.GetHeight() << endl;
+//	cout << "PDF: width = " << (96*page.GetWidth()/72) << ", height = " << (96*page.GetHeight()/72) << endl;
+//	cout << "PDF: width = " << (page.GetWidth() * scale * extent) << ", height = " << (page.GetHeight() * scale * extent) << endl;
 	int width = static_cast<int>(page.GetWidth() * scale * extent) + 1;
 	int height = static_cast<int>(page.GetHeight() * scale * extent) + 1;
+	//width += 4 * scale*extent; height += 4 * scale*extent;
+//	cout << "ClipRgn: width = " << width << ", height = " << height << endl;
 	//int width = (int) (page.GetWidth() * 1000 * d.scale);
 	//int height = (int) (page.GetHeight() * 1000 * d.scale);
-	if (extent != 1) {
+	if(extent != 1) {
 		::SetMapMode(dc, MM_ANISOTROPIC);
 		::SetWindowExtEx(dc, extent, extent, nullptr);
 	}
@@ -400,30 +404,30 @@ void DrawEMF(HDC dc, PDFPage &page, int extent, int scale, bool transparent, COL
 	::SelectClipRgn(dc, rgn);
 	RECT rc;
 	::GetClipBox(dc, &rc);
-	int tmpscale = std::max((int)(width / rc.bottom) + 1, (int)(height / rc.right) + 1);
-	rc.left = 0; rc.top = 0; rc.bottom = height; rc.right = width;
-	if (transparent) {
+	int tmpscale = std::max((int)(width / rc.right) + 1, (int)(height / rc.bottom) + 1);
+//	cout << "ClipRgn: left = " << rc.left << ", right = " << rc.right << ", top = " << rc.top << ", bottom = " << rc.bottom << endl;
+// è≠ÇµçLÇ≠ìhÇÈÅiÇ∂Ç·Ç»Ç¢Ç∆êÿÇÍÇÈÅj2Ç…óùóRÇÕÇ»Ç¢ÅD
+	rc.left = 0; rc.top = 0; rc.bottom = height + static_cast<int>(2 * extent); rc.right = width + static_cast<int>(2 * extent);
+	if(transparent) {
 		::SetBkMode(dc, TRANSPARENT);
 		::FillRect(dc, &rc, (HBRUSH)::GetStockObject(NULL_BRUSH));
 	} else {
 		::SetBkMode(dc, OPAQUE);
 		auto brush = ::CreateSolidBrush(background);
-		rc.bottom += 4 * extent;
-		rc.right += 4 * extent;
 		::FillRect(dc, &rc, brush);
 		::DeleteObject(brush);
 	}
 	HDC tmpdc = ::CreateEnhMetaFile(nullptr, nullptr, nullptr, nullptr);
-	if (extent != 1) {
-		::SetMapMode(tmpdc, MM_ANISOTROPIC);
-		::SetWindowExtEx(tmpdc, extent*tmpscale, extent*tmpscale, nullptr);
-	}
-	rc.left = 0; rc.top = 0; rc.bottom = height - 2 * extent*tmpscale; rc.right = width - 2 * extent*tmpscale;
+	::SetMapMode(tmpdc, MM_ANISOTROPIC);
+	::SetWindowExtEx(tmpdc, extent*tmpscale, extent*tmpscale, nullptr);
+	//rc.left = 0; rc.top = 0; rc.bottom = height - 2 * extent*tmpscale; rc.right = width - 2 * extent*tmpscale;
+	rc.left = 0; rc.top = 0; rc.bottom = height; rc.right = width;
 	::SetBkMode(tmpdc, TRANSPARENT);
 	::FillRect(tmpdc, &rc, (HBRUSH)::GetStockObject(NULL_BRUSH));
 	page.Render(tmpdc, 0, 0, width, height);
 	HENHMETAFILE  meta = ::CloseEnhMetaFile(tmpdc);
-	rc.left = 0; rc.top = 0; rc.bottom = height - extent*tmpscale; rc.right = width - extent*tmpscale;
+	//	rc.left = 0; rc.top = 0; rc.bottom = height - extent*tmpscale; rc.right = width - extent*tmpscale;
+	rc.left = 0; rc.top = 0; rc.bottom = height; rc.right = width;
 	::EnumEnhMetaFile(dc, meta, (ENHMFENUMPROC)EnhMetaFileProc, nullptr, &rc);
 	::DeleteEnhMetaFile(meta);
 	::DeleteObject(rgn);
