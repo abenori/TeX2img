@@ -129,11 +129,14 @@ For the detail, see the site of each library.
 
 
 ## History (after 2.0)
-* 2.0.0
+* 2.0.0 (2016/07/16)
     - Add English resources.
     - Add option /language
     - Options /platex and /dvipdfmx are now hidden.
 
-* 2.0.1
+* 2.0.1 (2016/10/06)
     - Fix typos in Japanese resources.
     - Update PDFium
+
+* 2.0.2 (2016/12/19)
+    - Fix bug: the conversion between strings and numbers are not correct with a certain system language.
