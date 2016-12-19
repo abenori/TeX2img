@@ -407,7 +407,7 @@ void DrawEMF(HDC dc, PDFPage &page, int extent, int scale, bool transparent, COL
 	int tmpscale = std::max((int)(width / rc.right) + 1, (int)(height / rc.bottom) + 1);
 //	cout << "ClipRgn: left = " << rc.left << ", right = " << rc.right << ", top = " << rc.top << ", bottom = " << rc.bottom << endl;
 // ­‚µL‚­“h‚éi‚¶‚á‚È‚¢‚ÆØ‚ê‚éj2‚É——R‚Í‚È‚¢D
-	rc.left = 0; rc.top = 0; rc.bottom = height + static_cast<int>(2 * extent); rc.right = width + static_cast<int>(2 * extent);
+	rc.left = 0; rc.top = 0; rc.bottom = height + static_cast<int>(4 * extent); rc.right = width + static_cast<int>(4 * extent);
 	if(transparent) {
 		::SetBkMode(dc, TRANSPARENT);
 		::FillRect(dc, &rc, (HBRUSH)::GetStockObject(NULL_BRUSH));
