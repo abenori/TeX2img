@@ -27,7 +27,8 @@ namespace TeX2img {
             top -= y;bottom -= y;
         }
         public override string ToString() {
-            return "%%BoundingBox: " + Left + " " + Bottom + " " + Right + " " + Top;
+            var enUS = new System.Globalization.CultureInfo("en-US");
+            return "%%BoundingBox: " + Left.ToString(enUS) + " " + Bottom.ToString(enUS) + " " + Right.ToString(enUS) + " " + Top.ToString(enUS);
         }
     };
 

@@ -13,6 +13,7 @@ namespace TeX2img {
         string error_str;
         volatile bool error_occured = false;
         object lockObj = new object();
+        System.Globalization.CultureInfo enUS = new System.Globalization.CultureInfo("en-US");
         public MuPDF(string path) {
             process = new Process();
             process.StartInfo.FileName = path;
@@ -102,7 +103,7 @@ namespace TeX2img {
         }
 
         string ReadString() {
-            int size = Int32.Parse(ReadLine());
+            int size = Int32.Parse(ReadLine(), enUS);
             for (int i = 0; i < 15; ++i) {
                 if (StdOutputBuf.Count >= size) {
                     System.Diagnostics.Debug.WriteLine(i);
@@ -124,14 +125,14 @@ namespace TeX2img {
         int ReadInt() {
             var str = ReadLine();
             if (str == null) throw new TimeoutException();
-            return Int32.Parse(str);
+            return Int32.Parse(str, enUS);
         }
 
         decimal ReadDecimal() {
             var str = ReadLine();
             if (str == null) throw new TimeoutException();
             try {
-                return Decimal.Parse(str);
+                return Decimal.Parse(str, enUS);
             }
             catch (Exception e) { System.Diagnostics.Debug.WriteLine("Exception = " + e.Message + ", str = [" + str + "]"); throw; }
         }
@@ -155,7 +156,7 @@ namespace TeX2img {
         }
 
         void Write(int n) {
-            var buf = Encoding.UTF8.GetBytes(n.ToString());
+            var buf = Encoding.UTF8.GetBytes(n.ToString(enUS));
             process.StandardInput.BaseStream.Write(buf, 0, buf.Length);
             process.StandardInput.BaseStream.WriteByte((byte)'\n');
             process.StandardInput.BaseStream.Flush();

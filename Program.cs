@@ -18,6 +18,7 @@ namespace TeX2img {
         static bool nogui = false;
         static bool version = false;
         static bool help = false;
+        static System.Globalization.CultureInfo enUS = new System.Globalization.CultureInfo("en-US");
 
         static OptionSet GetOptiontSet() {
             return new OptionSet(){
@@ -48,15 +49,15 @@ namespace TeX2img {
                 var list = val.Split(new char[] { ' ' }).ToList();
                 list.RemoveAll((s) => (s == ""));
                 try {
-                    if(list.Count == 1) Properties.Settings.Default.leftMargin = Properties.Settings.Default.topMargin = Properties.Settings.Default.rightMargin = Properties.Settings.Default.bottomMargin = Int32.Parse(list[0]);
+                    if(list.Count == 1) Properties.Settings.Default.leftMargin = Properties.Settings.Default.topMargin = Properties.Settings.Default.rightMargin = Properties.Settings.Default.bottomMargin = Int32.Parse(list[0], enUS);
                     else if(list.Count == 2) {
-                        Properties.Settings.Default.leftMargin = Properties.Settings.Default.rightMargin = Int32.Parse(list[0]);
-                        Properties.Settings.Default.topMargin = Properties.Settings.Default.bottomMargin = Int32.Parse(list[1]);
+                        Properties.Settings.Default.leftMargin = Properties.Settings.Default.rightMargin = Int32.Parse(list[0], enUS);
+                        Properties.Settings.Default.topMargin = Properties.Settings.Default.bottomMargin = Int32.Parse(list[1], enUS);
                     } else if(list.Count == 4) {
-                        Properties.Settings.Default.leftMargin = Int32.Parse(list[0]);
-                        Properties.Settings.Default.topMargin = Int32.Parse(list[1]);
-                        Properties.Settings.Default.rightMargin = Int32.Parse(list[2]);
-                        Properties.Settings.Default.bottomMargin = Int32.Parse(list[3]);
+                        Properties.Settings.Default.leftMargin = Int32.Parse(list[0], enUS);
+                        Properties.Settings.Default.topMargin = Int32.Parse(list[1], enUS);
+                        Properties.Settings.Default.rightMargin = Int32.Parse(list[2], enUS);
+                        Properties.Settings.Default.bottomMargin = Int32.Parse(list[3], enUS);
                     }else throw new Mono.Options.OptionException(Properties.Resources.CMDLINE_ERROR_INVALID_MARGIN,"margins");
                 }
                 catch(FormatException e) {
@@ -93,7 +94,7 @@ namespace TeX2img {
                 try {
                     if(list.Count != 3)throw new Exception(Properties.Resources.INVALID_INPUT);
                     Properties.Settings.Default.backgroundColor = System.Drawing.Color.FromArgb(0,
-                        Int32.Parse(list[0]),Int32.Parse(list[1]),Int32.Parse(list[2]));
+                        Int32.Parse(list[0], enUS),Int32.Parse(list[1], enUS),Int32.Parse(list[2], enUS));
                 }
                 catch(Exception e) {throw new Mono.Options.OptionException(e.Message,"background-color"); }
             },()=> {var c = Properties.Settings.Default.backgroundColor;

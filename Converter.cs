@@ -95,20 +95,21 @@ namespace TeX2img {
                     string line = System.Text.Encoding.ASCII.GetString(inbuf, inp, q - inp);
                     Match match = regexBB.Match(line);
                     if (match.Success) {
+                        var enUS = new System.Globalization.CultureInfo("en-US");
                         BoundingBox bbinfile = new BoundingBox(
-                            System.Convert.ToDecimal(match.Groups[2].Value),
-                            System.Convert.ToDecimal(match.Groups[3].Value),
-                            System.Convert.ToDecimal(match.Groups[4].Value),
-                            System.Convert.ToDecimal(match.Groups[5].Value));
+                            System.Convert.ToDecimal(match.Groups[2].Value, enUS),
+                            System.Convert.ToDecimal(match.Groups[3].Value, enUS),
+                            System.Convert.ToDecimal(match.Groups[4].Value, enUS),
+                            System.Convert.ToDecimal(match.Groups[5].Value, enUS));
                         string HiRes = match.Groups[1].Value;
                         if (HiRes == "") {
                             bbfound = true;
                             var newbb = bb(bbinfile);
-                            line = String.Format("%%BoundingBox: {0} {1} {2} {3}", (int)newbb.Left, (int)newbb.Bottom, (int)newbb.Right, (int)newbb.Top);
+                            line = String.Format(enUS, "%%BoundingBox: {0} {1} {2} {3}", (int)newbb.Left, (int)newbb.Bottom, (int)newbb.Right, (int)newbb.Top);
                         } else {
                             hiresbbfound = true;
                             var newbb = hiresbb(bbinfile);
-                            line = String.Format("%%HiResBoundingBox: {0} {1} {2} {3}", newbb.Left, newbb.Bottom, newbb.Right, newbb.Top);
+                            line = String.Format(enUS, "%%HiResBoundingBox: {0} {1} {2} {3}", newbb.Left, newbb.Bottom, newbb.Right, newbb.Top);
                         }
                         tmpbuf = System.Text.Encoding.ASCII.GetBytes(line);
                         System.Array.Copy(tmpbuf, 0, outbuf, outp, tmpbuf.Length);
@@ -145,11 +146,12 @@ namespace TeX2img {
                 while ((line = sr.ReadLine()) != null) {
                     Match match = regex.Match(line);
                     if (match.Success) {
+                        var enUS = new System.Globalization.CultureInfo("en-US");
                         var cb = new BoundingBox(
-                            System.Convert.ToDecimal(match.Groups[2].Value),
-                            System.Convert.ToDecimal(match.Groups[3].Value),
-                            System.Convert.ToDecimal(match.Groups[4].Value),
-                            System.Convert.ToDecimal(match.Groups[5].Value));
+                            System.Convert.ToDecimal(match.Groups[2].Value, enUS),
+                            System.Convert.ToDecimal(match.Groups[3].Value, enUS),
+                            System.Convert.ToDecimal(match.Groups[4].Value, enUS),
+                            System.Convert.ToDecimal(match.Groups[5].Value, enUS));
                         if (match.Groups[1].Value == "HiRes") {
                             hiresbb = cb;
                         } else {
@@ -233,6 +235,7 @@ namespace TeX2img {
 
         List<BoundingBoxPair> readPDFBB(string inputPDFFileName, int firstpage, int lastpage) {
             System.Diagnostics.Debug.Assert(lastpage >= firstpage);
+            var enUS = new System.Globalization.CultureInfo("en-US");
             string arg;
             var gspath = setProcStartInfo(Properties.Settings.Default.gsPath, out arg);
             using (var proc = GetProcess()) {
@@ -243,7 +246,7 @@ namespace TeX2img {
                     var box = Properties.Settings.Default.pagebox;
                     proc.StartInfo.Arguments += "-dUse" + Char.ToUpper(box[0]) + box.Substring(1) + "Box ";
                 }*/
-                proc.StartInfo.Arguments += "-dFirstPage=" + firstpage.ToString() + " -dLastPage=" + lastpage.ToString() + " \"" + inputPDFFileName + "\"";
+                proc.StartInfo.Arguments += "-dFirstPage=" + firstpage.ToString(enUS) + " -dLastPage=" + lastpage.ToString(enUS) + " \"" + inputPDFFileName + "\"";
                 var rv = new List<BoundingBoxPair>();
                 Regex regexBB = new Regex(@"^\%\%(HiRes)?BoundingBox\: ([-\d\.]+) ([-\d\.]+) ([-\d\.]+) ([-\d\.]+)$");
                 BoundingBox? bb = null;
@@ -253,10 +256,10 @@ namespace TeX2img {
                     var match = regexBB.Match(line);
                     if (match.Success) {
                         var currentbb = new BoundingBox(
-                            System.Convert.ToDecimal(match.Groups[2].Value),
-                            System.Convert.ToDecimal(match.Groups[3].Value),
-                            System.Convert.ToDecimal(match.Groups[4].Value),
-                            System.Convert.ToDecimal(match.Groups[5].Value));
+                            System.Convert.ToDecimal(match.Groups[2].Value, enUS),
+                            System.Convert.ToDecimal(match.Groups[3].Value, enUS),
+                            System.Convert.ToDecimal(match.Groups[4].Value, enUS),
+                            System.Convert.ToDecimal(match.Groups[5].Value, enUS));
                         if (match.Groups[1].Value == "HiRes") {
                             hiresbb = currentbb;
                         } else {
@@ -458,7 +461,7 @@ namespace TeX2img {
 
         bool pdf2pdf(string input, string output, int resolution, int version, int page = 0) {
 			string pageopt = "";
-			if(page != 0) pageopt = " -dFirstPage=" + page.ToString() + " -dLastPage=" + page.ToString();
+			if(page != 0) pageopt = " -dFirstPage=" + page.ToString(new System.Globalization.CultureInfo("en-US")) + " -dLastPage=" + page.ToString(new System.Globalization.CultureInfo("en-US"));
             return gs_pdfwrite("\"" + input + "\"", output, (IsNewGhostscript() ? "-dNoOutputFonts" : "-dNOCACHE") + pageopt, Properties.Resources.EXEC_GS, resolution, version, "");
         }
 
@@ -478,8 +481,8 @@ namespace TeX2img {
                     return false;
                 }
                 proc.StartInfo.Arguments = arg + "-dNOPAUSE -dBATCH -sDEVICE=pdfwrite -dAutoRotatePages=/None ";
-                if (version > 0) proc.StartInfo.Arguments += "-dCompatibilityLevel=1." + (version - 10).ToString() + " ";
-                if (resolution > 0) proc.StartInfo.Arguments += "-r" + resolution.ToString() + " ";
+                if (version > 0) proc.StartInfo.Arguments += "-dCompatibilityLevel=1." + (version - 10).ToString(new System.Globalization.CultureInfo("en-US")) + " ";
+                if (resolution > 0) proc.StartInfo.Arguments += "-r" + resolution.ToString(new System.Globalization.CultureInfo("en-US")) + " ";
                 if (option != "") proc.StartInfo.Arguments += option + " ";
                 proc.StartInfo.Arguments += "-sOutputFile=\"" + output + "\" -c \".setpdfwrite";
                 if (cmd != "") proc.StartInfo.Arguments += " " + cmd;
@@ -530,7 +533,7 @@ namespace TeX2img {
                 proc.StartInfo.Arguments += arg + "-dNOPAUSE -dBATCH -sDEVICE=" + device + " " +
                     ((page > 0) ? "-dFirstPage=" + page + " -dLastPage=" + page + " " : "") +
                     "-dTextAlphaBits=" + (Properties.Settings.Default.useMagickFlag ? "4" : "1") + " " +
-                    "-r" + (72 * Properties.Settings.Default.resolutionScale).ToString() + " " +
+                    "-r" + (72 * Properties.Settings.Default.resolutionScale).ToString(new System.Globalization.CultureInfo("en-US")) + " " +
                     "-sOutputFile=\"" + output + "\" \"" + input + "\"";
                 try {
                     printCommandLine(proc);
@@ -571,10 +574,11 @@ namespace TeX2img {
         // ついでに塗る．
         // crop = falseならば塗ることしかしない．
         bool pdfcrop(string inputFileName, string outputFileName, bool use_bp, List<int> pages, List<BoundingBoxPair> origbb, bool drawback = true, bool deleteemptypages = false, bool crop = true, int version = -1) {
+            var enUS = new System.Globalization.CultureInfo("en-US");
             var colorstr =
-                ((double)Properties.Settings.Default.backgroundColor.R / 255).ToString() + " " +
-                ((double)Properties.Settings.Default.backgroundColor.G / 255).ToString() + " " +
-                ((double)Properties.Settings.Default.backgroundColor.B / 255).ToString();
+                ((double)Properties.Settings.Default.backgroundColor.R / 255).ToString(enUS) + " " +
+                ((double)Properties.Settings.Default.backgroundColor.G / 255).ToString(enUS) + " " +
+                ((double)Properties.Settings.Default.backgroundColor.B / 255).ToString(enUS);
             System.Diagnostics.Debug.Assert(pages.Count == origbb.Count);
             var tmpfile = TempFilesDeleter.GetTempFileName(".tex", workingDir);
             if (tmpfile == null) return false;
@@ -596,24 +600,24 @@ namespace TeX2img {
             }
             using (var fw = new StreamWriter(Path.Combine(workingDir, tmpfile))) {
                 fw.WriteLine(@"\pdfoutput=1\relax");
-                if (version != -1) fw.WriteLine(@"\pdfminorversion=" + (version - 10).ToString() + @"\relax");
+                if (version != -1) fw.WriteLine(@"\pdfminorversion=" + (version - 10).ToString(enUS) + @"\relax");
                 for (int i = 0; i < pages.Count; ++i) {
                     var box = bbBox[i];
                     if (!box.IsEmpty) {
                         var page = pages[i];
-                        fw.WriteLine(@"\pdfximage page " + page.ToString() + " mediabox{" + inputFileName + @"}");
+                        fw.WriteLine(@"\pdfximage page " + page.ToString(enUS) + " mediabox{" + inputFileName + @"}");
                         fw.Write(@"\setbox0=\hbox{");
                         if (drawback) {
                             fw.Write(@"\pdfliteral{q " + colorstr + " rg n " +
-                                box.Left.ToString() + " " + box.Bottom.ToString() + " " +
-                                box.Width.ToString() + " " + box.Height.ToString() + " re f Q}");
+                                box.Left.ToString(enUS) + " " + box.Bottom.ToString(enUS) + " " +
+                                box.Width.ToString(enUS) + " " + box.Height.ToString(enUS) + " re f Q}");
                         }
                         fw.WriteLine(@"\pdfrefximage\pdflastximage}\relax");
                         if (crop) {
-                            fw.WriteLine(@"\pdfhorigin=" + (-box.Left).ToString() + @"bp\relax");
-                            fw.WriteLine(@"\pdfvorigin=" + box.Bottom.ToString() + @"bp\relax");
-                            fw.WriteLine(@"\pdfpagewidth=" + (box.Right - box.Left).ToString() + @"bp\relax");
-                            fw.WriteLine(@"\pdfpageheight=" + (box.Top - box.Bottom).ToString() + @"bp\relax");
+                            fw.WriteLine(@"\pdfhorigin=" + (-box.Left).ToString(enUS) + @"bp\relax");
+                            fw.WriteLine(@"\pdfvorigin=" + box.Bottom.ToString(enUS) + @"bp\relax");
+                            fw.WriteLine(@"\pdfpagewidth=" + (box.Right - box.Left).ToString(enUS) + @"bp\relax");
+                            fw.WriteLine(@"\pdfpageheight=" + (box.Top - box.Bottom).ToString(enUS) + @"bp\relax");
                             fw.WriteLine(@"\ht0=\pdfpageheight\relax");
                         } else {
                             fw.WriteLine(@"\pdfhorigin=0pt\relax");
@@ -697,10 +701,11 @@ namespace TeX2img {
 
         bool pdf2img_mudraw(string inputFileName, string outputFileName, List<int> pages) {
             tempFilesDeleter.AddFile(outputFileName);
+            var enUS = new System.Globalization.CultureInfo("en-US");
             using (var proc = GetProcess()) {
                 proc.StartInfo.FileName = Path.Combine(GetToolsPath(), "mudraw.exe");
                 proc.StartInfo.Arguments = "-l -o \"" + outputFileName + "\" \"" + inputFileName + "\"";
-                if (pages.Count > 0) proc.StartInfo.Arguments += " " + String.Join(",", pages.Select(d => d.ToString()).ToArray());
+                if (pages.Count > 0) proc.StartInfo.Arguments += " " + String.Join(",", pages.Select(d => d.ToString(enUS)).ToArray());
                 try {
                     printCommandLine(proc);
                     ReadOutputs(proc, Properties.Resources.EXEC_MUDRAW);
@@ -717,14 +722,14 @@ namespace TeX2img {
                     if (pages.Count > 0) {
                         bool rv = true;
                         foreach (var p in pages) {
-                            var f = Path.Combine(workingDir, pre + p.ToString() + aft);
+                            var f = Path.Combine(workingDir, pre + p.ToString(enUS) + aft);
                             if (File.Exists(f)) tempFilesDeleter.AddFile(f);
                             else rv = false;
                         }
                         return rv;
                     } else {
                         for (int i = 1; ; ++i) {
-                            var f = Path.Combine(workingDir, pre + i.ToString() + aft);
+                            var f = Path.Combine(workingDir, pre + i.ToString(enUS) + aft);
                             if (File.Exists(f)) tempFilesDeleter.AddFile(f);
                             else break;
                         }
@@ -760,6 +765,7 @@ namespace TeX2img {
         }
 
         bool pdf2img_pdfium(string inputFilename, string outputFileName, List<int> pages) {
+            var enUS = new System.Globalization.CultureInfo("en-US");
             System.Diagnostics.Debug.Assert(pages == null || pages.Count > 0);
             var type = Path.GetExtension(outputFileName).Substring(1).ToLower();
             using (var proc = GetProcess()) {
@@ -767,16 +773,16 @@ namespace TeX2img {
                 if (type == "emf") {
                     proc.StartInfo.Arguments = "--extent=50 ";
                     if (!Properties.Settings.Default.transparentPngFlag)
-                        proc.StartInfo.Arguments += "--backcolor=" + String.Format("{0:X2}{1:X2}{2:X2}",
+                        proc.StartInfo.Arguments += "--backcolor=" + String.Format(new System.Globalization.CultureInfo("en-US"),"{0:X2}{1:X2}{2:X2}",
                             Properties.Settings.Default.backgroundColor.R,
                             Properties.Settings.Default.backgroundColor.G,
                             Properties.Settings.Default.backgroundColor.B) + " ";
                 } else if (type != "pdf") {
-                    proc.StartInfo.Arguments = "--scale=" + Properties.Settings.Default.resolutionScale.ToString() + " ";
+                    proc.StartInfo.Arguments = "--scale=" + Properties.Settings.Default.resolutionScale.ToString(enUS) + " ";
                 }
                 proc.StartInfo.Arguments +=
                     "--" + type + " " + (Properties.Settings.Default.transparentPngFlag ? "--transparent " : "") +
-                    (pages != null ? "--pages=" + String.Join(",", pages.Select(i => i.ToString()).ToArray()) + " " : "") +
+                    (pages != null ? "--pages=" + String.Join(",", pages.Select(i => i.ToString(enUS)).ToArray()) + " " : "") +
                     "--output=\"" + outputFileName + "\" \"" + inputFilename + "\"";
                 try {
                     printCommandLine(proc);
@@ -795,14 +801,14 @@ namespace TeX2img {
                 var aft = outputFileName.Substring(r + 2);
                 if (pages == null) {
                     for (int i = 1; ; ++i) {
-                        var f = Path.Combine(workingDir, pre + i.ToString() + aft);
+                        var f = Path.Combine(workingDir, pre + i.ToString(enUS) + aft);
                         if (File.Exists(f)) tempFilesDeleter.AddFile(f);
                         else break;
                     }
                 } else {
                     bool rv = true;
                     foreach (var p in pages) {
-                        var f = Path.Combine(workingDir, pre + p.ToString() + aft);
+                        var f = Path.Combine(workingDir, pre + p.ToString(enUS) + aft);
                         tempFilesDeleter.AddFile(f);
                         if (!File.Exists(f)) rv = false;
                     }
@@ -826,7 +832,7 @@ namespace TeX2img {
             tempFilesDeleter.AddFile(output);
             using (var proc = GetProcess()) {
                 proc.StartInfo.FileName = Path.Combine(GetToolsPath(), "pdfiumdraw.exe");
-                proc.StartInfo.Arguments = "--pdf --input-format=pdf --pages=" + String.Join(",", pagelist.Select(i => i.ToString()).ToArray()) +
+                proc.StartInfo.Arguments = "--pdf --input-format=pdf --pages=" + String.Join(",", pagelist.Select(i => i.ToString(new System.Globalization.CultureInfo("en-US"))).ToArray()) +
                     " --output=\"" + output + "\" \"" + input + "\"";
                 try {
                     printCommandLine(proc);
@@ -1049,10 +1055,10 @@ namespace TeX2img {
                 attr = outxml.CreateAttribute("begin");
                 attr.Value = "0s"; animate.Attributes.Append(attr);
                 attr = outxml.CreateAttribute("dur");
-                attr.Value = ((decimal)(delay * files.Count) / 100).ToString() + "s";
+                attr.Value = ((decimal)(delay * files.Count) / 100).ToString(new System.Globalization.CultureInfo("en-US")) + "s";
                 animate.Attributes.Append(attr);
                 attr = outxml.CreateAttribute("repeatCount");
-                attr.Value = loop > 0 ? loop.ToString() : "indefinite";
+                attr.Value = loop > 0 ? loop.ToString(new System.Globalization.CultureInfo("en-US")) : "indefinite";
                 animate.Attributes.Append(attr);
                 attr = outxml.CreateAttribute("values");
                 attr.Value = String.Join(";", files.Select(d => "#" + Path.GetFileNameWithoutExtension(d)).ToArray());
@@ -1082,6 +1088,7 @@ namespace TeX2img {
         bool generate(string inputTeXFilePath, string outputFilePath) {
             abort = false;
             outputFileNames = new List<string>();
+            var enUS = new System.Globalization.CultureInfo("en-US");
             string extension = Path.GetExtension(outputFilePath).ToLower();
             string tmpFileBaseName = Path.GetFileNameWithoutExtension(inputTeXFilePath);
             string inputextension = Path.GetExtension(inputTeXFilePath).ToLower();
@@ -1187,7 +1194,7 @@ namespace TeX2img {
                 } else if (!modify_pdf(!Properties.Settings.Default.transparentPngFlag, true)) return false;
                 if (!Properties.Settings.Default.mergeOutputFiles) {
                     foreach (var i in pagelist) {
-                        if (!pdf2pdf_pdfium(tmpFileBaseName + ".pdf", tmpFileBaseName + "-" + i.ToString() + ".pdf", i)) return false;
+                        if (!pdf2pdf_pdfium(tmpFileBaseName + ".pdf", tmpFileBaseName + "-" + i.ToString(enUS) + ".pdf", i)) return false;
                     }
                 } else {
                     if (!pdf2pdf_pdfium(tmpFileBaseName + ".pdf", tmpFileBaseName + "-1.pdf", pagelist)) return false;
@@ -1217,14 +1224,14 @@ namespace TeX2img {
                 if (!pdf2img_mudraw(tmpFileBaseName + ".pdf", tmpFileBaseName + "-%d.svg", pagelist)) return false;
                 if (Properties.Settings.Default.deleteDisplaySize) {
                     foreach(var i in pagelist) {
-                        DeleteHeightAndWidthFromSVGFile(tmpFileBaseName + "-" + i.ToString() + ".svg");
+                        DeleteHeightAndWidthFromSVGFile(tmpFileBaseName + "-" + i.ToString(enUS) + ".svg");
                     }
                 }
                 if (Properties.Settings.Default.mergeOutputFiles && page > 1) {
                     var temp = TempFilesDeleter.GetTempFileName(".svg", workingDir);
                     var temp1 = Path.GetFileNameWithoutExtension(temp) + "-1.svg";
                     tempFilesDeleter.AddFile(temp1);
-                    if(svgconcat(pagelist.Select(d=>tmpFileBaseName + "-" + d.ToString() + ".svg").ToList(), temp1, Properties.Settings.Default.animationDelay, Properties.Settings.Default.animationLoop)) {
+                    if(svgconcat(pagelist.Select(d=>tmpFileBaseName + "-" + d.ToString(enUS) + ".svg").ToList(), temp1, Properties.Settings.Default.animationDelay, Properties.Settings.Default.animationLoop)) {
                         page = 1;
                         tmpFileBaseName = Path.GetFileNameWithoutExtension(temp);
                     } else warnngs.Add(Properties.Resources.FAIL_CONCAT_IMAGES);
@@ -1234,10 +1241,10 @@ namespace TeX2img {
             generate_actions[".svgz"] = () => {
                 if (!generate_actions[".svg"]()) return false;
                 for(int i = 1; i <= page; ++i) {
-                    if(File.Exists(Path.Combine(workingDir,tmpFileBaseName + "-" + i.ToString() + ".svg"))) {
-                        tempFilesDeleter.AddFile(tmpFileBaseName + "-" + i.ToString() + ".svgz");
-                        using (var ins = new FileStream(Path.Combine(workingDir, tmpFileBaseName + "-" + i.ToString() + ".svg"), FileMode.Open))
-                        using (var outs = new FileStream(Path.Combine(workingDir, tmpFileBaseName + "-" + i.ToString() + ".svgz"), FileMode.Create))
+                    if(File.Exists(Path.Combine(workingDir,tmpFileBaseName + "-" + i.ToString(enUS) + ".svg"))) {
+                        tempFilesDeleter.AddFile(tmpFileBaseName + "-" + i.ToString(enUS) + ".svgz");
+                        using (var ins = new FileStream(Path.Combine(workingDir, tmpFileBaseName + "-" + i.ToString(enUS) + ".svg"), FileMode.Open))
+                        using (var outs = new FileStream(Path.Combine(workingDir, tmpFileBaseName + "-" + i.ToString(enUS) + ".svgz"), FileMode.Create))
                         using (var gzip = new System.IO.Compression.GZipStream(outs, System.IO.Compression.CompressionMode.Compress)) {
                             var bytes = new byte[ins.Length];
                             ins.Read(bytes, 0, (int)ins.Length);
@@ -1276,7 +1283,7 @@ namespace TeX2img {
                 if (Properties.Settings.Default.mergeOutputFiles && page > 1) {
                     var temp = TempFilesDeleter.GetTempFileName(".tiff", workingDir);
                     var temp1 = Path.GetFileNameWithoutExtension(temp) + "-1.tiff";
-                    if(tiffconcat(pagelist.Select(d => tmpFileBaseName + "-" + d.ToString() + ".tiff").ToList(), temp1)){ 
+                    if(tiffconcat(pagelist.Select(d => tmpFileBaseName + "-" + d.ToString(enUS) + ".tiff").ToList(), temp1)){ 
                         page = 1;
                         tmpFileBaseName = Path.GetFileNameWithoutExtension(temp);
                     } else warnngs.Add(Properties.Resources.FAIL_CONCAT_IMAGES);
@@ -1296,7 +1303,7 @@ namespace TeX2img {
                 if (Properties.Settings.Default.mergeOutputFiles && page > 1) {
                     var temp = TempFilesDeleter.GetTempFileName(".gif", workingDir);
                     var temp1 = Path.GetFileNameWithoutExtension(temp) + "-1.gif";
-                    if (gifconcat(pagelist.Select(d => tmpFileBaseName + "-" + d.ToString() + ".gif").ToList(), temp1, Properties.Settings.Default.animationDelay, Properties.Settings.Default.animationLoop)) {
+                    if (gifconcat(pagelist.Select(d => tmpFileBaseName + "-" + d.ToString(enUS) + ".gif").ToList(), temp1, Properties.Settings.Default.animationDelay, Properties.Settings.Default.animationLoop)) {
                         page = 1;
                         tmpFileBaseName = Path.GetFileNameWithoutExtension(temp);
                     } else warnngs.Add(Properties.Resources.FAIL_CONCAT_IMAGES);
@@ -1661,7 +1668,7 @@ namespace TeX2img {
             using (var p = new Process()) {
                 try {
                     p.StartInfo.FileName = "taskkill.exe";
-                    p.StartInfo.Arguments = "/PID " + proc.Id.ToString() + " /T /F";
+                    p.StartInfo.Arguments = "/PID " + proc.Id.ToString(new System.Globalization.CultureInfo("en-US")) + " /T /F";
                     p.StartInfo.CreateNoWindow = true;
                     p.StartInfo.UseShellExecute = false;
                     p.Start();

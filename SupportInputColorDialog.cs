@@ -169,9 +169,10 @@ namespace TeX2img {
         }
         System.Drawing.Color GetCurrentColor(IntPtr hWnd) {
             int red, blue, green;
-            if(!Int32.TryParse(GetWindowText(hWnd, PInvoke.COLOR_RED),out red))red = 0;
-            if(!Int32.TryParse(GetWindowText(hWnd, PInvoke.COLOR_GREEN),out green))green = 0;
-            if(!Int32.TryParse(GetWindowText(hWnd, PInvoke.COLOR_BLUE),out blue))blue = 0;
+            var enUS = new System.Globalization.CultureInfo("en-US");
+            if (!Int32.TryParse(GetWindowText(hWnd, PInvoke.COLOR_RED), System.Globalization.NumberStyles.Integer, enUS, out red)) red = 0;
+            if (!Int32.TryParse(GetWindowText(hWnd, PInvoke.COLOR_GREEN), System.Globalization.NumberStyles.Integer, enUS, out green)) green = 0;
+            if (!Int32.TryParse(GetWindowText(hWnd, PInvoke.COLOR_BLUE), System.Globalization.NumberStyles.Integer, enUS, out blue)) blue = 0;
             return System.Drawing.Color.FromArgb(red, green, blue);
         }
         ControlSequence GetControlSequence(IntPtr hWnd) {
@@ -189,7 +190,8 @@ namespace TeX2img {
         }
         string GetControlSequenceString(IntPtr hWnd) {
             var color = GetCurrentColor(hWnd);
-            var colstring = "{" + ((double) color.R / (double) 255).ToString() + "," + ((double) color.G / (double) 255).ToString() + "," + ((double) color.B / (double) 255).ToString() + "}";
+            var enUS = new System.Globalization.CultureInfo("en-US");
+            var colstring = "{" + ((double) color.R / (double) 255).ToString(enUS) + "," + ((double) color.G / (double) 255).ToString(enUS) + "," + ((double) color.B / (double) 255).ToString(enUS) + "}";
             var cs = GetControlSequence(hWnd);
             switch(cs) {
             case ControlSequence.colorbox:

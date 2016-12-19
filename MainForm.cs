@@ -619,11 +619,12 @@ namespace TeX2img {
                 MessageBox.Show(Properties.Resources.ONLY_INPUTMODE,"TeX2img");
                 return;
             }
+            var enUS = new System.Globalization.CultureInfo("en-US");
             Func<Color, string> GetColorString = (c) => {
                 return "{" + 
-                    ((double) c.R / (double) 255).ToString() + "," +
-                    ((double) c.G / (double) 255).ToString() + "," +
-                    ((double) c.B / (double) 255).ToString() + "}";
+                    ((double) c.R / (double) 255).ToString(enUS) + "," +
+                    ((double) c.G / (double) 255).ToString(enUS) + "," +
+                    ((double) c.B / (double) 255).ToString(enUS) + "}";
             };
             using(var cdg = new SupportInputColorDialog()) {
                 cdg.CustomColors = (int[])Properties.Settings.Default.ColorDialogCustomColors.Clone();

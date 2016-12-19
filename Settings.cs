@@ -148,6 +148,7 @@ namespace TeX2img.Properties {
 
         public string GuessGsdevice(string gs) {
             string gsdevice = "";
+            var enUS = new System.Globalization.CultureInfo("en-US");
             // Ghostscriptのバージョンを取得する．
             using(var proc = new System.Diagnostics.Process()) {
                 proc.StartInfo.RedirectStandardOutput = true;
@@ -168,8 +169,8 @@ namespace TeX2img.Properties {
                     var reg = new System.Text.RegularExpressions.Regex("Ghostscript ([0-9]+)\\.([0-9]+)", System.Text.RegularExpressions.RegexOptions.IgnoreCase);
                     var m = reg.Match(msg);
                     if(m.Success) {
-                        int major = int.Parse(m.Groups[1].Value);
-                        int minor = int.Parse(m.Groups[2].Value);
+                        int major = int.Parse(m.Groups[1].Value, enUS);
+                        int minor = int.Parse(m.Groups[2].Value, enUS);
                         //System.Diagnostics.Debug.WriteLine("major = " + major.ToString() + ", minor = " + minor.ToString());
                         // 9.15以上ならばeps2write，そうでないならepwsrite
                         if(major > 9 || (major == 9 && minor >= 15)) gsdevice = "eps2write";
