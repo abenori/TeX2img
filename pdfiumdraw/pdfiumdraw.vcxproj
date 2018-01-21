@@ -14,19 +14,19 @@
     <ProjectGuid>{B99F785A-C0F5-4CAA-8B66-02A1866ADFF2}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>pdfiumdraw</RootNamespace>
-    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.15063.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v140_xp</PlatformToolset>
+    <PlatformToolset>v141_xp</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v140_xp</PlatformToolset>
+    <PlatformToolset>v141_xp</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
@@ -65,7 +65,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>gdiplus.lib;debug\obj\build\config\sanitizers\options_sources.lib;debug\obj\fdrm.lib;debug\obj\formfiller.lib;debug\obj\fpdfapi.lib;debug\obj\fpdfdoc.lib;debug\obj\fpdftext.lib;debug\obj\fxcodec.lib;debug\obj\fxcrt.lib;debug\obj\fxedit.lib;debug\obj\fxge.lib;debug\obj\fxge\fx_agg_driver.obj;debug\obj\javascript.lib;debug\obj\pdfium.lib;debug\obj\pdfium_unittests\fx_codec_jpx_unittest.obj;debug\obj\pdfwindow.lib;debug\obj\testing\gmock\gmock.lib;debug\obj\testing\gmock\gmock_main.lib;debug\obj\testing\gtest\gtest.lib;debug\obj\third_party\fx_freetype.lib;debug\obj\third_party\fx_agg.lib;debug\obj\third_party\fx_lcms2.lib;debug\obj\third_party\fx_libopenjpeg.lib;debug\obj\third_party\fx_lpng.lib;debug\obj\third_party\fx_zlib.lib;debug\obj\third_party\jpeg.lib;Shlwapi.lib;winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>gdiplus.lib;debug\obj\fdrm.lib;debug\obj\formfiller.lib;debug\obj\fpdfapi.lib;debug\obj\fpdfdoc.lib;debug\obj\fpdftext.lib;debug\obj\fxcodec.lib;debug\obj\fxcrt.lib;debug\obj\fxge.lib;debug\obj\fxjs.lib;debug\obj\image_diff.lib;debug\obj\pdfium.lib;debug\obj\pwl.lib;debug\obj\test_support.lib;debug\obj\fxge\fx_agg_driver.obj;debug\obj\pdfium_unittests\fx_codec_jpx_unittest.obj;debug\obj\testing\gmock\gmock.lib;debug\obj\testing\gmock\gmock_main.lib;debug\obj\testing\gtest\gtest.lib;debug\obj\third_party\bigint.lib;debug\obj\third_party\fx_freetype.lib;debug\obj\third_party\fx_agg.lib;debug\obj\third_party\fx_lcms2.lib;debug\obj\third_party\fx_libopenjpeg.lib;debug\obj\third_party\fx_lpng.lib;debug\obj\third_party\pdfium_base\partition_alloc.obj;debug\obj\third_party\pdfium_base\spin_lock;debug\obj\third_party\zlib\zlib.lib;debug\obj\third_party\zlib\zlib_inflate_chunk_simd\inflate.obj;debug\obj\third_party\libjpeg_turbo\libjpeg.lib;debug\obj\third_party\libjpeg_turbo\simd.lib;debug\obj\third_party\libjpeg_turbo\simd_asm.lib;\debug\obj\third_party\zlib\zlib_inflate_chunk_simd\inffast_chunk.obj;debug\obj\third_party\pdfium_base\page_allocator.obj;debug\obj\third_party\pdfium_base\address_space_randomization.obj;debug\obj\third_party\zlib\zlib_adler32_simd\adler32_simd.obj;debug\obj\third_party\zlib\zlib_x86_simd\crc_folding.obj;debug\obj\third_party\zlib\zlib_x86_simd\fill_window_sse.obj;Shlwapi.lib;winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -85,7 +85,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>gdiplus.lib;release\obj\build\config\sanitizers\options_sources.lib;release\obj\fdrm.lib;release\obj\formfiller.lib;release\obj\fpdfapi.lib;release\obj\fpdfdoc.lib;release\obj\fpdftext.lib;release\obj\fxcodec.lib;release\obj\fxcrt.lib;release\obj\fxedit.lib;release\obj\fxge.lib;release\obj\fxge\fx_agg_driver.obj;release\obj\javascript.lib;release\obj\pdfium.lib;release\obj\pdfium_unittests\fx_codec_jpx_unittest.obj;release\obj\pdfwindow.lib;release\obj\testing\gmock\gmock.lib;release\obj\testing\gmock\gmock_main.lib;release\obj\testing\gtest\gtest.lib;release\obj\third_party\fx_freetype.lib;release\obj\third_party\fx_agg.lib;release\obj\third_party\fx_lcms2.lib;release\obj\third_party\fx_libopenjpeg.lib;release\obj\third_party\fx_lpng.lib;release\obj\third_party\fx_zlib.lib;release\obj\third_party\jpeg.lib;Shlwapi.lib;winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>gdiplus.lib;release\obj\fdrm.lib;release\obj\formfiller.lib;release\obj\fpdfapi.lib;release\obj\fpdfdoc.lib;release\obj\fpdftext.lib;release\obj\fxcodec.lib;release\obj\fxcrt.lib;release\obj\fxge.lib;release\obj\fxjs.lib;release\obj\image_diff.lib;release\obj\pdfium.lib;release\obj\pwl.lib;release\obj\test_support.lib;release\obj\fxge\fx_agg_driver.obj;release\obj\pdfium_unittests\fx_codec_jpx_unittest.obj;release\obj\testing\gmock\gmock.lib;release\obj\testing\gmock\gmock_main.lib;release\obj\testing\gtest\gtest.lib;release\obj\third_party\bigint.lib;release\obj\third_party\fx_freetype.lib;release\obj\third_party\fx_agg.lib;release\obj\third_party\fx_lcms2.lib;release\obj\third_party\fx_libopenjpeg.lib;release\obj\third_party\fx_lpng.lib;release\obj\third_party\pdfium_base\partition_alloc.obj;release\obj\third_party\pdfium_base\spin_lock;release\obj\third_party\zlib\zlib.lib;release\obj\third_party\zlib\zlib_inflate_chunk_simd\inflate.obj;release\obj\third_party\libjpeg_turbo\libjpeg.lib;release\obj\third_party\libjpeg_turbo\simd.lib;release\obj\third_party\libjpeg_turbo\simd_asm.lib;\release\obj\third_party\zlib\zlib_inflate_chunk_simd\inffast_chunk.obj;release\obj\third_party\pdfium_base\page_allocator.obj;release\obj\third_party\pdfium_base\address_space_randomization.obj;release\obj\third_party\zlib\zlib_adler32_simd\adler32_simd.obj;release\obj\third_party\zlib\zlib_x86_simd\crc_folding.obj;release\obj\third_party\zlib\zlib_x86_simd\fill_window_sse.obj;Shlwapi.lib;winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>

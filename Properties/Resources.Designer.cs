@@ -79,7 +79,8 @@ namespace TeX2img.Properties {
         }
         
         /// <summary>
-        ///   Failed to analyze the source file.\nPlease check \\begin{document}, \\end{document} etc. に類似しているローカライズされた文字列を検索します。
+        ///   Parsing of the source file failed.
+        ///Please check \\begin{document}, \\end{document} etc. に類似しているローカライズされた文字列を検索します。
         /// </summary>
         internal static string ANALYZESOURCEERROR {
             get {
@@ -88,7 +89,8 @@ namespace TeX2img.Properties {
         }
         
         /// <summary>
-        ///   Cannot write \n{0} に類似しているローカライズされた文字列を検索します。
+        ///   Cannot write
+        ///{0} に類似しているローカライズされた文字列を検索します。
         /// </summary>
         internal static string AUTHORIZEDERROR {
             get {
@@ -115,7 +117,8 @@ namespace TeX2img.Properties {
         }
         
         /// <summary>
-        ///   Change the current preamble to the following:\n{0} に類似しているローカライズされた文字列を検索します。
+        ///   Change the current preamble to the following:
+        ///{0} に類似しているローカライズされた文字列を検索します。
         /// </summary>
         internal static string CHANGE_CURRENTPREAMBLE {
             get {
@@ -529,7 +532,7 @@ namespace TeX2img.Properties {
         }
         
         /// <summary>
-        ///   {0} will be deleted. に類似しているローカライズされた文字列を検索します。
+        ///   Are you sure you want to delete {0}? に類似しているローカライズされた文字列を検索します。
         /// </summary>
         internal static string DELETEMSG {
             get {
@@ -547,7 +550,8 @@ namespace TeX2img.Properties {
         }
         
         /// <summary>
-        ///   An error is detected. Please retry.\n{0} に類似しているローカライズされた文字列を検索します。
+        ///   An error is detected. Please retry.
+        ///{0} に類似しているローカライズされた文字列を検索します。
         /// </summary>
         internal static string DETECTERROR {
             get {
@@ -691,7 +695,8 @@ namespace TeX2img.Properties {
         }
         
         /// <summary>
-        ///   Failed to make a temporary file. Please check the folder\n{0} に類似しているローカライズされた文字列を検索します。
+        ///   Failed to make a temporary file. Please check the folder
+        ///{0} に類似しているローカライズされた文字列を検索します。
         /// </summary>
         internal static string FAIL_TMPFILE {
             get {
@@ -700,7 +705,9 @@ namespace TeX2img.Properties {
         }
         
         /// <summary>
-        ///   Failed to make a temporary folder\n{0}\nPlease check TMP and TEMP. に類似しているローカライズされた文字列を検索します。
+        ///   Failed to make a temporary folder
+        ///{0}
+        ///Please check TMP and TEMP. に類似しているローカライズされた文字列を検索します。
         /// </summary>
         internal static string FAIL_TMPFOLDER {
             get {
@@ -718,7 +725,9 @@ namespace TeX2img.Properties {
         }
         
         /// <summary>
-        ///   It is taking a long time for {0}.\nThe program may be freezing. Do you want to continue?\nIf it is not continued, it will be killed. に類似しているローカライズされた文字列を検索します。
+        ///   It is taking a long time for {0}.
+        ///The program may be freezing. Do you want to continue?
+        ///If it is not continued, it will be killed. に類似しているローカライズされた文字列を検索します。
         /// </summary>
         internal static string FREEZMSG {
             get {
@@ -745,7 +754,9 @@ namespace TeX2img.Properties {
         }
         
         /// <summary>
-        ///   Some errors are ignored.\nThe result might be not as expected.\nCheck the source again. に類似しているローカライズされた文字列を検索します。
+        ///   Some errors are ignored.
+        ///The result might be not as expected.
+        ///Check the source again. に類似しているローカライズされた文字列を検索します。
         /// </summary>
         internal static string IGNOREDERRORWARNING {
             get {
@@ -763,7 +774,7 @@ namespace TeX2img.Properties {
         }
         
         /// <summary>
-        ///   The file will be imported. The current preamble and the source will be remoevd. に類似しているローカライズされた文字列を検索します。
+        ///   Are you sure you want to replace the current preamble and source with the imported file? The current preamble and the source will be remoevd. に類似しているローカライズされた文字列を検索します。
         /// </summary>
         internal static string IMPORTMSG {
             get {
@@ -772,7 +783,11 @@ namespace TeX2img.Properties {
         }
         
         /// <summary>
-        ///   Set paths as\n{0}\n{1}\n{2}\nIf they are not correct, please set them manually. に類似しているローカライズされた文字列を検索します。
+        ///   Set paths as
+        ///{0}
+        ///{1}
+        ///{2}
+        ///If they are not correct, please set them manually. に類似しているローカライズされた文字列を検索します。
         /// </summary>
         internal static string INIT_PATH {
             get {
@@ -835,7 +850,7 @@ namespace TeX2img.Properties {
         }
         
         /// <summary>
-        ///   Failed to generate because {0} is opened by another application.{1} Please close the application and retry. に類似しているローカライズされた文字列を検索します。
+        ///   Generating Failed because {0} is opened by another application.{1} Please close the application and retry. に類似しているローカライズされた文字列を検索します。
         /// </summary>
         internal static string IOERROR {
             get {
@@ -979,7 +994,7 @@ namespace TeX2img.Properties {
         }
         
         /// <summary>
-        ///   {0} exists. Overwrite? に類似しているローカライズされた文字列を検索します。
+        ///   {0} exists. Do you wan to overwrite? に類似しているローカライズされた文字列を検索します。
         /// </summary>
         internal static string OVERWRITEMSG {
             get {
@@ -988,7 +1003,7 @@ namespace TeX2img.Properties {
         }
         
         /// <summary>
-        ///   The template {0} will be overwrited by the current preamble. に類似しているローカライズされた文字列を検索します。
+        ///   Are you sure you want to overwrite the template {0} with the current preamble? に類似しているローカライズされた文字列を検索します。
         /// </summary>
         internal static string OVERWRITETEMPLATEMSG {
             get {
@@ -997,7 +1012,8 @@ namespace TeX2img.Properties {
         }
         
         /// <summary>
-        ///   Cannot execute {0}.\nCheck the path of {1}. に類似しているローカライズされた文字列を検索します。
+        ///   Cannot execute {0}.
+        ///Check the path of {1}. に類似しているローカライズされた文字列を検索します。
         /// </summary>
         internal static string PATHERROR {
             get {
@@ -1033,7 +1049,7 @@ namespace TeX2img.Properties {
         }
         
         /// <summary>
-        ///   The templates {0} wil be restored and the other templates will be deleted. に類似しているローカライズされた文字列を検索します。
+        ///   Are you sure you wan to restore the templates {0} and remove other templates? に類似しているローカライズされた文字列を検索します。
         /// </summary>
         internal static string RESTORETEMPLATE_COMPLETEMSG {
             get {
@@ -1042,7 +1058,7 @@ namespace TeX2img.Properties {
         }
         
         /// <summary>
-        ///   The templates {0} will be restored. に類似しているローカライズされた文字列を検索します。
+        ///   Are you sure you wan to restore the templates {0}? に類似しているローカライズされた文字列を検索します。
         /// </summary>
         internal static string RESTORETEMPLATEMSG {
             get {
@@ -1087,7 +1103,9 @@ namespace TeX2img.Properties {
         }
         
         /// <summary>
-        ///   The template {0} is:\n\n{1} に類似しているローカライズされた文字列を検索します。
+        ///   The template {0} is:
+        ///
+        ///{1} に類似しているローカライズされた文字列を検索します。
         /// </summary>
         internal static string SHOWTEMPLATEMSG {
             get {
@@ -1132,7 +1150,8 @@ namespace TeX2img.Properties {
         }
         
         /// <summary>
-        ///   Failed to execute {0}.\nDon&apos;t delete the folder {1}. に類似しているローカライズされた文字列を検索します。
+        ///   Failed to execute {0}.
+        ///Don&apos;t delete the folder {1}. に類似しているローカライズされた文字列を検索します。
         /// </summary>
         internal static string TOOLERROR {
             get {
