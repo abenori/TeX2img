@@ -22,7 +22,7 @@
 
 ## 動作条件
 * Windows Vista 以降．
-* .NET Framework 3.5 以降．
+* .NET Framework 4.5.2 以降．
 * 十分新しい TeX ディストリビューション（W32TeX か TeX Live を推奨）がインストールされていて，適切な LaTeX エンジンと dvi ドライバ，および pdftex が使えること．
 * Ghostscript (Version 9以上を推奨) がインストールされ，使えること．（TeX Live 内のものでも利用可能です．）
 
@@ -345,7 +345,7 @@ https://pdfium.googlesource.com/pdfium/
 * 1.7.2（2016/06/18）
     - テンプレートの color パッケージを xcolor パッケージに変更．
     - NDesk.Options → Mono.Options （NuGetから）
-    - pdfium をアップデート．
+    - PDFium をアップデート．
     - PDF のバージョンを極力維持するようにした．
 
 * 2.0.0（2016/07/15）
@@ -355,7 +355,11 @@ https://pdfium.googlesource.com/pdfium/
 
 * 2.0.1（2016/10/06）
     - 日本語リソースのミスを修正．
-    - pdfium をアップデート．
+    - PDFium をアップデート．
 
-* 2.0.1（2016/12/19）
-    - システムの言語によっては数値から文字列への変換がうまく行かなかったバグを修正
+* 2.0.2（2016/12/19）
+    - システムの言語によっては数値から文字列への変換がうまく行かなかったバグを修正．
+
+* 2.0.3（2018/01/22）
+    - 要求する .NET Framework を 4.5.2 以上とした．
+    - PDFium をアップデート．

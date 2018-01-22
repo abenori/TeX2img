@@ -20,7 +20,7 @@ This was originally made by Yusuke Terada (until Version 1.2).
 
 ## Requirements
 * Windows Vista or later.
-* .NET Framework 3.5 or later.
+* .NET Framework 4.5.2 or later.
 * TeX distribution (W32TeX or TeX Live is recommended), especially pdftex.
 * Ghostscript (Version 9 or later is recommended). 
 
@@ -100,6 +100,9 @@ will generate transparent png file. In particular, because /load-defaults makes 
 * Webpage of Yusuke Terada (original developer of TeX2img)
 http://island.geocities.jp/loveinequality/
 
+## Known bugs
+Conversions to EMF file has some problems. See Issues in GitHub: [https://github.com/abenori/TeX2img/issues/3](https://github.com/abenori/TeX2img/issues/3).
+
 
 ## Acknowledgments
 * Originally it is made by Yusuke Terada.
@@ -140,3 +143,7 @@ For the detail, see the site of each library.
 
 * 2.0.2 (2016/12/19)
     - Fix bug: the conversion between strings and numbers are not correct with a certain system language.
+
+* 2.0.3 (2018/01/22)
+    - Require .NET Framework >= 4.5.2.
+    - Update PDFium
