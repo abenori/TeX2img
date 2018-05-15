@@ -117,317 +117,280 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="AUTHORIZEDERROR" xml:space="preserve">
-    <value>Cannot write
-{0}</value>
+  <data name="SHOWTEMPLATEMSG" xml:space="preserve">
+    <value>The template {0} is:
+
+{1}</value>
   </data>
   <data name="GENERATEERROR" xml:space="preserve">
     <value>Failed to generate the image. Please check the source code.</value>
   </data>
+  <data name="ERROR" xml:space="preserve">
+    <value>Error</value>
+  </data>
+  <data name="PDFTOEPS" xml:space="preserve">
+    <value>PDF To EPS</value>
+  </data>
+  <data name="DASHTOLINE_FAIL_MSG" xml:space="preserve">
+    <value>We skip a preprocessing for emf file because it failed.</value>
+  </data>
+  <data name="NOOUTPUT_FILE" xml:space="preserve">
+    <value>No input file for {0}.</value>
+  </data>
+  <data name="INPUTE_TEMPLATE_NAME" xml:space="preserve">
+    <value>Please input the name of the template.</value>
+  </data>
+  <data name="STOP" xml:space="preserve">
+    <value>Stop</value>
+  </data>
+  <data name="NOTSELECTED_SHOWTEMPLATE" xml:space="preserve">
+    <value>Select a template to show.</value>
+  </data>
+  <data name="CMDLINE_HELP" xml:space="preserve">
+    <value>Show this message</value>
+  </data>
+  <data name="ADD_TEMPLATEMSG" xml:space="preserve">
+    <value>Add template</value>
+  </data>
+  <data name="CMDLINE_BACKGROUND_COLOR" xml:space="preserve">
+    <value>Background color (ex: FF0000, red, "255 0 0")</value>
+  </data>
+  <data name="NOINPUTFILE" xml:space="preserve">
+    <value>No input file.</value>
+  </data>
   <data name="INVALID_EXTENSION" xml:space="preserve">
     <value>{0}: Invalid extension.</value>
+  </data>
+  <data name="CMDLINE_WITH_TEXT" xml:space="preserve">
+    <value>Keep original text information (PDF / SVG(Z))</value>
+  </data>
+  <data name="NOTEXIST" xml:space="preserve">
+    <value>{0} does not exist.</value>
+  </data>
+  <data name="CMDLINE_ERROR_INVALID_MARGIN" xml:space="preserve">
+    <value>Unrecognized margin specification.</value>
+  </data>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="INVALID_INPUT" xml:space="preserve">
+    <value>Invalid Input</value>
+  </data>
+  <data name="CMDLINE_BOTTOM_MARGIN" xml:space="preserve">
+    <value>Bottom margin</value>
+  </data>
+  <data name="CMDLINE_HELP_CURRENT" xml:space="preserve">
+    <value>(Current: {0})</value>
+  </data>
+  <data name="CMDLINE_LATEX" xml:space="preserve">
+    <value>Set path for latex</value>
+  </data>
+  <data name="WHITE" xml:space="preserve">
+    <value>White</value>
+  </data>
+  <data name="BOLD" xml:space="preserve">
+    <value>Bold</value>
   </data>
   <data name="NOSYSTEMFILE" xml:space="preserve">
     <value>Since the following files are not found, TeX2img cannot executed.</value>
   </data>
-  <data name="PATHERROR" xml:space="preserve">
-    <value>Cannot execute {0}.
-Check the path of {1}.</value>
+  <data name="CMDLINE_RIGHT_MARGIN" xml:space="preserve">
+    <value>Right margin</value>
+  </data>
+  <data name="COMPILE_TEX" xml:space="preserve">
+    <value>Compiling TeX source</value>
   </data>
   <data name="IOERROR" xml:space="preserve">
     <value>Generating Failed because {0} is opened by another application.{1} Please close the application and retry.</value>
   </data>
-  <data name="ANALYZESOURCEERROR" xml:space="preserve">
-    <value>Parsing of the source file failed.
-Please check \\begin{document}, \\end{document} etc.</value>
+  <data name="CMDLINE_MARGINS" xml:space="preserve">
+    <value>Margins (all / leftright topbottom / left top right bottom)</value>
   </data>
-  <data name="CHECK_ENCODEMSG" xml:space="preserve">
-    <value>The current character code is {0}, but the file seems to be with {1}. Do you want to use {0}?</value>
+  <data name="CMDLINE_KANJI" xml:space="preserve">
+    <value>Character code (utf8/sjis/jis/euc/no)</value>
   </data>
-  <data name="DETECTERROR" xml:space="preserve">
-    <value>An error is detected. Please retry.
-{0}</value>
-  </data>
-  <data name="EMBED_IS_ONLY_NTFS" xml:space="preserve">
-    <value>Embedding the source code is only supported with the NTFS file system.</value>
-  </data>
-  <data name="ERROR" xml:space="preserve">
-    <value>Error</value>
-  </data>
-  <data name="FAILED" xml:space="preserve">
-    <value>Failed</value>
-  </data>
-  <data name="FAIL_OPEN" xml:space="preserve">
-    <value>Cannot open {0}.</value>
-  </data>
-  <data name="FAIL_TMPFILE" xml:space="preserve">
-    <value>Failed to make a temporary file. Please check the folder
-{0}</value>
+  <data name="CMDLINE_SAVESETTINGS" xml:space="preserve">
+    <value>Save settings</value>
   </data>
   <data name="FAIL_TMPFOLDER" xml:space="preserve">
     <value>Failed to make a temporary folder
 {0}
 Please check TMP and TEMP.</value>
   </data>
-  <data name="IGNOREDERRORWARNING" xml:space="preserve">
-    <value>Some errors are ignored.
-The result might be not as expected.
-Check the source again.</value>
-  </data>
-  <data name="IMPORTDIALOG_FILTER" xml:space="preserve">
-    <value>TeX source (*.tex)|*.tex|Image files ({0})|{1}|All files (*.*)|*.*</value>
-  </data>
-  <data name="IMPORTMSG" xml:space="preserve">
-    <value>Are you sure you want to replace the current preamble and source with the imported file? The current preamble and the source will be remoevd.</value>
-  </data>
-  <data name="NOTEXIST" xml:space="preserve">
-    <value>{0} does not exist.</value>
-  </data>
-  <data name="NO_EMBEDDED_SOURCE" xml:space="preserve">
-    <value>The source file is not embedded in {0}.</value>
-  </data>
-  <data name="ONLY_INPUTMODE" xml:space="preserve">
-    <value>This function can be used only with the direct input mode.</value>
-  </data>
-  <data name="PUSHYORN" xml:space="preserve">
-    <value>Input y or n.</value>
-  </data>
-  <data name="STOP" xml:space="preserve">
-    <value>Stop</value>
-  </data>
-  <data name="TOOLERROR" xml:space="preserve">
-    <value>Failed to execute {0}.
-Don't delete the folder {1}.</value>
-  </data>
-  <data name="WARNING" xml:space="preserve">
-    <value>Warning</value>
-  </data>
-  <data name="ALLPAGE_EMPTYMSG" xml:space="preserve">
-    <value>All pages are empty.</value>
-  </data>
-  <data name="COMPILE_TEX" xml:space="preserve">
-    <value>Compiling TeX source</value>
-  </data>
-  <data name="DVITOPDF" xml:space="preserve">
-    <value>DVI To PDF</value>
-  </data>
-  <data name="EMPTYMSG" xml:space="preserve">
-    <value>The page {0} is empty.</value>
-  </data>
-  <data name="EPSTOPDF" xml:space="preserve">
-    <value>EPS To PDF</value>
-  </data>
-  <data name="EXEC_GS" xml:space="preserve">
-    <value>Execute Ghostscript</value>
-  </data>
-  <data name="EXEC_MUDRAW" xml:space="preserve">
-    <value>Execute mudraw</value>
-  </data>
-  <data name="EXEC_PDFIUMDRAW" xml:space="preserve">
-    <value>Execute pdfiumdraw</value>
-  </data>
-  <data name="EXEC_PDFTEX" xml:space="preserve">
-    <value>Execute pdftex</value>
+  <data name="ITALIC" xml:space="preserve">
+    <value>Italic</value>
   </data>
   <data name="FAIL_CONCAT_IMAGES" xml:space="preserve">
     <value>Fail to concatinate images.</value>
   </data>
-  <data name="FAIL_GETBOUNDINGBOX" xml:space="preserve">
-    <value>Fail to get boundingbox.</value>
+  <data name="EXEC_PDFTEX" xml:space="preserve">
+    <value>Execute pdftex</value>
   </data>
-  <data name="FAIL_PDFPAGES" xml:space="preserve">
-    <value>Fail to get total pdf pages.</value>
+  <data name="CHECK_ENCODEMSG" xml:space="preserve">
+    <value>The current character code is {0}, but the file seems to be with {1}. Do you want to use {0}?</value>
+  </data>
+  <data name="NOT_SPECIFY_ENCODE" xml:space="preserve">
+    <value>no (input: {0})</value>
+  </data>
+  <data name="SEEHELPMSG" xml:space="preserve">
+    <value>See help via {0}.</value>
+  </data>
+  <data name="CMDLINE_GS" xml:space="preserve">
+    <value>Set path for Ghostscript</value>
+  </data>
+  <data name="EXEC_GS" xml:space="preserve">
+    <value>Execute Ghostscript</value>
+  </data>
+  <data name="CMDLINE_VERSION" xml:space="preserve">
+    <value>Show version information</value>
+  </data>
+  <data name="CMDLINE_ANTIALIAS" xml:space="preserve">
+    <value>Anti-aliasing</value>
+  </data>
+  <data name="PATHERROR" xml:space="preserve">
+    <value>Cannot execute {0}.
+Check the path of {1}.</value>
+  </data>
+  <data name="SAMPLE" xml:space="preserve">
+    <value>Sample</value>
+  </data>
+  <data name="INVALID_TEMPLATE_NAME" xml:space="preserve">
+    <value>[{0}] is not used as the name of a template.</value>
+  </data>
+  <data name="FAIL_GUESS" xml:space="preserve">
+    <value>Fail to guess {0}.</value>
+  </data>
+  <data name="FAIL_INIT_PATH" xml:space="preserve">
+    <value>Faile to guess paths of LaTeX / DVI driver / Ghostscript. Please set them manually.</value>
+  </data>
+  <data name="CMDLINE_NUM" xml:space="preserve">
+    <value>(maximum) number of times for LaTeX</value>
+  </data>
+  <data name="NOARGUMENT" xml:space="preserve">
+    <value>No argument.</value>
   </data>
   <data name="FREEZMSG" xml:space="preserve">
     <value>It is taking a long time for {0}.
 The program may be freezing. Do you want to continue?
 If it is not continued, it will be killed.</value>
   </data>
-  <data name="GET_BOUNDINGBOX" xml:space="preserve">
-    <value>Get BoundingBox</value>
+  <data name="CMDLINE_IGNORE_ERRORS" xml:space="preserve">
+    <value>Force conversion by ignoring nonfatal errors</value>
   </data>
-  <data name="PDFTOEPS" xml:space="preserve">
-    <value>PDF To EPS</value>
-  </data>
-  <data name="PSTOPDF" xml:space="preserve">
-    <value>PS To PDF</value>
-  </data>
-  <data name="SKIPPED_BACAUSE_EMPTY" xml:space="preserve">
-    <value>The page {0} is skipped because it is empty.</value>
-  </data>
-  <data name="STOPCONVERTMSG" xml:space="preserve">
-    <value>Stop converting.</value>
-  </data>
-  <data name="TEX_DISTRIBUTION" xml:space="preserve">
-    <value>TeX distribution ({0})</value>
-  </data>
-  <data name="ADD_TEMPLATEMSG" xml:space="preserve">
-    <value>Add template</value>
-  </data>
-  <data name="BOLD" xml:space="preserve">
-    <value>Bold</value>
-  </data>
-  <data name="CANNOT_OPEN_WORKDIR" xml:space="preserve">
-    <value>Fail to open the working folder {0}, please check TMP and TEMP.</value>
-  </data>
-  <data name="CHANGE_CURRENTPREAMBLE" xml:space="preserve">
-    <value>Change the current preamble to the following:
+  <data name="AUTHORIZEDERROR" xml:space="preserve">
+    <value>Cannot write
 {0}</value>
-  </data>
-  <data name="DELETEMSG" xml:space="preserve">
-    <value>Are you sure you want to delete {0}?</value>
-  </data>
-  <data name="DETECT_RECOMMENDED_PATH" xml:space="preserve">
-    <value>The following paths are suggested as a suitable to the template. Do you want to change?{0}</value>
-  </data>
-  <data name="FAIL_GUESS" xml:space="preserve">
-    <value>Fail to guess {0}.</value>
-  </data>
-  <data name="INPUTE_TEMPLATE_NAME" xml:space="preserve">
-    <value>Please input the name of the template.</value>
-  </data>
-  <data name="INVALID_TEMPLATE_NAME" xml:space="preserve">
-    <value>[{0}] is not used as the name of a template.</value>
-  </data>
-  <data name="ITALIC" xml:space="preserve">
-    <value>Italic</value>
-  </data>
-  <data name="MANAGE_TEMPLATES" xml:space="preserve">
-    <value>Managing templates</value>
-  </data>
-  <data name="NOTSELECTED_DELETETEMPLATE" xml:space="preserve">
-    <value>Select a template to delete.</value>
-  </data>
-  <data name="NOTSELECTED_SHOWTEMPLATE" xml:space="preserve">
-    <value>Select a template to show.</value>
-  </data>
-  <data name="NOTSELECTED_TEMPLATE" xml:space="preserve">
-    <value>Please select a template name.</value>
-  </data>
-  <data name="NOT_SPECIFY_ENCODE" xml:space="preserve">
-    <value>no (input: {0})</value>
-  </data>
-  <data name="OVERWRITEMSG" xml:space="preserve">
-    <value>{0} exists. Do you wan to overwrite?</value>
-  </data>
-  <data name="OVERWRITETEMPLATEMSG" xml:space="preserve">
-    <value>Are you sure you want to overwrite the template {0} with the current preamble?</value>
-  </data>
-  <data name="RESTORETEMPLATEMSG" xml:space="preserve">
-    <value>Are you sure you wan to restore the templates {0}?</value>
-  </data>
-  <data name="RESTORETEMPLATE_COMPLETEMSG" xml:space="preserve">
-    <value>Are you sure you wan to restore the templates {0} and remove other templates?</value>
-  </data>
-  <data name="SAVE_CURRENT_PREAMBLE" xml:space="preserve">
-    <value>Save the current preamble</value>
-  </data>
-  <data name="SHOWTEMPLATEMSG" xml:space="preserve">
-    <value>The template {0} is:
-
-{1}</value>
-  </data>
-  <data name="TRANSPARENT" xml:space="preserve">
-    <value>Transparent</value>
-  </data>
-  <data name="CMDLINE_ANIMATION_DELAY" xml:space="preserve">
-    <value>Delay of animation (sec)</value>
-  </data>
-  <data name="CMDLINE_ANIMATION_LOOP" xml:space="preserve">
-    <value>Loop count of animation (0 =infinity)</value>
-  </data>
-  <data name="CMDLINE_ANTIALIAS" xml:space="preserve">
-    <value>Anti-aliasing</value>
-  </data>
-  <data name="CMDLINE_BACKGROUND_COLOR" xml:space="preserve">
-    <value>Background color (ex: FF0000, red, "255 0 0")</value>
   </data>
   <data name="CMDLINE_BATCH" xml:space="preserve">
     <value>Batch mode (stop/nonstop)</value>
   </data>
-  <data name="CMDLINE_BOTTOM_MARGIN" xml:space="preserve">
-    <value>Bottom margin</value>
+  <data name="DELETEMSG" xml:space="preserve">
+    <value>Are you sure you want to delete {0}?</value>
   </data>
-  <data name="CMDLINE_COPY_TO_CLIPBOARD" xml:space="preserve">
-    <value>Copy generated files to the clipboard</value>
+  <data name="RESTORETEMPLATEMSG" xml:space="preserve">
+    <value>Are you sure you wan to restore the templates {0}?</value>
   </data>
-  <data name="CMDLINE_DELETE_DISPLAY_SIZE" xml:space="preserve">
-    <value>Remove &lt;width&gt; and &lt;height&gt; (SVG(Z))</value>
+  <data name="CMDLINE_ANIMATION_LOOP" xml:space="preserve">
+    <value>Loop count of animation (0 =infinity)</value>
   </data>
-  <data name="CMDLINE_DELETE_TMPFILES" xml:space="preserve">
-    <value>Delete temporary files after compiling</value>
-  </data>
-  <data name="CMDLINE_DVIDRIVER" xml:space="preserve">
-    <value>Set path for dvi driver</value>
-  </data>
-  <data name="CMDLINE_EMBED_SOURCE" xml:space="preserve">
-    <value>Embed the source in output image files</value>
-  </data>
-  <data name="CMDLINE_EXIT" xml:space="preserve">
-    <value>Save settings and exit</value>
-  </data>
-  <data name="CMDLINE_GS" xml:space="preserve">
-    <value>Set path for Ghostscript</value>
-  </data>
-  <data name="CMDLINE_GUESS_COMPILE" xml:space="preserve">
-    <value>Guess compile</value>
-  </data>
-  <data name="CMDLINE_HELP" xml:space="preserve">
-    <value>Show this message</value>
-  </data>
-  <data name="CMDLINE_IGNORE_ERRORS" xml:space="preserve">
-    <value>Force conversion by ignoring nonfatal errors</value>
-  </data>
-  <data name="CMDLINE_KANJI" xml:space="preserve">
-    <value>Character code (utf8/sjis/jis/euc/no)</value>
-  </data>
-  <data name="CMDLINE_KEEP_PAGE_SIZE" xml:space="preserve">
-    <value>Keep the original page size</value>
-  </data>
-  <data name="CMDLINE_LATEX" xml:space="preserve">
-    <value>Set path for latex</value>
-  </data>
-  <data name="CMDLINE_LEFT_MARGIN" xml:space="preserve">
-    <value>Left margin</value>
-  </data>
-  <data name="CMDLINE_LOAD_DEFAULTS" xml:space="preserve">
-    <value>Load default settings</value>
-  </data>
-  <data name="CMDLINE_LOW_RESOLUTION" xml:space="preserve">
-    <value>Generate images with low resolution</value>
-  </data>
-  <data name="CMDLINE_MERGE_OUTPUT_FILES" xml:space="preserve">
-    <value>Make a single file (PDF / TIFF /SVG(Z))</value>
-  </data>
-  <data name="CMDLINE_MARGINS" xml:space="preserve">
-    <value>Margins (all / leftright topbottom / left top right bottom)</value>
-  </data>
-  <data name="CMDLINE_NUM" xml:space="preserve">
-    <value>(maximum) number of times for LaTeX</value>
-  </data>
-  <data name="CMDLINE_OLDGS" xml:space="preserve">
-    <value>Ghostscript is before version 9.14</value>
-  </data>
-  <data name="CMDLINE_PREVIEW" xml:space="preserve">
-    <value>Preview after compiling</value>
-  </data>
-  <data name="CMDLINE_QUIET" xml:space="preserve">
-    <value>Quiet mode</value>
-  </data>
-  <data name="CMDLINE_RESOLUTION" xml:space="preserve">
-    <value>Resolution level</value>
-  </data>
-  <data name="CMDLINE_RIGHT_MARGIN" xml:space="preserve">
-    <value>Right margin</value>
-  </data>
-  <data name="CMDLINE_SAVESETTINGS" xml:space="preserve">
-    <value>Save settings</value>
+  <data name="DETECTERROR" xml:space="preserve">
+    <value>An error is detected. Please retry.
+{0}</value>
   </data>
   <data name="CMDLINE_TIMEOUT" xml:space="preserve">
     <value>Time out period (seconds)</value>
   </data>
-  <data name="CMDLINE_TOP_MARGIN" xml:space="preserve">
-    <value>Top margin</value>
+  <data name="EMPTYMSG" xml:space="preserve">
+    <value>The page {0} is empty.</value>
+  </data>
+  <data name="STOPCONVERTMSG" xml:space="preserve">
+    <value>Stop converting.</value>
+  </data>
+  <data name="NOTSELECTED_DELETETEMPLATE" xml:space="preserve">
+    <value>Select a template to delete.</value>
+  </data>
+  <data name="FAIL_TMPFILE" xml:space="preserve">
+    <value>Failed to make a temporary file. Please check the folder
+{0}</value>
+  </data>
+  <data name="CMDLINE_OLDGS" xml:space="preserve">
+    <value>Ghostscript is before version 9.14</value>
+  </data>
+  <data name="CMDLINE_QUIET" xml:space="preserve">
+    <value>Quiet mode</value>
+  </data>
+  <data name="CMDLINE_MERGE_OUTPUT_FILES" xml:space="preserve">
+    <value>Make a single file (PDF / TIFF /SVG(Z))</value>
+  </data>
+  <data name="TRANSPARENT" xml:space="preserve">
+    <value>Transparent</value>
+  </data>
+  <data name="CMDLINE_LOW_RESOLUTION" xml:space="preserve">
+    <value>Generate images with low resolution</value>
+  </data>
+  <data name="CMDLINE_GUESS_COMPILE" xml:space="preserve">
+    <value>Guess compile</value>
+  </data>
+  <data name="CMDLINE_KEEP_PAGE_SIZE" xml:space="preserve">
+    <value>Keep the original page size</value>
+  </data>
+  <data name="NO_EMBEDDED_SOURCE" xml:space="preserve">
+    <value>The source file is not embedded in {0}.</value>
+  </data>
+  <data name="MAY_BE_OPTION" xml:space="preserve">
+    <value>Do you mean a option name?</value>
+  </data>
+  <data name="ONLY_INPUTMODE" xml:space="preserve">
+    <value>This function can be used only with the direct input mode.</value>
+  </data>
+  <data name="USAGE" xml:space="preserve">
+    <value>Usage: </value>
+  </data>
+  <data name="DETECT_RECOMMENDED_PATH" xml:space="preserve">
+    <value>The following paths are suggested as a suitable to the template. Do you want to change?{0}</value>
+  </data>
+  <data name="IMPORTDIALOG_FILTER" xml:space="preserve">
+    <value>TeX source (*.tex)|*.tex|Image files ({0})|{1}|All files (*.*)|*.*</value>
+  </data>
+  <data name="CMDLINE_RESOLUTION" xml:space="preserve">
+    <value>Resolution level</value>
+  </data>
+  <data name="FAIL_OPEN" xml:space="preserve">
+    <value>Cannot open {0}.</value>
+  </data>
+  <data name="NOTSELECTED_TEMPLATE" xml:space="preserve">
+    <value>Please select a template name.</value>
+  </data>
+  <data name="PUSHYORN" xml:space="preserve">
+    <value>Input y or n.</value>
+  </data>
+  <data name="CMDLINE_ERROR_INVALID_BATCHTYPE" xml:space="preserve">
+    <value>Specify stop or nonstop</value>
+  </data>
+  <data name="CMDLINE_LEFT_MARGIN" xml:space="preserve">
+    <value>Left margin</value>
+  </data>
+  <data name="CMDLINE_DELETE_DISPLAY_SIZE" xml:space="preserve">
+    <value>Remove &lt;width&gt; and &lt;height&gt; (SVG(Z))</value>
+  </data>
+  <data name="PSTOPDF" xml:space="preserve">
+    <value>PS To PDF</value>
+  </data>
+  <data name="CMDLINE_ERROR_INVALID_TIMEOUT" xml:space="preserve">
+    <value>Time out period should be greater than zero.</value>
+  </data>
+  <data name="CMDLINE_DELETE_TMPFILES" xml:space="preserve">
+    <value>Delete temporary files after compiling</value>
+  </data>
+  <data name="INVALID_COLOR_NAME" xml:space="preserve">
+    <value>Invalid color name: {0}</value>
+  </data>
+  <data name="INVALID_INPUT_TO_OPTION" xml:space="preserve">
+    <value>The input to the option {0} is invalid.</value>
+  </data>
+  <data name="CMDLINE_PREVIEW" xml:space="preserve">
+    <value>Preview after compiling</value>
+  </data>
+  <data name="FAILED" xml:space="preserve">
+    <value>Failed</value>
   </data>
   <data name="CMDLINE_TRANSPARENT" xml:space="preserve">
     <value>Transparent</value>
@@ -435,35 +398,88 @@ If it is not continued, it will be killed.</value>
   <data name="CMDLINE_UNIT" xml:space="preserve">
     <value>Unit of margins ( bp/px )</value>
   </data>
-  <data name="CMDLINE_VERSION" xml:space="preserve">
-    <value>Show version information</value>
+  <data name="CMDLINE_TOP_MARGIN" xml:space="preserve">
+    <value>Top margin</value>
   </data>
-  <data name="CMDLINE_WITH_TEXT" xml:space="preserve">
-    <value>Keep original text information (PDF / SVG(Z))</value>
+  <data name="TEX_DISTRIBUTION" xml:space="preserve">
+    <value>TeX distribution ({0})</value>
   </data>
-  <data name="CMDLINE_WORKINGDIR" xml:space="preserve">
-    <value>Working folder (tmp/file/current)</value>
+  <data name="SAVE_CURRENT_PREAMBLE" xml:space="preserve">
+    <value>Save the current preamble</value>
   </data>
-  <data name="USAGE" xml:space="preserve">
-    <value>Usage: </value>
+  <data name="OVERWRITETEMPLATEMSG" xml:space="preserve">
+    <value>Are you sure you want to overwrite the template {0} with the current preamble?</value>
   </data>
-  <data name="CMDLINE_ERROR_INVALID_BATCHTYPE" xml:space="preserve">
-    <value>Specify stop or nonstop</value>
+  <data name="DVITOPDF" xml:space="preserve">
+    <value>DVI To PDF</value>
   </data>
-  <data name="CMDLINE_ERROR_INVALID_MARGIN" xml:space="preserve">
-    <value>Unrecognized margin specification.</value>
+  <data name="IGNOREDERRORWARNING" xml:space="preserve">
+    <value>Some errors are ignored.
+The result might be not as expected.
+Check the source again.</value>
   </data>
-  <data name="CMDLINE_ERROR_INVALID_TIMEOUT" xml:space="preserve">
-    <value>Time out period should be greater than zero.</value>
+  <data name="OVERWRITEMSG" xml:space="preserve">
+    <value>{0} exists. Do you wan to overwrite?</value>
   </data>
-  <data name="CMDLINE_ERROR_INVALID_UNIT" xml:space="preserve">
-    <value>Please specify bp or bx.</value>
+  <data name="ANALYZESOURCEERROR" xml:space="preserve">
+    <value>Parsing of the source file failed.
+Please check \\begin{document}, \\end{document} etc.</value>
   </data>
-  <data name="CMDLINE_HELP_CURRENT" xml:space="preserve">
-    <value>(Current: {0})</value>
+  <data name="GET_BOUNDINGBOX" xml:space="preserve">
+    <value>Get BoundingBox</value>
   </data>
-  <data name="FAIL_INIT_PATH" xml:space="preserve">
-    <value>Faile to guess paths of LaTeX / DVI driver / Ghostscript. Please set them manually.</value>
+  <data name="WARNING" xml:space="preserve">
+    <value>Warning</value>
+  </data>
+  <data name="CMDLINE_ANIMATION_DELAY" xml:space="preserve">
+    <value>Delay of animation (sec)</value>
+  </data>
+  <data name="FAIL_GETBOUNDINGBOX" xml:space="preserve">
+    <value>Fail to get boundingbox.</value>
+  </data>
+  <data name="ALLPAGE_EMPTYMSG" xml:space="preserve">
+    <value>All pages are empty.</value>
+  </data>
+  <data name="MANAGE_TEMPLATES" xml:space="preserve">
+    <value>Managing templates</value>
+  </data>
+  <data name="EXEC_PDFIUMDRAW" xml:space="preserve">
+    <value>Execute pdfiumdraw</value>
+  </data>
+  <data name="RESTORETEMPLATE_COMPLETEMSG" xml:space="preserve">
+    <value>Are you sure you wan to restore the templates {0} and remove other templates?</value>
+  </data>
+  <data name="FAIL_PDFPAGES" xml:space="preserve">
+    <value>Fail to get total pdf pages.</value>
+  </data>
+  <data name="CMDLINE_COPY_TO_CLIPBOARD" xml:space="preserve">
+    <value>Copy generated files to the clipboard</value>
+  </data>
+  <data name="TOOLERROR" xml:space="preserve">
+    <value>Failed to execute {0}.
+Don't delete the folder {1}.</value>
+  </data>
+  <data name="EPSTOPDF" xml:space="preserve">
+    <value>EPS To PDF</value>
+  </data>
+  <data name="EMBED_IS_ONLY_NTFS" xml:space="preserve">
+    <value>Embedding the source code is only supported with the NTFS file system.</value>
+  </data>
+  <data name="CMDLINE_LOAD_DEFAULTS" xml:space="preserve">
+    <value>Load default settings</value>
+  </data>
+  <data name="CHANGE_CURRENTPREAMBLE" xml:space="preserve">
+    <value>Change the current preamble to the following:
+{0}</value>
+  </data>
+  <data name="EXEC_MUDRAW" xml:space="preserve">
+    <value>Execute mudraw</value>
+  </data>
+  <data name="CMDLINE_EXIT" xml:space="preserve">
+    <value>Save settings and exit</value>
+  </data>
+  <data name="CMDLINE_EMBED_SOURCE" xml:space="preserve">
+    <value>Embed the source in output image files</value>
   </data>
   <data name="INIT_PATH" xml:space="preserve">
     <value>Set paths as
@@ -472,43 +488,31 @@ If it is not continued, it will be killed.</value>
 {2}
 If they are not correct, please set them manually.</value>
   </data>
-  <data name="INVALID_COLOR_NAME" xml:space="preserve">
-    <value>Invalid color name: {0}</value>
+  <data name="CMDLINE_DVIDRIVER" xml:space="preserve">
+    <value>Set path for dvi driver</value>
   </data>
-  <data name="INVALID_INPUT" xml:space="preserve">
-    <value>Invalid Input</value>
+  <data name="SKIPPED_BACAUSE_EMPTY" xml:space="preserve">
+    <value>The page {0} is skipped because it is empty.</value>
   </data>
-  <data name="INVALID_INPUT_TO_OPTION" xml:space="preserve">
-    <value>The input to the option {0} is invalid.</value>
+  <data name="CMDLINE_WORKINGDIR" xml:space="preserve">
+    <value>Working folder (tmp/file/current)</value>
   </data>
-  <data name="MAY_BE_OPTION" xml:space="preserve">
-    <value>Do you mean a option name?</value>
-  </data>
-  <data name="NOARGUMENT" xml:space="preserve">
-    <value>No argument.</value>
-  </data>
-  <data name="NOINPUTFILE" xml:space="preserve">
-    <value>No input file.</value>
-  </data>
-  <data name="NOOUTPUT_FILE" xml:space="preserve">
-    <value>No input file for {0}.</value>
-  </data>
-  <data name="NOTPOSSIBLEARG" xml:space="preserve">
-    <value>Chose from {0}.</value>
-  </data>
-  <data name="SAMPLE" xml:space="preserve">
-    <value>Sample</value>
+  <data name="IMPORTMSG" xml:space="preserve">
+    <value>Are you sure you want to replace the current preamble and source with the imported file? The current preamble and the source will be remoevd.</value>
   </data>
   <data name="SECONDS" xml:space="preserve">
     <value>Seconds</value>
   </data>
-  <data name="SEEHELPMSG" xml:space="preserve">
-    <value>See help via {0}.</value>
+  <data name="CMDLINE_ERROR_INVALID_UNIT" xml:space="preserve">
+    <value>Please specify bp or bx.</value>
   </data>
-  <data name="WHITE" xml:space="preserve">
-    <value>White</value>
+  <data name="NOTPOSSIBLEARG" xml:space="preserve">
+    <value>Chose from {0}.</value>
   </data>
-  <data name="DASHTOLINE_FAIL_MSG" xml:space="preserve">
-    <value>We skip a preprocessing for emf file because it failed.</value>
+  <data name="CANNOT_OPEN_WORKDIR" xml:space="preserve">
+    <value>Fail to open the working folder {0}, please check TMP and TEMP.</value>
+  </data>
+  <data name="TeX2img_64x64" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\TeX2img_win_icon\TeX2img_64x64.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
 </root>

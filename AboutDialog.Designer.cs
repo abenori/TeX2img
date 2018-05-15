@@ -32,6 +32,8 @@
             this.ProductNameLabel = new System.Windows.Forms.Label();
             this.VersionLabel = new System.Windows.Forms.Label();
             this.OKButton = new System.Windows.Forms.Button();
+            this.TeX2imgIcon = new System.Windows.Forms.PictureBox();
+            ((System.ComponentModel.ISupportInitialize)(this.TeX2imgIcon)).BeginInit();
             this.SuspendLayout();
             // 
             // ProductNameLabel
@@ -51,12 +53,20 @@
             this.OKButton.UseVisualStyleBackColor = true;
             this.OKButton.Click += new System.EventHandler(this.OKButton_Click);
             // 
+            // TeX2imgIcon
+            // 
+            resources.ApplyResources(this.TeX2imgIcon, "TeX2imgIcon");
+            this.TeX2imgIcon.Image = global::TeX2img.Properties.Resources.TeX2img_64x64;
+            this.TeX2imgIcon.Name = "TeX2imgIcon";
+            this.TeX2imgIcon.TabStop = false;
+            // 
             // AboutDialog
             // 
             this.AcceptButton = this.OKButton;
             resources.ApplyResources(this, "$this");
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ControlBox = false;
+            this.Controls.Add(this.TeX2imgIcon);
             this.Controls.Add(this.OKButton);
             this.Controls.Add(this.VersionLabel);
             this.Controls.Add(this.ProductNameLabel);
@@ -64,6 +74,7 @@
             this.Name = "AboutDialog";
             this.ShowInTaskbar = false;
             this.Load += new System.EventHandler(this.AboutDialog_Load);
+            ((System.ComponentModel.ISupportInitialize)(this.TeX2imgIcon)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -74,5 +85,6 @@
         private System.Windows.Forms.Label ProductNameLabel;
         private System.Windows.Forms.Label VersionLabel;
         private System.Windows.Forms.Button OKButton;
+        private System.Windows.Forms.PictureBox TeX2imgIcon;
     }
 }
