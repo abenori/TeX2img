@@ -147,3 +147,7 @@ For the detail, see the site of each library.
 * 2.0.3 (2018/01/22)
     - Require .NET Framework >= 4.5.2.
     - Update PDFium
+
+* 2.1.0 (2018/05/16)
+    - Use {strokepath fill} for preprocessing for EMF file. (The old method can't apply for new Ghostscript.)
+    - Changed icons.

@@ -363,3 +363,7 @@ https://pdfium.googlesource.com/pdfium/
 * 2.0.3（2018/01/22）
     - 要求する .NET Framework を 4.5.2 以上とした．
     - PDFium をアップデート．
+
+* 2.1.0 (2018/05/16)
+    - EMF 作成における Ghostscript の前処理を {strokepath fill} で行うようにした．（Ghostscript 9.20 以降以前の方式では動かなかったため．）
+    - アイコンを変更
