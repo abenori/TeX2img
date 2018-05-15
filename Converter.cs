@@ -465,11 +465,8 @@ namespace TeX2img {
             return gs_pdfwrite("\"" + input + "\"", output, (IsNewGhostscript() ? "-dNoOutputFonts" : "-dNOCACHE") + pageopt, Properties.Resources.EXEC_GS, resolution, version, "");
         }
 
-        bool dashtoline(string input, int version) {
-            var tmppdf = TempFilesDeleter.GetTempFileName(".pdf", workingDir);
-            tempFilesDeleter.AddFile(tmppdf);
-            File.Move(Path.Combine(workingDir, input), Path.Combine(workingDir, tmppdf));
-            return gs_pdfwrite("\"" + tmppdf + "\"", input, "", Properties.Resources.EXEC_GS, 0, version, "/oldstroke /stroke load def /stroke {.dashpath [] 0 setdash oldstroke} def");
+        bool dashtoline(string input, string output, int version) {
+            return gs_pdfwrite("\"" + input + "\"", output, "", Properties.Resources.EXEC_GS, 0, version, "/stroke {strokepath fill} def");
         }
 
         bool gs_pdfwrite(string input, string output, string option, string msg, int resolution, int version, string cmd) {
@@ -487,9 +484,12 @@ namespace TeX2img {
                 proc.StartInfo.Arguments += "-sOutputFile=\"" + output + "\" -c \".setpdfwrite";
                 if (cmd != "") proc.StartInfo.Arguments += " " + cmd;
                 proc.StartInfo.Arguments += "\" -f " + input;
+                string stdout = "";
+                Action<string> read_stdout_func = (s) => { stdout += s; if(controller_ != null) controller_.appendOutput(s + "\n"); };
+                Action<string> read_func = (s) => { if(controller_ != null) controller_.appendOutput(s + "\n"); };
                 try {
                     printCommandLine(proc);
-                    ReadOutputs(proc, msg);
+                    ReadOutputs(proc, msg, read_stdout_func, read_func);
                 }
                 catch (Win32Exception) {
                     if (controller_ != null) controller_.showPathError(Properties.Settings.Default.gsPath, "Ghostscript ");
@@ -500,6 +500,7 @@ namespace TeX2img {
                     if (controller_ != null) controller_.showGenerateError();
                     return false;
                 }
+                if(stdout.IndexOf("Error reading a content stream.") >= 0) return false;
                 return true;
             }
         }
@@ -1258,7 +1259,13 @@ namespace TeX2img {
                 if (Properties.Settings.Default.outlinedText) {
                     if (!make_pdf_without_text(false)) return false;
                 }else if (!modify_pdf(false, true)) return false;
-                if (!dashtoline(tmpFileBaseName + ".pdf", version)) return false;
+                var tmpfile = TempFilesDeleter.GetTempFileName(".pdf", workingDir);
+                File.Move(Path.Combine(workingDir, tmpFileBaseName + ".pdf"), Path.Combine(workingDir, tmpfile));
+                if(!dashtoline(tmpfile, tmpFileBaseName + ".pdf", version)) {
+                    if(controller_ != null) controller_.appendOutput(Properties.Resources.DASHTOLINE_FAIL_MSG + "\n");
+                    File.Delete(Path.Combine(workingDir, tmpFileBaseName + ".pdf"));
+                    File.Move(Path.Combine(workingDir,tmpfile), Path.Combine(workingDir,tmpFileBaseName + ".pdf"));
+                }
                 if (!pdf2img_pdfium(tmpFileBaseName + ".pdf", tmpFileBaseName + "-%d" + extension, pagelist)) return false;
                 return true;
             };

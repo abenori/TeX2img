@@ -532,6 +532,15 @@ namespace TeX2img.Properties {
         }
         
         /// <summary>
+        ///   We skip a preprocessing for emf file because it failed. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string DASHTOLINE_FAIL_MSG {
+            get {
+                return ResourceManager.GetString("DASHTOLINE_FAIL_MSG", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Are you sure you want to delete {0}? に類似しているローカライズされた文字列を検索します。
         /// </summary>
         internal static string DELETEMSG {
