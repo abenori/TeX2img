@@ -124,6 +124,11 @@ namespace TeX2img.Properties {
         }
         public string GuessGsPath(string platex) {
             string gs = "";
+            if(platex.IndexOf("texlive") != -1) {
+                gs = System.IO.Path.GetDirectoryName(platex) + "\\rungs.exe";
+                if(System.IO.File.Exists(gs)) return gs;
+                gs = "";
+            }
             if(gs == "") {
                 gs = Converter.which("gswin32c.exe");
                 if(gs == "") {
@@ -132,7 +137,7 @@ namespace TeX2img.Properties {
                         gs = Converter.which("rungs.exe");
                         if(gs == "") {
                             if(platex != "") {
-                                gsPath = System.IO.Path.GetDirectoryName(platex) + "\\rungs.exe";
+                                gs = System.IO.Path.GetDirectoryName(platex) + "\\rungs.exe";
                                 if(!System.IO.File.Exists(gs)) gs = "";
                             }
                         }
