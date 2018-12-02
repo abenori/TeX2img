@@ -240,7 +240,7 @@ namespace TeX2img {
             var gspath = setProcStartInfo(Properties.Settings.Default.gsPath, out arg);
             using (var proc = GetProcess()) {
                 proc.StartInfo.FileName = gspath;
-                proc.StartInfo.Arguments = arg + "-q -dBATCH -dNOPAUSE -sDEVICE=bbox ";
+                proc.StartInfo.Arguments = arg + "-q -dBATCH -dNOPAUSE -sDEVICE=bbox -c \"<< /WhiteIsOpaque true >> setpagedevice\" ";
                 /*
                 if(Properties.Settings.Default.pagebox != "media") {
                     var box = Properties.Settings.Default.pagebox;
