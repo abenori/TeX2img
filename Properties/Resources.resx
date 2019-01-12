@@ -170,7 +170,6 @@
   <data name="CMDLINE_ERROR_INVALID_MARGIN" xml:space="preserve">
     <value>Unrecognized margin specification.</value>
   </data>
-  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="INVALID_INPUT" xml:space="preserve">
     <value>Invalid Input</value>
   </data>
@@ -512,7 +511,11 @@ If they are not correct, please set them manually.</value>
   <data name="CANNOT_OPEN_WORKDIR" xml:space="preserve">
     <value>Fail to open the working folder {0}, please check TMP and TEMP.</value>
   </data>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="TeX2img_64x64" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\TeX2img_win_icon\TeX2img_64x64.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="CONFLICT_EXTENSION_MESSAGE" xml:space="preserve">
+    <value>The extension of the output file is {0} but the extension of the file type you required is {1}. Choose the extension you want to use.</value>
   </data>
 </root>

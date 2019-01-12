@@ -528,4 +528,7 @@
   <data name="DASHTOLINE_FAIL_MSG" xml:space="preserve">
     <value>EMFの前処理に失敗したため、この処理をスキップして続行します。</value>
   </data>
+  <data name="CONFLICT_EXTENSION_MESSAGE" xml:space="preserve">
+    <value>ファイル名の拡張子は {0} ですが，要求しているファイルの種類の拡張子は {1} です．どの拡張子を使うかを選んでください．</value>
+  </data>
 </root>

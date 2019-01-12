@@ -102,23 +102,23 @@
             // 
             // AddTemplateContextMenu
             // 
-            resources.ApplyResources(this.AddTemplateContextMenu, "AddTemplateContextMenu");
             this.AddTemplateContextMenu.ImageScalingSize = new System.Drawing.Size(24, 24);
             this.AddTemplateContextMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.fromCurrentPreambleToolStripMenuItem,
             this.fromFileToolStripMenuItem});
             this.AddTemplateContextMenu.Name = "AddTemplateContextMenu";
+            resources.ApplyResources(this.AddTemplateContextMenu, "AddTemplateContextMenu");
             // 
             // fromCurrentPreambleToolStripMenuItem
             // 
-            resources.ApplyResources(this.fromCurrentPreambleToolStripMenuItem, "fromCurrentPreambleToolStripMenuItem");
             this.fromCurrentPreambleToolStripMenuItem.Name = "fromCurrentPreambleToolStripMenuItem";
+            resources.ApplyResources(this.fromCurrentPreambleToolStripMenuItem, "fromCurrentPreambleToolStripMenuItem");
             this.fromCurrentPreambleToolStripMenuItem.Click += new System.EventHandler(this.fromCurrentPreambleToolStripMenuItem_Click);
             // 
             // fromFileToolStripMenuItem
             // 
-            resources.ApplyResources(this.fromFileToolStripMenuItem, "fromFileToolStripMenuItem");
             this.fromFileToolStripMenuItem.Name = "fromFileToolStripMenuItem";
+            resources.ApplyResources(this.fromFileToolStripMenuItem, "fromFileToolStripMenuItem");
             this.fromFileToolStripMenuItem.Click += new System.EventHandler(this.fromFileToolStripMenuItem_Click);
             // 
             // openTeXSourceDialog
@@ -127,23 +127,23 @@
             // 
             // backToDefaultContextMenu
             // 
-            resources.ApplyResources(this.backToDefaultContextMenu, "backToDefaultContextMenu");
             this.backToDefaultContextMenu.ImageScalingSize = new System.Drawing.Size(24, 24);
             this.backToDefaultContextMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.restoreDefaultTemplatesToolStripMenuItem,
             this.initializeTheListToolStripMenuItem});
             this.backToDefaultContextMenu.Name = "backToDefaultContextMenu";
+            resources.ApplyResources(this.backToDefaultContextMenu, "backToDefaultContextMenu");
             // 
             // restoreDefaultTemplatesToolStripMenuItem
             // 
-            resources.ApplyResources(this.restoreDefaultTemplatesToolStripMenuItem, "restoreDefaultTemplatesToolStripMenuItem");
             this.restoreDefaultTemplatesToolStripMenuItem.Name = "restoreDefaultTemplatesToolStripMenuItem";
+            resources.ApplyResources(this.restoreDefaultTemplatesToolStripMenuItem, "restoreDefaultTemplatesToolStripMenuItem");
             this.restoreDefaultTemplatesToolStripMenuItem.Click += new System.EventHandler(this.restoreDefaultTemplatesToolStripMenuItem_Click);
             // 
             // initializeTheListToolStripMenuItem
             // 
-            resources.ApplyResources(this.initializeTheListToolStripMenuItem, "initializeTheListToolStripMenuItem");
             this.initializeTheListToolStripMenuItem.Name = "initializeTheListToolStripMenuItem";
+            resources.ApplyResources(this.initializeTheListToolStripMenuItem, "initializeTheListToolStripMenuItem");
             this.initializeTheListToolStripMenuItem.Click += new System.EventHandler(this.initializeTheListToolStripMenuItem_Click);
             // 
             // ManageTemplateDialog

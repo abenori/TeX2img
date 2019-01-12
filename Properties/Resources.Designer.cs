@@ -19,7 +19,7 @@ namespace TeX2img.Properties {
     // または Visual Studio のようなツールを使用して自動生成されました。
     // メンバーを追加または削除するには、.ResX ファイルを編集して、/str オプションと共に
     // ResGen を実行し直すか、または VS プロジェクトをビルドし直します。
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class Resources {
@@ -528,6 +528,15 @@ namespace TeX2img.Properties {
         internal static string COMPILE_TEX {
             get {
                 return ResourceManager.GetString("COMPILE_TEX", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   The extension of the output file is {0} but the extension of the file type you required is {1}. Choose the extension you want to use. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string CONFLICT_EXTENSION_MESSAGE {
+            get {
+                return ResourceManager.GetString("CONFLICT_EXTENSION_MESSAGE", resourceCulture);
             }
         }
         

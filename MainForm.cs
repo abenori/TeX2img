@@ -73,6 +73,11 @@ namespace TeX2img {
             } else {
                 outputFileNameTextBox.Text = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + "\\equation.eps";
             }
+            string ext = Path.GetExtension(outputFileNameTextBox.Text).ToLower();
+            ExtensioncomboBox.SelectedIndex = 0;
+            for(int i = 0; i < ExtensioncomboBox.Items.Count; ++i) {
+                if(ext == "." + ExtensioncomboBox.Items[i].ToString()) ExtensioncomboBox.SelectedIndex = i;
+            }
             inputFileNameTextBox.Text = Properties.Settings.Default.inputFile;
             InputFromTextboxRadioButton.Checked = Properties.Settings.Default.inputFromTextBox;
             InputFromFileRadioButton.Checked = !InputFromTextboxRadioButton.Checked;
@@ -267,6 +272,9 @@ namespace TeX2img {
 
         private void GenerateButton_Click(object sender, EventArgs arg) {
             if(!convertWorker.IsBusy) {
+                var ext = CheckExtension();
+                if(ext == "") return;
+                outputFileNameTextBox.Text = Path.ChangeExtension(outputFileNameTextBox.Text, ext);
                 clearOutputTextBox();
                 if(Properties.Settings.Default.showOutputWindowFlag) showOutputWindow(true);
                 GenerateButton.Text = Properties.Resources.STOP;
@@ -280,6 +288,21 @@ namespace TeX2img {
                 }
             } else {
                 if(converter != null) converter.Abort();
+            }
+        }
+
+        private string CheckExtension() {
+            string outExt = Path.GetExtension(outputFileNameTextBox.Text);
+            string reqExt = "." + ExtensioncomboBox.SelectedItem.ToString();
+            if(outExt.ToLower() == reqExt) return outExt;
+            using(var dialog = new ConflictExtensionDialog(outExt, reqExt)) {
+                dialog.ShowDialog();
+                switch(dialog.ExtensionResult) {
+                    case ConflictExtensionDialog.Extension.OutputFile: return outExt;
+                    case ConflictExtensionDialog.Extension.Required: return reqExt;
+                    case ConflictExtensionDialog.Extension.Both: return outExt + reqExt;
+                    default: return "";
+                }
             }
         }
 
@@ -654,6 +677,13 @@ namespace TeX2img {
                     }
                 }
                 cdg.CustomColors.CopyTo(Properties.Settings.Default.ColorDialogCustomColors, 0);
+            }
+        }
+
+        private void ExtensioncomboBox_SelectionChangeCommitted(object sender, EventArgs e) {
+            string ext = ExtensioncomboBox.SelectedItem.ToString();
+            if(ext != "") {
+                outputFileNameTextBox.Text = Path.ChangeExtension(outputFileNameTextBox.Text, ext);
             }
         }
     }

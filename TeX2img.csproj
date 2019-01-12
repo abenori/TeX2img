@@ -81,6 +81,12 @@
     <Compile Include="AnalyzeLaTeXCompile.cs" />
     <Compile Include="AppleDouble.cs" />
     <Compile Include="BoundingBox.cs" />
+    <Compile Include="ConflictExtensionDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ConflictExtensionDialog.Designer.cs">
+      <DependentUpon>ConflictExtensionDialog.cs</DependentUpon>
+    </Compile>
     <Compile Include="Converter.cs" />
     <Compile Include="CUIOutput.cs" />
     <Compile Include="Mono.Options\Options.cs" />
@@ -137,6 +143,12 @@
     <EmbeddedResource Include="AboutDialog.resx">
       <DependentUpon>AboutDialog.cs</DependentUpon>
       <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ConflictExtensionDialog.resx">
+      <DependentUpon>ConflictExtensionDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="InputComboDialog.ja-JP.resx">
+      <DependentUpon>InputComboDialog.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="InputComboDialog.resx">
       <DependentUpon>InputComboDialog.cs</DependentUpon>
