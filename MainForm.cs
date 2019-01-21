@@ -298,7 +298,14 @@ namespace TeX2img {
             using(var dialog = new ConflictExtensionDialog(outExt, reqExt)) {
                 dialog.ShowDialog();
                 switch(dialog.ExtensionResult) {
-                    case ConflictExtensionDialog.Extension.OutputFile: return outExt;
+                    case ConflictExtensionDialog.Extension.OutputFile:
+                        for(int i = 0; i < ExtensioncomboBox.Items.Count; ++i) {
+                            if(outExt.ToLower() == "." + ExtensioncomboBox.Items[i].ToString()) {
+                                ExtensioncomboBox.SelectedIndex = i;
+                                break;
+                            }
+                        }
+                        return outExt;
                     case ConflictExtensionDialog.Extension.Required: return reqExt;
                     case ConflictExtensionDialog.Extension.Both: return outExt + reqExt;
                     default: return "";
