@@ -481,7 +481,7 @@ namespace TeX2img {
                 if (version > 0) proc.StartInfo.Arguments += "-dCompatibilityLevel=1." + (version - 10).ToString(new System.Globalization.CultureInfo("en-US")) + " ";
                 if (resolution > 0) proc.StartInfo.Arguments += "-r" + resolution.ToString(new System.Globalization.CultureInfo("en-US")) + " ";
                 if (option != "") proc.StartInfo.Arguments += option + " ";
-                proc.StartInfo.Arguments += "-sOutputFile=\"" + output + "\" -c \".setpdfwrite";
+                proc.StartInfo.Arguments += "-sOutputFile=\"" + output + "\" -c\"";
                 if (cmd != "") proc.StartInfo.Arguments += " " + cmd;
                 proc.StartInfo.Arguments += "\" -f " + input;
                 string stdout = "";

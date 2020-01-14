@@ -151,3 +151,7 @@ For the detail, see the site of each library.
 * 2.1.0 (2018/05/16)
     - Use {strokepath fill} for preprocessing for EMF file. (The old method can't apply for new Ghostscript.)
     - Changed icons.
+
+* 2.1.1
+    - Fixed a bug: the size of the image was incorrect if white objects are drawn.
+    - Added a drop-down list to specify the extension of the generated file.

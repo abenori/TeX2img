@@ -188,12 +188,106 @@ namespace TeX2img {
         private void AboutToolStripMenuItem_Click(object sender, EventArgs e) {
             (new AboutDialog()).ShowDialog();
         }
+
+        private void ColorInputHelperToolStripMenuItem_Click(object sender, EventArgs e) {
+            if(!InputFromTextboxRadioButton.Checked) {
+                MessageBox.Show(Properties.Resources.ONLY_INPUTMODE, "TeX2img");
+                return;
+            }
+            var enUS = new System.Globalization.CultureInfo("en-US");
+            Func<Color, string> GetColorString = (c) => {
+                return "{" +
+                    ((double)c.R / (double)255).ToString(enUS) + "," +
+                    ((double)c.G / (double)255).ToString(enUS) + "," +
+                    ((double)c.B / (double)255).ToString(enUS) + "}";
+            };
+            using(var cdg = new SupportInputColorDialog()) {
+                cdg.CustomColors = (int[])Properties.Settings.Default.ColorDialogCustomColors.Clone();
+                cdg.AnyColor = true;
+                if(cdg.ShowDialog() == System.Windows.Forms.DialogResult.OK) {
+                    sourceTextBox.Document.SetSelection(sourceTextBox.CaretIndex, sourceTextBox.CaretIndex);
+                    int startcaret = sourceTextBox.CaretIndex;
+                    var colstring = GetColorString(cdg.Color);
+                    switch(cdg.CheckedControlSequence) {
+                        case SupportInputColorDialog.ControlSequence.colorbox:
+                            sourceTextBox.Document.Replace("\\colorbox[rgb]" + colstring + "{}");
+                            sourceTextBox.SetSelection(sourceTextBox.CaretIndex - 1, sourceTextBox.CaretIndex - 1);
+                            break;
+                        case SupportInputColorDialog.ControlSequence.textcolor:
+                            sourceTextBox.Document.Replace("\\textcolor[rgb]" + colstring + "{}");
+                            sourceTextBox.SetSelection(sourceTextBox.CaretIndex - 1, sourceTextBox.CaretIndex - 1);
+                            break;
+                        case SupportInputColorDialog.ControlSequence.definecolor:
+                            sourceTextBox.Document.Replace("\\definecolor{}{rgb}" + colstring);
+                            int shift = "\\definecolor{".Length;
+                            sourceTextBox.SetSelection(startcaret + shift, startcaret + shift);
+                            break;
+                        case SupportInputColorDialog.ControlSequence.color:
+                        default:
+                            sourceTextBox.Document.Replace("\\color[rgb]" + colstring);
+                            break;
+                    }
+                }
+                cdg.CustomColors.CopyTo(Properties.Settings.Default.ColorDialogCustomColors, 0);
+            }
+        }
+
+        private void ImportToolStripMenuItem_Click(object sender, EventArgs e) {
+            var ofd = new OpenFileDialog {
+                Filter = String.Format(Properties.Resources.IMPORTDIALOG_FILTER,
+                String.Join(", ", Converter.imageExtensions.Select(d => "*" + d).ToArray()),
+                String.Join(";", Converter.imageExtensions.Select(d => "*" + d).ToArray()))
+            };
+
+            if(ofd.ShowDialog() == DialogResult.OK) {
+                try {
+                    if(MessageBox.Show(Properties.Resources.IMPORTMSG, "TeX2img", MessageBoxButtons.YesNo) == System.Windows.Forms.DialogResult.Yes) {
+                        ImportFile(ofd.FileName);
+                    }
+                }
+                catch(FileNotFoundException) {
+                    MessageBox.Show(String.Format(Properties.Resources.NOTEXIST, ofd.FileName));
+                }
+            }
+        }
+
+        private void ExportToolStripMenuItem_Click(object sender, EventArgs e) {
+            if(TeXsourceSaveFileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK) {
+                var encoding = Converter.GetInputEncoding();
+                if(encoding.CodePage == Encoding.UTF8.CodePage) encoding = new System.Text.UTF8Encoding(false);
+                try {
+                    using(var file = new StreamWriter(TeXsourceSaveFileDialog.FileName, false, encoding)) {
+                        TeXSource.WriteTeXSourceFile(file, myPreambleForm.PreambleTextBox.Text, sourceTextBox.Text);
+                    }
+                }
+                catch(UnauthorizedAccessException) {
+                    MessageBox.Show(String.Format(Properties.Resources.AUTHORIZEDERROR, TeXsourceSaveFileDialog.FileName));
+                }
+            }
+        }
         #endregion
 
         #region その他のイベントハンドラ
         protected override void OnClosing(CancelEventArgs e) {
             if(Properties.Settings.Default.SaveSettings) saveSettings();
             base.OnClosing(e);
+        }
+
+        private void ExtensioncomboBox_SelectionChangeCommitted(object sender, EventArgs e) {
+            string ext = ExtensioncomboBox.SelectedItem.ToString();
+            if(ext != "") {
+                outputFileNameTextBox.Text = Path.ChangeExtension(outputFileNameTextBox.Text, ext);
+            }
+        }
+
+        private void outputFileNameTextBox_TextChanged(object sender, EventArgs e) {
+            string ext = Path.GetExtension(outputFileNameTextBox.Text);
+            for(int i = 0; i < ExtensioncomboBox.Items.Count; ++i) {
+                if(ext.ToLower() == "." + ExtensioncomboBox.Items[i]) {
+                    ExtensioncomboBox.SelectedIndex = i;
+                    break;
+                }
+            }
         }
         #endregion
 
@@ -256,6 +350,7 @@ namespace TeX2img {
         }
         #endregion
 
+        #region 画像ファイルの生成
         public void showOutputWindow(bool show) {
             showOutputWindowToolStripMenuItem.Checked = show;
             if(show) {
@@ -272,9 +367,6 @@ namespace TeX2img {
 
         private void GenerateButton_Click(object sender, EventArgs arg) {
             if(!convertWorker.IsBusy) {
-                var ext = CheckExtension();
-                if(ext == "") return;
-                outputFileNameTextBox.Text = Path.ChangeExtension(outputFileNameTextBox.Text, ext);
                 clearOutputTextBox();
                 if(Properties.Settings.Default.showOutputWindowFlag) showOutputWindow(true);
                 GenerateButton.Text = Properties.Resources.STOP;
@@ -288,28 +380,6 @@ namespace TeX2img {
                 }
             } else {
                 if(converter != null) converter.Abort();
-            }
-        }
-
-        private string CheckExtension() {
-            string outExt = Path.GetExtension(outputFileNameTextBox.Text);
-            string reqExt = "." + ExtensioncomboBox.SelectedItem.ToString();
-            if(outExt.ToLower() == reqExt) return outExt;
-            using(var dialog = new ConflictExtensionDialog(outExt, reqExt)) {
-                dialog.ShowDialog();
-                switch(dialog.ExtensionResult) {
-                    case ConflictExtensionDialog.Extension.OutputFile:
-                        for(int i = 0; i < ExtensioncomboBox.Items.Count; ++i) {
-                            if(outExt.ToLower() == "." + ExtensioncomboBox.Items[i].ToString()) {
-                                ExtensioncomboBox.SelectedIndex = i;
-                                break;
-                            }
-                        }
-                        return outExt;
-                    case ConflictExtensionDialog.Extension.Required: return reqExt;
-                    case ConflictExtensionDialog.Extension.Both: return outExt + reqExt;
-                    default: return "";
-                }
             }
         }
 
@@ -430,6 +500,7 @@ namespace TeX2img {
             setEnabled(true);
             this.GenerateButton.Text = thisGenerateButtonText;
         }
+#endregion
 
         #region 設定変更通知関連
         public void ChangeSetting() {
@@ -503,39 +574,7 @@ namespace TeX2img {
         }
         #endregion
 
-        private void ImportToolStripMenuItem_Click(object sender, EventArgs e) {
-            var ofd = new OpenFileDialog();
-
-            ofd.Filter = String.Format(Properties.Resources.IMPORTDIALOG_FILTER,
-                String.Join(", ", Converter.imageExtensions.Select(d => "*" + d).ToArray()),
-                String.Join(";", Converter.imageExtensions.Select(d => "*" + d).ToArray()));
-            if(ofd.ShowDialog() == DialogResult.OK) {
-                try {
-                    if(MessageBox.Show(Properties.Resources.IMPORTMSG, "TeX2img", MessageBoxButtons.YesNo) == System.Windows.Forms.DialogResult.Yes) {
-                        ImportFile(ofd.FileName);
-                    }
-                }
-                catch(FileNotFoundException) {
-                    MessageBox.Show(String.Format(Properties.Resources.NOTEXIST, ofd.FileName));
-                }
-            }
-        }
-
-        private void ExportToolStripMenuItem_Click(object sender, EventArgs e) {
-            if(TeXsourceSaveFileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK) {
-                var encoding = Converter.GetInputEncoding();
-                if(encoding.CodePage == Encoding.UTF8.CodePage) encoding = new System.Text.UTF8Encoding(false);
-                try {
-                    using(var file = new StreamWriter(TeXsourceSaveFileDialog.FileName, false, encoding)) {
-                        TeXSource.WriteTeXSourceFile(file, myPreambleForm.PreambleTextBox.Text, sourceTextBox.Text);
-                    }
-                }
-                catch(UnauthorizedAccessException){
-                    MessageBox.Show(String.Format(Properties.Resources.AUTHORIZEDERROR, TeXsourceSaveFileDialog.FileName));
-                }
-            }
-        }
-
+        #region ソースのインポート
         public void ImportFile(string path) {
             string preamble, body;
             ImportFile(path, out preamble, out body);
@@ -620,7 +659,9 @@ namespace TeX2img {
                 }
             }
         }
+        #endregion
 
+        #region D&D
         private void sourceTextBox_DragDrop(object sender, DragEventArgs e) {
             if(e.Data.GetDataPresent(DataFormats.FileDrop)) {
                 string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
@@ -643,55 +684,6 @@ namespace TeX2img {
                 inputFileNameTextBox.Text = files[0];
             }
         }
-
-        private void ColorInputHelperToolStripMenuItem_Click(object sender, EventArgs e) {
-            if(!InputFromTextboxRadioButton.Checked) {
-                MessageBox.Show(Properties.Resources.ONLY_INPUTMODE,"TeX2img");
-                return;
-            }
-            var enUS = new System.Globalization.CultureInfo("en-US");
-            Func<Color, string> GetColorString = (c) => {
-                return "{" + 
-                    ((double) c.R / (double) 255).ToString(enUS) + "," +
-                    ((double) c.G / (double) 255).ToString(enUS) + "," +
-                    ((double) c.B / (double) 255).ToString(enUS) + "}";
-            };
-            using(var cdg = new SupportInputColorDialog()) {
-                cdg.CustomColors = (int[])Properties.Settings.Default.ColorDialogCustomColors.Clone();
-                cdg.AnyColor = true;
-                if(cdg.ShowDialog() == System.Windows.Forms.DialogResult.OK) {
-                    sourceTextBox.Document.SetSelection(sourceTextBox.CaretIndex, sourceTextBox.CaretIndex);
-                    int startcaret = sourceTextBox.CaretIndex;
-                    var colstring = GetColorString(cdg.Color);
-                    switch(cdg.CheckedControlSequence) {
-                    case SupportInputColorDialog.ControlSequence.colorbox:
-                        sourceTextBox.Document.Replace("\\colorbox[rgb]" + colstring + "{}");
-                        sourceTextBox.SetSelection(sourceTextBox.CaretIndex-1,sourceTextBox.CaretIndex-1);
-                        break;
-                    case SupportInputColorDialog.ControlSequence.textcolor:
-                        sourceTextBox.Document.Replace("\\textcolor[rgb]" + colstring + "{}");
-                        sourceTextBox.SetSelection(sourceTextBox.CaretIndex-1,sourceTextBox.CaretIndex-1);
-                        break;
-                    case SupportInputColorDialog.ControlSequence.definecolor:
-                        sourceTextBox.Document.Replace("\\definecolor{}{rgb}" + colstring);
-                        int shift = "\\definecolor{".Length;
-                        sourceTextBox.SetSelection(startcaret + shift,startcaret +shift);
-                        break;
-                    case SupportInputColorDialog.ControlSequence.color:
-                    default:
-                        sourceTextBox.Document.Replace("\\color[rgb]" + colstring);
-                        break;
-                    }
-                }
-                cdg.CustomColors.CopyTo(Properties.Settings.Default.ColorDialogCustomColors, 0);
-            }
-        }
-
-        private void ExtensioncomboBox_SelectionChangeCommitted(object sender, EventArgs e) {
-            string ext = ExtensioncomboBox.SelectedItem.ToString();
-            if(ext != "") {
-                outputFileNameTextBox.Text = Path.ChangeExtension(outputFileNameTextBox.Text, ext);
-            }
-        }
+        #endregion
     }
 }

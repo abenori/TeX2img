@@ -354,6 +354,7 @@
             // 
             resources.ApplyResources(this.outputFileNameTextBox, "outputFileNameTextBox");
             this.outputFileNameTextBox.Name = "outputFileNameTextBox";
+            this.outputFileNameTextBox.TextChanged += new System.EventHandler(this.outputFileNameTextBox_TextChanged);
             // 
             // GenerateButton
             // 
