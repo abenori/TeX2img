@@ -114,7 +114,7 @@ TeX2img.exe input output
 
 ## 参考
 * 元々の作者である寺田さんによる TeX2img 配布ページ
-http://island.geocities.jp/loveinequality/
+https://tex2img.tech/
 には，TeX2img を活用するための情報があります．参考にしてみてください．
 
 
@@ -368,7 +368,7 @@ https://pdfium.googlesource.com/pdfium/
     - EMF 作成における Ghostscript の前処理を {strokepath fill} で行うようにした．（Ghostscript 9.20 以降以前の方式では動かなかったため．）
     - アイコンを変更
 
-* 2.1.1
+* 2.1.1 (2018/05/01)
     - 真っ白のものが描かれているページのサイズがうまく取得できなかったのを修正．
     - 出力ファイル名入力ダイアログの脇に拡張子を選択できるドロップダウンリストを追加．
     - Ghostscriptへの命令を少し変更．
