@@ -117,569 +117,707 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <assembly alias="mscorlib" name="mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="InputFromFileRadioButton.AutoSize" type="System.Boolean, mscorlib">
-    <value>True</value>
-  </data>
-  <data name="&gt;&gt;SettingToolStripMenuItem.Name" xml:space="preserve">
-    <value>SettingToolStripMenuItem</value>
-  </data>
-  <data name="ExtensioncomboBox.Items5" xml:space="preserve">
-    <value>svgz</value>
-  </data>
+  <metadata name="menuStrip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>280, 17</value>
+  </metadata>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
-  <data name="ExitToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>174, 22</value>
-  </data>
-  <data name="&gt;&gt;outputFileNameTextBox.Type" xml:space="preserve">
-    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="GenerateButton.Size" type="System.Drawing.Size, System.Drawing">
-    <value>127, 30</value>
-  </data>
-  <data name="InputFromTextboxRadioButton.TabIndex" type="System.Int32, mscorlib">
-    <value>1</value>
-  </data>
-  <data name="&gt;&gt;Delete.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;toolStripSeparator2.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripSeparator, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="menuStrip1.Location" type="System.Drawing.Point, System.Drawing">
+    <value>0, 0</value>
   </data>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="$this.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>3, 2, 3, 2</value>
-  </data>
-  <data name="&gt;&gt;表示VToolStripMenuItem.Name" xml:space="preserve">
-    <value>表示VToolStripMenuItem</value>
-  </data>
-  <data name="InputFromTextboxRadioButton.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
-    <value>NoControl</value>
-  </data>
-  <data name="&gt;&gt;menuStrip1.ZOrder" xml:space="preserve">
-    <value>4</value>
-  </data>
-  <data name="&gt;&gt;ExtensioncomboBox.Name" xml:space="preserve">
-    <value>ExtensioncomboBox</value>
-  </data>
-  <data name="InputFromTextboxRadioButton.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>3, 2, 3, 2</value>
-  </data>
-  <data name="InputFileBrowseButton.Text" xml:space="preserve">
-    <value>Browse...</value>
-  </data>
-  <data name="InputFileBrowseButton.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>3, 2, 3, 2</value>
-  </data>
-  <data name="AboutToolStripMenuItem.Text" xml:space="preserve">
-    <value>About...(&amp;A)</value>
-  </data>
-  <data name="&gt;&gt;openFileDialog1.Name" xml:space="preserve">
-    <value>openFileDialog1</value>
-  </data>
-  <data name="&gt;&gt;ImportToolStripMenuItem.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="InputFileBrowseButton.TabIndex" type="System.Int32, mscorlib">
-    <value>6</value>
-  </data>
-  <data name="&gt;&gt;OutputBrowseButton.ZOrder" xml:space="preserve">
-    <value>1</value>
+  <data name="menuStrip1.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>13, 4, 0, 4</value>
   </data>
   <data name="menuStrip1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>672, 24</value>
+    <value>1456, 44</value>
   </data>
-  <data name="&gt;&gt;ExtensioncomboBox.ZOrder" xml:space="preserve">
+  <assembly alias="mscorlib" name="mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="menuStrip1.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
   </data>
-  <data name="&gt;&gt;groupBox2.ZOrder" xml:space="preserve">
-    <value>2</value>
-  </data>
-  <data name="groupBox2.Location" type="System.Drawing.Point, System.Drawing">
-    <value>12, 322</value>
+  <data name="menuStrip1.Text" xml:space="preserve">
+    <value>menuStrip1</value>
   </data>
   <data name="&gt;&gt;menuStrip1.Name" xml:space="preserve">
     <value>menuStrip1</value>
   </data>
-  <data name="InputFromTextboxRadioButton.Text" xml:space="preserve">
-    <value>Input TeX code (between \begin{document} and \end{document})</value>
-  </data>
-  <data name="OutputBrowseButton.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>3, 2, 3, 2</value>
-  </data>
-  <data name="OutputBrowseButton.Size" type="System.Drawing.Size, System.Drawing">
-    <value>67, 18</value>
-  </data>
-  <data name="&gt;&gt;groupBox2.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="&gt;&gt;TeXsourceSaveFileDialog.Name" xml:space="preserve">
-    <value>TeXsourceSaveFileDialog</value>
-  </data>
-  <data name="ExportToolStripMenuItem.Text" xml:space="preserve">
-    <value>Export(&amp;S)</value>
-  </data>
-  <data name="$this.Font" type="System.Drawing.Font, System.Drawing">
-    <value>MS UI Gothic, 9pt</value>
-  </data>
-  <data name="OutputBrowseButton.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
-    <value>NoControl</value>
-  </data>
-  <data name="$this.Text" xml:space="preserve">
-    <value>TeX2img</value>
-  </data>
-  <data name="&gt;&gt;InputFileBrowseButton.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="ExtensioncomboBox.Items2" xml:space="preserve">
-    <value>jpg</value>
-  </data>
-  <data name="&gt;&gt;SelectAll.Name" xml:space="preserve">
-    <value>SelectAll</value>
-  </data>
-  <data name="&gt;&gt;InputFileBrowseButton.Parent" xml:space="preserve">
-    <value>groupBox1</value>
-  </data>
-  <data name="&gt;&gt;convertWorker.Type" xml:space="preserve">
-    <value>System.ComponentModel.BackgroundWorker, System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;sourceTextBox.ZOrder" xml:space="preserve">
-    <value>0</value>
-  </data>
-  <data name="&gt;&gt;オプションOToolStripMenuItem.Name" xml:space="preserve">
-    <value>オプションOToolStripMenuItem</value>
-  </data>
-  <data name="GenerateButton.Text" xml:space="preserve">
-    <value>Generate</value>
-  </data>
-  <data name="&gt;&gt;GenerateEPSToolStripMenuItem.Name" xml:space="preserve">
-    <value>GenerateEPSToolStripMenuItem</value>
-  </data>
-  <data name="ExtensioncomboBox.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>1, 2, 1, 2</value>
-  </data>
-  <data name="showOutputWindowToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>210, 22</value>
+  <data name="&gt;&gt;menuStrip1.Type" xml:space="preserve">
+    <value>System.Windows.Forms.MenuStrip, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;menuStrip1.Parent" xml:space="preserve">
     <value>$this</value>
   </data>
-  <data name="openFileDialog1.Filter" xml:space="preserve">
-    <value>TeX sources (*.tex)|*.tex|All files (*.*)|*.*</value>
+  <data name="&gt;&gt;menuStrip1.ZOrder" xml:space="preserve">
+    <value>4</value>
   </data>
-  <data name="toolStripSeparator2.Size" type="System.Drawing.Size, System.Drawing">
-    <value>135, 6</value>
-  </data>
-  <data name="GenerateEPSToolStripMenuItem.Text" xml:space="preserve">
-    <value>Generate(&amp;T)</value>
-  </data>
-  <data name="InputFileBrowseButton.Size" type="System.Drawing.Size, System.Drawing">
-    <value>67, 18</value>
-  </data>
-  <data name="&gt;&gt;groupBox1.Name" xml:space="preserve">
-    <value>groupBox1</value>
-  </data>
-  <data name="InputFromFileRadioButton.Location" type="System.Drawing.Point, System.Drawing">
-    <value>6, 240</value>
-  </data>
-  <data name="&gt;&gt;showPreambleWindowToolStripMenuItem.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;saveFileDialog1.Name" xml:space="preserve">
-    <value>saveFileDialog1</value>
-  </data>
-  <data name="InputFileBrowseButton.Enabled" type="System.Boolean, mscorlib">
-    <value>False</value>
-  </data>
-  <data name="色入力ToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>210, 22</value>
-  </data>
-  <data name="GenerateEPSToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>174, 22</value>
-  </data>
-  <data name="&gt;&gt;InputFromFileRadioButton.Type" xml:space="preserve">
-    <value>System.Windows.Forms.RadioButton, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="Paste.Text" xml:space="preserve">
-    <value>Paste(&amp;P)</value>
-  </data>
-  <data name="groupBox2.Size" type="System.Drawing.Size, System.Drawing">
-    <value>607, 46</value>
-  </data>
-  <data name="ExtensioncomboBox.Items" xml:space="preserve">
-    <value>eps</value>
-  </data>
-  <data name="&gt;&gt;Redo.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;InputFromTextboxRadioButton.Name" xml:space="preserve">
-    <value>InputFromTextboxRadioButton</value>
-  </data>
-  <data name="SettingToolStripMenuItem.Text" xml:space="preserve">
-    <value>Tools(&amp;T)</value>
-  </data>
-  <data name="SelectAll.Size" type="System.Drawing.Size, System.Drawing">
-    <value>138, 22</value>
-  </data>
-  <data name="Undo.Size" type="System.Drawing.Size, System.Drawing">
-    <value>138, 22</value>
-  </data>
-  <data name="&gt;&gt;OutputBrowseButton.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;Paste.Name" xml:space="preserve">
-    <value>Paste</value>
-  </data>
-  <data name="&gt;&gt;Delete.Name" xml:space="preserve">
-    <value>Delete</value>
-  </data>
-  <data name="Paste.Size" type="System.Drawing.Size, System.Drawing">
-    <value>138, 22</value>
-  </data>
-  <data name="saveFileDialog1.Filter" xml:space="preserve">
-    <value>EPSファイル (*.eps)|*.eps|JPEGファイル (*.jpg)|*.jpg|PNGファイル (*.png)|*.png|TIFFファイル (*.tiff)|*.tiff|BMPファイル (*.bmp)|*.bmp|PDFファイル (*.pdf)|*.pdf|EMFファイル (*.emf)|*.emf|SVGファイル (*.svg)|*.svg|SVGZファイル (*.svgz)|*.svgz|すべてのファイル (*.*)|*.*</value>
-  </data>
-  <data name="groupBox1.TabIndex" type="System.Int32, mscorlib">
-    <value>1</value>
-  </data>
-  <data name="ExtensioncomboBox.Size" type="System.Drawing.Size, System.Drawing">
-    <value>52, 20</value>
-  </data>
-  <data name="ExitToolStripMenuItem.ShortcutKeys" type="System.Windows.Forms.Keys, System.Windows.Forms">
-    <value>Ctrl+W</value>
-  </data>
-  <data name="&gt;&gt;InputFileBrowseButton.Name" xml:space="preserve">
-    <value>InputFileBrowseButton</value>
-  </data>
-  <data name="InputFromTextboxRadioButton.AutoSize" type="System.Boolean, mscorlib">
-    <value>True</value>
-  </data>
-  <data name="表示VToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>59, 20</value>
-  </data>
-  <data name="showOutputWindowToolStripMenuItem.Text" xml:space="preserve">
-    <value>Output(&amp;O)</value>
-  </data>
-  <data name="&gt;&gt;SelectAll.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="groupBox1.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
-    <value>Top, Bottom, Left, Right</value>
-  </data>
-  <data name="groupBox1.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>3, 2, 3, 2</value>
-  </data>
-  <data name="AboutToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>132, 22</value>
-  </data>
-  <data name="ExtensioncomboBox.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
-    <value>Bottom, Right</value>
-  </data>
-  <data name="sourceTextBox.Location" type="System.Drawing.Point, System.Drawing">
-    <value>16, 38</value>
-  </data>
-  <data name="&gt;&gt;sourceTextBoxMenu.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ContextMenuStrip, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;Cut.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;FileToolStripMenuItem.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;ExtensioncomboBox.Parent" xml:space="preserve">
-    <value>groupBox2</value>
-  </data>
-  <data name="&gt;&gt;AboutToolStripMenuItem.Name" xml:space="preserve">
-    <value>AboutToolStripMenuItem</value>
-  </data>
-  <data name="&gt;&gt;sourceTextBox.Parent" xml:space="preserve">
-    <value>groupBox1</value>
-  </data>
-  <data name="sourceTextBox.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
-    <value>Top, Bottom, Left, Right</value>
-  </data>
-  <data name="&gt;&gt;sourceTextBoxMenu.Name" xml:space="preserve">
-    <value>sourceTextBoxMenu</value>
-  </data>
-  <data name="&gt;&gt;$this.Name" xml:space="preserve">
-    <value>MainForm</value>
-  </data>
-  <data name="showPreambleWindowToolStripMenuItem.ShortcutKeys" type="System.Windows.Forms.Keys, System.Windows.Forms">
-    <value>Ctrl+Shift+P</value>
-  </data>
-  <data name="Copy.Text" xml:space="preserve">
-    <value>Copy(&amp;C)</value>
-  </data>
-  <data name="&gt;&gt;outputFileNameTextBox.Parent" xml:space="preserve">
-    <value>groupBox2</value>
-  </data>
-  <data name="Delete.Text" xml:space="preserve">
-    <value>Delete(&amp;D)</value>
-  </data>
-  <data name="&gt;&gt;ヘルプHToolStripMenuItem.Name" xml:space="preserve">
-    <value>ヘルプHToolStripMenuItem</value>
-  </data>
-  <data name="&gt;&gt;ヘルプHToolStripMenuItem.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="groupBox2.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
-    <value>Bottom, Left, Right</value>
-  </data>
-  <data name="&gt;&gt;groupBox2.Name" xml:space="preserve">
-    <value>groupBox2</value>
-  </data>
-  <data name="sourceTextBox.Size" type="System.Drawing.Size, System.Drawing">
-    <value>590, 194</value>
-  </data>
-  <data name="&gt;&gt;AboutToolStripMenuItem.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;groupBox1.ZOrder" xml:space="preserve">
-    <value>3</value>
-  </data>
-  <data name="ExtensioncomboBox.Items6" xml:space="preserve">
-    <value>emf</value>
-  </data>
-  <data name="Undo.Text" xml:space="preserve">
-    <value>Undo(&amp;U)</value>
-  </data>
-  <data name="GenerateButton.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
-    <value>NoControl</value>
+  <data name="FileToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>98, 36</value>
   </data>
   <data name="FileToolStripMenuItem.Text" xml:space="preserve">
     <value>File(&amp;F)</value>
   </data>
-  <data name="&gt;&gt;GenerateButton.Name" xml:space="preserve">
-    <value>GenerateButton</value>
+  <data name="GenerateEPSToolStripMenuItem.ShortcutKeys" type="System.Windows.Forms.Keys, System.Windows.Forms">
+    <value>Ctrl+T</value>
   </data>
-  <data name="Copy.Size" type="System.Drawing.Size, System.Drawing">
-    <value>138, 22</value>
+  <data name="GenerateEPSToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>354, 44</value>
   </data>
-  <data name="ヘルプHToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>61, 20</value>
-  </data>
-  <data name="&gt;&gt;groupBox1.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="&gt;&gt;TeXsourceSaveFileDialog.Type" xml:space="preserve">
-    <value>System.Windows.Forms.SaveFileDialog, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="inputFileNameTextBox.Size" type="System.Drawing.Size, System.Drawing">
-    <value>515, 19</value>
-  </data>
-  <data name="$this.StartPosition" type="System.Windows.Forms.FormStartPosition, System.Windows.Forms">
-    <value>Manual</value>
-  </data>
-  <data name="ExitToolStripMenuItem.Text" xml:space="preserve">
-    <value>Exit(&amp;X)</value>
-  </data>
-  <data name="&gt;&gt;ExitToolStripMenuItem.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="ExportToolStripMenuItem.ShortcutKeys" type="System.Windows.Forms.Keys, System.Windows.Forms">
-    <value>Ctrl+S</value>
-  </data>
-  <data name="&gt;&gt;sourceTextBox.Type" xml:space="preserve">
-    <value>Sgry.Azuki.WinForms.AzukiControl, Azuki, Version=1.7.11.24454, Culture=neutral, PublicKeyToken=46b77eb7f2d82aba</value>
-  </data>
-  <data name="&gt;&gt;showPreambleWindowToolStripMenuItem.Name" xml:space="preserve">
-    <value>showPreambleWindowToolStripMenuItem</value>
-  </data>
-  <data name="&gt;&gt;toolStripSeparator1.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripSeparator, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;menuStrip1.Type" xml:space="preserve">
-    <value>System.Windows.Forms.MenuStrip, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="menuStrip1.TabIndex" type="System.Int32, mscorlib">
-    <value>0</value>
-  </data>
-  <data name="ヘルプHToolStripMenuItem.Text" xml:space="preserve">
-    <value>Help(&amp;H)</value>
-  </data>
-  <data name="InputFromFileRadioButton.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
-    <value>Bottom, Left</value>
-  </data>
-  <data name="&gt;&gt;OutputBrowseButton.Parent" xml:space="preserve">
-    <value>groupBox2</value>
-  </data>
-  <data name="&gt;&gt;inputFileNameTextBox.ZOrder" xml:space="preserve">
-    <value>2</value>
-  </data>
-  <data name="&gt;&gt;色入力ToolStripMenuItem.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="InputFromFileRadioButton.Size" type="System.Drawing.Size, System.Drawing">
-    <value>130, 16</value>
-  </data>
-  <data name="&gt;&gt;showOutputWindowToolStripMenuItem.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="sourceTextBox.Font" type="System.Drawing.Font, System.Drawing">
-    <value>ＭＳ ゴシック, 12pt</value>
-  </data>
-  <data name="&gt;&gt;Paste.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="outputFileNameTextBox.Size" type="System.Drawing.Size, System.Drawing">
-    <value>454, 19</value>
-  </data>
-  <data name="showOutputWindowToolStripMenuItem.ShortcutKeys" type="System.Windows.Forms.Keys, System.Windows.Forms">
-    <value>Ctrl+Shift+O</value>
-  </data>
-  <data name="sourceTextBox.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>3, 2, 3, 2</value>
-  </data>
-  <data name="&gt;&gt;Undo.Name" xml:space="preserve">
-    <value>Undo</value>
-  </data>
-  <data name="groupBox1.Location" type="System.Drawing.Point, System.Drawing">
-    <value>12, 26</value>
-  </data>
-  <data name="FileToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>51, 20</value>
-  </data>
-  <data name="Redo.Text" xml:space="preserve">
-    <value>Redo(&amp;Y)</value>
-  </data>
-  <data name="&gt;&gt;GenerateButton.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="&gt;&gt;inputFileNameTextBox.Name" xml:space="preserve">
-    <value>inputFileNameTextBox</value>
-  </data>
-  <data name="ImportToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>174, 22</value>
-  </data>
-  <data name="ExtensioncomboBox.Items4" xml:space="preserve">
-    <value>svg</value>
-  </data>
-  <data name="&gt;&gt;オプションOToolStripMenuItem.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="OutputBrowseButton.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
-    <value>Top, Right</value>
-  </data>
-  <data name="色入力ToolStripMenuItem.ShortcutKeys" type="System.Windows.Forms.Keys, System.Windows.Forms">
-    <value>Ctrl+Shift+C</value>
-  </data>
-  <data name="ExtensioncomboBox.Items3" xml:space="preserve">
-    <value>pdf</value>
-  </data>
-  <data name="Delete.Size" type="System.Drawing.Size, System.Drawing">
-    <value>138, 22</value>
-  </data>
-  <data name="SelectAll.Text" xml:space="preserve">
-    <value>Select All(&amp;A)</value>
-  </data>
-  <data name="GenerateButton.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
-    <value>Bottom, Right</value>
-  </data>
-  <data name="Cut.Size" type="System.Drawing.Size, System.Drawing">
-    <value>138, 22</value>
-  </data>
-  <data name="Redo.Size" type="System.Drawing.Size, System.Drawing">
-    <value>138, 22</value>
-  </data>
-  <data name="OutputBrowseButton.Text" xml:space="preserve">
-    <value>Browse...</value>
-  </data>
-  <data name="sourceTextBox.TabIndex" type="System.Int32, mscorlib">
-    <value>3</value>
-  </data>
-  <data name="&gt;&gt;FileToolStripMenuItem.Name" xml:space="preserve">
-    <value>FileToolStripMenuItem</value>
-  </data>
-  <data name="ExtensioncomboBox.Location" type="System.Drawing.Point, System.Drawing">
-    <value>469, 18</value>
-  </data>
-  <data name="&gt;&gt;InputFromTextboxRadioButton.Parent" xml:space="preserve">
-    <value>groupBox1</value>
-  </data>
-  <data name="&gt;&gt;GenerateButton.ZOrder" xml:space="preserve">
-    <value>1</value>
-  </data>
-  <data name="InputFromTextboxRadioButton.Location" type="System.Drawing.Point, System.Drawing">
-    <value>6, 18</value>
-  </data>
-  <data name="オプションOToolStripMenuItem.Text" xml:space="preserve">
-    <value>Options...(&amp;O)</value>
-  </data>
-  <data name="groupBox1.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>3, 2, 3, 2</value>
-  </data>
-  <data name="&gt;&gt;groupBox2.Type" xml:space="preserve">
-    <value>System.Windows.Forms.GroupBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="outputFileNameTextBox.Location" type="System.Drawing.Point, System.Drawing">
-    <value>6, 18</value>
-  </data>
-  <data name="TeXsourceSaveFileDialog.Filter" xml:space="preserve">
-    <value>TeX sources (*.tex)|*.tex|All files (*.*)|*.*</value>
-  </data>
-  <data name="&gt;&gt;InputFromTextboxRadioButton.ZOrder" xml:space="preserve">
-    <value>3</value>
-  </data>
-  <data name="&gt;&gt;色入力ToolStripMenuItem.Name" xml:space="preserve">
-    <value>色入力ToolStripMenuItem</value>
-  </data>
-  <data name="&gt;&gt;Redo.Name" xml:space="preserve">
-    <value>Redo</value>
-  </data>
-  <data name="&gt;&gt;outputFileNameTextBox.ZOrder" xml:space="preserve">
-    <value>2</value>
-  </data>
-  <data name="groupBox2.TabIndex" type="System.Int32, mscorlib">
-    <value>2</value>
-  </data>
-  <data name="showPreambleWindowToolStripMenuItem.Text" xml:space="preserve">
-    <value>Preamble(&amp;P)</value>
-  </data>
-  <data name="inputFileNameTextBox.Enabled" type="System.Boolean, mscorlib">
-    <value>False</value>
-  </data>
-  <data name="&gt;&gt;ExportToolStripMenuItem.Name" xml:space="preserve">
-    <value>ExportToolStripMenuItem</value>
-  </data>
-  <data name="toolStripSeparator1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>135, 6</value>
-  </data>
-  <data name="OutputBrowseButton.TabIndex" type="System.Int32, mscorlib">
-    <value>1</value>
-  </data>
-  <data name="&gt;&gt;$this.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Form, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="inputFileNameTextBox.TabIndex" type="System.Int32, mscorlib">
-    <value>5</value>
-  </data>
-  <data name="&gt;&gt;InputFromFileRadioButton.Name" xml:space="preserve">
-    <value>InputFromFileRadioButton</value>
+  <data name="GenerateEPSToolStripMenuItem.Text" xml:space="preserve">
+    <value>Generate(&amp;T)</value>
   </data>
   <data name="ImportToolStripMenuItem.ShortcutKeys" type="System.Windows.Forms.Keys, System.Windows.Forms">
     <value>Ctrl+O</value>
   </data>
-  <data name="groupBox2.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>3, 2, 3, 2</value>
+  <data name="ImportToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>354, 44</value>
   </data>
-  <data name="ExtensioncomboBox.Items1" xml:space="preserve">
-    <value>png</value>
+  <data name="ImportToolStripMenuItem.Text" xml:space="preserve">
+    <value>Import(&amp;O)</value>
+  </data>
+  <data name="ExportToolStripMenuItem.ShortcutKeys" type="System.Windows.Forms.Keys, System.Windows.Forms">
+    <value>Ctrl+S</value>
+  </data>
+  <data name="ExportToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>354, 44</value>
+  </data>
+  <data name="ExportToolStripMenuItem.Text" xml:space="preserve">
+    <value>Export(&amp;S)</value>
+  </data>
+  <data name="ExitToolStripMenuItem.ShortcutKeys" type="System.Windows.Forms.Keys, System.Windows.Forms">
+    <value>Ctrl+W</value>
+  </data>
+  <data name="ExitToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>354, 44</value>
+  </data>
+  <data name="ExitToolStripMenuItem.Text" xml:space="preserve">
+    <value>Exit(&amp;X)</value>
+  </data>
+  <data name="表示VToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>115, 36</value>
+  </data>
+  <data name="表示VToolStripMenuItem.Text" xml:space="preserve">
+    <value>View(&amp;V)</value>
+  </data>
+  <data name="showPreambleWindowToolStripMenuItem.ShortcutKeys" type="System.Windows.Forms.Keys, System.Windows.Forms">
+    <value>Ctrl+Shift+P</value>
   </data>
   <data name="showPreambleWindowToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>210, 22</value>
+    <value>422, 44</value>
   </data>
-  <data name="&gt;&gt;toolStripSeparator2.Name" xml:space="preserve">
-    <value>toolStripSeparator2</value>
+  <data name="showPreambleWindowToolStripMenuItem.Text" xml:space="preserve">
+    <value>Preamble(&amp;P)</value>
   </data>
-  <data name="sourceTextBoxMenu.Size" type="System.Drawing.Size, System.Drawing">
-    <value>139, 170</value>
+  <data name="showOutputWindowToolStripMenuItem.ShortcutKeys" type="System.Windows.Forms.Keys, System.Windows.Forms">
+    <value>Ctrl+Shift+O</value>
+  </data>
+  <data name="showOutputWindowToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>422, 44</value>
+  </data>
+  <data name="showOutputWindowToolStripMenuItem.Text" xml:space="preserve">
+    <value>Output(&amp;O)</value>
+  </data>
+  <data name="色入力ToolStripMenuItem.ShortcutKeys" type="System.Windows.Forms.Keys, System.Windows.Forms">
+    <value>Ctrl+Shift+C</value>
+  </data>
+  <data name="色入力ToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>422, 44</value>
+  </data>
+  <data name="色入力ToolStripMenuItem.Text" xml:space="preserve">
+    <value>Input Color</value>
+  </data>
+  <data name="SettingToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>116, 36</value>
+  </data>
+  <data name="SettingToolStripMenuItem.Text" xml:space="preserve">
+    <value>Tools(&amp;T)</value>
+  </data>
+  <data name="オプションOToolStripMenuItem.ShortcutKeys" type="System.Windows.Forms.Keys, System.Windows.Forms">
+    <value>Ctrl+E</value>
+  </data>
+  <data name="オプションOToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>360, 44</value>
+  </data>
+  <data name="オプションOToolStripMenuItem.Text" xml:space="preserve">
+    <value>Options...(&amp;O)</value>
+  </data>
+  <data name="ヘルプHToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>116, 36</value>
+  </data>
+  <data name="ヘルプHToolStripMenuItem.Text" xml:space="preserve">
+    <value>Help(&amp;H)</value>
+  </data>
+  <data name="AboutToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>258, 44</value>
+  </data>
+  <data name="AboutToolStripMenuItem.Text" xml:space="preserve">
+    <value>About...(&amp;A)</value>
+  </data>
+  <data name="groupBox1.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Top, Bottom, Left, Right</value>
+  </data>
+  <data name="&gt;&gt;sourceTextBox.Name" xml:space="preserve">
+    <value>sourceTextBox</value>
+  </data>
+  <data name="&gt;&gt;sourceTextBox.Type" xml:space="preserve">
+    <value>Sgry.Azuki.WinForms.AzukiControl, Azuki, Version=1.7.13.20355, Culture=neutral, PublicKeyToken=46b77eb7f2d82aba</value>
+  </data>
+  <data name="&gt;&gt;sourceTextBox.Parent" xml:space="preserve">
+    <value>groupBox1</value>
+  </data>
+  <data name="&gt;&gt;sourceTextBox.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="&gt;&gt;InputFileBrowseButton.Name" xml:space="preserve">
+    <value>InputFileBrowseButton</value>
+  </data>
+  <data name="&gt;&gt;InputFileBrowseButton.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;InputFileBrowseButton.Parent" xml:space="preserve">
+    <value>groupBox1</value>
+  </data>
+  <data name="&gt;&gt;InputFileBrowseButton.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="&gt;&gt;inputFileNameTextBox.Name" xml:space="preserve">
+    <value>inputFileNameTextBox</value>
   </data>
   <data name="&gt;&gt;inputFileNameTextBox.Type" xml:space="preserve">
     <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
+  <data name="&gt;&gt;inputFileNameTextBox.Parent" xml:space="preserve">
+    <value>groupBox1</value>
+  </data>
+  <data name="&gt;&gt;inputFileNameTextBox.ZOrder" xml:space="preserve">
+    <value>2</value>
+  </data>
+  <data name="&gt;&gt;InputFromTextboxRadioButton.Name" xml:space="preserve">
+    <value>InputFromTextboxRadioButton</value>
+  </data>
+  <data name="&gt;&gt;InputFromTextboxRadioButton.Type" xml:space="preserve">
+    <value>System.Windows.Forms.RadioButton, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;InputFromTextboxRadioButton.Parent" xml:space="preserve">
+    <value>groupBox1</value>
+  </data>
+  <data name="&gt;&gt;InputFromTextboxRadioButton.ZOrder" xml:space="preserve">
+    <value>3</value>
+  </data>
+  <data name="&gt;&gt;InputFromFileRadioButton.Name" xml:space="preserve">
+    <value>InputFromFileRadioButton</value>
+  </data>
+  <data name="&gt;&gt;InputFromFileRadioButton.Type" xml:space="preserve">
+    <value>System.Windows.Forms.RadioButton, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;InputFromFileRadioButton.Parent" xml:space="preserve">
+    <value>groupBox1</value>
+  </data>
+  <data name="&gt;&gt;InputFromFileRadioButton.ZOrder" xml:space="preserve">
+    <value>4</value>
+  </data>
+  <data name="groupBox1.Location" type="System.Drawing.Point, System.Drawing">
+    <value>26, 52</value>
+  </data>
+  <data name="groupBox1.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>7, 4, 7, 4</value>
+  </data>
+  <data name="groupBox1.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>7, 4, 7, 4</value>
+  </data>
+  <data name="groupBox1.Size" type="System.Drawing.Size, System.Drawing">
+    <value>1315, 576</value>
+  </data>
+  <data name="groupBox1.TabIndex" type="System.Int32, mscorlib">
+    <value>1</value>
+  </data>
+  <data name="groupBox1.Text" xml:space="preserve">
+    <value>Input</value>
+  </data>
+  <data name="&gt;&gt;groupBox1.Name" xml:space="preserve">
+    <value>groupBox1</value>
+  </data>
+  <data name="&gt;&gt;groupBox1.Type" xml:space="preserve">
+    <value>System.Windows.Forms.GroupBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;groupBox1.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;groupBox1.ZOrder" xml:space="preserve">
+    <value>3</value>
+  </data>
+  <data name="sourceTextBox.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Top, Bottom, Left, Right</value>
+  </data>
+  <metadata name="sourceTextBoxMenu.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>577, 17</value>
+  </metadata>
+  <data name="sourceTextBoxMenu.Size" type="System.Drawing.Size, System.Drawing">
+    <value>218, 282</value>
+  </data>
+  <data name="&gt;&gt;sourceTextBoxMenu.Name" xml:space="preserve">
+    <value>sourceTextBoxMenu</value>
+  </data>
+  <data name="&gt;&gt;sourceTextBoxMenu.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ContextMenuStrip, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="sourceTextBox.Font" type="System.Drawing.Font, System.Drawing">
+    <value>ＭＳ ゴシック, 12pt</value>
+  </data>
+  <data name="sourceTextBox.Location" type="System.Drawing.Point, System.Drawing">
+    <value>35, 76</value>
+  </data>
+  <data name="sourceTextBox.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>7, 4, 7, 4</value>
+  </data>
+  <data name="sourceTextBox.Size" type="System.Drawing.Size, System.Drawing">
+    <value>1256, 388</value>
+  </data>
+  <data name="sourceTextBox.TabIndex" type="System.Int32, mscorlib">
+    <value>3</value>
+  </data>
+  <data name="&gt;&gt;sourceTextBox.Name" xml:space="preserve">
+    <value>sourceTextBox</value>
+  </data>
+  <data name="&gt;&gt;sourceTextBox.Type" xml:space="preserve">
+    <value>Sgry.Azuki.WinForms.AzukiControl, Azuki, Version=1.7.13.20355, Culture=neutral, PublicKeyToken=46b77eb7f2d82aba</value>
+  </data>
+  <data name="&gt;&gt;sourceTextBox.Parent" xml:space="preserve">
+    <value>groupBox1</value>
+  </data>
+  <data name="&gt;&gt;sourceTextBox.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="Undo.Size" type="System.Drawing.Size, System.Drawing">
+    <value>217, 38</value>
+  </data>
+  <data name="Undo.Text" xml:space="preserve">
+    <value>Undo(&amp;U)</value>
+  </data>
+  <data name="Redo.Size" type="System.Drawing.Size, System.Drawing">
+    <value>217, 38</value>
+  </data>
+  <data name="Redo.Text" xml:space="preserve">
+    <value>Redo(&amp;Y)</value>
+  </data>
+  <data name="toolStripSeparator1.Size" type="System.Drawing.Size, System.Drawing">
+    <value>214, 6</value>
+  </data>
+  <data name="Cut.Size" type="System.Drawing.Size, System.Drawing">
+    <value>217, 38</value>
+  </data>
+  <data name="Cut.Text" xml:space="preserve">
+    <value>Cut(&amp;T)</value>
+  </data>
+  <data name="Copy.Size" type="System.Drawing.Size, System.Drawing">
+    <value>217, 38</value>
+  </data>
+  <data name="Copy.Text" xml:space="preserve">
+    <value>Copy(&amp;C)</value>
+  </data>
+  <data name="Paste.Size" type="System.Drawing.Size, System.Drawing">
+    <value>217, 38</value>
+  </data>
+  <data name="Paste.Text" xml:space="preserve">
+    <value>Paste(&amp;P)</value>
+  </data>
+  <data name="Delete.Size" type="System.Drawing.Size, System.Drawing">
+    <value>217, 38</value>
+  </data>
+  <data name="Delete.Text" xml:space="preserve">
+    <value>Delete(&amp;D)</value>
+  </data>
+  <data name="toolStripSeparator2.Size" type="System.Drawing.Size, System.Drawing">
+    <value>214, 6</value>
+  </data>
+  <data name="SelectAll.Size" type="System.Drawing.Size, System.Drawing">
+    <value>217, 38</value>
+  </data>
+  <data name="SelectAll.Text" xml:space="preserve">
+    <value>Select All(&amp;A)</value>
+  </data>
+  <data name="InputFileBrowseButton.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Bottom, Right</value>
+  </data>
+  <data name="InputFileBrowseButton.Enabled" type="System.Boolean, mscorlib">
+    <value>False</value>
+  </data>
+  <data name="InputFileBrowseButton.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="InputFileBrowseButton.Location" type="System.Drawing.Point, System.Drawing">
+    <value>1146, 524</value>
+  </data>
+  <data name="InputFileBrowseButton.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>7, 4, 7, 4</value>
+  </data>
+  <data name="InputFileBrowseButton.Size" type="System.Drawing.Size, System.Drawing">
+    <value>145, 36</value>
+  </data>
+  <data name="InputFileBrowseButton.TabIndex" type="System.Int32, mscorlib">
+    <value>6</value>
+  </data>
+  <data name="InputFileBrowseButton.Text" xml:space="preserve">
+    <value>Browse...</value>
+  </data>
+  <data name="&gt;&gt;InputFileBrowseButton.Name" xml:space="preserve">
+    <value>InputFileBrowseButton</value>
+  </data>
+  <data name="&gt;&gt;InputFileBrowseButton.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;InputFileBrowseButton.Parent" xml:space="preserve">
+    <value>groupBox1</value>
+  </data>
+  <data name="&gt;&gt;InputFileBrowseButton.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="inputFileNameTextBox.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Bottom, Left, Right</value>
+  </data>
+  <data name="inputFileNameTextBox.Enabled" type="System.Boolean, mscorlib">
+    <value>False</value>
+  </data>
+  <data name="inputFileNameTextBox.Location" type="System.Drawing.Point, System.Drawing">
+    <value>13, 524</value>
+  </data>
+  <data name="inputFileNameTextBox.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>7, 4, 7, 4</value>
+  </data>
+  <data name="inputFileNameTextBox.Size" type="System.Drawing.Size, System.Drawing">
+    <value>1111, 31</value>
+  </data>
+  <data name="inputFileNameTextBox.TabIndex" type="System.Int32, mscorlib">
+    <value>5</value>
+  </data>
+  <data name="&gt;&gt;inputFileNameTextBox.Name" xml:space="preserve">
+    <value>inputFileNameTextBox</value>
+  </data>
+  <data name="&gt;&gt;inputFileNameTextBox.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;inputFileNameTextBox.Parent" xml:space="preserve">
+    <value>groupBox1</value>
+  </data>
+  <data name="&gt;&gt;inputFileNameTextBox.ZOrder" xml:space="preserve">
+    <value>2</value>
+  </data>
+  <data name="InputFromTextboxRadioButton.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="InputFromTextboxRadioButton.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="InputFromTextboxRadioButton.Location" type="System.Drawing.Point, System.Drawing">
+    <value>13, 36</value>
+  </data>
+  <data name="InputFromTextboxRadioButton.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>7, 4, 7, 4</value>
+  </data>
+  <data name="InputFromTextboxRadioButton.Size" type="System.Drawing.Size, System.Drawing">
+    <value>686, 28</value>
+  </data>
+  <data name="InputFromTextboxRadioButton.TabIndex" type="System.Int32, mscorlib">
+    <value>1</value>
+  </data>
+  <data name="InputFromTextboxRadioButton.Text" xml:space="preserve">
+    <value>Input TeX code (between \begin{document} and \end{document})</value>
+  </data>
+  <data name="&gt;&gt;InputFromTextboxRadioButton.Name" xml:space="preserve">
+    <value>InputFromTextboxRadioButton</value>
+  </data>
+  <data name="&gt;&gt;InputFromTextboxRadioButton.Type" xml:space="preserve">
+    <value>System.Windows.Forms.RadioButton, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;InputFromTextboxRadioButton.Parent" xml:space="preserve">
+    <value>groupBox1</value>
+  </data>
+  <data name="&gt;&gt;InputFromTextboxRadioButton.ZOrder" xml:space="preserve">
+    <value>3</value>
+  </data>
+  <data name="InputFromFileRadioButton.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Bottom, Left</value>
+  </data>
+  <data name="InputFromFileRadioButton.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="InputFromFileRadioButton.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="InputFromFileRadioButton.Location" type="System.Drawing.Point, System.Drawing">
+    <value>13, 484</value>
+  </data>
+  <data name="InputFromFileRadioButton.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>7, 4, 7, 4</value>
+  </data>
+  <data name="InputFromFileRadioButton.Size" type="System.Drawing.Size, System.Drawing">
+    <value>248, 28</value>
+  </data>
+  <data name="InputFromFileRadioButton.TabIndex" type="System.Int32, mscorlib">
+    <value>4</value>
+  </data>
+  <data name="InputFromFileRadioButton.Text" xml:space="preserve">
+    <value>Input TeX source file</value>
+  </data>
+  <data name="&gt;&gt;InputFromFileRadioButton.Name" xml:space="preserve">
+    <value>InputFromFileRadioButton</value>
+  </data>
+  <data name="&gt;&gt;InputFromFileRadioButton.Type" xml:space="preserve">
+    <value>System.Windows.Forms.RadioButton, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;InputFromFileRadioButton.Parent" xml:space="preserve">
+    <value>groupBox1</value>
+  </data>
+  <data name="&gt;&gt;InputFromFileRadioButton.ZOrder" xml:space="preserve">
+    <value>4</value>
+  </data>
+  <data name="groupBox2.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Bottom, Left, Right</value>
+  </data>
+  <data name="&gt;&gt;ExtensioncomboBox.Name" xml:space="preserve">
+    <value>ExtensioncomboBox</value>
+  </data>
+  <data name="&gt;&gt;ExtensioncomboBox.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ComboBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;ExtensioncomboBox.Parent" xml:space="preserve">
+    <value>groupBox2</value>
+  </data>
+  <data name="&gt;&gt;ExtensioncomboBox.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="&gt;&gt;OutputBrowseButton.Name" xml:space="preserve">
+    <value>OutputBrowseButton</value>
+  </data>
+  <data name="&gt;&gt;OutputBrowseButton.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;OutputBrowseButton.Parent" xml:space="preserve">
+    <value>groupBox2</value>
+  </data>
+  <data name="&gt;&gt;OutputBrowseButton.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
   <data name="&gt;&gt;outputFileNameTextBox.Name" xml:space="preserve">
     <value>outputFileNameTextBox</value>
+  </data>
+  <data name="&gt;&gt;outputFileNameTextBox.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;outputFileNameTextBox.Parent" xml:space="preserve">
+    <value>groupBox2</value>
+  </data>
+  <data name="&gt;&gt;outputFileNameTextBox.ZOrder" xml:space="preserve">
+    <value>2</value>
+  </data>
+  <data name="groupBox2.Location" type="System.Drawing.Point, System.Drawing">
+    <value>26, 644</value>
+  </data>
+  <data name="groupBox2.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>7, 4, 7, 4</value>
+  </data>
+  <data name="groupBox2.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>7, 4, 7, 4</value>
+  </data>
+  <data name="groupBox2.Size" type="System.Drawing.Size, System.Drawing">
+    <value>1315, 92</value>
+  </data>
+  <data name="groupBox2.TabIndex" type="System.Int32, mscorlib">
+    <value>2</value>
+  </data>
+  <data name="groupBox2.Text" xml:space="preserve">
+    <value>Output File Path (extention: .eps / .png / .jpg / .pdf / .svg(z) / .emf /.bmp )</value>
+  </data>
+  <data name="&gt;&gt;groupBox2.Name" xml:space="preserve">
+    <value>groupBox2</value>
+  </data>
+  <data name="&gt;&gt;groupBox2.Type" xml:space="preserve">
+    <value>System.Windows.Forms.GroupBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;groupBox2.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;groupBox2.ZOrder" xml:space="preserve">
+    <value>2</value>
+  </data>
+  <data name="ExtensioncomboBox.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Bottom, Right</value>
+  </data>
+  <data name="ExtensioncomboBox.Items" xml:space="preserve">
+    <value>eps</value>
+  </data>
+  <data name="ExtensioncomboBox.Items1" xml:space="preserve">
+    <value>png</value>
+  </data>
+  <data name="ExtensioncomboBox.Items2" xml:space="preserve">
+    <value>jpg</value>
+  </data>
+  <data name="ExtensioncomboBox.Items3" xml:space="preserve">
+    <value>pdf</value>
+  </data>
+  <data name="ExtensioncomboBox.Items4" xml:space="preserve">
+    <value>svg</value>
+  </data>
+  <data name="ExtensioncomboBox.Items5" xml:space="preserve">
+    <value>svgz</value>
+  </data>
+  <data name="ExtensioncomboBox.Items6" xml:space="preserve">
+    <value>emf</value>
+  </data>
+  <data name="ExtensioncomboBox.Items7" xml:space="preserve">
+    <value>bmp</value>
+  </data>
+  <data name="ExtensioncomboBox.Location" type="System.Drawing.Point, System.Drawing">
+    <value>1016, 36</value>
+  </data>
+  <data name="ExtensioncomboBox.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>2, 4, 2, 4</value>
+  </data>
+  <data name="ExtensioncomboBox.Size" type="System.Drawing.Size, System.Drawing">
+    <value>108, 32</value>
+  </data>
+  <data name="ExtensioncomboBox.TabIndex" type="System.Int32, mscorlib">
+    <value>2</value>
+  </data>
+  <data name="&gt;&gt;ExtensioncomboBox.Name" xml:space="preserve">
+    <value>ExtensioncomboBox</value>
+  </data>
+  <data name="&gt;&gt;ExtensioncomboBox.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ComboBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;ExtensioncomboBox.Parent" xml:space="preserve">
+    <value>groupBox2</value>
+  </data>
+  <data name="&gt;&gt;ExtensioncomboBox.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="OutputBrowseButton.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Top, Right</value>
+  </data>
+  <data name="OutputBrowseButton.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="OutputBrowseButton.Location" type="System.Drawing.Point, System.Drawing">
+    <value>1146, 36</value>
+  </data>
+  <data name="OutputBrowseButton.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>7, 4, 7, 4</value>
+  </data>
+  <data name="OutputBrowseButton.Size" type="System.Drawing.Size, System.Drawing">
+    <value>145, 36</value>
+  </data>
+  <data name="OutputBrowseButton.TabIndex" type="System.Int32, mscorlib">
+    <value>1</value>
+  </data>
+  <data name="OutputBrowseButton.Text" xml:space="preserve">
+    <value>Browse...</value>
+  </data>
+  <data name="&gt;&gt;OutputBrowseButton.Name" xml:space="preserve">
+    <value>OutputBrowseButton</value>
+  </data>
+  <data name="&gt;&gt;OutputBrowseButton.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;OutputBrowseButton.Parent" xml:space="preserve">
+    <value>groupBox2</value>
+  </data>
+  <data name="&gt;&gt;OutputBrowseButton.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="outputFileNameTextBox.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Top, Left, Right</value>
+  </data>
+  <data name="outputFileNameTextBox.Location" type="System.Drawing.Point, System.Drawing">
+    <value>13, 36</value>
+  </data>
+  <data name="outputFileNameTextBox.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>7, 4, 7, 4</value>
+  </data>
+  <data name="outputFileNameTextBox.Size" type="System.Drawing.Size, System.Drawing">
+    <value>979, 31</value>
+  </data>
+  <data name="outputFileNameTextBox.TabIndex" type="System.Int32, mscorlib">
+    <value>0</value>
+  </data>
+  <data name="&gt;&gt;outputFileNameTextBox.Name" xml:space="preserve">
+    <value>outputFileNameTextBox</value>
+  </data>
+  <data name="&gt;&gt;outputFileNameTextBox.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;outputFileNameTextBox.Parent" xml:space="preserve">
+    <value>groupBox2</value>
+  </data>
+  <data name="&gt;&gt;outputFileNameTextBox.ZOrder" xml:space="preserve">
+    <value>2</value>
+  </data>
+  <data name="GenerateButton.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Bottom, Right</value>
+  </data>
+  <data name="GenerateButton.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="GenerateButton.Location" type="System.Drawing.Point, System.Drawing">
+    <value>1064, 756</value>
+  </data>
+  <data name="GenerateButton.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>7, 4, 7, 4</value>
+  </data>
+  <data name="GenerateButton.Size" type="System.Drawing.Size, System.Drawing">
+    <value>275, 60</value>
+  </data>
+  <data name="GenerateButton.TabIndex" type="System.Int32, mscorlib">
+    <value>3</value>
+  </data>
+  <data name="GenerateButton.Text" xml:space="preserve">
+    <value>Generate</value>
+  </data>
+  <data name="&gt;&gt;GenerateButton.Name" xml:space="preserve">
+    <value>GenerateButton</value>
+  </data>
+  <data name="&gt;&gt;GenerateButton.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;GenerateButton.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;GenerateButton.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <metadata name="saveFileDialog1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>149, 17</value>
+  </metadata>
+  <data name="saveFileDialog1.Filter" xml:space="preserve">
+    <value>EPSファイル (*.eps)|*.eps|JPEGファイル (*.jpg)|*.jpg|PNGファイル (*.png)|*.png|TIFFファイル (*.tiff)|*.tiff|BMPファイル (*.bmp)|*.bmp|PDFファイル (*.pdf)|*.pdf|EMFファイル (*.emf)|*.emf|SVGファイル (*.svg)|*.svg|SVGZファイル (*.svgz)|*.svgz|すべてのファイル (*.*)|*.*</value>
+  </data>
+  <metadata name="openFileDialog1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>17, 17</value>
+  </metadata>
+  <data name="openFileDialog1.Filter" xml:space="preserve">
+    <value>TeX sources (*.tex)|*.tex|All files (*.*)|*.*</value>
+  </data>
+  <metadata name="convertWorker.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>390, 17</value>
+  </metadata>
+  <metadata name="TeXsourceSaveFileDialog.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>17, 58</value>
+  </metadata>
+  <data name="TeXsourceSaveFileDialog.Filter" xml:space="preserve">
+    <value>TeX sources (*.tex)|*.tex|All files (*.*)|*.*</value>
+  </data>
+  <metadata name="$this.Language" type="System.Globalization.CultureInfo, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>ja-JP</value>
+  </metadata>
+  <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
+  <data name="$this.AutoScaleDimensions" type="System.Drawing.SizeF, System.Drawing">
+    <value>13, 24</value>
+  </data>
+  <data name="$this.ClientSize" type="System.Drawing.Size, System.Drawing">
+    <value>1456, 828</value>
+  </data>
+  <data name="$this.Font" type="System.Drawing.Font, System.Drawing">
+    <value>MS UI Gothic, 9pt</value>
   </data>
   <data name="$this.Icon" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
@@ -6692,214 +6830,175 @@
         AAAAAH////8AAAAA/////8AAAAP/////8AAAD//////+AAB////////wD///////////////
 </value>
   </data>
-  <data name="GenerateButton.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>3, 2, 3, 2</value>
+  <data name="$this.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>7, 4, 7, 4</value>
   </data>
-  <data name="&gt;&gt;InputFromFileRadioButton.Parent" xml:space="preserve">
-    <value>groupBox1</value>
+  <data name="$this.StartPosition" type="System.Windows.Forms.FormStartPosition, System.Windows.Forms">
+    <value>Manual</value>
   </data>
-  <data name="$this.AutoScaleDimensions" type="System.Drawing.SizeF, System.Drawing">
-    <value>6, 12</value>
+  <data name="$this.Text" xml:space="preserve">
+    <value>TeX2img</value>
   </data>
-  <data name="menuStrip1.Location" type="System.Drawing.Point, System.Drawing">
-    <value>0, 0</value>
+  <data name="&gt;&gt;FileToolStripMenuItem.Name" xml:space="preserve">
+    <value>FileToolStripMenuItem</value>
   </data>
-  <data name="outputFileNameTextBox.TabIndex" type="System.Int32, mscorlib">
-    <value>0</value>
-  </data>
-  <data name="inputFileNameTextBox.Location" type="System.Drawing.Point, System.Drawing">
-    <value>6, 262</value>
-  </data>
-  <data name="オプションOToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>181, 22</value>
-  </data>
-  <data name="&gt;&gt;convertWorker.Name" xml:space="preserve">
-    <value>convertWorker</value>
-  </data>
-  <data name="&gt;&gt;SettingToolStripMenuItem.Type" xml:space="preserve">
+  <data name="&gt;&gt;FileToolStripMenuItem.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="GenerateButton.TabIndex" type="System.Int32, mscorlib">
-    <value>3</value>
-  </data>
-  <data name="InputFromFileRadioButton.TabIndex" type="System.Int32, mscorlib">
-    <value>4</value>
-  </data>
-  <data name="&gt;&gt;OutputBrowseButton.Name" xml:space="preserve">
-    <value>OutputBrowseButton</value>
-  </data>
-  <data name="&gt;&gt;sourceTextBox.Name" xml:space="preserve">
-    <value>sourceTextBox</value>
-  </data>
-  <data name="&gt;&gt;ExitToolStripMenuItem.Name" xml:space="preserve">
-    <value>ExitToolStripMenuItem</value>
-  </data>
-  <data name="inputFileNameTextBox.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>3, 2, 3, 2</value>
-  </data>
-  <data name="InputFileBrowseButton.Location" type="System.Drawing.Point, System.Drawing">
-    <value>529, 262</value>
-  </data>
-  <data name="menuStrip1.Text" xml:space="preserve">
-    <value>menuStrip1</value>
-  </data>
-  <data name="&gt;&gt;InputFileBrowseButton.ZOrder" xml:space="preserve">
-    <value>1</value>
-  </data>
-  <data name="outputFileNameTextBox.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
-    <value>Top, Left, Right</value>
-  </data>
-  <data name="&gt;&gt;openFileDialog1.Type" xml:space="preserve">
-    <value>System.Windows.Forms.OpenFileDialog, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="groupBox2.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>3, 2, 3, 2</value>
-  </data>
-  <data name="InputFromFileRadioButton.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
-    <value>NoControl</value>
-  </data>
-  <data name="OutputBrowseButton.Location" type="System.Drawing.Point, System.Drawing">
-    <value>529, 18</value>
-  </data>
-  <data name="ImportToolStripMenuItem.Text" xml:space="preserve">
-    <value>Import(&amp;O)</value>
-  </data>
-  <data name="InputFromFileRadioButton.Text" xml:space="preserve">
-    <value>Input TeX source file</value>
-  </data>
-  <data name="groupBox1.Text" xml:space="preserve">
-    <value>Input</value>
-  </data>
-  <data name="ExtensioncomboBox.Items7" xml:space="preserve">
-    <value>bmp</value>
-  </data>
-  <data name="&gt;&gt;toolStripSeparator1.Name" xml:space="preserve">
-    <value>toolStripSeparator1</value>
-  </data>
-  <data name="表示VToolStripMenuItem.Text" xml:space="preserve">
-    <value>View(&amp;V)</value>
-  </data>
-  <data name="GenerateButton.Location" type="System.Drawing.Point, System.Drawing">
-    <value>491, 378</value>
-  </data>
-  <data name="groupBox1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>607, 288</value>
-  </data>
-  <data name="ExportToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>174, 22</value>
-  </data>
-  <data name="&gt;&gt;inputFileNameTextBox.Parent" xml:space="preserve">
-    <value>groupBox1</value>
-  </data>
-  <data name="inputFileNameTextBox.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
-    <value>Bottom, Left, Right</value>
-  </data>
-  <data name="Cut.Text" xml:space="preserve">
-    <value>Cut(&amp;T)</value>
+  <data name="&gt;&gt;GenerateEPSToolStripMenuItem.Name" xml:space="preserve">
+    <value>GenerateEPSToolStripMenuItem</value>
   </data>
   <data name="&gt;&gt;GenerateEPSToolStripMenuItem.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;saveFileDialog1.Type" xml:space="preserve">
-    <value>System.Windows.Forms.SaveFileDialog, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="outputFileNameTextBox.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>3, 2, 3, 2</value>
-  </data>
-  <data name="&gt;&gt;Copy.Name" xml:space="preserve">
-    <value>Copy</value>
-  </data>
   <data name="&gt;&gt;ImportToolStripMenuItem.Name" xml:space="preserve">
     <value>ImportToolStripMenuItem</value>
   </data>
-  <data name="InputFromFileRadioButton.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>3, 2, 3, 2</value>
+  <data name="&gt;&gt;ImportToolStripMenuItem.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;ExportToolStripMenuItem.Name" xml:space="preserve">
+    <value>ExportToolStripMenuItem</value>
   </data>
   <data name="&gt;&gt;ExportToolStripMenuItem.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="SettingToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>60, 20</value>
+  <data name="&gt;&gt;ExitToolStripMenuItem.Name" xml:space="preserve">
+    <value>ExitToolStripMenuItem</value>
   </data>
-  <data name="$this.ClientSize" type="System.Drawing.Size, System.Drawing">
-    <value>672, 414</value>
+  <data name="&gt;&gt;ExitToolStripMenuItem.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;InputFromFileRadioButton.ZOrder" xml:space="preserve">
-    <value>4</value>
-  </data>
-  <data name="groupBox2.Text" xml:space="preserve">
-    <value>Output File Path (extention: .eps / .png / .jpg / .pdf / .svg(z) / .emf /.bmp )</value>
-  </data>
-  <data name="&gt;&gt;InputFromTextboxRadioButton.Type" xml:space="preserve">
-    <value>System.Windows.Forms.RadioButton, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="オプションOToolStripMenuItem.ShortcutKeys" type="System.Windows.Forms.Keys, System.Windows.Forms">
-    <value>Ctrl+E</value>
-  </data>
-  <data name="InputFileBrowseButton.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
-    <value>NoControl</value>
-  </data>
-  <data name="&gt;&gt;ExtensioncomboBox.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ComboBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;Cut.Name" xml:space="preserve">
-    <value>Cut</value>
+  <data name="&gt;&gt;表示VToolStripMenuItem.Name" xml:space="preserve">
+    <value>表示VToolStripMenuItem</value>
   </data>
   <data name="&gt;&gt;表示VToolStripMenuItem.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="ExtensioncomboBox.TabIndex" type="System.Int32, mscorlib">
-    <value>2</value>
+  <data name="&gt;&gt;showPreambleWindowToolStripMenuItem.Name" xml:space="preserve">
+    <value>showPreambleWindowToolStripMenuItem</value>
   </data>
-  <data name="&gt;&gt;Copy.Type" xml:space="preserve">
+  <data name="&gt;&gt;showPreambleWindowToolStripMenuItem.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="GenerateEPSToolStripMenuItem.ShortcutKeys" type="System.Windows.Forms.Keys, System.Windows.Forms">
-    <value>Ctrl+T</value>
   </data>
   <data name="&gt;&gt;showOutputWindowToolStripMenuItem.Name" xml:space="preserve">
     <value>showOutputWindowToolStripMenuItem</value>
   </data>
+  <data name="&gt;&gt;showOutputWindowToolStripMenuItem.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;色入力ToolStripMenuItem.Name" xml:space="preserve">
+    <value>色入力ToolStripMenuItem</value>
+  </data>
+  <data name="&gt;&gt;色入力ToolStripMenuItem.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;SettingToolStripMenuItem.Name" xml:space="preserve">
+    <value>SettingToolStripMenuItem</value>
+  </data>
+  <data name="&gt;&gt;SettingToolStripMenuItem.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;オプションOToolStripMenuItem.Name" xml:space="preserve">
+    <value>オプションOToolStripMenuItem</value>
+  </data>
+  <data name="&gt;&gt;オプションOToolStripMenuItem.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;ヘルプHToolStripMenuItem.Name" xml:space="preserve">
+    <value>ヘルプHToolStripMenuItem</value>
+  </data>
+  <data name="&gt;&gt;ヘルプHToolStripMenuItem.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;AboutToolStripMenuItem.Name" xml:space="preserve">
+    <value>AboutToolStripMenuItem</value>
+  </data>
+  <data name="&gt;&gt;AboutToolStripMenuItem.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;Undo.Name" xml:space="preserve">
+    <value>Undo</value>
+  </data>
   <data name="&gt;&gt;Undo.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="InputFromTextboxRadioButton.Size" type="System.Drawing.Size, System.Drawing">
-    <value>351, 16</value>
+  <data name="&gt;&gt;Redo.Name" xml:space="preserve">
+    <value>Redo</value>
   </data>
-  <data name="&gt;&gt;GenerateButton.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="&gt;&gt;Redo.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="色入力ToolStripMenuItem.Text" xml:space="preserve">
-    <value>Input Color</value>
+  <data name="&gt;&gt;toolStripSeparator1.Name" xml:space="preserve">
+    <value>toolStripSeparator1</value>
   </data>
-  <data name="&gt;&gt;groupBox1.Type" xml:space="preserve">
-    <value>System.Windows.Forms.GroupBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="&gt;&gt;toolStripSeparator1.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripSeparator, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="InputFileBrowseButton.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
-    <value>Bottom, Right</value>
+  <data name="&gt;&gt;Cut.Name" xml:space="preserve">
+    <value>Cut</value>
   </data>
-  <metadata name="openFileDialog1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>17, 17</value>
-  </metadata>
-  <metadata name="sourceTextBoxMenu.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>577, 17</value>
-  </metadata>
-  <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-    <value>True</value>
-  </metadata>
-  <metadata name="saveFileDialog1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>149, 17</value>
-  </metadata>
-  <metadata name="TeXsourceSaveFileDialog.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>17, 58</value>
-  </metadata>
-  <metadata name="menuStrip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>280, 17</value>
-  </metadata>
-  <metadata name="convertWorker.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>390, 17</value>
-  </metadata>
-  <metadata name="$this.Language" type="System.Globalization.CultureInfo, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-    <value>ja-JP</value>
-  </metadata>
+  <data name="&gt;&gt;Cut.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;Copy.Name" xml:space="preserve">
+    <value>Copy</value>
+  </data>
+  <data name="&gt;&gt;Copy.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;Paste.Name" xml:space="preserve">
+    <value>Paste</value>
+  </data>
+  <data name="&gt;&gt;Paste.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;Delete.Name" xml:space="preserve">
+    <value>Delete</value>
+  </data>
+  <data name="&gt;&gt;Delete.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;toolStripSeparator2.Name" xml:space="preserve">
+    <value>toolStripSeparator2</value>
+  </data>
+  <data name="&gt;&gt;toolStripSeparator2.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripSeparator, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;SelectAll.Name" xml:space="preserve">
+    <value>SelectAll</value>
+  </data>
+  <data name="&gt;&gt;SelectAll.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;saveFileDialog1.Name" xml:space="preserve">
+    <value>saveFileDialog1</value>
+  </data>
+  <data name="&gt;&gt;saveFileDialog1.Type" xml:space="preserve">
+    <value>System.Windows.Forms.SaveFileDialog, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;openFileDialog1.Name" xml:space="preserve">
+    <value>openFileDialog1</value>
+  </data>
+  <data name="&gt;&gt;openFileDialog1.Type" xml:space="preserve">
+    <value>System.Windows.Forms.OpenFileDialog, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;convertWorker.Name" xml:space="preserve">
+    <value>convertWorker</value>
+  </data>
+  <data name="&gt;&gt;convertWorker.Type" xml:space="preserve">
+    <value>System.ComponentModel.BackgroundWorker, System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;TeXsourceSaveFileDialog.Name" xml:space="preserve">
+    <value>TeXsourceSaveFileDialog</value>
+  </data>
+  <data name="&gt;&gt;TeXsourceSaveFileDialog.Type" xml:space="preserve">
+    <value>System.Windows.Forms.SaveFileDialog, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;$this.Name" xml:space="preserve">
+    <value>MainForm</value>
+  </data>
+  <data name="&gt;&gt;$this.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Form, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
 </root>
