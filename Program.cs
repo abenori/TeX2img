@@ -240,8 +240,10 @@ namespace TeX2img {
 
         [STAThread]
         static void Main() {
+            Application.EnableVisualStyles();
+            Application.SetCompatibleTextRenderingDefault(false);
             // アップデートしていたら前バージョンの設定を読み込む
-            if (!Properties.Settings.Default.IsUpgraded) {
+            if(!Properties.Settings.Default.IsUpgraded) {
                 Properties.Settings.Default.Upgrade();
                 Properties.Settings.Default.IsUpgraded = true;
                 Properties.Settings.Default.TeX2imgVersion = Application.ProductVersion;

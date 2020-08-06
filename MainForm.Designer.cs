@@ -60,7 +60,6 @@
             this.InputFileBrowseButton = new System.Windows.Forms.Button();
             this.inputFileNameTextBox = new System.Windows.Forms.TextBox();
             this.InputFromFileRadioButton = new System.Windows.Forms.RadioButton();
-            this.InputFromTextboxRadioButton = new System.Windows.Forms.RadioButton();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.ExtensioncomboBox = new System.Windows.Forms.ComboBox();
             this.OutputBrowseButton = new System.Windows.Forms.Button();
@@ -70,6 +69,7 @@
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.convertWorker = new System.ComponentModel.BackgroundWorker();
             this.TeXsourceSaveFileDialog = new System.Windows.Forms.SaveFileDialog();
+            this.InputFromTextboxRadioButton = new System.Windows.Forms.RadioButton();
             this.menuStrip1.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.sourceTextBoxMenu.SuspendLayout();
@@ -78,100 +78,100 @@
             // 
             // menuStrip1
             // 
+            resources.ApplyResources(this.menuStrip1, "menuStrip1");
             this.menuStrip1.ImageScalingSize = new System.Drawing.Size(24, 24);
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.FileToolStripMenuItem,
             this.表示VToolStripMenuItem,
             this.SettingToolStripMenuItem,
             this.ヘルプHToolStripMenuItem});
-            resources.ApplyResources(this.menuStrip1, "menuStrip1");
             this.menuStrip1.Name = "menuStrip1";
             // 
             // FileToolStripMenuItem
             // 
+            resources.ApplyResources(this.FileToolStripMenuItem, "FileToolStripMenuItem");
             this.FileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.GenerateEPSToolStripMenuItem,
             this.ImportToolStripMenuItem,
             this.ExportToolStripMenuItem,
             this.ExitToolStripMenuItem});
             this.FileToolStripMenuItem.Name = "FileToolStripMenuItem";
-            resources.ApplyResources(this.FileToolStripMenuItem, "FileToolStripMenuItem");
             // 
             // GenerateEPSToolStripMenuItem
             // 
-            this.GenerateEPSToolStripMenuItem.Name = "GenerateEPSToolStripMenuItem";
             resources.ApplyResources(this.GenerateEPSToolStripMenuItem, "GenerateEPSToolStripMenuItem");
+            this.GenerateEPSToolStripMenuItem.Name = "GenerateEPSToolStripMenuItem";
             this.GenerateEPSToolStripMenuItem.Click += new System.EventHandler(this.GenerateButton_Click);
             // 
             // ImportToolStripMenuItem
             // 
-            this.ImportToolStripMenuItem.Name = "ImportToolStripMenuItem";
             resources.ApplyResources(this.ImportToolStripMenuItem, "ImportToolStripMenuItem");
+            this.ImportToolStripMenuItem.Name = "ImportToolStripMenuItem";
             this.ImportToolStripMenuItem.Click += new System.EventHandler(this.ImportToolStripMenuItem_Click);
             // 
             // ExportToolStripMenuItem
             // 
-            this.ExportToolStripMenuItem.Name = "ExportToolStripMenuItem";
             resources.ApplyResources(this.ExportToolStripMenuItem, "ExportToolStripMenuItem");
+            this.ExportToolStripMenuItem.Name = "ExportToolStripMenuItem";
             this.ExportToolStripMenuItem.Click += new System.EventHandler(this.ExportToolStripMenuItem_Click);
             // 
             // ExitToolStripMenuItem
             // 
-            this.ExitToolStripMenuItem.Name = "ExitToolStripMenuItem";
             resources.ApplyResources(this.ExitToolStripMenuItem, "ExitToolStripMenuItem");
+            this.ExitToolStripMenuItem.Name = "ExitToolStripMenuItem";
             this.ExitToolStripMenuItem.Click += new System.EventHandler(this.ExitCToolStripMenuItem_Click);
             // 
             // 表示VToolStripMenuItem
             // 
+            resources.ApplyResources(this.表示VToolStripMenuItem, "表示VToolStripMenuItem");
             this.表示VToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.showPreambleWindowToolStripMenuItem,
             this.showOutputWindowToolStripMenuItem,
             this.色入力ToolStripMenuItem});
             this.表示VToolStripMenuItem.Name = "表示VToolStripMenuItem";
-            resources.ApplyResources(this.表示VToolStripMenuItem, "表示VToolStripMenuItem");
             // 
             // showPreambleWindowToolStripMenuItem
             // 
-            this.showPreambleWindowToolStripMenuItem.Name = "showPreambleWindowToolStripMenuItem";
             resources.ApplyResources(this.showPreambleWindowToolStripMenuItem, "showPreambleWindowToolStripMenuItem");
+            this.showPreambleWindowToolStripMenuItem.Name = "showPreambleWindowToolStripMenuItem";
             this.showPreambleWindowToolStripMenuItem.Click += new System.EventHandler(this.showPreambleWindowToolStripMenuItem_Click);
             // 
             // showOutputWindowToolStripMenuItem
             // 
-            this.showOutputWindowToolStripMenuItem.Name = "showOutputWindowToolStripMenuItem";
             resources.ApplyResources(this.showOutputWindowToolStripMenuItem, "showOutputWindowToolStripMenuItem");
+            this.showOutputWindowToolStripMenuItem.Name = "showOutputWindowToolStripMenuItem";
             this.showOutputWindowToolStripMenuItem.Click += new System.EventHandler(this.showOutputWindowToolStripMenuItem_Click);
             // 
             // 色入力ToolStripMenuItem
             // 
-            this.色入力ToolStripMenuItem.Name = "色入力ToolStripMenuItem";
             resources.ApplyResources(this.色入力ToolStripMenuItem, "色入力ToolStripMenuItem");
+            this.色入力ToolStripMenuItem.Name = "色入力ToolStripMenuItem";
             this.色入力ToolStripMenuItem.Click += new System.EventHandler(this.ColorInputHelperToolStripMenuItem_Click);
             // 
             // SettingToolStripMenuItem
             // 
+            resources.ApplyResources(this.SettingToolStripMenuItem, "SettingToolStripMenuItem");
             this.SettingToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.オプションOToolStripMenuItem});
             this.SettingToolStripMenuItem.Name = "SettingToolStripMenuItem";
-            resources.ApplyResources(this.SettingToolStripMenuItem, "SettingToolStripMenuItem");
             // 
             // オプションOToolStripMenuItem
             // 
-            this.オプションOToolStripMenuItem.Name = "オプションOToolStripMenuItem";
             resources.ApplyResources(this.オプションOToolStripMenuItem, "オプションOToolStripMenuItem");
+            this.オプションOToolStripMenuItem.Name = "オプションOToolStripMenuItem";
             this.オプションOToolStripMenuItem.Click += new System.EventHandler(this.SettingToolStripMenuItem_Click);
             // 
             // ヘルプHToolStripMenuItem
             // 
+            resources.ApplyResources(this.ヘルプHToolStripMenuItem, "ヘルプHToolStripMenuItem");
             this.ヘルプHToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.AboutToolStripMenuItem});
             this.ヘルプHToolStripMenuItem.Name = "ヘルプHToolStripMenuItem";
-            resources.ApplyResources(this.ヘルプHToolStripMenuItem, "ヘルプHToolStripMenuItem");
             // 
             // AboutToolStripMenuItem
             // 
-            this.AboutToolStripMenuItem.Name = "AboutToolStripMenuItem";
             resources.ApplyResources(this.AboutToolStripMenuItem, "AboutToolStripMenuItem");
+            this.AboutToolStripMenuItem.Name = "AboutToolStripMenuItem";
             this.AboutToolStripMenuItem.Click += new System.EventHandler(this.AboutToolStripMenuItem_Click);
             // 
             // groupBox1
@@ -180,16 +180,16 @@
             this.groupBox1.Controls.Add(this.sourceTextBox);
             this.groupBox1.Controls.Add(this.InputFileBrowseButton);
             this.groupBox1.Controls.Add(this.inputFileNameTextBox);
-            this.groupBox1.Controls.Add(this.InputFromFileRadioButton);
             this.groupBox1.Controls.Add(this.InputFromTextboxRadioButton);
+            this.groupBox1.Controls.Add(this.InputFromFileRadioButton);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.TabStop = false;
             // 
             // sourceTextBox
             // 
             this.sourceTextBox.AcceptsTab = false;
-            this.sourceTextBox.AllowDrop = true;
             resources.ApplyResources(this.sourceTextBox, "sourceTextBox");
+            this.sourceTextBox.AllowDrop = true;
             this.sourceTextBox.BackColor = System.Drawing.SystemColors.Window;
             this.sourceTextBox.ContextMenuStrip = this.sourceTextBoxMenu;
             this.sourceTextBox.Cursor = System.Windows.Forms.Cursors.IBeam;
@@ -219,6 +219,7 @@
             // 
             // sourceTextBoxMenu
             // 
+            resources.ApplyResources(this.sourceTextBoxMenu, "sourceTextBoxMenu");
             this.sourceTextBoxMenu.ImageScalingSize = new System.Drawing.Size(24, 24);
             this.sourceTextBoxMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.Undo,
@@ -231,58 +232,57 @@
             this.toolStripSeparator2,
             this.SelectAll});
             this.sourceTextBoxMenu.Name = "sourceTextBoxMenu";
-            resources.ApplyResources(this.sourceTextBoxMenu, "sourceTextBoxMenu");
             // 
             // Undo
             // 
-            this.Undo.Name = "Undo";
             resources.ApplyResources(this.Undo, "Undo");
+            this.Undo.Name = "Undo";
             this.Undo.Click += new System.EventHandler(this.Undo_Click);
             // 
             // Redo
             // 
-            this.Redo.Name = "Redo";
             resources.ApplyResources(this.Redo, "Redo");
+            this.Redo.Name = "Redo";
             this.Redo.Click += new System.EventHandler(this.Redo_Click);
             // 
             // toolStripSeparator1
             // 
-            this.toolStripSeparator1.Name = "toolStripSeparator1";
             resources.ApplyResources(this.toolStripSeparator1, "toolStripSeparator1");
+            this.toolStripSeparator1.Name = "toolStripSeparator1";
             // 
             // Cut
             // 
-            this.Cut.Name = "Cut";
             resources.ApplyResources(this.Cut, "Cut");
+            this.Cut.Name = "Cut";
             this.Cut.Click += new System.EventHandler(this.Cut_Click);
             // 
             // Copy
             // 
-            this.Copy.Name = "Copy";
             resources.ApplyResources(this.Copy, "Copy");
+            this.Copy.Name = "Copy";
             this.Copy.Click += new System.EventHandler(this.Copy_Click);
             // 
             // Paste
             // 
-            this.Paste.Name = "Paste";
             resources.ApplyResources(this.Paste, "Paste");
+            this.Paste.Name = "Paste";
             this.Paste.Click += new System.EventHandler(this.Paste_Click);
             // 
             // Delete
             // 
-            this.Delete.Name = "Delete";
             resources.ApplyResources(this.Delete, "Delete");
+            this.Delete.Name = "Delete";
             this.Delete.Click += new System.EventHandler(this.Delete_Click);
             // 
             // toolStripSeparator2
             // 
-            this.toolStripSeparator2.Name = "toolStripSeparator2";
             resources.ApplyResources(this.toolStripSeparator2, "toolStripSeparator2");
+            this.toolStripSeparator2.Name = "toolStripSeparator2";
             // 
             // SelectAll
             // 
-            this.SelectAll.Name = "SelectAll";
             resources.ApplyResources(this.SelectAll, "SelectAll");
+            this.SelectAll.Name = "SelectAll";
             this.SelectAll.Click += new System.EventHandler(this.SelectAll_Click);
             // 
             // InputFileBrowseButton
@@ -294,8 +294,8 @@
             // 
             // inputFileNameTextBox
             // 
-            this.inputFileNameTextBox.AllowDrop = true;
             resources.ApplyResources(this.inputFileNameTextBox, "inputFileNameTextBox");
+            this.inputFileNameTextBox.AllowDrop = true;
             this.inputFileNameTextBox.Name = "inputFileNameTextBox";
             this.inputFileNameTextBox.DragDrop += new System.Windows.Forms.DragEventHandler(this.inputFileNameTextBox_DragDrop);
             this.inputFileNameTextBox.DragEnter += new System.Windows.Forms.DragEventHandler(this.TextBox_DragEnter);
@@ -306,16 +306,6 @@
             this.InputFromFileRadioButton.Name = "InputFromFileRadioButton";
             this.InputFromFileRadioButton.UseVisualStyleBackColor = true;
             this.InputFromFileRadioButton.Click += new System.EventHandler(this.setEnabled);
-            // 
-            // InputFromTextboxRadioButton
-            // 
-            resources.ApplyResources(this.InputFromTextboxRadioButton, "InputFromTextboxRadioButton");
-            this.InputFromTextboxRadioButton.Checked = global::TeX2img.Properties.Settings.Default.inputFromTextBox;
-            this.InputFromTextboxRadioButton.DataBindings.Add(new System.Windows.Forms.Binding("Checked", global::TeX2img.Properties.Settings.Default, "inputFromTextBox", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
-            this.InputFromTextboxRadioButton.Name = "InputFromTextboxRadioButton";
-            this.InputFromTextboxRadioButton.TabStop = true;
-            this.InputFromTextboxRadioButton.UseVisualStyleBackColor = true;
-            this.InputFromTextboxRadioButton.CheckedChanged += new System.EventHandler(this.setEnabled);
             // 
             // groupBox2
             // 
@@ -383,6 +373,16 @@
             // TeXsourceSaveFileDialog
             // 
             resources.ApplyResources(this.TeXsourceSaveFileDialog, "TeXsourceSaveFileDialog");
+            // 
+            // InputFromTextboxRadioButton
+            // 
+            resources.ApplyResources(this.InputFromTextboxRadioButton, "InputFromTextboxRadioButton");
+            this.InputFromTextboxRadioButton.Checked = global::TeX2img.Properties.Settings.Default.inputFromTextBox;
+            this.InputFromTextboxRadioButton.DataBindings.Add(new System.Windows.Forms.Binding("Checked", global::TeX2img.Properties.Settings.Default, "inputFromTextBox", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
+            this.InputFromTextboxRadioButton.Name = "InputFromTextboxRadioButton";
+            this.InputFromTextboxRadioButton.TabStop = true;
+            this.InputFromTextboxRadioButton.UseVisualStyleBackColor = true;
+            this.InputFromTextboxRadioButton.CheckedChanged += new System.EventHandler(this.setEnabled);
             // 
             // MainForm
             // 
