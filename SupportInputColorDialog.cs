@@ -19,20 +19,28 @@ namespace TeX2img {
         System.Drawing.Size OriginalSize;
         System.Drawing.Size OriginalClientSize;
         System.Drawing.Size Size {
-            get { return new System.Drawing.Size(OriginalSize.Width, OriginalSize.Height + 50); }
+            get { return new System.Drawing.Size(OriginalSize.Width, OriginalSize.Height + GetSizeY(50)); }
         }
         System.Drawing.Size ClientSize {
-            get { return new System.Drawing.Size(OriginalClientSize.Width, OriginalClientSize.Height + 50); }
+            get { return new System.Drawing.Size(OriginalClientSize.Width, OriginalClientSize.Height + GetSizeY(50)); }
         }
         IntPtr brush = PInvoke.CreateSolidBrush(ToRGB(Properties.Settings.Default.editorNormalColorBack));
         protected override void Dispose(bool disposing) {
             PInvoke.DeleteObject(brush);
             base.Dispose(disposing);
         }
+        double dpiX;
+        double dpiY;
         public SupportInputColorDialog() : base(){
             AllowFullOpen = true;
             FullOpen = true;
+            var f = new System.Windows.Forms.Form();
+            var g = f.CreateGraphics();
+            dpiX = g.DpiX / 96;
+            dpiY = g.DpiY / 96;
         }
+        int GetSizeX(int xx) { return (int)((double)xx * dpiX); }
+        int GetSizeY(int yy) { return (int)((double)yy * dpiY); }
         public new bool FullOpen {
             get { return base.FullOpen; }
             private set { base.FullOpen = value; }
@@ -58,7 +66,7 @@ namespace TeX2img {
                 // 選択されている色の表示エリアの高さを半分に
                 dlg = PInvoke.GetDlgItem(hWnd, PInvoke.COLOR_CURRENT);
                 GetControlRect(hWnd, dlg, out rect);
-                PInvoke.MoveWindow(dlg, rect.Left, rect.Top, rect.Right - rect.Left, (rect.Bottom - rect.Top) / 2-2, true);
+                PInvoke.MoveWindow(dlg, rect.Left, rect.Top, rect.Right - rect.Left, (rect.Bottom - rect.Top) / 2-GetSizeY(2), true);
                 // その下にテキストのサンプル
                 dlg = PInvoke.CreateWindowEx(0,"EDIT",Properties.Resources.SAMPLE,
                     PInvoke.WindowStyles.WS_CHILD | PInvoke.WindowStyles.WS_VISIBLE | PInvoke.WindowStyles.WS_BORDER | PInvoke.WindowStyles.ES_CENTER,
@@ -70,24 +78,24 @@ namespace TeX2img {
                 dlg = PInvoke.GetDlgItem(hWnd,PInvoke.IDOK);
                 var okButton = dlg;
                 GetControlRect(hWnd, dlg, out rect);
-                var RadioBtnPos = new System.Drawing.Point(rect.Left, rect.Top + 5);
-                PInvoke.MoveWindow(dlg, rect.Left, rect.Top + 50, rect.Right - rect.Left, rect.Bottom - rect.Top, true);
+                var RadioBtnPos = new System.Drawing.Point(rect.Left, rect.Top + GetSizeY(5));
+                PInvoke.MoveWindow(dlg, rect.Left, rect.Top + GetSizeY(50), rect.Right - rect.Left, rect.Bottom - rect.Top, true);
                 dlg = PInvoke.GetDlgItem(hWnd,PInvoke.IDCANCEL);
                 GetControlRect(hWnd, dlg, out rect);
-                PInvoke.MoveWindow(dlg, rect.Left, rect.Top + 50, rect.Right - rect.Left, rect.Bottom - rect.Top, true);
+                PInvoke.MoveWindow(dlg, rect.Left, rect.Top + GetSizeY(50), rect.Right - rect.Left, rect.Bottom - rect.Top, true);
                 dlg = PInvoke.GetDlgItem(hWnd, PInvoke.COLOR_ADD);
                 GetControlRect(hWnd,dlg, out rect);
-                PInvoke.MoveWindow(dlg, rect.Left, rect.Top + 50, OriginalClientSize.Width - 10 - rect.Left, rect.Bottom - rect.Top, true);
+                PInvoke.MoveWindow(dlg, rect.Left, rect.Top + GetSizeY(50), OriginalClientSize.Width - GetSizeX(50) - rect.Left, rect.Bottom - rect.Top, true);
                 if(ShowHelp) {
                     dlg = PInvoke.GetDlgItem(hWnd, PInvoke.pshHelp);
                     GetControlRect(hWnd, dlg, out rect);
-                    PInvoke.MoveWindow(dlg, rect.Left, rect.Top + 50, rect.Right - rect.Left, rect.Bottom - rect.Top, true);
+                    PInvoke.MoveWindow(dlg, rect.Left, rect.Top + GetSizeY(50), rect.Right - rect.Left, rect.Bottom - rect.Top, true);
                 }
                 // ラジオボタン四つ
                 var instance = Marshal.GetHINSTANCE(System.Reflection.Assembly.GetExecutingAssembly().ManifestModule);
                 dlg = PInvoke.CreateWindowEx(0, "BUTTON", "\\color",
                     PInvoke.WindowStyles.WS_CHILD | PInvoke.WindowStyles.WS_VISIBLE | PInvoke.WindowStyles.WS_TABSTOP | PInvoke.WindowStyles.BS_AUTORADIOBUTTON | PInvoke.WindowStyles.WS_GROUP,
-                    RadioBtnPos.X, RadioBtnPos.Y, ClientSize.Width / 4, 15,
+                    RadioBtnPos.X, RadioBtnPos.Y, ClientSize.Width / 4, GetSizeY(15),
                     hWnd, new IntPtr(ID_CHECKBOX_COLOR), instance, IntPtr.Zero);
                 PInvoke.SendMessage(dlg, PInvoke.WM_SETFONT, dialogFont, new IntPtr(1));
                 PInvoke.SendMessage(dlg, PInvoke.BM_SETCHECK, new IntPtr(1), IntPtr.Zero);
@@ -97,28 +105,28 @@ namespace TeX2img {
                 var prevdlg = dlg;
                 dlg = PInvoke.CreateWindowEx(0, "BUTTON", "\\textcolor",
                     PInvoke.WindowStyles.WS_CHILD | PInvoke.WindowStyles.WS_VISIBLE | PInvoke.WindowStyles.WS_TABSTOP | PInvoke.WindowStyles.BS_AUTORADIOBUTTON,
-                    RadioBtnPos.X + ClientSize.Width / 4, RadioBtnPos.Y, ClientSize.Width / 4, 15,
+                    RadioBtnPos.X + ClientSize.Width / 4, RadioBtnPos.Y, ClientSize.Width / 4, GetSizeY(15),
                     hWnd, new IntPtr(ID_CHECKBOX_TEXTCOLOR), instance, IntPtr.Zero);
                 PInvoke.SendMessage(dlg, PInvoke.WM_SETFONT, dialogFont, new IntPtr(1));
                 PInvoke.SetWindowPos(dlg, prevdlg, 0, 0, 0, 0, PInvoke.SetWindowPosFlags.SWP_NOMOVE | PInvoke.SetWindowPosFlags.SWP_NOSIZE);
                 prevdlg = dlg;
                 dlg = PInvoke.CreateWindowEx(0, "BUTTON", "\\colorbox",
                     PInvoke.WindowStyles.WS_CHILD | PInvoke.WindowStyles.WS_VISIBLE | PInvoke.WindowStyles.WS_TABSTOP | PInvoke.WindowStyles.BS_AUTORADIOBUTTON,
-                    RadioBtnPos.X + ClientSize.Width / 2, RadioBtnPos.Y, ClientSize.Width / 4, 15,
+                    RadioBtnPos.X + ClientSize.Width / 2, RadioBtnPos.Y, ClientSize.Width / 4, GetSizeY(15),
                     hWnd, new IntPtr(ID_CHECKBOX_COLORBOX), instance, IntPtr.Zero);
                 PInvoke.SendMessage(dlg, PInvoke.WM_SETFONT, dialogFont, new IntPtr(1));
                 PInvoke.SetWindowPos(dlg, prevdlg, 0, 0, 0, 0, PInvoke.SetWindowPosFlags.SWP_NOMOVE | PInvoke.SetWindowPosFlags.SWP_NOSIZE);
                 prevdlg = dlg;
                 dlg = PInvoke.CreateWindowEx(0, "BUTTON", "\\definecolor",
                     PInvoke.WindowStyles.WS_CHILD | PInvoke.WindowStyles.WS_VISIBLE | PInvoke.WindowStyles.WS_TABSTOP | PInvoke.WindowStyles.BS_AUTORADIOBUTTON,
-                    RadioBtnPos.X + ClientSize.Width * 3 / 4, RadioBtnPos.Y, ClientSize.Width / 4, 15,
+                    RadioBtnPos.X + ClientSize.Width * 3 / 4, RadioBtnPos.Y, ClientSize.Width / 4, GetSizeY(15),
                     hWnd, new IntPtr(ID_CHECKBOX_DEFINECOLOR), instance, IntPtr.Zero);
                 PInvoke.SendMessage(dlg, PInvoke.WM_SETFONT, dialogFont, new IntPtr(1));
                 PInvoke.SetWindowPos(dlg, prevdlg, 0, 0, 0, 0, PInvoke.SetWindowPosFlags.SWP_NOMOVE | PInvoke.SetWindowPosFlags.SWP_NOSIZE);
                 // 入力される命令を出すエディトボックス
                 dlg = PInvoke.CreateWindowEx(0, "EDIT", "",
                     PInvoke.WindowStyles.WS_CHILD | PInvoke.WindowStyles.WS_VISIBLE | PInvoke.WindowStyles.WS_BORDER,
-                    RadioBtnPos.X, RadioBtnPos.Y + 20, ClientSize.Width - 10 - RadioBtnPos.X, 20,
+                    RadioBtnPos.X, RadioBtnPos.Y + GetSizeY(20), ClientSize.Width - GetSizeX(10) - RadioBtnPos.X, GetSizeY(20),
                     hWnd, new IntPtr(ID_SAMPLETEXTBOX), instance, IntPtr.Zero);
                 PInvoke.SendMessage(dlg, PInvoke.WM_SETFONT, dialogFont, new IntPtr(1));
                 PInvoke.SendMessage(dlg, PInvoke.EM_SETREADONLY, new IntPtr(1), IntPtr.Zero);
