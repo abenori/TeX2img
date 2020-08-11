@@ -1,6 +1,6 @@
 # TeX2img
 
-(C) Yusuke Terada and Noriyuki Abe http://www.math.sci.hokudai.ac.jp/~abenori/
+(C) Yusuke Terada and Noriyuki Abe http://www.ms.u-tokyo.ac.jp/~abenori/
 
 （日本語のドキュメントは [TeX2img.txt](./TeX2img.txt) をご覧ください．）
 
@@ -25,7 +25,7 @@ This was originally made by Yusuke Terada (until Version 1.2).
 * Ghostscript (Version 9 or later is recommended). 
 
 ## How to install
-Download from http://www.math.sci.hokudai.ac.jp/~abenori/soft/index.html#TEX2IMG
+Download from http://www.ms.u-tokyo.ac.jp/~abenori/soft/index.html#TEX2IMG
 
 Just extract and double click "TeX2img.exe". At the first time, TeX2img try to get paths of pdflatex.exe etc. If it is not correct, please set them from [Tools(T)] -> [Options...(O)]
 
@@ -152,6 +152,10 @@ For the detail, see the site of each library.
     - Use {strokepath fill} for preprocessing for EMF file. (The old method can't apply for new Ghostscript.)
     - Changed icons.
 
-* 2.1.1
+* 2.1.1 (2020/05/01)
     - Fixed a bug: the size of the image was incorrect if white objects are drawn.
     - Added a drop-down list to specify the extension of the generated file.
+
+* 2.1.2 (2020/08/11)
+    - Supported high DPI.
+    - TeX2img requires .NET Framework version >= 4.7.2.

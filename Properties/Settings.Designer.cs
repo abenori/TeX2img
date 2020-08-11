@@ -73,7 +73,7 @@ namespace TeX2img.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("677")]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
         public int Width {
             get {
                 return ((int)(this["Width"]));
@@ -85,7 +85,7 @@ namespace TeX2img.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("449")]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
         public int Height {
             get {
                 return ((int)(this["Height"]));

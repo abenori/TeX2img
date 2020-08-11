@@ -1,6 +1,6 @@
 # TeX2img
 
-(C) Yusuke Terada and Noriyuki Abe http://www.math.sci.hokudai.ac.jp/~abenori/
+(C) Yusuke Terada and Noriyuki Abe http://www.ms.u-tokyo.ac.jp/~abenori/
 
 (For the English document, see README.md.)
 
@@ -28,7 +28,7 @@
 
 
 ## インストール
-http://www.math.sci.hokudai.ac.jp/~abenori/soft/index.html#TEX2IMG からダウンロードしてください．
+http://www.ms.u-tokyo.ac.jp/~abenori/soft/index.html#TEX2IMG からダウンロードしてください．
 解凍後出てくる TeX2img.exe をダブルクリックすれば起動します．初回に platex.exe などの場所を推定しますが，推定に失敗した場合は，メニューの「ツール(T)」→「オプション... (O) Ctrl+E」から設定をしてください．
 TeX2imgc.exe は CUI モードで動かすためのラッパです．TeX2img.exe と同じフォルダに置いてください．使い方は
 
@@ -371,4 +371,8 @@ https://pdfium.googlesource.com/pdfium/
 * 2.1.1 (2020/05/01)
     - 真っ白のものが描かれているページのサイズがうまく取得できなかったのを修正．
     - 出力ファイル名入力ダイアログの脇に拡張子を選択できるドロップダウンリストを追加．
-    - Ghostscriptへの命令を少し変更．
+    - Ghostscript への命令を少し変更．
+
+* 2.1.2 (2020/08/11)
+    - 高 DPI でもレイアウトが崩れないようにした（つもり）．
+    - 要求する .NET Framework のバージョンを 4.7.2 以上とした．
