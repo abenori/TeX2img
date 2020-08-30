@@ -96,6 +96,9 @@
             this.resolutionScaleUpDown = new System.Windows.Forms.NumericUpDown();
             this.label8 = new System.Windows.Forms.Label();
             this.BasicSettingTab = new System.Windows.Forms.TabPage();
+            this.pdftexBrowseButton = new System.Windows.Forms.Button();
+            this.pdftexTextBox = new System.Windows.Forms.TextBox();
+            this.label23 = new System.Windows.Forms.Label();
             this.languageComboBox = new System.Windows.Forms.ComboBox();
             this.label21 = new System.Windows.Forms.Label();
             this.GuessPathButton = new System.Windows.Forms.Button();
@@ -117,6 +120,7 @@
             this.platexBrowseButton = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
             this.SettingTab = new System.Windows.Forms.TabControl();
+            this.pdftexOpenFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.eachImageSettingTab.SuspendLayout();
             this.groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.animationLoopNumericUpDown)).BeginInit();
@@ -620,6 +624,9 @@
             // 
             // BasicSettingTab
             // 
+            this.BasicSettingTab.Controls.Add(this.pdftexBrowseButton);
+            this.BasicSettingTab.Controls.Add(this.pdftexTextBox);
+            this.BasicSettingTab.Controls.Add(this.label23);
             this.BasicSettingTab.Controls.Add(this.languageComboBox);
             this.BasicSettingTab.Controls.Add(this.label21);
             this.BasicSettingTab.Controls.Add(this.GuessPathButton);
@@ -643,6 +650,23 @@
             resources.ApplyResources(this.BasicSettingTab, "BasicSettingTab");
             this.BasicSettingTab.Name = "BasicSettingTab";
             this.BasicSettingTab.UseVisualStyleBackColor = true;
+            // 
+            // pdftexBrowseButton
+            // 
+            resources.ApplyResources(this.pdftexBrowseButton, "pdftexBrowseButton");
+            this.pdftexBrowseButton.Name = "pdftexBrowseButton";
+            this.pdftexBrowseButton.UseVisualStyleBackColor = true;
+            this.pdftexBrowseButton.Click += new System.EventHandler(this.pdftexBrowseButton_Click);
+            // 
+            // pdftexTextBox
+            // 
+            resources.ApplyResources(this.pdftexTextBox, "pdftexTextBox");
+            this.pdftexTextBox.Name = "pdftexTextBox";
+            // 
+            // label23
+            // 
+            resources.ApplyResources(this.label23, "label23");
+            this.label23.Name = "label23";
             // 
             // languageComboBox
             // 
@@ -770,6 +794,10 @@
             this.SettingTab.Controls.Add(this.EditorSettingTab);
             this.SettingTab.Name = "SettingTab";
             this.SettingTab.SelectedIndex = 0;
+            // 
+            // pdftexOpenFileDialog
+            // 
+            resources.ApplyResources(this.pdftexOpenFileDialog, "pdftexOpenFileDialog");
             // 
             // SettingForm
             // 
@@ -906,5 +934,9 @@
         private System.Windows.Forms.Label label21;
         private System.Windows.Forms.ComboBox languageComboBox;
         private System.Windows.Forms.ListView FontColorListView;
+        private System.Windows.Forms.Label label23;
+        private System.Windows.Forms.TextBox pdftexTextBox;
+        private System.Windows.Forms.Button pdftexBrowseButton;
+        private System.Windows.Forms.OpenFileDialog pdftexOpenFileDialog;
     }
 }

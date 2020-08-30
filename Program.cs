@@ -26,6 +26,7 @@ namespace TeX2img {
             {"platex=",val => Properties.Settings.Default.platexPath=val},
             {"dvidriver=",Properties.Resources.CMDLINE_DVIDRIVER,val =>Properties.Settings.Default.dvipdfmxPath=val,()=>Properties.Settings.Default.dvipdfmxPath},
             {"dvipdfmx=",val =>Properties.Settings.Default.dvipdfmxPath=val},
+            {"pdftex=",val => Properties.Settings.Default.pdftexPath =val},
             {"gs=",Properties.Resources.CMDLINE_GS,val => Properties.Settings.Default.gsPath = val,()=>Properties.Settings.Default.gsPath},
             {"oldgs",
                 Properties.Resources.CMDLINE_OLDGS + "[-]",
@@ -306,10 +307,11 @@ namespace TeX2img {
         }
 
         static void setPath(bool nomsg) {
-            if (Properties.Settings.Default.platexPath == "" || Properties.Settings.Default.dvipdfmxPath == "" || Properties.Settings.Default.gsPath == "") {
+            if (Properties.Settings.Default.platexPath == "" || Properties.Settings.Default.pdftexPath == "" || Properties.Settings.Default.dvipdfmxPath == "" || Properties.Settings.Default.gsPath == "") {
                 if (Properties.Settings.Default.platexPath == "") Properties.Settings.Default.platexPath = Properties.Settings.Default.GuessPlatexPath();
                 if (Properties.Settings.Default.dvipdfmxPath == "") Properties.Settings.Default.dvipdfmxPath = Properties.Settings.Default.GuessDvipdfmxPath();
                 if (Properties.Settings.Default.gsPath == "") Properties.Settings.Default.gsPath = Properties.Settings.Default.GuessGsPath();
+                if (Properties.Settings.Default.pdftexPath == "") Properties.Settings.Default.pdftexPath = Properties.Settings.Default.GuessPdftexPath();
                 if (Properties.Settings.Default.platexPath == "" || Properties.Settings.Default.dvipdfmxPath == "" || Properties.Settings.Default.gsPath == "") {
                     if (!nomsg) {
                         var msg = Properties.Resources.FAIL_INIT_PATH;
@@ -319,7 +321,7 @@ namespace TeX2img {
                     }
                 } else {
                     if (!nomsg) {
-                        var msg = String.Format(Properties.Resources.INIT_PATH, Properties.Settings.Default.platexPath, Properties.Settings.Default.dvipdfmxPath, Properties.Settings.Default.gsPath);
+                        var msg = String.Format(Properties.Resources.INIT_PATH, Properties.Settings.Default.platexPath, Properties.Settings.Default.pdftexPath, Properties.Settings.Default.dvipdfmxPath, Properties.Settings.Default.gsPath);
                         if (nogui) Console.WriteLine(msg + "\n");
                         else MessageBox.Show(msg, "TeX2img");
                     }

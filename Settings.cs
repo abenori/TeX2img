@@ -1,4 +1,6 @@
-﻿[assembly: System.Runtime.CompilerServices.InternalsVisibleTo("UnitTest")]
+﻿using System.IO;
+
+[assembly: System.Runtime.CompilerServices.InternalsVisibleTo("UnitTest")]
 
 namespace TeX2img.Properties {
     // このクラスでは設定クラスでの特定のイベントを処理することができます:
@@ -145,6 +147,17 @@ namespace TeX2img.Properties {
                 }
             }
             return gs;
+        }
+        public string GuessPdftexPath() {
+            return GuessPdftexPath(platexPath);
+        }
+        public string GuessPdftexPath(string platex) {
+            var dir = Path.GetDirectoryName(platex);
+            if(dir != "") {
+                var pdftex = Path.Combine(dir, "pdftex.exe");
+                if (System.IO.File.Exists(pdftex)) return pdftex;
+            }
+            return Converter.which("pdftex.ex");
         }
 
         public string GuessGsdevice() {

@@ -632,8 +632,9 @@ namespace TeX2img {
                 fw.WriteLine(@"\bye");
             }
             using (var proc = GetProcess()) {
-                proc.StartInfo.FileName = GetpdftexPath();
-                proc.StartInfo.Arguments = "-no-shell-escape -interaction=nonstopmode \"" + tmpfile + "\"";
+                string arg;
+                proc.StartInfo.FileName = setProcStartInfo(Properties.Settings.Default.pdftexPath, out arg);
+                proc.StartInfo.Arguments = arg + " -no-shell-escape -interaction=nonstopmode \"" + tmpfile + "\"";
                 try {
                     printCommandLine(proc);
                     ReadOutputs(proc, Properties.Resources.EXEC_PDFTEX);
@@ -1462,11 +1463,6 @@ namespace TeX2img {
             return string.Empty;
         }
 
-        string GetpdftexPath() {
-            var f = Path.Combine(Path.GetDirectoryName(setProcStartInfo(Properties.Settings.Default.platexPath)), "pdftex.exe");
-            if (File.Exists(f)) return f;
-            return which("pdftex");
-        }
 
         ProcessStartInfo GetProcessStartInfo() {
             var rv = new ProcessStartInfo() {

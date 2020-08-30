@@ -90,6 +90,7 @@ namespace TeX2img {
             //            FontColorListView_SelectedIndexChanged();
 
             platexTextBox.Text = Properties.Settings.Default.platexPath;
+            pdftexTextBox.Text = Properties.Settings.Default.pdftexPath;
             dvipdfmxTextBox.Text = Properties.Settings.Default.dvipdfmxPath;
             gsTextBox.Text = Properties.Settings.Default.gsPath;
             encodeComboBox.SelectedValue = Properties.Settings.Default.encode;
@@ -148,6 +149,11 @@ namespace TeX2img {
                 platexTextBox.Text = platexOpenFileDialog.FileName;
             }
         }
+        private void pdftexBrowseButton_Click(object sender, EventArgs e) {
+            if(pdftexOpenFileDialog.ShowDialog() == DialogResult.OK) {
+                pdftexTextBox.Text = pdftexOpenFileDialog.FileName;
+            }
+        }
 
         private void dvipdfmxBrowseButton_Click(object sender, EventArgs e) {
             if(dvipdfmxOpenFileDialog.ShowDialog() == DialogResult.OK) {
@@ -169,6 +175,7 @@ namespace TeX2img {
         private void OKButton_Click(object sender, EventArgs e) {
             Properties.Settings.Default.platexPath = platexTextBox.Text;
             Properties.Settings.Default.dvipdfmxPath = dvipdfmxTextBox.Text;
+            Properties.Settings.Default.pdftexPath = pdftexTextBox.Text;
             Properties.Settings.Default.gsPath = gsTextBox.Text;
             Properties.Settings.Default.gsDevice = GSUseepswriteCheckButton.Checked ? "epswrite" : "eps2write";
             Properties.Settings.Default.useLowResolution = UseLowResolutionCheckBox.Checked;
@@ -304,6 +311,8 @@ namespace TeX2img {
         private void GuessPathButton_Click(object sender, EventArgs e) {
             string platex = Properties.Settings.Default.GuessPlatexPath();
             platexTextBox.Text = platex;
+            var pdftex = Properties.Settings.Default.GuessPdftexPath();
+            pdftexTextBox.Text = pdftex;
             var dvipdfmx = Properties.Settings.Default.GuessDvipdfmxPath();
             dvipdfmxTextBox.Text = dvipdfmx;
             string gs = Properties.Settings.Default.GuessGsPath(platex);
@@ -312,6 +321,7 @@ namespace TeX2img {
             if(gsdevice != "") GSUseepswriteCheckButton.Checked = (gsdevice == "epswrite");
             var errs = new List<string>();
             if(platex == "") errs.Add("latex");
+            if (pdftex == "") errs.Add("pdftex");
             if(dvipdfmx == "") errs.Add("DVI driver");
             if(gs == "") errs.Add("Ghostscript");
             var err = String.Join(", ", errs.ToArray());
@@ -365,5 +375,6 @@ namespace TeX2img {
         private void transparentPngCheckBox_CheckedChanged(object sender, EventArgs e) {
             SetbackgroundColorButtonTextANDColor();
         }
+
     }
 }

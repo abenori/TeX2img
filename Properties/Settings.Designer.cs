@@ -886,5 +886,17 @@ namespace TeX2img.Properties {
                 this["language"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string pdftexPath {
+            get {
+                return ((string)(this["pdftexPath"]));
+            }
+            set {
+                this["pdftexPath"] = value;
+            }
+        }
     }
 }
