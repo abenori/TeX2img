@@ -5,7 +5,8 @@
 （日本語のドキュメントは [TeX2img.txt](./TeX2img.txt) をご覧ください．）
 
 ## What is TeX2img?
-This generates the images with the following formats from the TeX source code:
+TeX2img generates an image in various file formats from a TeX source code.
+You can choose the following file formats:
 
 * EPS (outlined font)
 * PDF (outlined font or keep the text)
@@ -16,7 +17,8 @@ This generates the images with the following formats from the TeX source code:
 * BMP
 * EMF
 
-This was originally made by Yusuke Terada (until Version 1.2).
+TeX2img was originally developed by Yusuke Terada (until Version 1.2).
+Recently, Windows version (here) and [macOS version](https://github.com/doraTeX/TeX2img) has been developed independently.
 
 ## Requirements
 * Windows Vista or later.
@@ -25,27 +27,25 @@ This was originally made by Yusuke Terada (until Version 1.2).
 * Ghostscript (Version 9 or later is recommended). 
 
 ## How to install
-Download from http://www.ms.u-tokyo.ac.jp/~abenori/soft/index.html#TEX2IMG
+Download a zip file, like `TeX2img_x.y.z.zip`, from http://www.ms.u-tokyo.ac.jp/~abenori/soft/index.html#TEX2IMG
 
-Just extract and double click "TeX2img.exe". At the first time, TeX2img try to get paths of pdflatex.exe etc. If it is not correct, please set them from [Tools(T)] -> [Options...(O)]
+Just extract the zip file and double click "TeX2img.exe" in the extracted directory. At the first time, TeX2img will try to get paths of pdflatex.exe, etc. If the paths are not correct, please set them from [Tools(T)] -> [Options...(O)].
 
-TeX2imgc.exe is a wrapper program to execute TeX2img with the console.
+TeX2imgc.exe is a wrapper program to execute TeX2img in a command-line.
 
 	> TeX2imgc.exe [Options] Input Output [Input Output...]
 
-Each property are inherited from those of TeX2img except preview after compiling (always false).
-
+All properties are inherited from those of TeX2img except preview after compiling (always false).
 
 ## Tips
-* You can also specify the options to each programs.
-Example："C:\w32tex\bin\platex.exe" --guess-input-enc
+* You can also specify the options for each program, for example, `"C:\w32tex\bin\platex.exe" --guess-input-enc`
 
-* Since the internal character code is Unicode, you can also use characters which is outside of Shift_JIS with "uplatex" etc. For that, please choose "UTF-8" or "no (input UTF-8)" for the character code.
+* Since the internal character code is Unicode, you can use the characters outside of Shift_JIS encoding through "uplatex", "lualatex", etc. To achieve it, please choose "UTF-8" or "no (input UTF-8)" for the character encoding.
 
-* If TeX2img think that the LaTeX program generated pdf file, TeX2img skips DVI driver. If TeX2img thinks that the DVI driver generates ps, then TeX2img converts the ps file to pdf file via Ghostscript. Consequently, you can specify "dvips"
+* If TeX2img guesses that the LaTeX program generates PDF file directly, TeX2img skips DVI driver.
+* You can specify not only "dvipdfmx" but also "dvips" for `/dvidriver` because TeX2img converts PostScript to PDF via Ghostscript, if TeX2img guesses that the DVI driver generates a PostScript file.
 
 * If you drag and drop the generated file to TeX2img (or [File(F)] -> [Import(O)]), the source file is restored.
-
 
 ## Options
 The following are the options for TeX2img.exe or TeX2imgc.exe.
@@ -90,22 +90,22 @@ The following are the options for TeX2img.exe or TeX2imgc.exe.
 	/version                 Show version information
 	/language=<VAL>          Language (system/ja/en)
 
-[-] means negation. For example. /guess-compile- means that TeX2img does not guess the compiling.
+[-] means negation. For example, `/guess-compile-` means that TeX2img does not guess the compiling.
 
-If you specify several options, TeX2img takes the last one. For example
+If you specify several options, TeX2img takes the last one. For example,
+
 	tex2imgc /transparent- /transparent a.tex a.png
-will generate transparent png file. In particular, because /load-defaults makes all settings default ones, the options before /load-defaults are ignored. The option /load-defaults should be the first.
+
+will generate transparent png file. In particular, because `/load-defaults` makes all settings default ones, the options before /load-defaults are ignored. The option `/load-defaults` should be placed at the first.
 
 ## Reference
-* Webpage of Yusuke Terada (original developer of TeX2img)
-http://island.geocities.jp/loveinequality/
+* Official webpage of TeX2img: https://tex2img.tech/
 
 ## Known bugs
 Conversions to EMF file has some problems. See Issues in GitHub: [https://github.com/abenori/TeX2img/issues/3](https://github.com/abenori/TeX2img/issues/3).
 
-
 ## Acknowledgments
-* Originally it is made by Yusuke Terada.
+* Originally, TeX2img was developed by Yusuke Terada.
 * Azuki text editor engine is used.
 http://sgry.b.sourceforge.jp/
 * To parse the command line, NDesk.Options is used.
@@ -117,9 +117,8 @@ http://www.mupdf.com/
 * pdfiumdraw uses PDFium.
 https://pdfium.googlesource.com/pdfium/
 
-
-## license
-See [license.txt](./license.txt). For the libraries:
+## License
+For TeX2img itself, see [license.txt](./license.txt). For the libraries:
 
 * Azuki text editor engine: zlib license.
 * NDesk.Options: MIT license.
@@ -128,10 +127,9 @@ See [license.txt](./license.txt). For the libraries:
 * PDFium: modified BSD license.
 * pdfiumdraw: modified BSD license.
 
-For the detail, see the site of each library.
+For further details, see the website of each library.
 
-
-## History (after 2.0)
+## History (after version 2.0)
 * 2.0.0 (2016/07/16)
     - Add English resources.
     - Add option /language
