@@ -18,6 +18,7 @@ You can choose the following file formats:
 * EMF
 
 TeX2img was originally developed by Yusuke Terada (until Version 1.2).
+Recently, Windows version (here) and [macOS version](https://github.com/doraTeX/TeX2img) has been developed independently.
 
 ## Requirements
 * Windows Vista or later.
@@ -26,16 +27,15 @@ TeX2img was originally developed by Yusuke Terada (until Version 1.2).
 * Ghostscript (Version 9 or later is recommended). 
 
 ## How to install
-Download from http://www.ms.u-tokyo.ac.jp/~abenori/soft/index.html#TEX2IMG
+Download a zip file, like `TeX2img_x.y.z.zip`, from http://www.ms.u-tokyo.ac.jp/~abenori/soft/index.html#TEX2IMG
 
-Just extract and double click "TeX2img.exe". At the first time, TeX2img try to get paths of pdflatex.exe etc. If it is not correct, please set them from [Tools(T)] -> [Options...(O)]
+Just extract the zip file and double click "TeX2img.exe" in the extracted directory. At the first time, TeX2img will try to get paths of pdflatex.exe, etc. If the paths are not correct, please set them from [Tools(T)] -> [Options...(O)].
 
-TeX2imgc.exe is a wrapper program to execute TeX2img with the console.
+TeX2imgc.exe is a wrapper program to execute TeX2img in a command-line.
 
 	> TeX2imgc.exe [Options] Input Output [Input Output...]
 
-Each property are inherited from those of TeX2img except preview after compiling (always false).
-
+All properties are inherited from those of TeX2img except preview after compiling (always false).
 
 ## Tips
 * You can also specify the options for each program, for example, `"C:\w32tex\bin\platex.exe" --guess-input-enc`
@@ -46,7 +46,6 @@ Each property are inherited from those of TeX2img except preview after compiling
 * You can specify not only "dvipdfmx" but also "dvips" for `/dvidriver` because TeX2img converts PostScript to PDF via Ghostscript, if TeX2img guesses that the DVI driver generates a PostScript file.
 
 * If you drag and drop the generated file to TeX2img (or [File(F)] -> [Import(O)]), the source file is restored.
-
 
 ## Options
 The following are the options for TeX2img.exe or TeX2imgc.exe.
@@ -105,7 +104,6 @@ will generate transparent png file. In particular, because `/load-defaults` make
 ## Known bugs
 Conversions to EMF file has some problems. See Issues in GitHub: [https://github.com/abenori/TeX2img/issues/3](https://github.com/abenori/TeX2img/issues/3).
 
-
 ## Acknowledgments
 * Originally, TeX2img was developed by Yusuke Terada.
 * Azuki text editor engine is used.
@@ -119,7 +117,6 @@ http://www.mupdf.com/
 * pdfiumdraw uses PDFium.
 https://pdfium.googlesource.com/pdfium/
 
-
 ## License
 For TeX2img itself, see [license.txt](./license.txt). For the libraries:
 
@@ -132,8 +129,7 @@ For TeX2img itself, see [license.txt](./license.txt). For the libraries:
 
 For further details, see the website of each library.
 
-
-## History (after 2.0)
+## History (after version 2.0)
 * 2.0.0 (2016/07/16)
     - Add English resources.
     - Add option /language
