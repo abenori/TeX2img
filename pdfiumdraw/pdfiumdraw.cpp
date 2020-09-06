@@ -628,6 +628,21 @@ void OutputBox(string boxname, Data &d) {
 	catch (runtime_error e) { cout << e.what() << endl; }
 }
 
+void OutputRotate(Data &d) {
+	try {
+		PDFDoc doc(d.input);
+		int pagecount = doc.GetPageCount();
+		for (int i = 0; i < pagecount; ++i) {
+			if (!d.pages.empty() && find(d.pages.begin(), d.pages.end(), i) == d.pages.end())continue;
+			PDFPage page(doc, i);
+			int rotate = ::FPDFPage_GetRotation(page.page) * 90;
+			cout << "%%Page: " << (i + 1) << endl;
+			cout << "%%Rotate: " << rotate << endl;
+		}
+	}
+	catch (runtime_error e) { cout << e.what() << endl; }
+}
+
 std::vector<std::string> split(const std::string &str, char sep) {
 	std::vector<std::string> v;
 	std::stringstream ss(str);
@@ -681,6 +696,7 @@ int main(int argc, char *argv[]) {
 		Data current_data;
 		bool output_page = false;
 		string box = "";
+		bool output_rotate = false;
 		for (int i = 1; i < argc; ++i) {
 			std::string arg = argv[i];
 			if (arg == "--use-gdi")current_data.use_gdi = true;
@@ -702,6 +718,7 @@ int main(int argc, char *argv[]) {
 			else if (arg == "--input-format=tiff")current_data.input_format = TIFF;
 			else if (arg == "--input-format=pdf")current_data.input_format = PDF;
 			else if (arg == "--output-page")output_page = true;// ページ数を出力する
+			else if (arg == "--output-rotate")output_rotate = true;
 			else if (arg == "--merge")merge = true;
 			else if (arg.find("--pages=") == 0) {
 				try {
@@ -742,6 +759,13 @@ int main(int argc, char *argv[]) {
 						cout << e.what() << endl;
 					}
 					output_page = false;
+				}else if(output_rotate){
+					cout << "output_rotate" << endl;
+					Data d = current_data;
+					d.input = GetFullName(arg);
+					d.output = GetFullName(current_data.output);
+					OutputRotate(d);
+					output_rotate = false;
 				} else {
 					Data d = current_data;
 					d.input = GetFullName(arg);

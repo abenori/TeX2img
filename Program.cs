@@ -275,7 +275,7 @@ namespace TeX2img {
                 nogui = true;
                 cmds.RemoveAt(0);
             }
-            var chkfiles = new List<string>() { "pdfiumdraw.exe", "mudraw.exe" };
+            var chkfiles = new List<string>() { "pdfiumdraw.exe" };
             if (!nogui) chkfiles.Add("Azuki.dll");
             string mydir = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
             chkfiles = chkfiles.Where(f => !File.Exists(Path.Combine(mydir, f))).ToList();
