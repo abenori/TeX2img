@@ -69,13 +69,14 @@ namespace TeX2img {
         }
 
         public static string ReadEmbededSource(string file) {
+            /*
             try {
                 using (var fs = AlternativeDataStream.ReadAlternativeDataStream(file, ADSName))
                 using (var sr = new StreamReader(fs, Encoding.UTF8)) {
                     return sr.ReadToEnd();
                 }
             }
-            catch (Exception) { }
+            catch (Exception) { }*/
             try {
                 var ext = Path.GetExtension(file).ToLower();
                 if (ExtraRead.ContainsKey(ext)) {
@@ -98,51 +99,90 @@ namespace TeX2img {
 
         static void PDFEmbed(string file, string text) {
             var tmpdir = Path.GetTempPath();
-            var tmp = TempFilesDeleter.GetTempFileName(".pdf", tmpdir);
-            tmp = Path.Combine(tmpdir, tmp);
-            using (var tmp_deleter = new TempFilesDeleter(tmpdir)) {
-                tmp_deleter.AddFile(tmp);
-                using (var mupdf = new MuPDF(mudraw)) {
-                    var doc = mupdf.Execute<int>("open_document", file);
-                    if (doc == 0) return;
-                    var page = mupdf.Execute<int>("load_page", doc, 0);
-                    if (page == 0) return;
-                    var annot = mupdf.Execute<int>("create_annot", page, "Text");
-                    if (annot == 0) return;
-                    mupdf.Execute("set_annot_contents", annot, ChangeReturnCode(PDFsrcHead + System.Environment.NewLine + text, "\n"));
-                    mupdf.Execute("set_annot_flag", annot, 35);
-                    mupdf.Execute("write_document", doc, tmp);
+//            tmpdir = @"C:\Users\Abe_Noriyuki\Desktop";
+            using (var tempFileDeleter = new TempFilesDeleter(tmpdir)) {
+                var targettmp = TempFilesDeleter.GetTempFileName(".pdf", tmpdir);
+                try { File.Copy(file, Path.Combine(tmpdir,targettmp)); }
+                catch(Exception e) { return; }
+                tempFileDeleter.AddFile(targettmp);
+                var tmp = TempFilesDeleter.GetTempFileName(".tex", tmpdir);
+                tmp = Path.Combine(tmpdir, tmp);
+                //tempFileDeleter.AddTeXFile(tmp);
+                using (var fw = new StreamWriter(tmp)) {
+                    fw.WriteLine(@"\pdfoutput=1\relax");
+                    fw.WriteLine(
+                        @"{\catcode`\^^J=12\relax\catcode`\^^M=12\relax\catcode`^=12\catcode`\%=12\relax" + 
+                        @"\xdef\teximgannot{\pdfannot width 0pt height 0pt depth 0pt" +
+                        @"{/Subtype /Text /F 35 /Contents (\pdfescapestring{\detokenize{" + ChangeReturnCode(PDFsrcHead + System.Environment.NewLine + text,"\n") + @"}})}}}%"
+                    );
+                    fw.WriteLine(@"\newcount\pagecnt\pagecnt=1\relax
+\newcount\totalpage
+\pdfximage{" + targettmp + @"}\totalpage =\pdflastximagepages
+\advance\totalpage by 1\relax
+\loop
+\pdfximage page \the\pagecnt {" + targettmp + @"}
+\setbox0 =\hbox{\ifnum\pagecnt = 1\relax\teximgannot\fi\pdfrefximage\pdflastximage}%
+\pdfhorigin = 0pt\relax
+\pdfvorigin = 0pt\relax
+\pdfpagewidth =\wd0\relax
+\pdfpageheight =\ht0\relax
+\shipout\box0
+\advance\pagecnt by 1
+\ifnum\pagecnt <\totalpage\repeat
+\bye"
+                        );
                 }
-                if (File.Exists(tmp)) {
+                using(var proc = new System.Diagnostics.Process()) {
+                    string arg;
+                    proc.StartInfo.WorkingDirectory = Path.GetDirectoryName(tmp);
+                    proc.StartInfo.FileName = Converter.setProcStartInfo(Properties.Settings.Default.pdftexPath, out arg);
+                    //                    proc.StartInfo.Arguments = arg + " -no-shell-escape -interaction=nonstopmode \"" + Path.GetFileName(tmp) + "\"";
+                    proc.StartInfo.Arguments = arg + " -no-shell-escape  \"" + Path.GetFileName(tmp) + "\"";
+                    try { proc.Start(); }
+                    catch (Exception) { return; }
+                    proc.WaitForExit(5000);
+                }
+                var tmppdf = Path.ChangeExtension(tmp, ".pdf");
+                if (File.Exists(tmppdf)) {
                     File.Delete(file);
-                    File.Move(tmp, file);
+                    File.Move(tmppdf, file);
                 }
             }
         }
-        
+
         static string PDFRead(string file) {
             var srcHead = PDFsrcHead + System.Environment.NewLine;
-            using (var mupdf = new MuPDF(mudraw)) {
-                var doc = mupdf.Execute<int>("open_document", file);
-                if (doc == 0) return null;
-                var page = mupdf.Execute<int>("load_page", doc, 0);
-                if (page == 0) return null;
-                var annot = mupdf.Execute<int>("first_annot", page);
-                while (annot != 0) {
-                    var rect = mupdf.Execute<BoundingBox>("bound_annot", annot);
-                    if(rect.Width == 0 && rect.Height == 0) { 
-                        if (mupdf.Execute<string>("annot_type", annot) == "Text") {
-                            var text = mupdf.Execute<string>("annot_contents", annot);
-                            text = ChangeReturnCode(text);
+            var tmpdir = Path.GetTempPath();
+            using (var tempFileDeleter = new TempFilesDeleter(tmpdir)) {
+                var targettmp = TempFilesDeleter.GetTempFileName(".pdf");
+                tempFileDeleter.AddFile(targettmp);
+                try { File.Copy(file, Path.Combine(tmpdir, targettmp)); }
+                catch (Exception) { return null; }
+                var targetpre = Path.GetFileNameWithoutExtension(targettmp);
+                using (var proc = new System.Diagnostics.Process()) {
+                    proc.StartInfo.FileName = Path.Combine(Converter.GetToolsPath(), "pdfiumdraw.exe");
+                    proc.StartInfo.Arguments = "--output-text-annots --output=\"" + targetpre + "-%d.txt\" \"" + targettmp + "\"";
+                    proc.StartInfo.WorkingDirectory = tmpdir;
+                    try { proc.Start(); }
+                    catch (Exception) { return null; }
+                }
+                int i = 1;
+                string rv = null;
+                while (File.Exists(Path.Combine(tmpdir, targetpre + "-" + i.ToString() + ".txt"))){
+                    string annot_txt_file = Path.Combine(tmpdir, targetpre + "-" + i.ToString() + ".txt");
+                    tempFileDeleter.AddFile(annot_txt_file);
+                    if (rv == null) {
+                        using (var fr = new StreamReader(Path.Combine(tmpdir, targetpre + "-" + i.ToString() + ".txt"))) {
+                            var text = ChangeReturnCode(fr.ReadToEnd());
                             if (text.StartsWith(srcHead)) {
                                 return text.Substring(srcHead.Length);
                             }
                         }
                     }
-                    annot = mupdf.Execute<int>("next_annot", annot);
+                    ++i;
                 }
+                return rv;
             }
-            return null;
         }
 
         static string ReadAppleDouble(string file) {

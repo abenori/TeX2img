@@ -16,6 +16,7 @@
 #include <fpdf_edit.h>
 #include <fpdf_ppo.h>
 #include <fpdf_save.h>
+#include <fpdf_annot.h>
 #include <algorithm>
 
 const int PDF = 0;
@@ -127,6 +128,15 @@ string GetFileNameWithoutExtension(string file) {
 	auto r = ::PathFindExtension(f.c_str());
 	if (r == nullptr)return f;
 	else return f.substr(0, r - f.c_str());
+}
+
+string UTF16ToUTF8(const wstring& str) {
+	static ::std::vector<char> buf;
+	DWORD size = ::WideCharToMultiByte(CP_UTF8, 0, str.c_str(), str.length(), NULL, 0, NULL, NULL);
+	buf.resize(size + 1);
+	size = ::WideCharToMultiByte(CP_UTF8, 0, str.c_str(), str.length(), &buf[0], buf.size(), NULL, NULL);
+	buf[size] = '\0';
+	return string(&buf[0]);
 }
 
 class PDFPage;
@@ -643,6 +653,35 @@ void OutputRotate(Data &d) {
 	catch (runtime_error e) { cout << e.what() << endl; }
 }
 
+void OutputTextAnnots(Data& d) {
+	try {
+		PDFDoc doc(d.input);
+		int page_cnt = doc.GetPageCount();
+		string outputpre, outputpost;
+		GetOutputFileName(d.input, d.output, ".txt", outputpre, outputpost);
+		int total_annot_number = 1;
+		for (int i = 0; i < page_cnt; ++i) {
+			PDFPage page(doc, i);
+			auto annot_cnt = ::FPDFPage_GetAnnotCount(page.page);
+			for (int j = 0; j < annot_cnt; ++j) {
+				auto annot = ::FPDFPage_GetAnnot(page.page, j);
+				auto t = ::FPDFAnnot_GetSubtype(annot);
+				if (t == FPDF_ANNOT_TEXT) {
+					auto len = ::FPDFAnnot_GetStringValue(annot, "Contents", nullptr, 0);
+					std::vector<char> buf(len);
+					::FPDFAnnot_GetStringValue(annot, "Contents", &buf[0], len);
+					auto str = UTF16ToUTF8(wstring((wchar_t*)&buf[0]));
+					ofstream ofs(outputpre + to_string(total_annot_number) + outputpost,ios_base::out | ios_base::binary);
+					ofs.write(str.c_str(), str.length());
+					ofs.close();
+					total_annot_number++;
+				}
+			}
+		}
+	}
+	catch (runtime_error e) { cout << e.what() << endl; }
+}
+
 std::vector<std::string> split(const std::string &str, char sep) {
 	std::vector<std::string> v;
 	std::stringstream ss(str);
@@ -697,6 +736,7 @@ int main(int argc, char *argv[]) {
 		bool output_page = false;
 		string box = "";
 		bool output_rotate = false;
+		bool output_text_annots = false;
 		for (int i = 1; i < argc; ++i) {
 			std::string arg = argv[i];
 			if (arg == "--use-gdi")current_data.use_gdi = true;
@@ -719,6 +759,7 @@ int main(int argc, char *argv[]) {
 			else if (arg == "--input-format=pdf")current_data.input_format = PDF;
 			else if (arg == "--output-page")output_page = true;// ページ数を出力する
 			else if (arg == "--output-rotate")output_rotate = true;
+			else if (arg == "--output-text-annots")output_text_annots = true;
 			else if (arg == "--merge")merge = true;
 			else if (arg.find("--pages=") == 0) {
 				try {
@@ -759,13 +800,19 @@ int main(int argc, char *argv[]) {
 						cout << e.what() << endl;
 					}
 					output_page = false;
-				}else if(output_rotate){
+				} else if (output_rotate) {
 					cout << "output_rotate" << endl;
 					Data d = current_data;
 					d.input = GetFullName(arg);
 					d.output = GetFullName(current_data.output);
 					OutputRotate(d);
 					output_rotate = false;
+				} else if (output_text_annots) {
+					Data d = current_data;
+					d.input = GetFullName(arg);
+					d.output = GetFullName(current_data.output);
+					OutputTextAnnots(d);
+					output_text_annots = false;
 				} else {
 					Data d = current_data;
 					d.input = GetFullName(arg);
@@ -778,7 +825,7 @@ int main(int argc, char *argv[]) {
 					}
 					current_data.output = "";
 					current_data.pages.clear();
-					current_data.viewport = RECT{0, 0, 0, 0};
+					current_data.viewport = RECT{ 0, 0, 0, 0 };
 					current_data.backcolor = RGB(255, 255, 255);
 				}
 			}
