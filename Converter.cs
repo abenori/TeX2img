@@ -1478,7 +1478,7 @@ namespace TeX2img {
                     try {
                         version = int.Parse(verstr);
                     }
-                    catch (Exception e) { return false; }
+                    catch (Exception) { return false; }
                 }
                 var tmpfile = TempFilesDeleter.GetTempFileName(".tex", workingDir);
                 if (tmpfile == null) return false;

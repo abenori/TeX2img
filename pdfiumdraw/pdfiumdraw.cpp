@@ -665,6 +665,7 @@ void OutputTextAnnots(Data& d) {
 			auto annot_cnt = ::FPDFPage_GetAnnotCount(page.page);
 			for (int j = 0; j < annot_cnt; ++j) {
 				auto annot = ::FPDFPage_GetAnnot(page.page, j);
+				if (annot == nullptr)continue;
 				auto t = ::FPDFAnnot_GetSubtype(annot);
 				if (t == FPDF_ANNOT_TEXT) {
 					auto len = ::FPDFAnnot_GetStringValue(annot, "Contents", nullptr, 0);

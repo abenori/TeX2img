@@ -69,14 +69,13 @@ namespace TeX2img {
         }
 
         public static string ReadEmbededSource(string file) {
-            /*
             try {
                 using (var fs = AlternativeDataStream.ReadAlternativeDataStream(file, ADSName))
                 using (var sr = new StreamReader(fs, Encoding.UTF8)) {
                     return sr.ReadToEnd();
                 }
             }
-            catch (Exception) { }*/
+            catch (Exception) { }
             try {
                 var ext = Path.GetExtension(file).ToLower();
                 if (ExtraRead.ContainsKey(ext)) {
@@ -99,45 +98,54 @@ namespace TeX2img {
 
         static void PDFEmbed(string file, string text) {
             var tmpdir = Path.GetTempPath();
-//            tmpdir = @"C:\Users\Abe_Noriyuki\Desktop";
             using (var tempFileDeleter = new TempFilesDeleter(tmpdir)) {
                 var targettmp = TempFilesDeleter.GetTempFileName(".pdf", tmpdir);
                 try { File.Copy(file, Path.Combine(tmpdir,targettmp)); }
-                catch(Exception e) { return; }
+                catch(Exception) { return; }
                 tempFileDeleter.AddFile(targettmp);
                 var tmp = TempFilesDeleter.GetTempFileName(".tex", tmpdir);
                 tmp = Path.Combine(tmpdir, tmp);
-                //tempFileDeleter.AddTeXFile(tmp);
-                using (var fw = new StreamWriter(tmp)) {
-                    fw.WriteLine(@"\pdfoutput=1\relax");
-                    fw.WriteLine(
-                        @"{\catcode`\^^J=12\relax\catcode`\^^M=12\relax\catcode`^=12\catcode`\%=12\relax" + 
-                        @"\xdef\teximgannot{\pdfannot width 0pt height 0pt depth 0pt" +
-                        @"{/Subtype /Text /F 35 /Contents (\pdfescapestring{\detokenize{" + ChangeReturnCode(PDFsrcHead + System.Environment.NewLine + text,"\n") + @"}})}}}%"
-                    );
-                    fw.WriteLine(@"\newcount\pagecnt\pagecnt=1\relax
+                var unicode = new UnicodeEncoding(true, true);
+                var text_bytes = unicode.GetBytes(ChangeReturnCode(PDFsrcHead + System.Environment.NewLine + text, "\n"));
+                tempFileDeleter.AddTeXFile(tmp);
+                using (var fw = new BinaryWriter(new FileStream(tmp,FileMode.Create))) {
+                    string str =
+@"\pdfoutput=1\relax
+{\catcode`@=12\relax\catcode`\^^@=12\relax\catcode`\^^J=12\relax\catcode`\^^M=12\relax\catcode`\^^I=12\relax
+\catcode`^=12\catcode`\%=12\relax\catcode`~=12\relax\catcode`\^^L=12\relax
+\def\x{\catcode`\\=12\gdef\teximgannota}\relax
+\x{";
+                    fw.Write(ASCIIEncoding.ASCII.GetBytes(str));
+                    fw.Write(unicode.GetPreamble());
+                    fw.Write(text_bytes);
+                    str =
+@"}}\edef\teximgannot{\expandafter\detokenize\expandafter{\teximgannota}}%
+\newcount\pagecnt\pagecnt=1\relax
 \newcount\totalpage
 \pdfximage{" + targettmp + @"}\totalpage =\pdflastximagepages
 \advance\totalpage by 1\relax
 \loop
-\pdfximage page \the\pagecnt {" + targettmp + @"}
-\setbox0 =\hbox{\ifnum\pagecnt = 1\relax\teximgannot\fi\pdfrefximage\pdflastximage}%
+\pdfximage page \the\pagecnt {" + targettmp + @"}%
+\setbox0 =\hbox{\ifnum\pagecnt = 1\relax
+\pdfannot width 0pt height 0pt depth 0pt{/Subtype /Text /F 35 /Contents (\pdfescapestring{\teximgannot})}\fi
+\pdfrefximage\pdflastximage}%
 \pdfhorigin = 0pt\relax
 \pdfvorigin = 0pt\relax
 \pdfpagewidth =\wd0\relax
 \pdfpageheight =\ht0\relax
-\shipout\box0
-\advance\pagecnt by 1
+\shipout\box0\relax
+\advance\pagecnt by 1\relax
 \ifnum\pagecnt <\totalpage\repeat
-\bye"
-                        );
+\bye";
+                    fw.Write(ASCIIEncoding.ASCII.GetBytes(str));
                 }
                 using(var proc = new System.Diagnostics.Process()) {
                     string arg;
                     proc.StartInfo.WorkingDirectory = Path.GetDirectoryName(tmp);
                     proc.StartInfo.FileName = Converter.setProcStartInfo(Properties.Settings.Default.pdftexPath, out arg);
-                    //                    proc.StartInfo.Arguments = arg + " -no-shell-escape -interaction=nonstopmode \"" + Path.GetFileName(tmp) + "\"";
-                    proc.StartInfo.Arguments = arg + " -no-shell-escape  \"" + Path.GetFileName(tmp) + "\"";
+                    proc.StartInfo.Arguments = arg + " -no-shell-escape -interaction=nonstopmode \"" + Path.GetFileName(tmp) + "\"";
+                    proc.StartInfo.UseShellExecute = false;
+                    proc.StartInfo.CreateNoWindow = true;
                     try { proc.Start(); }
                     catch (Exception) { return; }
                     proc.WaitForExit(5000);

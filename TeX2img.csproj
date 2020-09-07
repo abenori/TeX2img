@@ -93,7 +93,6 @@
     <Compile Include="Converter.cs" />
     <Compile Include="CUIOutput.cs" />
     <Compile Include="Mono.Options\Options.cs" />
-    <Compile Include="mudraw.cs" />
     <Compile Include="TempFilesDeleter.cs" />
     <Compile Include="TeXSource.cs" />
     <Compile Include="InputComboDialog.cs">
