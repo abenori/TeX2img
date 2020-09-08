@@ -111,31 +111,30 @@ namespace TeX2img {
                 using (var fw = new BinaryWriter(new FileStream(tmp,FileMode.Create))) {
                     string str =
 @"\pdfoutput=1\relax
-{\catcode`@=12\relax\catcode`\^^@=12\relax\catcode`\^^J=12\relax\catcode`\^^M=12\relax\catcode`\^^I=12\relax
-\catcode`^=12\catcode`\%=12\relax\catcode`~=12\relax\catcode`\^^L=12\relax
-\def\x{\catcode`\\=12\gdef\teximgannota}\relax
-\x{";
+{\catcode0=12\relax\catcode9=12\relax\catcode11=12\relax\catcode12=12\relax\catcode13=12\relax\catcode32=12\relax" + 
+@"\catcode37=12\relax\catcode94=12\relax\catcode126=12\relax\catcode127=\relax" + 
+@"\def\x{\catcode92=12\relax\gdef\teximgannota}\relax\x{";
                     fw.Write(ASCIIEncoding.ASCII.GetBytes(str));
                     fw.Write(unicode.GetPreamble());
                     fw.Write(text_bytes);
                     str =
 @"}}\edef\teximgannot{\expandafter\detokenize\expandafter{\teximgannota}}%
-\newcount\pagecnt\pagecnt=1\relax
-\newcount\totalpage
-\pdfximage{" + targettmp + @"}\totalpage =\pdflastximagepages
-\advance\totalpage by 1\relax
+\newcount\teximgpagecnt\teximgpagecnt=1\relax
+\newcount\teximgtotalpage
+\pdfximage{" + targettmp + @"}\teximgtotalpage =\pdflastximagepages
+\advance\teximgtotalpage by 1\relax
 \loop
-\pdfximage page \the\pagecnt {" + targettmp + @"}%
-\setbox0 =\hbox{\ifnum\pagecnt = 1\relax
+\pdfximage page \the\teximgpagecnt {" + targettmp + @"}%
+\setbox0 =\hbox{\ifnum\teximgpagecnt=1\relax
 \pdfannot width 0pt height 0pt depth 0pt{/Subtype /Text /F 35 /Contents (\pdfescapestring{\teximgannot})}\fi
 \pdfrefximage\pdflastximage}%
-\pdfhorigin = 0pt\relax
-\pdfvorigin = 0pt\relax
-\pdfpagewidth =\wd0\relax
-\pdfpageheight =\ht0\relax
+\pdfhorigin=0pt\relax
+\pdfvorigin=0pt\relax
+\pdfpagewidth=\wd0\relax
+\pdfpageheight=\ht0\relax
 \shipout\box0\relax
-\advance\pagecnt by 1\relax
-\ifnum\pagecnt <\totalpage\repeat
+\advance\teximgpagecnt by 1\relax
+\ifnum\teximgpagecnt<\teximgtotalpage\repeat
 \bye";
                     fw.Write(ASCIIEncoding.ASCII.GetBytes(str));
                 }
@@ -180,7 +179,7 @@ namespace TeX2img {
                     string annot_txt_file = Path.Combine(tmpdir, targetpre + "-" + i.ToString() + ".txt");
                     tempFileDeleter.AddFile(annot_txt_file);
                     if (rv == null) {
-                        using (var fr = new StreamReader(Path.Combine(tmpdir, targetpre + "-" + i.ToString() + ".txt"))) {
+                        using (var fr = new StreamReader(Path.Combine(tmpdir, targetpre + "-" + i.ToString() + ".txt"), Encoding.UTF8)) {
                             var text = ChangeReturnCode(fr.ReadToEnd());
                             if (text.StartsWith(srcHead)) {
                                 return text.Substring(srcHead.Length);
