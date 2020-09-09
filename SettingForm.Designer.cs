@@ -173,22 +173,22 @@
             // 
             // eachImageSettingTab
             // 
+            resources.ApplyResources(this.eachImageSettingTab, "eachImageSettingTab");
             this.eachImageSettingTab.Controls.Add(this.groupBox2);
             this.eachImageSettingTab.Controls.Add(this.MergeOutputFilesCheckBox);
             this.eachImageSettingTab.Controls.Add(this.deleteDisplaySizeCheckBox);
             this.eachImageSettingTab.Controls.Add(this.useMagickCheckBox);
             this.eachImageSettingTab.Controls.Add(this.notOutllinedTextCheckBox);
-            resources.ApplyResources(this.eachImageSettingTab, "eachImageSettingTab");
             this.eachImageSettingTab.Name = "eachImageSettingTab";
             this.eachImageSettingTab.UseVisualStyleBackColor = true;
             // 
             // groupBox2
             // 
+            resources.ApplyResources(this.groupBox2, "groupBox2");
             this.groupBox2.Controls.Add(this.animationLoopNumericUpDown);
             this.groupBox2.Controls.Add(this.animationDelayNumericUpDown);
             this.groupBox2.Controls.Add(this.label20);
             this.groupBox2.Controls.Add(this.label19);
-            resources.ApplyResources(this.groupBox2, "groupBox2");
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.TabStop = false;
             // 
@@ -199,13 +199,13 @@
             // 
             // animationDelayNumericUpDown
             // 
+            resources.ApplyResources(this.animationDelayNumericUpDown, "animationDelayNumericUpDown");
             this.animationDelayNumericUpDown.DecimalPlaces = 2;
             this.animationDelayNumericUpDown.Increment = new decimal(new int[] {
             1,
             0,
             0,
             131072});
-            resources.ApplyResources(this.animationDelayNumericUpDown, "animationDelayNumericUpDown");
             this.animationDelayNumericUpDown.Name = "animationDelayNumericUpDown";
             // 
             // label20
@@ -244,6 +244,7 @@
             // 
             // EditorSettingTab
             // 
+            resources.ApplyResources(this.EditorSettingTab, "EditorSettingTab");
             this.EditorSettingTab.Controls.Add(this.acceptTabCheckBox);
             this.EditorSettingTab.Controls.Add(this.tabWidthNumericUpDown);
             this.EditorSettingTab.Controls.Add(this.label17);
@@ -255,7 +256,6 @@
             this.EditorSettingTab.Controls.Add(this.ChangeFontButton);
             this.EditorSettingTab.Controls.Add(this.FontDataText);
             this.EditorSettingTab.Controls.Add(this.label11);
-            resources.ApplyResources(this.EditorSettingTab, "EditorSettingTab");
             this.EditorSettingTab.Name = "EditorSettingTab";
             this.EditorSettingTab.UseVisualStyleBackColor = true;
             // 
@@ -277,12 +277,12 @@
             // 
             // showGroupBox
             // 
+            resources.ApplyResources(this.showGroupBox, "showGroupBox");
             this.showGroupBox.Controls.Add(this.drawFullWidthSpaceCheckBox);
             this.showGroupBox.Controls.Add(this.drawEOFCheckBox);
             this.showGroupBox.Controls.Add(this.drawEOLCheckBox);
             this.showGroupBox.Controls.Add(this.drawTabCheckBox);
             this.showGroupBox.Controls.Add(this.drawSpaceCheckBox);
-            resources.ApplyResources(this.showGroupBox, "showGroupBox");
             this.showGroupBox.Name = "showGroupBox";
             this.showGroupBox.TabStop = false;
             // 
@@ -328,11 +328,11 @@
             // 
             // FontColorGroup
             // 
+            resources.ApplyResources(this.FontColorGroup, "FontColorGroup");
             this.FontColorGroup.Controls.Add(this.label14);
             this.FontColorGroup.Controls.Add(this.label13);
             this.FontColorGroup.Controls.Add(this.FontColorButton);
             this.FontColorGroup.Controls.Add(this.BackColorButton);
-            resources.ApplyResources(this.FontColorGroup, "FontColorGroup");
             this.FontColorGroup.Name = "FontColorGroup";
             this.FontColorGroup.TabStop = false;
             // 
@@ -362,6 +362,7 @@
             // 
             // FontColorListView
             // 
+            resources.ApplyResources(this.FontColorListView, "FontColorListView");
             this.FontColorListView.HideSelection = false;
             this.FontColorListView.Items.AddRange(new System.Windows.Forms.ListViewItem[] {
             ((System.Windows.Forms.ListViewItem)(resources.GetObject("FontColorListView.Items"))),
@@ -373,7 +374,6 @@
             ((System.Windows.Forms.ListViewItem)(resources.GetObject("FontColorListView.Items6"))),
             ((System.Windows.Forms.ListViewItem)(resources.GetObject("FontColorListView.Items7"))),
             ((System.Windows.Forms.ListViewItem)(resources.GetObject("FontColorListView.Items8")))});
-            resources.ApplyResources(this.FontColorListView, "FontColorListView");
             this.FontColorListView.MultiSelect = false;
             this.FontColorListView.Name = "FontColorListView";
             this.FontColorListView.UseCompatibleStateImageBehavior = false;
@@ -401,23 +401,23 @@
             // 
             // AfterCompilingTab
             // 
+            resources.ApplyResources(this.AfterCompilingTab, "AfterCompilingTab");
             this.AfterCompilingTab.Controls.Add(this.groupBox4);
             this.AfterCompilingTab.Controls.Add(this.setFileToClipboardCheckBox);
             this.AfterCompilingTab.Controls.Add(this.embedTeXSourCecheckBox);
             this.AfterCompilingTab.Controls.Add(this.showOutputWindowCheckBox);
             this.AfterCompilingTab.Controls.Add(this.previewCheckBox);
             this.AfterCompilingTab.Controls.Add(this.deleteTmpFilesCheckBox);
-            resources.ApplyResources(this.AfterCompilingTab, "AfterCompilingTab");
             this.AfterCompilingTab.Name = "AfterCompilingTab";
             this.AfterCompilingTab.UseVisualStyleBackColor = true;
             // 
             // groupBox4
             // 
+            resources.ApplyResources(this.groupBox4, "groupBox4");
             this.groupBox4.Controls.Add(this.workDir_CurrentRadioButton);
             this.groupBox4.Controls.Add(this.workDir_FileDirRadioButton);
             this.groupBox4.Controls.Add(this.workDir_TempDirRadioButton);
             this.groupBox4.Controls.Add(this.openTmpFolderButton);
-            resources.ApplyResources(this.groupBox4, "groupBox4");
             this.groupBox4.Name = "groupBox4";
             this.groupBox4.TabStop = false;
             // 
@@ -487,6 +487,7 @@
             // 
             // OutputImgSettingTab
             // 
+            resources.ApplyResources(this.OutputImgSettingTab, "OutputImgSettingTab");
             this.OutputImgSettingTab.Controls.Add(this.label4);
             this.OutputImgSettingTab.Controls.Add(this.backgroundColorButton);
             this.OutputImgSettingTab.Controls.Add(this.label18);
@@ -502,7 +503,6 @@
             this.OutputImgSettingTab.Controls.Add(this.label7);
             this.OutputImgSettingTab.Controls.Add(this.resolutionScaleUpDown);
             this.OutputImgSettingTab.Controls.Add(this.label8);
-            resources.ApplyResources(this.OutputImgSettingTab, "OutputImgSettingTab");
             this.OutputImgSettingTab.Name = "OutputImgSettingTab";
             this.OutputImgSettingTab.UseVisualStyleBackColor = true;
             // 
@@ -513,8 +513,8 @@
             // 
             // backgroundColorButton
             // 
-            this.backgroundColorButton.BackColor = System.Drawing.Color.White;
             resources.ApplyResources(this.backgroundColorButton, "backgroundColorButton");
+            this.backgroundColorButton.BackColor = System.Drawing.Color.White;
             this.backgroundColorButton.Name = "backgroundColorButton";
             this.backgroundColorButton.UseVisualStyleBackColor = false;
             this.backgroundColorButton.Click += new System.EventHandler(this.backgroundColorButton_Click);
@@ -541,10 +541,10 @@
             // 
             // groupBox3
             // 
+            resources.ApplyResources(this.groupBox3, "groupBox3");
             this.groupBox3.Controls.Add(this.label9);
             this.groupBox3.Controls.Add(this.radioButtonbp);
             this.groupBox3.Controls.Add(this.radioButtonpx);
-            resources.ApplyResources(this.groupBox3, "groupBox3");
             this.groupBox3.Name = "groupBox3";
             this.groupBox3.TabStop = false;
             // 
@@ -624,6 +624,7 @@
             // 
             // BasicSettingTab
             // 
+            resources.ApplyResources(this.BasicSettingTab, "BasicSettingTab");
             this.BasicSettingTab.Controls.Add(this.pdftexBrowseButton);
             this.BasicSettingTab.Controls.Add(this.pdftexTextBox);
             this.BasicSettingTab.Controls.Add(this.label23);
@@ -647,7 +648,6 @@
             this.BasicSettingTab.Controls.Add(this.label2);
             this.BasicSettingTab.Controls.Add(this.platexBrowseButton);
             this.BasicSettingTab.Controls.Add(this.label1);
-            resources.ApplyResources(this.BasicSettingTab, "BasicSettingTab");
             this.BasicSettingTab.Name = "BasicSettingTab";
             this.BasicSettingTab.UseVisualStyleBackColor = true;
             // 
@@ -670,9 +670,9 @@
             // 
             // languageComboBox
             // 
+            resources.ApplyResources(this.languageComboBox, "languageComboBox");
             this.languageComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.languageComboBox.FormattingEnabled = true;
-            resources.ApplyResources(this.languageComboBox, "languageComboBox");
             this.languageComboBox.Name = "languageComboBox";
             // 
             // label21
@@ -717,9 +717,9 @@
             // 
             // encodeComboBox
             // 
+            resources.ApplyResources(this.encodeComboBox, "encodeComboBox");
             this.encodeComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.encodeComboBox.FormattingEnabled = true;
-            resources.ApplyResources(this.encodeComboBox, "encodeComboBox");
             this.encodeComboBox.Name = "encodeComboBox";
             // 
             // label10
