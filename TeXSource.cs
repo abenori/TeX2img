@@ -103,29 +103,53 @@ namespace TeX2img {
                 try { File.Copy(file, Path.Combine(tmpdir,targettmp)); }
                 catch(Exception) { return; }
                 tempFileDeleter.AddFile(targettmp);
+                var txttmp = TempFilesDeleter.GetTempFileName(".txt", tmpdir);
+                tempFileDeleter.AddFile(txttmp);
+                using(var fw = new BinaryWriter(new FileStream(Path.Combine(tmpdir, txttmp), FileMode.Create))) {
+                    fw.Write((new UnicodeEncoding(true,false)).GetBytes(ChangeReturnCode(PDFsrcHead + System.Environment.NewLine + text + "\n","\n")));
+                }
                 var tmp = TempFilesDeleter.GetTempFileName(".tex", tmpdir);
                 tmp = Path.Combine(tmpdir, tmp);
-                var unicode = new UnicodeEncoding(true, true);
-                var text_bytes = unicode.GetBytes(ChangeReturnCode(PDFsrcHead + System.Environment.NewLine + text, "\n"));
                 tempFileDeleter.AddTeXFile(tmp);
                 using (var fw = new BinaryWriter(new FileStream(tmp,FileMode.Create))) {
                     string str =
 @"\pdfoutput=1\relax
-{\catcode0=12\relax\catcode9=12\relax\catcode11=12\relax\catcode12=12\relax\catcode13=12\relax\catcode32=12\relax" + 
-@"\catcode37=12\relax\catcode94=12\relax\catcode126=12\relax\catcode127=12\relax" + 
-@"\def\x{\catcode92=12\relax\gdef\teximgannota}\relax\x{";
+\newread\teximgread
+\newcount\teximgcnt
+\teximgcnt=0\relax
+\def\x{{%
+  \loop
+    \expandafter\catcode\the\teximgcnt=12\relax
+    \advance\teximgcnt by 1\relax
+  \ifnum\teximgcnt<128\repeat
+  \gdef\teximgannot{";
                     fw.Write(ASCIIEncoding.ASCII.GetBytes(str));
-                    fw.Write(unicode.GetPreamble());
-                    fw.Write(text_bytes);
+                    fw.Write((new UnicodeEncoding(true,true)).GetPreamble());
                     str =
-@"}}\edef\teximgannot{\expandafter\detokenize\expandafter{\teximgannota}}%
-\newcount\teximgpagecnt\teximgpagecnt=1\relax
+@"}%
+  \immediate\openin\teximgread=";
+                    fw.Write(ASCIIEncoding.ASCII.GetBytes(str));
+                    fw.Write(ASCIIEncoding.ASCII.GetBytes(txttmp));
+                    str =
+@"\relax
+  \loop
+    \read\teximgread to \teximgline
+    \xdef\teximgannot{\teximgannot\teximgline}%
+  \unless\ifeof\teximgread\repeat
+  \immediate\closein\teximgread
+}}\x
+\def\teximguniqtokena{\teximguniqtokenx}\def\teximguniqtokenb{\teximguniqtokenbx}\def\teximguniqtokenx{}%
+{\catcode0=12\catcode13=12\relax\def\removelast#1^^M\teximguniqtokena#2\teximguniqtokenb{#1}%
+\xdef\teximgannot{\expandafter\removelast\teximgannot\teximguniqtokena^^M\teximguniqtokena\teximguniqtokenb}
+\def\removelast#1^^@^^M\teximguniqtokena#2\teximguniqtokenb{#1}%
+\xdef\teximgannot{\expandafter\removelast\teximgannot\teximguniqtokena^^@^^M\teximguniqtokena\teximguniqtokenb}}%
 \newcount\teximgtotalpage
 \pdfximage{" + targettmp + @"}\teximgtotalpage =\pdflastximagepages
 \advance\teximgtotalpage by 1\relax
+\teximgcnt=1\relax
 \loop
-\pdfximage page \the\teximgpagecnt {" + targettmp + @"}%
-\setbox0 =\hbox{\ifnum\teximgpagecnt=1\relax
+\pdfximage page \the\teximgcnt {" + targettmp + @"}%
+\setbox0 =\hbox{\ifnum\teximgcnt=1\relax
 \pdfannot width 0pt height 0pt depth 0pt{/Subtype /Text /F 35 /Contents (\pdfescapestring{\teximgannot})}\fi
 \pdfrefximage\pdflastximage}%
 \pdfhorigin=0pt\relax
@@ -133,8 +157,8 @@ namespace TeX2img {
 \pdfpagewidth=\wd0\relax
 \pdfpageheight=\ht0\relax
 \shipout\box0\relax
-\advance\teximgpagecnt by 1\relax
-\ifnum\teximgpagecnt<\teximgtotalpage\repeat
+\advance\teximgcnt by 1\relax
+\ifnum\teximgcnt<\teximgtotalpage\repeat
 \bye";
                     fw.Write(ASCIIEncoding.ASCII.GetBytes(str));
                 }
