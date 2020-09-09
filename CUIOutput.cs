@@ -11,6 +11,9 @@ namespace TeX2img {
         public void showPathError(string exeName, string necessary) {
             Console.WriteLine(String.Format(Properties.Resources.PATHERROR, exeName, necessary));
         }
+        public void showNoToolError(string item, string tool) {
+            Console.WriteLine(string.Format(Properties.Resources.NOTOOLERROR, item, tool));
+        }
 
         public void showExtensionError(string file) {
             Console.WriteLine(String.Format(Properties.Resources.INVALID_EXTENSION, file));

@@ -112,7 +112,7 @@ namespace TeX2img {
                     string str =
 @"\pdfoutput=1\relax
 {\catcode0=12\relax\catcode9=12\relax\catcode11=12\relax\catcode12=12\relax\catcode13=12\relax\catcode32=12\relax" + 
-@"\catcode37=12\relax\catcode94=12\relax\catcode126=12\relax\catcode127=\relax" + 
+@"\catcode37=12\relax\catcode94=12\relax\catcode126=12\relax\catcode127=12\relax" + 
 @"\def\x{\catcode92=12\relax\gdef\teximgannota}\relax\x{";
                     fw.Write(ASCIIEncoding.ASCII.GetBytes(str));
                     fw.Write(unicode.GetPreamble());

@@ -8,6 +8,7 @@ namespace TeX2img
     interface IOutputController
     {
         void showExtensionError(string file);
+        void showNoToolError(string item, string tool);
         void showPathError(string exeName, string necessary);
         void appendOutput(string log);
         void showGenerateError();

@@ -295,7 +295,9 @@ namespace TeX2img {
         public void showPathError(string exeName, string necessary) {
             MessageBox.Show(String.Format(Properties.Resources.PATHERROR, exeName, necessary), Properties.Resources.FAILED, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
         }
-
+        public void showNoToolError(string item, string tool) {
+            MessageBox.Show(string.Format(Properties.Resources.NOTOOLERROR, item, tool));
+        }
         public void showExtensionError(string file) {
             MessageBox.Show(String.Format(Properties.Resources.INVALID_EXTENSION, file),Properties.Resources.ERROR, MessageBoxButtons.OK, MessageBoxIcon.Error);
         }

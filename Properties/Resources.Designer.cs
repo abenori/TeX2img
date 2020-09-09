@@ -805,6 +805,7 @@ namespace TeX2img.Properties {
         ///{0}
         ///{1}
         ///{2}
+        ///{3}
         ///If they are not correct, please set them manually. に類似しているローカライズされた文字列を検索します。
         /// </summary>
         internal static string INIT_PATH {
@@ -963,6 +964,15 @@ namespace TeX2img.Properties {
         internal static string NOTEXIST {
             get {
                 return ResourceManager.GetString("NOTEXIST", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   {1} is needed for {0}, put {1} in tool path directory. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string NOTOOLERROR {
+            get {
+                return ResourceManager.GetString("NOTOOLERROR", resourceCulture);
             }
         }
         

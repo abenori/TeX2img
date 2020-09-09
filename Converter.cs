@@ -1462,6 +1462,13 @@ namespace TeX2img {
         #region PDF情報
         bool pdfinfo(string file, out int page, out int version) {
             page = -1; version = -1;
+            if(Path.IsPathRooted(file) && (Path.GetDirectoryName(file) != workingDir)) {
+                var b = TempFilesDeleter.GetTempFileName(Path.GetExtension(file));
+                try { File.Copy(file, Path.Combine(workingDir, b)); }
+                catch (Exception) { return false; }
+                file = b;
+                tempFilesDeleter.AddFile(file);
+            }
             try {
                 using (var fs = new FileStream(Path.Combine(workingDir, file), FileMode.Open, FileAccess.Read)) {
                     if (!fs.CanRead) return false;
@@ -1571,6 +1578,12 @@ namespace TeX2img {
             if (!imageExtensions.Contains(extension)) {
                 if (controller_ != null) controller_.showExtensionError(OutputFile);
                 return false;
+            }
+            if(extension == ".svg") {
+                if (!File.Exists(Path.Combine(GetToolsPath(), "mudraw.exe"))) {
+                    if (controller_ != null) controller_.showNoToolError("mudraw", "SVG");
+                    return false;
+                }
             }
             return true;
         }

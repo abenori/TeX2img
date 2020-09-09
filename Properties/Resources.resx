@@ -519,4 +519,7 @@ If they are not correct, please set them manually.</value>
   <data name="CONFLICT_EXTENSION_MESSAGE" xml:space="preserve">
     <value>The extension of the output file is {0} but the extension of the file type you required is {1}. Choose the extension you want to use.</value>
   </data>
+  <data name="NOTOOLERROR" xml:space="preserve">
+    <value>{1} is needed for {0}, put {1} in tool path directory.</value>
+  </data>
 </root>
