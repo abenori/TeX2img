@@ -756,8 +756,14 @@ namespace TeX2img {
             tempFilesDeleter.AddFile(outputFileName);
             var enUS = new System.Globalization.CultureInfo("en-US");
             using (var proc = GetProcess()) {
-                proc.StartInfo.FileName = Path.Combine(GetToolsPath(), "mudraw.exe");
-                proc.StartInfo.Arguments = "-l -o \"" + outputFileName + "\" \"" + inputFileName + "\"";
+                var mudraw = Path.Combine(GetToolsPath(), "mudraw.exe");
+                string arg = "";
+                if (!File.Exists(mudraw)) {
+                    mudraw = Path.Combine(GetToolsPath(), "mutool.exe");
+                    arg = "draw ";
+                }
+                proc.StartInfo.FileName = mudraw;
+                proc.StartInfo.Arguments = arg + "-o \"" + outputFileName + "\" \"" + inputFileName + "\"";
                 if (pages.Count > 0) proc.StartInfo.Arguments += " " + String.Join(",", pages.Select(d => d.ToString(enUS)).ToArray());
                 try {
                     printCommandLine(proc);
@@ -1580,8 +1586,11 @@ namespace TeX2img {
                 return false;
             }
             if(extension == ".svg") {
-                if (!File.Exists(Path.Combine(GetToolsPath(), "mudraw.exe"))) {
-                    if (controller_ != null) controller_.showNoToolError("mudraw", "SVG");
+                if (
+                    (!File.Exists(Path.Combine(GetToolsPath(), "mudraw.exe"))) &&
+                    (!File.Exists(Path.Combine(GetToolsPath(), "mutool.exe")))
+                 ) {
+                    if (controller_ != null) controller_.showNoToolError("mudraw / mutool", "SVG");
                     return false;
                 }
             }
