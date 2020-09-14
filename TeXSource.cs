@@ -112,28 +112,26 @@ namespace TeX2img {
                 tmp = Path.Combine(tmpdir, tmp);
                 tempFileDeleter.AddTeXFile(tmp);
                 using (var fw = new BinaryWriter(new FileStream(tmp,FileMode.Create))) {
-                    string str =
+                    fw.Write(ASCIIEncoding.ASCII.GetBytes(
 @"\pdfoutput=1\relax
 \newread\teximgread
 \newcount\teximgcnt
 \teximgcnt=0\relax
-\newif\ifteximgflag
+\newif\ifteximgflag\teximgflagtrue
 \def\x{{%
   \loop
     \expandafter\catcode\the\teximgcnt=12\relax
     \advance\teximgcnt by 1\relax
   \ifnum\teximgcnt<128\repeat
-  \gdef\teximgannot{";
-                    fw.Write(ASCIIEncoding.ASCII.GetBytes(str));
+  \gdef\teximgannot{"));
                     fw.Write((new UnicodeEncoding(true,true)).GetPreamble());
-                    str =
+                    fw.Write(ASCIIEncoding.ASCII.GetBytes(
 @"}%
-  \immediate\openin\teximgread=";
-                    fw.Write(ASCIIEncoding.ASCII.GetBytes(str));
+  \immediate\openin\teximgread="));
                     fw.Write(ASCIIEncoding.ASCII.GetBytes(txttmp));
-                    str =
+                    fw.Write(ASCIIEncoding.ASCII.GetBytes(
 @"\relax
-  \ifeof\teximgread\teximgflagtrue\else
+  \ifeof\teximgread\teximgflagfalse\else
     \loop
       \read\teximgread to \teximgline
       \xdef\teximgannot{\teximgannot\teximgline}%
@@ -141,10 +139,10 @@ namespace TeX2img {
     \immediate\closein\teximgread
   \fi
 }}\x
-\ifteximgflag\else
+\ifteximgflag
   \def\teximguniqtokena{\teximguniqtokenx}\def\teximguniqtokenb{\teximguniqtokenbx}\def\teximguniqtokenx{}%
   {\catcode0=12\catcode13=12\relax\def\removelast#1^^M\teximguniqtokena#2\teximguniqtokenb{#1}%
-  \xdef\teximgannot{\expandafter\removelast\teximgannot\teximguniqtokena^^M\teximguniqtokena\teximguniqtokenb}
+  \xdef\teximgannot{\expandafter\removelast\teximgannot\teximguniqtokena^^M\teximguniqtokena\teximguniqtokenb}%
   \def\removelast#1^^@^^M\teximguniqtokena#2\teximguniqtokenb{#1}%
   \xdef\teximgannot{\expandafter\removelast\teximgannot\teximguniqtokena^^@^^M\teximguniqtokena\teximguniqtokenb}}%
   \newcount\teximgtotalpage
@@ -164,8 +162,7 @@ namespace TeX2img {
     \advance\teximgcnt by 1\relax
   \ifnum\teximgcnt<\teximgtotalpage\repeat
 \fi
-\bye";
-                    fw.Write(ASCIIEncoding.ASCII.GetBytes(str));
+\bye"));
                 }
                 using(var proc = new System.Diagnostics.Process()) {
                     string arg;
@@ -200,7 +197,7 @@ namespace TeX2img {
                     proc.StartInfo.UseShellExecute = false;
                     try { proc.Start(); }
                     catch (Exception e) { System.Windows.Forms.MessageBox.Show(e.ToString()); return null; }
-                    proc.WaitForExit(5000);
+                    proc.WaitForExit(1000);
                 }
                 int i = 1;
                 string rv = null;
