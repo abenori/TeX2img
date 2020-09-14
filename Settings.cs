@@ -164,7 +164,7 @@ namespace TeX2img.Properties {
                 var pdftex = Path.Combine(dir, "pdftex.exe");
                 if (System.IO.File.Exists(pdftex)) return pdftex;
             }
-            return Converter.which("pdftex.ex");
+            return Converter.which("pdftex.exe");
         }
 
         public string GuessGsdevice() {
