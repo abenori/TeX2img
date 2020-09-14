@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 
 [assembly: System.Runtime.CompilerServices.InternalsVisibleTo("UnitTest")]
 
@@ -126,11 +127,14 @@ namespace TeX2img.Properties {
         }
         public string GuessGsPath(string platex) {
             string gs = "";
-            if(platex.IndexOf("texlive") != -1) {
-                gs = System.IO.Path.GetDirectoryName(platex) + "\\rungs.exe";
-                if(System.IO.File.Exists(gs)) return gs;
-                gs = "";
+            try {
+                if (platex.IndexOf("texlive") != -1) {
+                    gs = System.IO.Path.GetDirectoryName(platex) + "\\rungs.exe";
+                    if (System.IO.File.Exists(gs)) return gs;
+                    gs = "";
+                }
             }
+            catch (Exception) { }
             if(gs == "") {
                 gs = Converter.which("gswin32c.exe");
                 if(gs == "") {
@@ -139,8 +143,11 @@ namespace TeX2img.Properties {
                         gs = Converter.which("rungs.exe");
                         if(gs == "") {
                             if(platex != "") {
-                                gs = System.IO.Path.GetDirectoryName(platex) + "\\rungs.exe";
-                                if(!System.IO.File.Exists(gs)) gs = "";
+                                try {
+                                    gs = System.IO.Path.GetDirectoryName(platex) + "\\rungs.exe";
+                                    if (!System.IO.File.Exists(gs)) gs = "";
+                                }
+                                catch (Exception) { }
                             }
                         }
                     }
@@ -157,7 +164,7 @@ namespace TeX2img.Properties {
                 var pdftex = Path.Combine(dir, "pdftex.exe");
                 if (System.IO.File.Exists(pdftex)) return pdftex;
             }
-            return Converter.which("pdftex.ex");
+            return Converter.which("pdftex.exe");
         }
 
         public string GuessGsdevice() {

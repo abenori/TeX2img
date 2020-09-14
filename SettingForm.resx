@@ -207,174 +207,6 @@
   <data name="gsOpenFileDialog.Title" xml:space="preserve">
     <value>Ghostscript</value>
   </data>
-  <data name="&gt;&gt;groupBox2.Name" xml:space="preserve">
-    <value>groupBox2</value>
-  </data>
-  <data name="&gt;&gt;groupBox2.Type" xml:space="preserve">
-    <value>System.Windows.Forms.GroupBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;groupBox2.Parent" xml:space="preserve">
-    <value>eachImageSettingTab</value>
-  </data>
-  <data name="&gt;&gt;groupBox2.ZOrder" xml:space="preserve">
-    <value>0</value>
-  </data>
-  <data name="&gt;&gt;MergeOutputFilesCheckBox.Name" xml:space="preserve">
-    <value>MergeOutputFilesCheckBox</value>
-  </data>
-  <data name="&gt;&gt;MergeOutputFilesCheckBox.Type" xml:space="preserve">
-    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;MergeOutputFilesCheckBox.Parent" xml:space="preserve">
-    <value>eachImageSettingTab</value>
-  </data>
-  <data name="&gt;&gt;MergeOutputFilesCheckBox.ZOrder" xml:space="preserve">
-    <value>1</value>
-  </data>
-  <data name="&gt;&gt;deleteDisplaySizeCheckBox.Name" xml:space="preserve">
-    <value>deleteDisplaySizeCheckBox</value>
-  </data>
-  <data name="&gt;&gt;deleteDisplaySizeCheckBox.Type" xml:space="preserve">
-    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;deleteDisplaySizeCheckBox.Parent" xml:space="preserve">
-    <value>eachImageSettingTab</value>
-  </data>
-  <data name="&gt;&gt;deleteDisplaySizeCheckBox.ZOrder" xml:space="preserve">
-    <value>2</value>
-  </data>
-  <data name="&gt;&gt;useMagickCheckBox.Name" xml:space="preserve">
-    <value>useMagickCheckBox</value>
-  </data>
-  <data name="&gt;&gt;useMagickCheckBox.Type" xml:space="preserve">
-    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;useMagickCheckBox.Parent" xml:space="preserve">
-    <value>eachImageSettingTab</value>
-  </data>
-  <data name="&gt;&gt;useMagickCheckBox.ZOrder" xml:space="preserve">
-    <value>3</value>
-  </data>
-  <data name="&gt;&gt;notOutllinedTextCheckBox.Name" xml:space="preserve">
-    <value>notOutllinedTextCheckBox</value>
-  </data>
-  <data name="&gt;&gt;notOutllinedTextCheckBox.Type" xml:space="preserve">
-    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;notOutllinedTextCheckBox.Parent" xml:space="preserve">
-    <value>eachImageSettingTab</value>
-  </data>
-  <data name="&gt;&gt;notOutllinedTextCheckBox.ZOrder" xml:space="preserve">
-    <value>4</value>
-  </data>
-  <data name="eachImageSettingTab.Location" type="System.Drawing.Point, System.Drawing">
-    <value>4, 22</value>
-  </data>
-  <data name="eachImageSettingTab.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>2, 2, 2, 2</value>
-  </data>
-  <data name="eachImageSettingTab.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>2, 2, 2, 2</value>
-  </data>
-  <data name="eachImageSettingTab.Size" type="System.Drawing.Size, System.Drawing">
-    <value>402, 308</value>
-  </data>
-  <data name="eachImageSettingTab.TabIndex" type="System.Int32, mscorlib">
-    <value>4</value>
-  </data>
-  <data name="eachImageSettingTab.Text" xml:space="preserve">
-    <value>Particular to formats</value>
-  </data>
-  <data name="&gt;&gt;eachImageSettingTab.Name" xml:space="preserve">
-    <value>eachImageSettingTab</value>
-  </data>
-  <data name="&gt;&gt;eachImageSettingTab.Type" xml:space="preserve">
-    <value>System.Windows.Forms.TabPage, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;eachImageSettingTab.Parent" xml:space="preserve">
-    <value>SettingTab</value>
-  </data>
-  <data name="&gt;&gt;eachImageSettingTab.ZOrder" xml:space="preserve">
-    <value>2</value>
-  </data>
-  <data name="&gt;&gt;animationLoopNumericUpDown.Name" xml:space="preserve">
-    <value>animationLoopNumericUpDown</value>
-  </data>
-  <data name="&gt;&gt;animationLoopNumericUpDown.Type" xml:space="preserve">
-    <value>System.Windows.Forms.NumericUpDown, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;animationLoopNumericUpDown.Parent" xml:space="preserve">
-    <value>groupBox2</value>
-  </data>
-  <data name="&gt;&gt;animationLoopNumericUpDown.ZOrder" xml:space="preserve">
-    <value>0</value>
-  </data>
-  <data name="&gt;&gt;animationDelayNumericUpDown.Name" xml:space="preserve">
-    <value>animationDelayNumericUpDown</value>
-  </data>
-  <data name="&gt;&gt;animationDelayNumericUpDown.Type" xml:space="preserve">
-    <value>System.Windows.Forms.NumericUpDown, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;animationDelayNumericUpDown.Parent" xml:space="preserve">
-    <value>groupBox2</value>
-  </data>
-  <data name="&gt;&gt;animationDelayNumericUpDown.ZOrder" xml:space="preserve">
-    <value>1</value>
-  </data>
-  <data name="&gt;&gt;label20.Name" xml:space="preserve">
-    <value>label20</value>
-  </data>
-  <data name="&gt;&gt;label20.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;label20.Parent" xml:space="preserve">
-    <value>groupBox2</value>
-  </data>
-  <data name="&gt;&gt;label20.ZOrder" xml:space="preserve">
-    <value>2</value>
-  </data>
-  <data name="&gt;&gt;label19.Name" xml:space="preserve">
-    <value>label19</value>
-  </data>
-  <data name="&gt;&gt;label19.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;label19.Parent" xml:space="preserve">
-    <value>groupBox2</value>
-  </data>
-  <data name="&gt;&gt;label19.ZOrder" xml:space="preserve">
-    <value>3</value>
-  </data>
-  <data name="groupBox2.Location" type="System.Drawing.Point, System.Drawing">
-    <value>25, 90</value>
-  </data>
-  <data name="groupBox2.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>2, 2, 2, 2</value>
-  </data>
-  <data name="groupBox2.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>2, 2, 2, 2</value>
-  </data>
-  <data name="groupBox2.Size" type="System.Drawing.Size, System.Drawing">
-    <value>344, 66</value>
-  </data>
-  <data name="groupBox2.TabIndex" type="System.Int32, mscorlib">
-    <value>4</value>
-  </data>
-  <data name="groupBox2.Text" xml:space="preserve">
-    <value>Annimation (SVG(Z))</value>
-  </data>
-  <data name="&gt;&gt;groupBox2.Name" xml:space="preserve">
-    <value>groupBox2</value>
-  </data>
-  <data name="&gt;&gt;groupBox2.Type" xml:space="preserve">
-    <value>System.Windows.Forms.GroupBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;groupBox2.Parent" xml:space="preserve">
-    <value>eachImageSettingTab</value>
-  </data>
-  <data name="&gt;&gt;groupBox2.ZOrder" xml:space="preserve">
-    <value>0</value>
-  </data>
   <data name="animationLoopNumericUpDown.Location" type="System.Drawing.Point, System.Drawing">
     <value>146, 38</value>
   </data>
@@ -482,6 +314,36 @@
   </data>
   <data name="&gt;&gt;label19.ZOrder" xml:space="preserve">
     <value>3</value>
+  </data>
+  <data name="groupBox2.Location" type="System.Drawing.Point, System.Drawing">
+    <value>25, 90</value>
+  </data>
+  <data name="groupBox2.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>2, 2, 2, 2</value>
+  </data>
+  <data name="groupBox2.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>2, 2, 2, 2</value>
+  </data>
+  <data name="groupBox2.Size" type="System.Drawing.Size, System.Drawing">
+    <value>344, 66</value>
+  </data>
+  <data name="groupBox2.TabIndex" type="System.Int32, mscorlib">
+    <value>4</value>
+  </data>
+  <data name="groupBox2.Text" xml:space="preserve">
+    <value>Annimation (SVG(Z))</value>
+  </data>
+  <data name="&gt;&gt;groupBox2.Name" xml:space="preserve">
+    <value>groupBox2</value>
+  </data>
+  <data name="&gt;&gt;groupBox2.Type" xml:space="preserve">
+    <value>System.Windows.Forms.GroupBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;groupBox2.Parent" xml:space="preserve">
+    <value>eachImageSettingTab</value>
+  </data>
+  <data name="&gt;&gt;groupBox2.ZOrder" xml:space="preserve">
+    <value>0</value>
   </data>
   <data name="MergeOutputFilesCheckBox.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -603,167 +465,35 @@
   <data name="&gt;&gt;notOutllinedTextCheckBox.ZOrder" xml:space="preserve">
     <value>4</value>
   </data>
-  <data name="&gt;&gt;acceptTabCheckBox.Name" xml:space="preserve">
-    <value>acceptTabCheckBox</value>
-  </data>
-  <data name="&gt;&gt;acceptTabCheckBox.Type" xml:space="preserve">
-    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;acceptTabCheckBox.Parent" xml:space="preserve">
-    <value>EditorSettingTab</value>
-  </data>
-  <data name="&gt;&gt;acceptTabCheckBox.ZOrder" xml:space="preserve">
-    <value>0</value>
-  </data>
-  <data name="&gt;&gt;tabWidthNumericUpDown.Name" xml:space="preserve">
-    <value>tabWidthNumericUpDown</value>
-  </data>
-  <data name="&gt;&gt;tabWidthNumericUpDown.Type" xml:space="preserve">
-    <value>System.Windows.Forms.NumericUpDown, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;tabWidthNumericUpDown.Parent" xml:space="preserve">
-    <value>EditorSettingTab</value>
-  </data>
-  <data name="&gt;&gt;tabWidthNumericUpDown.ZOrder" xml:space="preserve">
-    <value>1</value>
-  </data>
-  <data name="&gt;&gt;label17.Name" xml:space="preserve">
-    <value>label17</value>
-  </data>
-  <data name="&gt;&gt;label17.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;label17.Parent" xml:space="preserve">
-    <value>EditorSettingTab</value>
-  </data>
-  <data name="&gt;&gt;label17.ZOrder" xml:space="preserve">
-    <value>2</value>
-  </data>
-  <data name="&gt;&gt;showGroupBox.Name" xml:space="preserve">
-    <value>showGroupBox</value>
-  </data>
-  <data name="&gt;&gt;showGroupBox.Type" xml:space="preserve">
-    <value>System.Windows.Forms.GroupBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;showGroupBox.Parent" xml:space="preserve">
-    <value>EditorSettingTab</value>
-  </data>
-  <data name="&gt;&gt;showGroupBox.ZOrder" xml:space="preserve">
-    <value>3</value>
-  </data>
-  <data name="&gt;&gt;label15.Name" xml:space="preserve">
-    <value>label15</value>
-  </data>
-  <data name="&gt;&gt;label15.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;label15.Parent" xml:space="preserve">
-    <value>EditorSettingTab</value>
-  </data>
-  <data name="&gt;&gt;label15.ZOrder" xml:space="preserve">
-    <value>4</value>
-  </data>
-  <data name="&gt;&gt;label12.Name" xml:space="preserve">
-    <value>label12</value>
-  </data>
-  <data name="&gt;&gt;label12.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;label12.Parent" xml:space="preserve">
-    <value>EditorSettingTab</value>
-  </data>
-  <data name="&gt;&gt;label12.ZOrder" xml:space="preserve">
-    <value>5</value>
-  </data>
-  <data name="&gt;&gt;FontColorGroup.Name" xml:space="preserve">
-    <value>FontColorGroup</value>
-  </data>
-  <data name="&gt;&gt;FontColorGroup.Type" xml:space="preserve">
-    <value>System.Windows.Forms.GroupBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;FontColorGroup.Parent" xml:space="preserve">
-    <value>EditorSettingTab</value>
-  </data>
-  <data name="&gt;&gt;FontColorGroup.ZOrder" xml:space="preserve">
-    <value>6</value>
-  </data>
-  <data name="&gt;&gt;FontColorListView.Name" xml:space="preserve">
-    <value>FontColorListView</value>
-  </data>
-  <data name="&gt;&gt;FontColorListView.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ListView, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;FontColorListView.Parent" xml:space="preserve">
-    <value>EditorSettingTab</value>
-  </data>
-  <data name="&gt;&gt;FontColorListView.ZOrder" xml:space="preserve">
-    <value>7</value>
-  </data>
-  <data name="&gt;&gt;ChangeFontButton.Name" xml:space="preserve">
-    <value>ChangeFontButton</value>
-  </data>
-  <data name="&gt;&gt;ChangeFontButton.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;ChangeFontButton.Parent" xml:space="preserve">
-    <value>EditorSettingTab</value>
-  </data>
-  <data name="&gt;&gt;ChangeFontButton.ZOrder" xml:space="preserve">
-    <value>8</value>
-  </data>
-  <data name="&gt;&gt;FontDataText.Name" xml:space="preserve">
-    <value>FontDataText</value>
-  </data>
-  <data name="&gt;&gt;FontDataText.Type" xml:space="preserve">
-    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;FontDataText.Parent" xml:space="preserve">
-    <value>EditorSettingTab</value>
-  </data>
-  <data name="&gt;&gt;FontDataText.ZOrder" xml:space="preserve">
-    <value>9</value>
-  </data>
-  <data name="&gt;&gt;label11.Name" xml:space="preserve">
-    <value>label11</value>
-  </data>
-  <data name="&gt;&gt;label11.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;label11.Parent" xml:space="preserve">
-    <value>EditorSettingTab</value>
-  </data>
-  <data name="&gt;&gt;label11.ZOrder" xml:space="preserve">
-    <value>10</value>
-  </data>
-  <data name="EditorSettingTab.Location" type="System.Drawing.Point, System.Drawing">
+  <data name="eachImageSettingTab.Location" type="System.Drawing.Point, System.Drawing">
     <value>4, 22</value>
   </data>
-  <data name="EditorSettingTab.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+  <data name="eachImageSettingTab.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>2, 2, 2, 2</value>
   </data>
-  <data name="EditorSettingTab.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+  <data name="eachImageSettingTab.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>2, 2, 2, 2</value>
   </data>
-  <data name="EditorSettingTab.Size" type="System.Drawing.Size, System.Drawing">
+  <data name="eachImageSettingTab.Size" type="System.Drawing.Size, System.Drawing">
     <value>402, 308</value>
   </data>
-  <data name="EditorSettingTab.TabIndex" type="System.Int32, mscorlib">
-    <value>3</value>
+  <data name="eachImageSettingTab.TabIndex" type="System.Int32, mscorlib">
+    <value>4</value>
   </data>
-  <data name="EditorSettingTab.Text" xml:space="preserve">
-    <value>Editor</value>
+  <data name="eachImageSettingTab.Text" xml:space="preserve">
+    <value>Particular to formats</value>
   </data>
-  <data name="&gt;&gt;EditorSettingTab.Name" xml:space="preserve">
-    <value>EditorSettingTab</value>
+  <data name="&gt;&gt;eachImageSettingTab.Name" xml:space="preserve">
+    <value>eachImageSettingTab</value>
   </data>
-  <data name="&gt;&gt;EditorSettingTab.Type" xml:space="preserve">
+  <data name="&gt;&gt;eachImageSettingTab.Type" xml:space="preserve">
     <value>System.Windows.Forms.TabPage, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;EditorSettingTab.Parent" xml:space="preserve">
+  <data name="&gt;&gt;eachImageSettingTab.Parent" xml:space="preserve">
     <value>SettingTab</value>
   </data>
-  <data name="&gt;&gt;EditorSettingTab.ZOrder" xml:space="preserve">
-    <value>4</value>
+  <data name="&gt;&gt;eachImageSettingTab.ZOrder" xml:space="preserve">
+    <value>2</value>
   </data>
   <data name="acceptTabCheckBox.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -848,96 +578,6 @@
   </data>
   <data name="&gt;&gt;label17.ZOrder" xml:space="preserve">
     <value>2</value>
-  </data>
-  <data name="&gt;&gt;drawFullWidthSpaceCheckBox.Name" xml:space="preserve">
-    <value>drawFullWidthSpaceCheckBox</value>
-  </data>
-  <data name="&gt;&gt;drawFullWidthSpaceCheckBox.Type" xml:space="preserve">
-    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;drawFullWidthSpaceCheckBox.Parent" xml:space="preserve">
-    <value>showGroupBox</value>
-  </data>
-  <data name="&gt;&gt;drawFullWidthSpaceCheckBox.ZOrder" xml:space="preserve">
-    <value>0</value>
-  </data>
-  <data name="&gt;&gt;drawEOFCheckBox.Name" xml:space="preserve">
-    <value>drawEOFCheckBox</value>
-  </data>
-  <data name="&gt;&gt;drawEOFCheckBox.Type" xml:space="preserve">
-    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;drawEOFCheckBox.Parent" xml:space="preserve">
-    <value>showGroupBox</value>
-  </data>
-  <data name="&gt;&gt;drawEOFCheckBox.ZOrder" xml:space="preserve">
-    <value>1</value>
-  </data>
-  <data name="&gt;&gt;drawEOLCheckBox.Name" xml:space="preserve">
-    <value>drawEOLCheckBox</value>
-  </data>
-  <data name="&gt;&gt;drawEOLCheckBox.Type" xml:space="preserve">
-    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;drawEOLCheckBox.Parent" xml:space="preserve">
-    <value>showGroupBox</value>
-  </data>
-  <data name="&gt;&gt;drawEOLCheckBox.ZOrder" xml:space="preserve">
-    <value>2</value>
-  </data>
-  <data name="&gt;&gt;drawTabCheckBox.Name" xml:space="preserve">
-    <value>drawTabCheckBox</value>
-  </data>
-  <data name="&gt;&gt;drawTabCheckBox.Type" xml:space="preserve">
-    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;drawTabCheckBox.Parent" xml:space="preserve">
-    <value>showGroupBox</value>
-  </data>
-  <data name="&gt;&gt;drawTabCheckBox.ZOrder" xml:space="preserve">
-    <value>3</value>
-  </data>
-  <data name="&gt;&gt;drawSpaceCheckBox.Name" xml:space="preserve">
-    <value>drawSpaceCheckBox</value>
-  </data>
-  <data name="&gt;&gt;drawSpaceCheckBox.Type" xml:space="preserve">
-    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;drawSpaceCheckBox.Parent" xml:space="preserve">
-    <value>showGroupBox</value>
-  </data>
-  <data name="&gt;&gt;drawSpaceCheckBox.ZOrder" xml:space="preserve">
-    <value>4</value>
-  </data>
-  <data name="showGroupBox.Location" type="System.Drawing.Point, System.Drawing">
-    <value>14, 214</value>
-  </data>
-  <data name="showGroupBox.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>2, 2, 2, 2</value>
-  </data>
-  <data name="showGroupBox.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>2, 2, 2, 2</value>
-  </data>
-  <data name="showGroupBox.Size" type="System.Drawing.Size, System.Drawing">
-    <value>370, 38</value>
-  </data>
-  <data name="showGroupBox.TabIndex" type="System.Int32, mscorlib">
-    <value>4</value>
-  </data>
-  <data name="showGroupBox.Text" xml:space="preserve">
-    <value>Show</value>
-  </data>
-  <data name="&gt;&gt;showGroupBox.Name" xml:space="preserve">
-    <value>showGroupBox</value>
-  </data>
-  <data name="&gt;&gt;showGroupBox.Type" xml:space="preserve">
-    <value>System.Windows.Forms.GroupBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;showGroupBox.Parent" xml:space="preserve">
-    <value>EditorSettingTab</value>
-  </data>
-  <data name="&gt;&gt;showGroupBox.ZOrder" xml:space="preserve">
-    <value>3</value>
   </data>
   <data name="drawFullWidthSpaceCheckBox.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -1089,6 +729,36 @@
   <data name="&gt;&gt;drawSpaceCheckBox.ZOrder" xml:space="preserve">
     <value>4</value>
   </data>
+  <data name="showGroupBox.Location" type="System.Drawing.Point, System.Drawing">
+    <value>14, 214</value>
+  </data>
+  <data name="showGroupBox.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>2, 2, 2, 2</value>
+  </data>
+  <data name="showGroupBox.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>2, 2, 2, 2</value>
+  </data>
+  <data name="showGroupBox.Size" type="System.Drawing.Size, System.Drawing">
+    <value>370, 38</value>
+  </data>
+  <data name="showGroupBox.TabIndex" type="System.Int32, mscorlib">
+    <value>4</value>
+  </data>
+  <data name="showGroupBox.Text" xml:space="preserve">
+    <value>Show</value>
+  </data>
+  <data name="&gt;&gt;showGroupBox.Name" xml:space="preserve">
+    <value>showGroupBox</value>
+  </data>
+  <data name="&gt;&gt;showGroupBox.Type" xml:space="preserve">
+    <value>System.Windows.Forms.GroupBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;showGroupBox.Parent" xml:space="preserve">
+    <value>EditorSettingTab</value>
+  </data>
+  <data name="&gt;&gt;showGroupBox.ZOrder" xml:space="preserve">
+    <value>3</value>
+  </data>
   <data name="label15.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Top, Right</value>
   </data>
@@ -1154,81 +824,6 @@
   </data>
   <data name="&gt;&gt;label12.ZOrder" xml:space="preserve">
     <value>5</value>
-  </data>
-  <data name="&gt;&gt;label14.Name" xml:space="preserve">
-    <value>label14</value>
-  </data>
-  <data name="&gt;&gt;label14.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;label14.Parent" xml:space="preserve">
-    <value>FontColorGroup</value>
-  </data>
-  <data name="&gt;&gt;label14.ZOrder" xml:space="preserve">
-    <value>0</value>
-  </data>
-  <data name="&gt;&gt;label13.Name" xml:space="preserve">
-    <value>label13</value>
-  </data>
-  <data name="&gt;&gt;label13.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;label13.Parent" xml:space="preserve">
-    <value>FontColorGroup</value>
-  </data>
-  <data name="&gt;&gt;label13.ZOrder" xml:space="preserve">
-    <value>1</value>
-  </data>
-  <data name="&gt;&gt;FontColorButton.Name" xml:space="preserve">
-    <value>FontColorButton</value>
-  </data>
-  <data name="&gt;&gt;FontColorButton.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;FontColorButton.Parent" xml:space="preserve">
-    <value>FontColorGroup</value>
-  </data>
-  <data name="&gt;&gt;FontColorButton.ZOrder" xml:space="preserve">
-    <value>2</value>
-  </data>
-  <data name="&gt;&gt;BackColorButton.Name" xml:space="preserve">
-    <value>BackColorButton</value>
-  </data>
-  <data name="&gt;&gt;BackColorButton.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;BackColorButton.Parent" xml:space="preserve">
-    <value>FontColorGroup</value>
-  </data>
-  <data name="&gt;&gt;BackColorButton.ZOrder" xml:space="preserve">
-    <value>3</value>
-  </data>
-  <data name="FontColorGroup.Location" type="System.Drawing.Point, System.Drawing">
-    <value>236, 58</value>
-  </data>
-  <data name="FontColorGroup.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>2, 2, 2, 2</value>
-  </data>
-  <data name="FontColorGroup.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>2, 2, 2, 2</value>
-  </data>
-  <data name="FontColorGroup.Size" type="System.Drawing.Size, System.Drawing">
-    <value>146, 126</value>
-  </data>
-  <data name="FontColorGroup.TabIndex" type="System.Int32, mscorlib">
-    <value>3</value>
-  </data>
-  <data name="&gt;&gt;FontColorGroup.Name" xml:space="preserve">
-    <value>FontColorGroup</value>
-  </data>
-  <data name="&gt;&gt;FontColorGroup.Type" xml:space="preserve">
-    <value>System.Windows.Forms.GroupBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;FontColorGroup.Parent" xml:space="preserve">
-    <value>EditorSettingTab</value>
-  </data>
-  <data name="&gt;&gt;FontColorGroup.ZOrder" xml:space="preserve">
-    <value>6</value>
   </data>
   <data name="label14.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -1337,6 +932,33 @@
   </data>
   <data name="&gt;&gt;BackColorButton.ZOrder" xml:space="preserve">
     <value>3</value>
+  </data>
+  <data name="FontColorGroup.Location" type="System.Drawing.Point, System.Drawing">
+    <value>236, 58</value>
+  </data>
+  <data name="FontColorGroup.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>2, 2, 2, 2</value>
+  </data>
+  <data name="FontColorGroup.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>2, 2, 2, 2</value>
+  </data>
+  <data name="FontColorGroup.Size" type="System.Drawing.Size, System.Drawing">
+    <value>146, 126</value>
+  </data>
+  <data name="FontColorGroup.TabIndex" type="System.Int32, mscorlib">
+    <value>3</value>
+  </data>
+  <data name="&gt;&gt;FontColorGroup.Name" xml:space="preserve">
+    <value>FontColorGroup</value>
+  </data>
+  <data name="&gt;&gt;FontColorGroup.Type" xml:space="preserve">
+    <value>System.Windows.Forms.GroupBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;FontColorGroup.Parent" xml:space="preserve">
+    <value>EditorSettingTab</value>
+  </data>
+  <data name="&gt;&gt;FontColorGroup.ZOrder" xml:space="preserve">
+    <value>6</value>
   </data>
   <data name="FontColorListView.Items" mimetype="application/x-microsoft.net.object.binary.base64">
     <value>
@@ -1601,185 +1223,35 @@
   <data name="&gt;&gt;label11.ZOrder" xml:space="preserve">
     <value>10</value>
   </data>
-  <data name="&gt;&gt;groupBox4.Name" xml:space="preserve">
-    <value>groupBox4</value>
-  </data>
-  <data name="&gt;&gt;groupBox4.Type" xml:space="preserve">
-    <value>System.Windows.Forms.GroupBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;groupBox4.Parent" xml:space="preserve">
-    <value>AfterCompilingTab</value>
-  </data>
-  <data name="&gt;&gt;groupBox4.ZOrder" xml:space="preserve">
-    <value>0</value>
-  </data>
-  <data name="&gt;&gt;setFileToClipboardCheckBox.Name" xml:space="preserve">
-    <value>setFileToClipboardCheckBox</value>
-  </data>
-  <data name="&gt;&gt;setFileToClipboardCheckBox.Type" xml:space="preserve">
-    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;setFileToClipboardCheckBox.Parent" xml:space="preserve">
-    <value>AfterCompilingTab</value>
-  </data>
-  <data name="&gt;&gt;setFileToClipboardCheckBox.ZOrder" xml:space="preserve">
-    <value>1</value>
-  </data>
-  <data name="&gt;&gt;embedTeXSourCecheckBox.Name" xml:space="preserve">
-    <value>embedTeXSourCecheckBox</value>
-  </data>
-  <data name="&gt;&gt;embedTeXSourCecheckBox.Type" xml:space="preserve">
-    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;embedTeXSourCecheckBox.Parent" xml:space="preserve">
-    <value>AfterCompilingTab</value>
-  </data>
-  <data name="&gt;&gt;embedTeXSourCecheckBox.ZOrder" xml:space="preserve">
-    <value>2</value>
-  </data>
-  <data name="&gt;&gt;showOutputWindowCheckBox.Name" xml:space="preserve">
-    <value>showOutputWindowCheckBox</value>
-  </data>
-  <data name="&gt;&gt;showOutputWindowCheckBox.Type" xml:space="preserve">
-    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;showOutputWindowCheckBox.Parent" xml:space="preserve">
-    <value>AfterCompilingTab</value>
-  </data>
-  <data name="&gt;&gt;showOutputWindowCheckBox.ZOrder" xml:space="preserve">
-    <value>3</value>
-  </data>
-  <data name="&gt;&gt;previewCheckBox.Name" xml:space="preserve">
-    <value>previewCheckBox</value>
-  </data>
-  <data name="&gt;&gt;previewCheckBox.Type" xml:space="preserve">
-    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;previewCheckBox.Parent" xml:space="preserve">
-    <value>AfterCompilingTab</value>
-  </data>
-  <data name="&gt;&gt;previewCheckBox.ZOrder" xml:space="preserve">
-    <value>4</value>
-  </data>
-  <data name="&gt;&gt;deleteTmpFilesCheckBox.Name" xml:space="preserve">
-    <value>deleteTmpFilesCheckBox</value>
-  </data>
-  <data name="&gt;&gt;deleteTmpFilesCheckBox.Type" xml:space="preserve">
-    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;deleteTmpFilesCheckBox.Parent" xml:space="preserve">
-    <value>AfterCompilingTab</value>
-  </data>
-  <data name="&gt;&gt;deleteTmpFilesCheckBox.ZOrder" xml:space="preserve">
-    <value>5</value>
-  </data>
-  <data name="AfterCompilingTab.Location" type="System.Drawing.Point, System.Drawing">
+  <data name="EditorSettingTab.Location" type="System.Drawing.Point, System.Drawing">
     <value>4, 22</value>
   </data>
-  <data name="AfterCompilingTab.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+  <data name="EditorSettingTab.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>2, 2, 2, 2</value>
   </data>
-  <data name="AfterCompilingTab.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+  <data name="EditorSettingTab.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>2, 2, 2, 2</value>
   </data>
-  <data name="AfterCompilingTab.Size" type="System.Drawing.Size, System.Drawing">
+  <data name="EditorSettingTab.Size" type="System.Drawing.Size, System.Drawing">
     <value>402, 308</value>
   </data>
-  <data name="AfterCompilingTab.TabIndex" type="System.Int32, mscorlib">
-    <value>2</value>
+  <data name="EditorSettingTab.TabIndex" type="System.Int32, mscorlib">
+    <value>3</value>
   </data>
-  <data name="AfterCompilingTab.Text" xml:space="preserve">
-    <value>After compiling</value>
+  <data name="EditorSettingTab.Text" xml:space="preserve">
+    <value>Editor</value>
   </data>
-  <data name="&gt;&gt;AfterCompilingTab.Name" xml:space="preserve">
-    <value>AfterCompilingTab</value>
+  <data name="&gt;&gt;EditorSettingTab.Name" xml:space="preserve">
+    <value>EditorSettingTab</value>
   </data>
-  <data name="&gt;&gt;AfterCompilingTab.Type" xml:space="preserve">
+  <data name="&gt;&gt;EditorSettingTab.Type" xml:space="preserve">
     <value>System.Windows.Forms.TabPage, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;AfterCompilingTab.Parent" xml:space="preserve">
+  <data name="&gt;&gt;EditorSettingTab.Parent" xml:space="preserve">
     <value>SettingTab</value>
   </data>
-  <data name="&gt;&gt;AfterCompilingTab.ZOrder" xml:space="preserve">
-    <value>3</value>
-  </data>
-  <data name="&gt;&gt;workDir_CurrentRadioButton.Name" xml:space="preserve">
-    <value>workDir_CurrentRadioButton</value>
-  </data>
-  <data name="&gt;&gt;workDir_CurrentRadioButton.Type" xml:space="preserve">
-    <value>System.Windows.Forms.RadioButton, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;workDir_CurrentRadioButton.Parent" xml:space="preserve">
-    <value>groupBox4</value>
-  </data>
-  <data name="&gt;&gt;workDir_CurrentRadioButton.ZOrder" xml:space="preserve">
-    <value>0</value>
-  </data>
-  <data name="&gt;&gt;workDir_FileDirRadioButton.Name" xml:space="preserve">
-    <value>workDir_FileDirRadioButton</value>
-  </data>
-  <data name="&gt;&gt;workDir_FileDirRadioButton.Type" xml:space="preserve">
-    <value>System.Windows.Forms.RadioButton, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;workDir_FileDirRadioButton.Parent" xml:space="preserve">
-    <value>groupBox4</value>
-  </data>
-  <data name="&gt;&gt;workDir_FileDirRadioButton.ZOrder" xml:space="preserve">
-    <value>1</value>
-  </data>
-  <data name="&gt;&gt;workDir_TempDirRadioButton.Name" xml:space="preserve">
-    <value>workDir_TempDirRadioButton</value>
-  </data>
-  <data name="&gt;&gt;workDir_TempDirRadioButton.Type" xml:space="preserve">
-    <value>System.Windows.Forms.RadioButton, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;workDir_TempDirRadioButton.Parent" xml:space="preserve">
-    <value>groupBox4</value>
-  </data>
-  <data name="&gt;&gt;workDir_TempDirRadioButton.ZOrder" xml:space="preserve">
-    <value>2</value>
-  </data>
-  <data name="&gt;&gt;openTmpFolderButton.Name" xml:space="preserve">
-    <value>openTmpFolderButton</value>
-  </data>
-  <data name="&gt;&gt;openTmpFolderButton.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;openTmpFolderButton.Parent" xml:space="preserve">
-    <value>groupBox4</value>
-  </data>
-  <data name="&gt;&gt;openTmpFolderButton.ZOrder" xml:space="preserve">
-    <value>3</value>
-  </data>
-  <data name="groupBox4.Location" type="System.Drawing.Point, System.Drawing">
-    <value>14, 126</value>
-  </data>
-  <data name="groupBox4.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>2, 2, 2, 2</value>
-  </data>
-  <data name="groupBox4.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>2, 2, 2, 2</value>
-  </data>
-  <data name="groupBox4.Size" type="System.Drawing.Size, System.Drawing">
-    <value>352, 90</value>
-  </data>
-  <data name="groupBox4.TabIndex" type="System.Int32, mscorlib">
-    <value>5</value>
-  </data>
-  <data name="groupBox4.Text" xml:space="preserve">
-    <value>Directory</value>
-  </data>
-  <data name="&gt;&gt;groupBox4.Name" xml:space="preserve">
-    <value>groupBox4</value>
-  </data>
-  <data name="&gt;&gt;groupBox4.Type" xml:space="preserve">
-    <value>System.Windows.Forms.GroupBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;groupBox4.Parent" xml:space="preserve">
-    <value>AfterCompilingTab</value>
-  </data>
-  <data name="&gt;&gt;groupBox4.ZOrder" xml:space="preserve">
-    <value>0</value>
+  <data name="&gt;&gt;EditorSettingTab.ZOrder" xml:space="preserve">
+    <value>4</value>
   </data>
   <data name="workDir_CurrentRadioButton.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -1897,6 +1369,36 @@
   </data>
   <data name="&gt;&gt;openTmpFolderButton.ZOrder" xml:space="preserve">
     <value>3</value>
+  </data>
+  <data name="groupBox4.Location" type="System.Drawing.Point, System.Drawing">
+    <value>14, 126</value>
+  </data>
+  <data name="groupBox4.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>2, 2, 2, 2</value>
+  </data>
+  <data name="groupBox4.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>2, 2, 2, 2</value>
+  </data>
+  <data name="groupBox4.Size" type="System.Drawing.Size, System.Drawing">
+    <value>352, 90</value>
+  </data>
+  <data name="groupBox4.TabIndex" type="System.Int32, mscorlib">
+    <value>5</value>
+  </data>
+  <data name="groupBox4.Text" xml:space="preserve">
+    <value>Directory</value>
+  </data>
+  <data name="&gt;&gt;groupBox4.Name" xml:space="preserve">
+    <value>groupBox4</value>
+  </data>
+  <data name="&gt;&gt;groupBox4.Type" xml:space="preserve">
+    <value>System.Windows.Forms.GroupBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;groupBox4.Parent" xml:space="preserve">
+    <value>AfterCompilingTab</value>
+  </data>
+  <data name="&gt;&gt;groupBox4.ZOrder" xml:space="preserve">
+    <value>0</value>
   </data>
   <data name="setFileToClipboardCheckBox.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -2048,215 +1550,35 @@
   <data name="&gt;&gt;deleteTmpFilesCheckBox.ZOrder" xml:space="preserve">
     <value>5</value>
   </data>
-  <data name="&gt;&gt;label4.Name" xml:space="preserve">
-    <value>label4</value>
-  </data>
-  <data name="&gt;&gt;label4.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;label4.Parent" xml:space="preserve">
-    <value>OutputImgSettingTab</value>
-  </data>
-  <data name="&gt;&gt;label4.ZOrder" xml:space="preserve">
-    <value>0</value>
-  </data>
-  <data name="&gt;&gt;backgroundColorButton.Name" xml:space="preserve">
-    <value>backgroundColorButton</value>
-  </data>
-  <data name="&gt;&gt;backgroundColorButton.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;backgroundColorButton.Parent" xml:space="preserve">
-    <value>OutputImgSettingTab</value>
-  </data>
-  <data name="&gt;&gt;backgroundColorButton.ZOrder" xml:space="preserve">
-    <value>1</value>
-  </data>
-  <data name="&gt;&gt;label18.Name" xml:space="preserve">
-    <value>label18</value>
-  </data>
-  <data name="&gt;&gt;label18.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;label18.Parent" xml:space="preserve">
-    <value>OutputImgSettingTab</value>
-  </data>
-  <data name="&gt;&gt;label18.ZOrder" xml:space="preserve">
-    <value>2</value>
-  </data>
-  <data name="&gt;&gt;transparentPngCheckBox.Name" xml:space="preserve">
-    <value>transparentPngCheckBox</value>
-  </data>
-  <data name="&gt;&gt;transparentPngCheckBox.Type" xml:space="preserve">
-    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;transparentPngCheckBox.Parent" xml:space="preserve">
-    <value>OutputImgSettingTab</value>
-  </data>
-  <data name="&gt;&gt;transparentPngCheckBox.ZOrder" xml:space="preserve">
-    <value>3</value>
-  </data>
-  <data name="&gt;&gt;KeepPageSizeCheckBox.Name" xml:space="preserve">
-    <value>KeepPageSizeCheckBox</value>
-  </data>
-  <data name="&gt;&gt;KeepPageSizeCheckBox.Type" xml:space="preserve">
-    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;KeepPageSizeCheckBox.Parent" xml:space="preserve">
-    <value>OutputImgSettingTab</value>
-  </data>
-  <data name="&gt;&gt;KeepPageSizeCheckBox.ZOrder" xml:space="preserve">
-    <value>4</value>
-  </data>
-  <data name="&gt;&gt;groupBox3.Name" xml:space="preserve">
-    <value>groupBox3</value>
-  </data>
-  <data name="&gt;&gt;groupBox3.Type" xml:space="preserve">
-    <value>System.Windows.Forms.GroupBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;groupBox3.Parent" xml:space="preserve">
-    <value>OutputImgSettingTab</value>
-  </data>
-  <data name="&gt;&gt;groupBox3.ZOrder" xml:space="preserve">
-    <value>5</value>
-  </data>
-  <data name="&gt;&gt;bottomMarginUpDown.Name" xml:space="preserve">
-    <value>bottomMarginUpDown</value>
-  </data>
-  <data name="&gt;&gt;bottomMarginUpDown.Type" xml:space="preserve">
-    <value>System.Windows.Forms.NumericUpDown, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;bottomMarginUpDown.Parent" xml:space="preserve">
-    <value>OutputImgSettingTab</value>
-  </data>
-  <data name="&gt;&gt;bottomMarginUpDown.ZOrder" xml:space="preserve">
-    <value>6</value>
-  </data>
-  <data name="&gt;&gt;rightMarginUpDown.Name" xml:space="preserve">
-    <value>rightMarginUpDown</value>
-  </data>
-  <data name="&gt;&gt;rightMarginUpDown.Type" xml:space="preserve">
-    <value>System.Windows.Forms.NumericUpDown, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;rightMarginUpDown.Parent" xml:space="preserve">
-    <value>OutputImgSettingTab</value>
-  </data>
-  <data name="&gt;&gt;rightMarginUpDown.ZOrder" xml:space="preserve">
-    <value>7</value>
-  </data>
-  <data name="&gt;&gt;label5.Name" xml:space="preserve">
-    <value>label5</value>
-  </data>
-  <data name="&gt;&gt;label5.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;label5.Parent" xml:space="preserve">
-    <value>OutputImgSettingTab</value>
-  </data>
-  <data name="&gt;&gt;label5.ZOrder" xml:space="preserve">
-    <value>8</value>
-  </data>
-  <data name="&gt;&gt;label6.Name" xml:space="preserve">
-    <value>label6</value>
-  </data>
-  <data name="&gt;&gt;label6.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;label6.Parent" xml:space="preserve">
-    <value>OutputImgSettingTab</value>
-  </data>
-  <data name="&gt;&gt;label6.ZOrder" xml:space="preserve">
-    <value>9</value>
-  </data>
-  <data name="&gt;&gt;leftMarginUpDown.Name" xml:space="preserve">
-    <value>leftMarginUpDown</value>
-  </data>
-  <data name="&gt;&gt;leftMarginUpDown.Type" xml:space="preserve">
-    <value>System.Windows.Forms.NumericUpDown, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;leftMarginUpDown.Parent" xml:space="preserve">
-    <value>OutputImgSettingTab</value>
-  </data>
-  <data name="&gt;&gt;leftMarginUpDown.ZOrder" xml:space="preserve">
-    <value>10</value>
-  </data>
-  <data name="&gt;&gt;topMarginUpDown.Name" xml:space="preserve">
-    <value>topMarginUpDown</value>
-  </data>
-  <data name="&gt;&gt;topMarginUpDown.Type" xml:space="preserve">
-    <value>System.Windows.Forms.NumericUpDown, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;topMarginUpDown.Parent" xml:space="preserve">
-    <value>OutputImgSettingTab</value>
-  </data>
-  <data name="&gt;&gt;topMarginUpDown.ZOrder" xml:space="preserve">
-    <value>11</value>
-  </data>
-  <data name="&gt;&gt;label7.Name" xml:space="preserve">
-    <value>label7</value>
-  </data>
-  <data name="&gt;&gt;label7.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;label7.Parent" xml:space="preserve">
-    <value>OutputImgSettingTab</value>
-  </data>
-  <data name="&gt;&gt;label7.ZOrder" xml:space="preserve">
-    <value>12</value>
-  </data>
-  <data name="&gt;&gt;resolutionScaleUpDown.Name" xml:space="preserve">
-    <value>resolutionScaleUpDown</value>
-  </data>
-  <data name="&gt;&gt;resolutionScaleUpDown.Type" xml:space="preserve">
-    <value>System.Windows.Forms.NumericUpDown, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;resolutionScaleUpDown.Parent" xml:space="preserve">
-    <value>OutputImgSettingTab</value>
-  </data>
-  <data name="&gt;&gt;resolutionScaleUpDown.ZOrder" xml:space="preserve">
-    <value>13</value>
-  </data>
-  <data name="&gt;&gt;label8.Name" xml:space="preserve">
-    <value>label8</value>
-  </data>
-  <data name="&gt;&gt;label8.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;label8.Parent" xml:space="preserve">
-    <value>OutputImgSettingTab</value>
-  </data>
-  <data name="&gt;&gt;label8.ZOrder" xml:space="preserve">
-    <value>14</value>
-  </data>
-  <data name="OutputImgSettingTab.Location" type="System.Drawing.Point, System.Drawing">
+  <data name="AfterCompilingTab.Location" type="System.Drawing.Point, System.Drawing">
     <value>4, 22</value>
   </data>
-  <data name="OutputImgSettingTab.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+  <data name="AfterCompilingTab.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>2, 2, 2, 2</value>
   </data>
-  <data name="OutputImgSettingTab.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+  <data name="AfterCompilingTab.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>2, 2, 2, 2</value>
   </data>
-  <data name="OutputImgSettingTab.Size" type="System.Drawing.Size, System.Drawing">
+  <data name="AfterCompilingTab.Size" type="System.Drawing.Size, System.Drawing">
     <value>402, 308</value>
   </data>
-  <data name="OutputImgSettingTab.TabIndex" type="System.Int32, mscorlib">
-    <value>1</value>
+  <data name="AfterCompilingTab.TabIndex" type="System.Int32, mscorlib">
+    <value>2</value>
   </data>
-  <data name="OutputImgSettingTab.Text" xml:space="preserve">
-    <value>Images</value>
+  <data name="AfterCompilingTab.Text" xml:space="preserve">
+    <value>After compiling</value>
   </data>
-  <data name="&gt;&gt;OutputImgSettingTab.Name" xml:space="preserve">
-    <value>OutputImgSettingTab</value>
+  <data name="&gt;&gt;AfterCompilingTab.Name" xml:space="preserve">
+    <value>AfterCompilingTab</value>
   </data>
-  <data name="&gt;&gt;OutputImgSettingTab.Type" xml:space="preserve">
+  <data name="&gt;&gt;AfterCompilingTab.Type" xml:space="preserve">
     <value>System.Windows.Forms.TabPage, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;OutputImgSettingTab.Parent" xml:space="preserve">
+  <data name="&gt;&gt;AfterCompilingTab.Parent" xml:space="preserve">
     <value>SettingTab</value>
   </data>
-  <data name="&gt;&gt;OutputImgSettingTab.ZOrder" xml:space="preserve">
-    <value>1</value>
+  <data name="&gt;&gt;AfterCompilingTab.ZOrder" xml:space="preserve">
+    <value>3</value>
   </data>
   <data name="label4.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -2399,72 +1721,6 @@
   <data name="&gt;&gt;KeepPageSizeCheckBox.ZOrder" xml:space="preserve">
     <value>4</value>
   </data>
-  <data name="&gt;&gt;label9.Name" xml:space="preserve">
-    <value>label9</value>
-  </data>
-  <data name="&gt;&gt;label9.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;label9.Parent" xml:space="preserve">
-    <value>groupBox3</value>
-  </data>
-  <data name="&gt;&gt;label9.ZOrder" xml:space="preserve">
-    <value>0</value>
-  </data>
-  <data name="&gt;&gt;radioButtonbp.Name" xml:space="preserve">
-    <value>radioButtonbp</value>
-  </data>
-  <data name="&gt;&gt;radioButtonbp.Type" xml:space="preserve">
-    <value>System.Windows.Forms.RadioButton, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;radioButtonbp.Parent" xml:space="preserve">
-    <value>groupBox3</value>
-  </data>
-  <data name="&gt;&gt;radioButtonbp.ZOrder" xml:space="preserve">
-    <value>1</value>
-  </data>
-  <data name="&gt;&gt;radioButtonpx.Name" xml:space="preserve">
-    <value>radioButtonpx</value>
-  </data>
-  <data name="&gt;&gt;radioButtonpx.Type" xml:space="preserve">
-    <value>System.Windows.Forms.RadioButton, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;radioButtonpx.Parent" xml:space="preserve">
-    <value>groupBox3</value>
-  </data>
-  <data name="&gt;&gt;radioButtonpx.ZOrder" xml:space="preserve">
-    <value>2</value>
-  </data>
-  <data name="groupBox3.Location" type="System.Drawing.Point, System.Drawing">
-    <value>16, 94</value>
-  </data>
-  <data name="groupBox3.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>2, 2, 2, 2</value>
-  </data>
-  <data name="groupBox3.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>2, 2, 2, 2</value>
-  </data>
-  <data name="groupBox3.Size" type="System.Drawing.Size, System.Drawing">
-    <value>346, 38</value>
-  </data>
-  <data name="groupBox3.TabIndex" type="System.Int32, mscorlib">
-    <value>5</value>
-  </data>
-  <data name="groupBox3.Text" xml:space="preserve">
-    <value>Unit for margins (JPEG / PNG / BMP / TIFF)</value>
-  </data>
-  <data name="&gt;&gt;groupBox3.Name" xml:space="preserve">
-    <value>groupBox3</value>
-  </data>
-  <data name="&gt;&gt;groupBox3.Type" xml:space="preserve">
-    <value>System.Windows.Forms.GroupBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;groupBox3.Parent" xml:space="preserve">
-    <value>OutputImgSettingTab</value>
-  </data>
-  <data name="&gt;&gt;groupBox3.ZOrder" xml:space="preserve">
-    <value>5</value>
-  </data>
   <data name="label9.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
@@ -2554,6 +1810,36 @@
   </data>
   <data name="&gt;&gt;radioButtonpx.ZOrder" xml:space="preserve">
     <value>2</value>
+  </data>
+  <data name="groupBox3.Location" type="System.Drawing.Point, System.Drawing">
+    <value>16, 94</value>
+  </data>
+  <data name="groupBox3.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>2, 2, 2, 2</value>
+  </data>
+  <data name="groupBox3.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>2, 2, 2, 2</value>
+  </data>
+  <data name="groupBox3.Size" type="System.Drawing.Size, System.Drawing">
+    <value>346, 38</value>
+  </data>
+  <data name="groupBox3.TabIndex" type="System.Int32, mscorlib">
+    <value>5</value>
+  </data>
+  <data name="groupBox3.Text" xml:space="preserve">
+    <value>Unit for margins (JPEG / PNG / BMP / TIFF)</value>
+  </data>
+  <data name="&gt;&gt;groupBox3.Name" xml:space="preserve">
+    <value>groupBox3</value>
+  </data>
+  <data name="&gt;&gt;groupBox3.Type" xml:space="preserve">
+    <value>System.Windows.Forms.GroupBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;groupBox3.Parent" xml:space="preserve">
+    <value>OutputImgSettingTab</value>
+  </data>
+  <data name="&gt;&gt;groupBox3.ZOrder" xml:space="preserve">
+    <value>5</value>
   </data>
   <data name="bottomMarginUpDown.Location" type="System.Drawing.Point, System.Drawing">
     <value>212, 70</value>
@@ -2795,6 +2081,39 @@
   <data name="&gt;&gt;label8.ZOrder" xml:space="preserve">
     <value>14</value>
   </data>
+  <data name="OutputImgSettingTab.Location" type="System.Drawing.Point, System.Drawing">
+    <value>4, 22</value>
+  </data>
+  <data name="OutputImgSettingTab.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>2, 2, 2, 2</value>
+  </data>
+  <data name="OutputImgSettingTab.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>2, 2, 2, 2</value>
+  </data>
+  <data name="OutputImgSettingTab.Size" type="System.Drawing.Size, System.Drawing">
+    <value>402, 308</value>
+  </data>
+  <data name="OutputImgSettingTab.TabIndex" type="System.Int32, mscorlib">
+    <value>1</value>
+  </data>
+  <data name="OutputImgSettingTab.Text" xml:space="preserve">
+    <value>Images</value>
+  </data>
+  <data name="&gt;&gt;OutputImgSettingTab.Name" xml:space="preserve">
+    <value>OutputImgSettingTab</value>
+  </data>
+  <data name="&gt;&gt;OutputImgSettingTab.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TabPage, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;OutputImgSettingTab.Parent" xml:space="preserve">
+    <value>SettingTab</value>
+  </data>
+  <data name="&gt;&gt;OutputImgSettingTab.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="pdftexBrowseButton.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Top, Right</value>
+  </data>
   <data name="pdftexBrowseButton.Location" type="System.Drawing.Point, System.Drawing">
     <value>332, 41</value>
   </data>
@@ -2819,11 +2138,14 @@
   <data name="&gt;&gt;pdftexBrowseButton.ZOrder" xml:space="preserve">
     <value>0</value>
   </data>
+  <data name="pdftexTextBox.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Top, Left, Right</value>
+  </data>
   <data name="pdftexTextBox.Location" type="System.Drawing.Point, System.Drawing">
     <value>80, 41</value>
   </data>
   <data name="pdftexTextBox.Size" type="System.Drawing.Size, System.Drawing">
-    <value>243, 19</value>
+    <value>244, 19</value>
   </data>
   <data name="pdftexTextBox.TabIndex" type="System.Int32, mscorlib">
     <value>2</value>
@@ -2840,6 +2162,9 @@
   <data name="&gt;&gt;pdftexTextBox.ZOrder" xml:space="preserve">
     <value>1</value>
   </data>
+  <data name="label23.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Top, Right</value>
+  </data>
   <data name="label23.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
@@ -2854,6 +2179,9 @@
   </data>
   <data name="label23.Text" xml:space="preserve">
     <value>pdfTeX ：</value>
+  </data>
+  <data name="label23.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
+    <value>MiddleRight</value>
   </data>
   <data name="&gt;&gt;label23.Name" xml:space="preserve">
     <value>label23</value>
