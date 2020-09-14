@@ -311,7 +311,7 @@ namespace TeX2img {
         private void GuessPathButton_Click(object sender, EventArgs e) {
             string platex = Properties.Settings.Default.GuessPlatexPath();
             platexTextBox.Text = platex;
-            var pdftex = Properties.Settings.Default.GuessPdftexPath();
+            var pdftex = Properties.Settings.Default.GuessPdftexPath(platex);
             pdftexTextBox.Text = pdftex;
             var dvipdfmx = Properties.Settings.Default.GuessDvipdfmxPath();
             dvipdfmxTextBox.Text = dvipdfmx;

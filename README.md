@@ -157,3 +157,7 @@ For further details, see the website of each library.
 * 2.1.2 (2020/08/11)
     - Supported high DPI.
     - TeX2img requires .NET Framework version >= 4.7.2.
+
+* 2.1.3 (2020/09/14)
+    - Added the path setting of pdfTeX.
+
