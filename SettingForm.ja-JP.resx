@@ -149,6 +149,30 @@
   <data name="gsOpenFileDialog.Filter" xml:space="preserve">
     <value>gswin32c.exe|gswin32c.exe|プログラム (*.exe;*.bat)|*.exe;*.bat|全てのファイル (*.*)|*.*</value>
   </data>
+  <data name="eachImageSettingTab.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>1, 1, 1, 1</value>
+  </data>
+  <data name="eachImageSettingTab.Size" type="System.Drawing.Size, System.Drawing">
+    <value>402, 309</value>
+  </data>
+  <data name="eachImageSettingTab.Text" xml:space="preserve">
+    <value>画像形式ごとの設定</value>
+  </data>
+  <data name="groupBox2.Location" type="System.Drawing.Point, System.Drawing">
+    <value>25, 89</value>
+  </data>
+  <data name="groupBox2.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>1, 1, 1, 1</value>
+  </data>
+  <data name="groupBox2.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>1, 1, 1, 1</value>
+  </data>
+  <data name="groupBox2.Size" type="System.Drawing.Size, System.Drawing">
+    <value>344, 67</value>
+  </data>
+  <data name="groupBox2.Text" xml:space="preserve">
+    <value>アニメーション設定（SVG(Z)）</value>
+  </data>
   <data name="animationLoopNumericUpDown.Location" type="System.Drawing.Point, System.Drawing">
     <value>146, 39</value>
   </data>
@@ -181,21 +205,6 @@
   </data>
   <data name="label19.Text" xml:space="preserve">
     <value>フレーム間ディレイ（秒）</value>
-  </data>
-  <data name="groupBox2.Location" type="System.Drawing.Point, System.Drawing">
-    <value>25, 89</value>
-  </data>
-  <data name="groupBox2.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>1, 1, 1, 1</value>
-  </data>
-  <data name="groupBox2.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>1, 1, 1, 1</value>
-  </data>
-  <data name="groupBox2.Size" type="System.Drawing.Size, System.Drawing">
-    <value>344, 67</value>
-  </data>
-  <data name="groupBox2.Text" xml:space="preserve">
-    <value>アニメーション設定（SVG(Z)）</value>
   </data>
   <data name="MergeOutputFilesCheckBox.Location" type="System.Drawing.Point, System.Drawing">
     <value>13, 71</value>
@@ -242,14 +251,14 @@
   <data name="notOutllinedTextCheckBox.Text" xml:space="preserve">
     <value>テキスト保持する（PDF / SVG(Z)）</value>
   </data>
-  <data name="eachImageSettingTab.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+  <data name="EditorSettingTab.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>1, 1, 1, 1</value>
   </data>
-  <data name="eachImageSettingTab.Size" type="System.Drawing.Size, System.Drawing">
+  <data name="EditorSettingTab.Size" type="System.Drawing.Size, System.Drawing">
     <value>402, 309</value>
   </data>
-  <data name="eachImageSettingTab.Text" xml:space="preserve">
-    <value>画像形式ごとの設定</value>
+  <data name="EditorSettingTab.Text" xml:space="preserve">
+    <value>エディタの設定</value>
   </data>
   <data name="acceptTabCheckBox.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>1, 1, 1, 1</value>
@@ -277,6 +286,21 @@
   </data>
   <data name="label17.Text" xml:space="preserve">
     <value>タブ幅</value>
+  </data>
+  <data name="showGroupBox.Location" type="System.Drawing.Point, System.Drawing">
+    <value>14, 215</value>
+  </data>
+  <data name="showGroupBox.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>1, 1, 1, 1</value>
+  </data>
+  <data name="showGroupBox.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>1, 1, 1, 1</value>
+  </data>
+  <data name="showGroupBox.Size" type="System.Drawing.Size, System.Drawing">
+    <value>370, 37</value>
+  </data>
+  <data name="showGroupBox.Text" xml:space="preserve">
+    <value>表示</value>
   </data>
   <data name="drawFullWidthSpaceCheckBox.Location" type="System.Drawing.Point, System.Drawing">
     <value>88, 17</value>
@@ -332,21 +356,6 @@
   <data name="drawSpaceCheckBox.Text" xml:space="preserve">
     <value>半角空白</value>
   </data>
-  <data name="showGroupBox.Location" type="System.Drawing.Point, System.Drawing">
-    <value>14, 215</value>
-  </data>
-  <data name="showGroupBox.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>1, 1, 1, 1</value>
-  </data>
-  <data name="showGroupBox.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>1, 1, 1, 1</value>
-  </data>
-  <data name="showGroupBox.Size" type="System.Drawing.Size, System.Drawing">
-    <value>370, 37</value>
-  </data>
-  <data name="showGroupBox.Text" xml:space="preserve">
-    <value>表示</value>
-  </data>
   <data name="label15.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>1, 0, 1, 0</value>
   </data>
@@ -367,6 +376,18 @@
   </data>
   <data name="label12.Text" xml:space="preserve">
     <value>色の設定</value>
+  </data>
+  <data name="FontColorGroup.Location" type="System.Drawing.Point, System.Drawing">
+    <value>236, 57</value>
+  </data>
+  <data name="FontColorGroup.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>1, 1, 1, 1</value>
+  </data>
+  <data name="FontColorGroup.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>1, 1, 1, 1</value>
+  </data>
+  <data name="FontColorGroup.Size" type="System.Drawing.Size, System.Drawing">
+    <value>146, 127</value>
   </data>
   <data name="label14.Location" type="System.Drawing.Point, System.Drawing">
     <value>13, 27</value>
@@ -403,18 +424,6 @@
   </data>
   <data name="BackColorButton.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>1, 1, 1, 1</value>
-  </data>
-  <data name="FontColorGroup.Location" type="System.Drawing.Point, System.Drawing">
-    <value>236, 57</value>
-  </data>
-  <data name="FontColorGroup.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>1, 1, 1, 1</value>
-  </data>
-  <data name="FontColorGroup.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>1, 1, 1, 1</value>
-  </data>
-  <data name="FontColorGroup.Size" type="System.Drawing.Size, System.Drawing">
-    <value>146, 127</value>
   </data>
   <data name="FontColorListView.Items" mimetype="application/x-microsoft.net.object.binary.base64">
     <value>
@@ -606,14 +615,29 @@
   <data name="label11.Text" xml:space="preserve">
     <value>フォント設定</value>
   </data>
-  <data name="EditorSettingTab.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>1, 1, 1, 1</value>
+  <data name="AfterCompilingTab.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>2, 3, 2, 3</value>
   </data>
-  <data name="EditorSettingTab.Size" type="System.Drawing.Size, System.Drawing">
+  <data name="AfterCompilingTab.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>2, 3, 2, 3</value>
+  </data>
+  <data name="AfterCompilingTab.Size" type="System.Drawing.Size, System.Drawing">
     <value>402, 309</value>
   </data>
-  <data name="EditorSettingTab.Text" xml:space="preserve">
-    <value>エディタの設定</value>
+  <data name="AfterCompilingTab.Text" xml:space="preserve">
+    <value>コンパイル後処理</value>
+  </data>
+  <data name="groupBox4.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>1, 1, 1, 1</value>
+  </data>
+  <data name="groupBox4.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>1, 1, 1, 1</value>
+  </data>
+  <data name="groupBox4.Size" type="System.Drawing.Size, System.Drawing">
+    <value>352, 80</value>
+  </data>
+  <data name="groupBox4.Text" xml:space="preserve">
+    <value>作業ディレクトリ</value>
   </data>
   <data name="workDir_CurrentRadioButton.Location" type="System.Drawing.Point, System.Drawing">
     <value>4, 57</value>
@@ -659,18 +683,6 @@
   </data>
   <data name="openTmpFolderButton.Text" xml:space="preserve">
     <value>一時フォルダを開く...</value>
-  </data>
-  <data name="groupBox4.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>1, 1, 1, 1</value>
-  </data>
-  <data name="groupBox4.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>1, 1, 1, 1</value>
-  </data>
-  <data name="groupBox4.Size" type="System.Drawing.Size, System.Drawing">
-    <value>352, 80</value>
-  </data>
-  <data name="groupBox4.Text" xml:space="preserve">
-    <value>作業ディレクトリ</value>
   </data>
   <data name="setFileToClipboardCheckBox.Location" type="System.Drawing.Point, System.Drawing">
     <value>14, 107</value>
@@ -732,17 +744,17 @@
   <data name="deleteTmpFilesCheckBox.Text" xml:space="preserve">
     <value>コンパイル後作業ファイルを削除する（推奨）</value>
   </data>
-  <data name="AfterCompilingTab.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+  <data name="OutputImgSettingTab.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>2, 3, 2, 3</value>
   </data>
-  <data name="AfterCompilingTab.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+  <data name="OutputImgSettingTab.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>2, 3, 2, 3</value>
   </data>
-  <data name="AfterCompilingTab.Size" type="System.Drawing.Size, System.Drawing">
+  <data name="OutputImgSettingTab.Size" type="System.Drawing.Size, System.Drawing">
     <value>402, 309</value>
   </data>
-  <data name="AfterCompilingTab.Text" xml:space="preserve">
-    <value>コンパイル後処理</value>
+  <data name="OutputImgSettingTab.Text" xml:space="preserve">
+    <value>出力画像設定</value>
   </data>
   <data name="label4.Location" type="System.Drawing.Point, System.Drawing">
     <value>269, 56</value>
@@ -795,6 +807,21 @@
   <data name="KeepPageSizeCheckBox.Text" xml:space="preserve">
     <value>ページサイズを維持する</value>
   </data>
+  <data name="groupBox3.Location" type="System.Drawing.Point, System.Drawing">
+    <value>16, 95</value>
+  </data>
+  <data name="groupBox3.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>1, 1, 1, 1</value>
+  </data>
+  <data name="groupBox3.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>1, 1, 1, 1</value>
+  </data>
+  <data name="groupBox3.Size" type="System.Drawing.Size, System.Drawing">
+    <value>346, 39</value>
+  </data>
+  <data name="groupBox3.Text" xml:space="preserve">
+    <value>余白の単位（JPEG / PNG / BMP / TIFF）</value>
+  </data>
   <data name="label9.Location" type="System.Drawing.Point, System.Drawing">
     <value>109, 19</value>
   </data>
@@ -818,21 +845,6 @@
   </data>
   <data name="radioButtonpx.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>1, 1, 1, 1</value>
-  </data>
-  <data name="groupBox3.Location" type="System.Drawing.Point, System.Drawing">
-    <value>16, 95</value>
-  </data>
-  <data name="groupBox3.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>1, 1, 1, 1</value>
-  </data>
-  <data name="groupBox3.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>1, 1, 1, 1</value>
-  </data>
-  <data name="groupBox3.Size" type="System.Drawing.Size, System.Drawing">
-    <value>346, 39</value>
-  </data>
-  <data name="groupBox3.Text" xml:space="preserve">
-    <value>余白の単位（JPEG / PNG / BMP / TIFF）</value>
   </data>
   <data name="bottomMarginUpDown.Location" type="System.Drawing.Point, System.Drawing">
     <value>190, 71</value>
@@ -900,17 +912,20 @@
   <data name="label8.Text" xml:space="preserve">
     <value>解像度レベル（1〜100）</value>
   </data>
-  <data name="OutputImgSettingTab.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+  <data name="BasicSettingTab.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>2, 3, 2, 3</value>
   </data>
-  <data name="OutputImgSettingTab.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+  <data name="BasicSettingTab.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>2, 3, 2, 3</value>
   </data>
-  <data name="OutputImgSettingTab.Size" type="System.Drawing.Size, System.Drawing">
+  <data name="BasicSettingTab.Size" type="System.Drawing.Size, System.Drawing">
     <value>402, 309</value>
   </data>
-  <data name="OutputImgSettingTab.Text" xml:space="preserve">
-    <value>出力画像設定</value>
+  <data name="BasicSettingTab.Text" xml:space="preserve">
+    <value>基本設定</value>
+  </data>
+  <data name="pdftexBrowseButton.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Top, Right</value>
   </data>
   <data name="pdftexBrowseButton.Location" type="System.Drawing.Point, System.Drawing">
     <value>332, 38</value>
@@ -924,20 +939,26 @@
   <data name="pdftexBrowseButton.Text" xml:space="preserve">
     <value>参照</value>
   </data>
+  <data name="pdftexTextBox.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Top, Left, Right</value>
+  </data>
   <data name="pdftexTextBox.Location" type="System.Drawing.Point, System.Drawing">
     <value>80, 38</value>
   </data>
   <data name="pdftexTextBox.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>2, 2, 2, 2</value>
   </data>
-  <data name="pdftexTextBox.Size" type="System.Drawing.Size, System.Drawing">
-    <value>244, 19</value>
+  <data name="label23.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Top, Right</value>
   </data>
   <data name="label23.Location" type="System.Drawing.Point, System.Drawing">
     <value>30, 41</value>
   </data>
   <data name="label23.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>2, 0, 2, 0</value>
+  </data>
+  <data name="label23.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
+    <value>MiddleRight</value>
   </data>
   <data name="languageComboBox.Location" type="System.Drawing.Point, System.Drawing">
     <value>71, 255</value>
@@ -1103,18 +1124,6 @@
   </data>
   <data name="label1.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>1, 0, 1, 0</value>
-  </data>
-  <data name="BasicSettingTab.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>2, 3, 2, 3</value>
-  </data>
-  <data name="BasicSettingTab.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>2, 3, 2, 3</value>
-  </data>
-  <data name="BasicSettingTab.Size" type="System.Drawing.Size, System.Drawing">
-    <value>402, 309</value>
-  </data>
-  <data name="BasicSettingTab.Text" xml:space="preserve">
-    <value>基本設定</value>
   </data>
   <data name="SettingTab.Location" type="System.Drawing.Point, System.Drawing">
     <value>13, 13</value>
