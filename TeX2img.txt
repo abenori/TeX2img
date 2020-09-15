@@ -9,7 +9,7 @@
 
 * EPS ファイル（フォントをアウトライン化）
 * PDF ファイル（フォントをアウトライン化またはテキストを保持）
-* SVG(Z) ファイル（フォントをアウトライン化かつテキストも保持）
+* SVG(Z) ファイル（フォントをアウトライン化かつテキストも保持，要 MuPDF）
 * JPEG ファイル
 * TIFF ファイル
 * PNG ファイル
@@ -22,7 +22,7 @@
 
 ## 動作条件
 * Windows Vista 以降．
-* .NET Framework 4.5.2 以降．
+* .NET Framework 4.7.2 以降．
 * 十分新しい TeX ディストリビューション（W32TeX か TeX Live を推奨）がインストールされていて，適切な LaTeX エンジンと dvi ドライバ，および pdftex が使えること．
 * Ghostscript (Version 9以上を推奨) がインストールされ，使えること．（TeX Live 内のものでも利用可能です．）
 
@@ -35,6 +35,8 @@ TeX2imgc.exe は CUI モードで動かすためのラッパです．TeX2img.exe
 	> TeX2imgc.exe [Options] Input Output [Input Output...]
 
 です．各種設定項目は TeX2img のそれを受け継ぎますが，変換後のプレビューのみ必ず行わないようになります．行いたい場合はオプション /preview を指定してください．
+
+SVG ファイルの生成には MuPDF が必要です．[MuPDF](https://mupdf.com/index.html)からオリジナルを，または http://www.ms.u-tokyo.ac.jp/~abenori/soft/index.html#MUTOOL  から改変版をダウンロードし，mutool.exe を TeX2img.exe と同じフォルダにおいてください．
 
 
 ## 制限
@@ -126,20 +128,17 @@ http://sgry.b.sourceforge.jp/
 http://www.ndesk.org/Options
 * 日本語文字コードの推測には，Gauche に含まれている推測ルーチン（を C# に移植したもの）を利用しています．
 http://practical-scheme.net/gauche/index-j.html
-* mudraw に独自拡張を施したものを利用しています．
-http://www.mupdf.com/
 * 添付 pdfiumdraw には PDFium を利用しています．
 https://pdfium.googlesource.com/pdfium/
 
 
 ## ライセンス
 修正 BSD ライセンスです．詳しくは license.txt を参照してください．
-なお，用いているライブラリなどのライセンスは以下の通りです．
+なお，梱包しているライブラリなどのライセンスは以下の通りです．
 
 * Azuki エディタコンポーネント Azuki.dll は zlib ライセンス．
 * NDesk.Options は MIT ライセンス．
 * Gauche は修正 BSD ライセンス．
-* mudraw は GPL v3 ライセンス．
 * PDFium は修正 BSD ライセンス．
 * pdfiumdraw は修正 BSD ライセンスとしています．
 詳細は各々のページをご覧ください．
