@@ -44,10 +44,10 @@ To generate SVG file, MuPDF is needed. Download the original version from [MuPDF
 
 * Since the internal character code is Unicode, you can use the characters outside of Shift_JIS encoding through "uplatex", "lualatex", etc. To achieve it, please choose "UTF-8" or "no (input UTF-8)" for the character encoding.
 
-* If TeX2img guesses that the LaTeX program generates PDF file directly, TeX2img skips DVI driver.
-* You can specify not only "dvipdfmx" but also "dvips" for `/dvidriver` because TeX2img converts PostScript to PDF via Ghostscript, if TeX2img guesses that the DVI driver generates a PostScript file.
+* If TeX2img guesses that the LaTeX program generates a PDF file directly, TeX2img skips DVI driver.
+* You can specify not only "dvipdfmx" but also "dvips" for DVI driver because TeX2img converts PostScript to PDF via Ghostscript, if TeX2img guesses that the DVI driver generates a PostScript file.
 
-* If you drag and drop the generated file to TeX2img (or [File(F)] -> [Import(O)]), the source file is restored.
+* If you drag and drop the generated file to TeX2img (or [File(F)] -> [Import(O)]), the source file is restored. (This function can be turned off from [Tools(T)] -> [Options...(O)].)
 
 ## Options
 The following are the options for TeX2img.exe or TeX2imgc.exe.
@@ -98,7 +98,7 @@ If you specify several options, TeX2img takes the last one. For example,
 
 	tex2imgc /transparent- /transparent a.tex a.png
 
-will generate transparent png file. In particular, because `/load-defaults` makes all settings default ones, the options before /load-defaults are ignored. The option `/load-defaults` should be placed at the first.
+will generate transparent png file. In particular, because `/load-defaults` makes all settings default ones, the options before `/load-defaults` are ignored. The option `/load-defaults` should be placed at the first.
 
 ## Reference
 * Official webpage of TeX2img: https://tex2img.tech/
