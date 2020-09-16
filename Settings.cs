@@ -159,11 +159,14 @@ namespace TeX2img.Properties {
             return GuessPdftexPath(platexPath);
         }
         public string GuessPdftexPath(string platex) {
-            var dir = Path.GetDirectoryName(platex);
-            if(dir != "") {
-                var pdftex = Path.Combine(dir, "pdftex.exe");
-                if (System.IO.File.Exists(pdftex)) return pdftex;
+            try {
+                var dir = Path.GetDirectoryName(platex);
+                if (dir != "") {
+                    var pdftex = Path.Combine(dir, "pdftex.exe");
+                    if (System.IO.File.Exists(pdftex)) return pdftex;
+                }
             }
+            catch (Exception) { }
             return Converter.which("pdftex.exe");
         }
 
