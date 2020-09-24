@@ -119,12 +119,40 @@ namespace TeX2img {
 
         #region 参照ボタンクリックのイベントハンドラ
         private void OutputBrowseButton_Click(object sender, EventArgs e) {
+            var file = outputFileNameTextBox.Text;
+            saveFileDialog1.FileName = "";
+            if(file != "") {
+                try {
+                    var basename = Path.GetFileName(file);
+                    var dir = Path.GetDirectoryName(file);
+                    var ext = Path.GetExtension(file);
+                    if (ext.StartsWith(".")) ext = ext.Substring(1);
+                    saveFileDialog1.FileName = basename;
+                    saveFileDialog1.InitialDirectory = dir;
+                    var filters = saveFileDialog1.Filter.Split(new char[] { '|' }).Where((fil,index) => (index %2 == 1)).Select(s => s.Split(new char[] { ';' })).ToArray();
+                    for(int i = 0; i < filters.Length; ++i) {
+                        foreach(var filext in filters[i]) {
+                            if (filext.ToLower().EndsWith(ext.ToLower())) {
+                                saveFileDialog1.FilterIndex = i + 1;
+                                break;
+                            }
+                        }
+                    }
+                }
+                catch (Exception) { }
+            }
             if(saveFileDialog1.ShowDialog() == DialogResult.OK) {
                 outputFileNameTextBox.Text = saveFileDialog1.FileName;
             }
         }
 
         private void InputFileBrowseButton_Click(object sender, EventArgs e) {
+            openFileDialog1.FileName = "";
+            try {
+                var file = inputFileNameTextBox.Text;
+                if (file != "") openFileDialog1.InitialDirectory = Path.GetDirectoryName(file);
+            }
+            catch (Exception) { }
             if(openFileDialog1.ShowDialog() == DialogResult.OK) {
                 inputFileNameTextBox.Text = openFileDialog1.FileName;
             }

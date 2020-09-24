@@ -30,7 +30,7 @@
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
-            Sgry.Azuki.FontInfo fontInfo2 = new Sgry.Azuki.FontInfo();
+            Sgry.Azuki.FontInfo fontInfo1 = new Sgry.Azuki.FontInfo();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.FileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.GenerateEPSToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -78,101 +78,100 @@
             // 
             // menuStrip1
             // 
-            this.menuStrip1.GripMargin = new System.Windows.Forms.Padding(2, 2, 0, 2);
+            resources.ApplyResources(this.menuStrip1, "menuStrip1");
             this.menuStrip1.ImageScalingSize = new System.Drawing.Size(24, 24);
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.FileToolStripMenuItem,
             this.表示VToolStripMenuItem,
             this.SettingToolStripMenuItem,
             this.ヘルプHToolStripMenuItem});
-            resources.ApplyResources(this.menuStrip1, "menuStrip1");
             this.menuStrip1.Name = "menuStrip1";
             // 
             // FileToolStripMenuItem
             // 
+            resources.ApplyResources(this.FileToolStripMenuItem, "FileToolStripMenuItem");
             this.FileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.GenerateEPSToolStripMenuItem,
             this.ImportToolStripMenuItem,
             this.ExportToolStripMenuItem,
             this.ExitToolStripMenuItem});
             this.FileToolStripMenuItem.Name = "FileToolStripMenuItem";
-            resources.ApplyResources(this.FileToolStripMenuItem, "FileToolStripMenuItem");
             // 
             // GenerateEPSToolStripMenuItem
             // 
-            this.GenerateEPSToolStripMenuItem.Name = "GenerateEPSToolStripMenuItem";
             resources.ApplyResources(this.GenerateEPSToolStripMenuItem, "GenerateEPSToolStripMenuItem");
+            this.GenerateEPSToolStripMenuItem.Name = "GenerateEPSToolStripMenuItem";
             this.GenerateEPSToolStripMenuItem.Click += new System.EventHandler(this.GenerateButton_Click);
             // 
             // ImportToolStripMenuItem
             // 
-            this.ImportToolStripMenuItem.Name = "ImportToolStripMenuItem";
             resources.ApplyResources(this.ImportToolStripMenuItem, "ImportToolStripMenuItem");
+            this.ImportToolStripMenuItem.Name = "ImportToolStripMenuItem";
             this.ImportToolStripMenuItem.Click += new System.EventHandler(this.ImportToolStripMenuItem_Click);
             // 
             // ExportToolStripMenuItem
             // 
-            this.ExportToolStripMenuItem.Name = "ExportToolStripMenuItem";
             resources.ApplyResources(this.ExportToolStripMenuItem, "ExportToolStripMenuItem");
+            this.ExportToolStripMenuItem.Name = "ExportToolStripMenuItem";
             this.ExportToolStripMenuItem.Click += new System.EventHandler(this.ExportToolStripMenuItem_Click);
             // 
             // ExitToolStripMenuItem
             // 
-            this.ExitToolStripMenuItem.Name = "ExitToolStripMenuItem";
             resources.ApplyResources(this.ExitToolStripMenuItem, "ExitToolStripMenuItem");
+            this.ExitToolStripMenuItem.Name = "ExitToolStripMenuItem";
             this.ExitToolStripMenuItem.Click += new System.EventHandler(this.ExitCToolStripMenuItem_Click);
             // 
             // 表示VToolStripMenuItem
             // 
+            resources.ApplyResources(this.表示VToolStripMenuItem, "表示VToolStripMenuItem");
             this.表示VToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.showPreambleWindowToolStripMenuItem,
             this.showOutputWindowToolStripMenuItem,
             this.色入力ToolStripMenuItem});
             this.表示VToolStripMenuItem.Name = "表示VToolStripMenuItem";
-            resources.ApplyResources(this.表示VToolStripMenuItem, "表示VToolStripMenuItem");
             // 
             // showPreambleWindowToolStripMenuItem
             // 
-            this.showPreambleWindowToolStripMenuItem.Name = "showPreambleWindowToolStripMenuItem";
             resources.ApplyResources(this.showPreambleWindowToolStripMenuItem, "showPreambleWindowToolStripMenuItem");
+            this.showPreambleWindowToolStripMenuItem.Name = "showPreambleWindowToolStripMenuItem";
             this.showPreambleWindowToolStripMenuItem.Click += new System.EventHandler(this.showPreambleWindowToolStripMenuItem_Click);
             // 
             // showOutputWindowToolStripMenuItem
             // 
-            this.showOutputWindowToolStripMenuItem.Name = "showOutputWindowToolStripMenuItem";
             resources.ApplyResources(this.showOutputWindowToolStripMenuItem, "showOutputWindowToolStripMenuItem");
+            this.showOutputWindowToolStripMenuItem.Name = "showOutputWindowToolStripMenuItem";
             this.showOutputWindowToolStripMenuItem.Click += new System.EventHandler(this.showOutputWindowToolStripMenuItem_Click);
             // 
             // 色入力ToolStripMenuItem
             // 
-            this.色入力ToolStripMenuItem.Name = "色入力ToolStripMenuItem";
             resources.ApplyResources(this.色入力ToolStripMenuItem, "色入力ToolStripMenuItem");
+            this.色入力ToolStripMenuItem.Name = "色入力ToolStripMenuItem";
             this.色入力ToolStripMenuItem.Click += new System.EventHandler(this.ColorInputHelperToolStripMenuItem_Click);
             // 
             // SettingToolStripMenuItem
             // 
+            resources.ApplyResources(this.SettingToolStripMenuItem, "SettingToolStripMenuItem");
             this.SettingToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.オプションOToolStripMenuItem});
             this.SettingToolStripMenuItem.Name = "SettingToolStripMenuItem";
-            resources.ApplyResources(this.SettingToolStripMenuItem, "SettingToolStripMenuItem");
             // 
             // オプションOToolStripMenuItem
             // 
-            this.オプションOToolStripMenuItem.Name = "オプションOToolStripMenuItem";
             resources.ApplyResources(this.オプションOToolStripMenuItem, "オプションOToolStripMenuItem");
+            this.オプションOToolStripMenuItem.Name = "オプションOToolStripMenuItem";
             this.オプションOToolStripMenuItem.Click += new System.EventHandler(this.SettingToolStripMenuItem_Click);
             // 
             // ヘルプHToolStripMenuItem
             // 
+            resources.ApplyResources(this.ヘルプHToolStripMenuItem, "ヘルプHToolStripMenuItem");
             this.ヘルプHToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.AboutToolStripMenuItem});
             this.ヘルプHToolStripMenuItem.Name = "ヘルプHToolStripMenuItem";
-            resources.ApplyResources(this.ヘルプHToolStripMenuItem, "ヘルプHToolStripMenuItem");
             // 
             // AboutToolStripMenuItem
             // 
-            this.AboutToolStripMenuItem.Name = "AboutToolStripMenuItem";
             resources.ApplyResources(this.AboutToolStripMenuItem, "AboutToolStripMenuItem");
+            this.AboutToolStripMenuItem.Name = "AboutToolStripMenuItem";
             this.AboutToolStripMenuItem.Click += new System.EventHandler(this.AboutToolStripMenuItem_Click);
             // 
             // groupBox1
@@ -189,8 +188,8 @@
             // sourceTextBox
             // 
             this.sourceTextBox.AcceptsTab = false;
-            this.sourceTextBox.AllowDrop = true;
             resources.ApplyResources(this.sourceTextBox, "sourceTextBox");
+            this.sourceTextBox.AllowDrop = true;
             this.sourceTextBox.BackColor = System.Drawing.SystemColors.Window;
             this.sourceTextBox.ContextMenuStrip = this.sourceTextBoxMenu;
             this.sourceTextBox.Cursor = System.Windows.Forms.Cursors.IBeam;
@@ -200,10 +199,10 @@
             | Sgry.Azuki.DrawingOption.HighlightsMatchedBracket)));
             this.sourceTextBox.DrawsEofMark = true;
             this.sourceTextBox.FirstVisibleLine = 0;
-            fontInfo2.Name = "ＭＳ ゴシック";
-            fontInfo2.Size = 12;
-            fontInfo2.Style = System.Drawing.FontStyle.Regular;
-            this.sourceTextBox.FontInfo = fontInfo2;
+            fontInfo1.Name = "ＭＳ ゴシック";
+            fontInfo1.Size = 12;
+            fontInfo1.Style = System.Drawing.FontStyle.Regular;
+            this.sourceTextBox.FontInfo = fontInfo1;
             this.sourceTextBox.ForeColor = System.Drawing.Color.Black;
             this.sourceTextBox.HighlightsCurrentLine = false;
             this.sourceTextBox.Name = "sourceTextBox";
@@ -220,6 +219,7 @@
             // 
             // sourceTextBoxMenu
             // 
+            resources.ApplyResources(this.sourceTextBoxMenu, "sourceTextBoxMenu");
             this.sourceTextBoxMenu.ImageScalingSize = new System.Drawing.Size(24, 24);
             this.sourceTextBoxMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.Undo,
@@ -232,58 +232,57 @@
             this.toolStripSeparator2,
             this.SelectAll});
             this.sourceTextBoxMenu.Name = "sourceTextBoxMenu";
-            resources.ApplyResources(this.sourceTextBoxMenu, "sourceTextBoxMenu");
             // 
             // Undo
             // 
-            this.Undo.Name = "Undo";
             resources.ApplyResources(this.Undo, "Undo");
+            this.Undo.Name = "Undo";
             this.Undo.Click += new System.EventHandler(this.Undo_Click);
             // 
             // Redo
             // 
-            this.Redo.Name = "Redo";
             resources.ApplyResources(this.Redo, "Redo");
+            this.Redo.Name = "Redo";
             this.Redo.Click += new System.EventHandler(this.Redo_Click);
             // 
             // toolStripSeparator1
             // 
-            this.toolStripSeparator1.Name = "toolStripSeparator1";
             resources.ApplyResources(this.toolStripSeparator1, "toolStripSeparator1");
+            this.toolStripSeparator1.Name = "toolStripSeparator1";
             // 
             // Cut
             // 
-            this.Cut.Name = "Cut";
             resources.ApplyResources(this.Cut, "Cut");
+            this.Cut.Name = "Cut";
             this.Cut.Click += new System.EventHandler(this.Cut_Click);
             // 
             // Copy
             // 
-            this.Copy.Name = "Copy";
             resources.ApplyResources(this.Copy, "Copy");
+            this.Copy.Name = "Copy";
             this.Copy.Click += new System.EventHandler(this.Copy_Click);
             // 
             // Paste
             // 
-            this.Paste.Name = "Paste";
             resources.ApplyResources(this.Paste, "Paste");
+            this.Paste.Name = "Paste";
             this.Paste.Click += new System.EventHandler(this.Paste_Click);
             // 
             // Delete
             // 
-            this.Delete.Name = "Delete";
             resources.ApplyResources(this.Delete, "Delete");
+            this.Delete.Name = "Delete";
             this.Delete.Click += new System.EventHandler(this.Delete_Click);
             // 
             // toolStripSeparator2
             // 
-            this.toolStripSeparator2.Name = "toolStripSeparator2";
             resources.ApplyResources(this.toolStripSeparator2, "toolStripSeparator2");
+            this.toolStripSeparator2.Name = "toolStripSeparator2";
             // 
             // SelectAll
             // 
-            this.SelectAll.Name = "SelectAll";
             resources.ApplyResources(this.SelectAll, "SelectAll");
+            this.SelectAll.Name = "SelectAll";
             this.SelectAll.Click += new System.EventHandler(this.SelectAll_Click);
             // 
             // InputFileBrowseButton
@@ -295,8 +294,8 @@
             // 
             // inputFileNameTextBox
             // 
-            this.inputFileNameTextBox.AllowDrop = true;
             resources.ApplyResources(this.inputFileNameTextBox, "inputFileNameTextBox");
+            this.inputFileNameTextBox.AllowDrop = true;
             this.inputFileNameTextBox.Name = "inputFileNameTextBox";
             this.inputFileNameTextBox.DragDrop += new System.Windows.Forms.DragEventHandler(this.inputFileNameTextBox_DragDrop);
             this.inputFileNameTextBox.DragEnter += new System.Windows.Forms.DragEventHandler(this.TextBox_DragEnter);
@@ -373,7 +372,6 @@
             // openFileDialog1
             // 
             this.openFileDialog1.DefaultExt = "tex";
-            this.openFileDialog1.FileName = "openFileDialog1";
             resources.ApplyResources(this.openFileDialog1, "openFileDialog1");
             // 
             // convertWorker
