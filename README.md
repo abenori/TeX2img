@@ -10,7 +10,7 @@ You can choose the following file formats:
 
 * EPS (outlined font)
 * PDF (outlined font or keep the text)
-* SVG(Z) (outlined font + keep the text)
+* SVG(Z) (outlined font + keep the text, MuPDF is needed)
 * JPEG
 * TIFF
 * PNG
@@ -36,6 +36,8 @@ TeX2imgc.exe is a wrapper program to execute TeX2img in a command-line.
 	> TeX2imgc.exe [Options] Input Output [Input Output...]
 
 All properties are inherited from those of TeX2img except preview after compiling (always false).
+
+To generate SVG file, MuPDF is needed. Download the original version from [MuPDF](https://mupdf.com/index.html) or modified (by me) version from [http://www.ms.u-tokyo.ac.jp/~abenori/soft/index.html#MUTOOL](http://www.ms.u-tokyo.ac.jp/~abenori/soft/index.html#MUTOOL) and put mutool.exe at the same directory as that of TeX2img.exe
 
 ## Tips
 * You can also specify the options for each program, for example, `"C:\w32tex\bin\platex.exe" --guess-input-enc`
@@ -112,8 +114,6 @@ http://sgry.b.sourceforge.jp/
 http://www.ndesk.org/Options
 * To guess Japanese character code, TeX2img uses a (C# version of) routine in Gauch.
 http://practical-scheme.net/gauche/index.html
-* TeX2img uses mudraw (with modifications).
-http://www.mupdf.com/
 * pdfiumdraw uses PDFium.
 https://pdfium.googlesource.com/pdfium/
 
@@ -123,7 +123,6 @@ For TeX2img itself, see [license.txt](./license.txt). For the libraries:
 * Azuki text editor engine: zlib license.
 * NDesk.Options: MIT license.
 * Gauche: modified BSD license.
-* mudraw: GPL v3 license.
 * PDFium: modified BSD license.
 * pdfiumdraw: modified BSD license.
 

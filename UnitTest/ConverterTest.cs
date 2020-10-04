@@ -157,6 +157,8 @@ namespace UnitTest {
 
             Settings.Default.platexPath = Settings.Default.GuessPlatexPath();
             Debug.WriteLine("platex = " + Settings.Default.platexPath);
+            Settings.Default.pdftexPath = Settings.Default.GuessPdftexPath();
+            Debug.WriteLine("pdftex = " + Settings.Default.pdftexPath);
             Settings.Default.dvipdfmxPath = Settings.Default.GuessDvipdfmxPath();
             Debug.WriteLine("dvipdfmx = " + Settings.Default.dvipdfmxPath);
             Settings.Default.gsPath = Settings.Default.GuessGsPath();
@@ -540,6 +542,7 @@ namespace UnitTest {
 
 
         public void showExtensionError(string file) { Debug.WriteLine("showExtensionError: \nfile = " + file); }
+        public void showNoToolError(string item, string tool) { Debug.WriteLine("showNoToolError: \nitem = " + item + "\ntool = " + tool); }
         public void showPathError(string exeName, string necessary) { Debug.WriteLine("showPathError:\n exeName = " + exeName + "\nnecessary = " + necessary); }
 //        public void appendOutput(string log) { Debug.WriteLine("appendOutput: log = \n" + log); }
         public void appendOutput(string log) { Debug.Write(log); }

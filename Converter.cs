@@ -167,36 +167,85 @@ namespace TeX2img {
             return new BoundingBoxPair(bb.Value, hiresbb.Value);
         }
 
+        BoundingBox pdfTeXbbBoxTobbBox(string left, string bottom, string right, string top) {
+            var enUS = new System.Globalization.CultureInfo("en-US");
+            decimal leftd = (decimal)(double.Parse(left, enUS) * 0.996274);
+            decimal bottomd = (decimal)(double.Parse(bottom, enUS) * 0.996274);
+            decimal rightd = (decimal)(double.Parse(right, enUS) * 0.996274);
+            decimal topd = (decimal)(double.Parse(top, enUS) * 0.996274);
+            return new BoundingBox(leftd, bottomd, rightd, topd);
+        }
+
         List<BoundingBoxPair> readPDFBox(string inputPDFFileName, List<int> pages, string boxname) {
+            var enUS = new System.Globalization.CultureInfo("en-US");
             try {
-                using (var mupdf = new MuPDF(Path.Combine(GetToolsPath(), "mudraw.exe"))) {
-                    if (controller_ != null) controller_.appendOutput("Getting the size of PDFBox...\n");
-                    var rv = new List<BoundingBoxPair>();
-                    var doc = mupdf.Execute<int>("open_document", Path.Combine(workingDir, inputPDFFileName));
-                    if (doc == 0) return null;
+                var rotates = new Dictionary<int, int>();
+                using (var proc = GetProcess()) {
+                    proc.StartInfo.FileName = Path.Combine(GetToolsPath(), "pdfiumdraw.exe");
+                    proc.StartInfo.Arguments = "--pages=";
+                    for (int i = 0; i < pages.Count; ++i) {
+                        if (i == 0) proc.StartInfo.Arguments += pages[i].ToString(enUS);
+                        else proc.StartInfo.Arguments += "," + pages[i].ToString(enUS);
+                    }
+                    proc.StartInfo.Arguments += " --output-rotate \"" + inputPDFFileName + "\"";
+                    string stdout = "";
+                    Action<string> read_stdout_func = (s) => { stdout += s; if (controller_ != null) controller_.appendOutput(s + "\n"); };
+                    Action<string> read_func = (s) => { if (controller_ != null) controller_.appendOutput(s + "\n"); };
+                    try {
+                        printCommandLine(proc);
+                        ReadOutputs(proc, Properties.Resources.EXEC_PDFIUMDRAW, read_stdout_func, read_func);
+                    }
+                    catch (Win32Exception) {
+                        if (controller_ != null) controller_.showToolError("pdfiumdraw.exe");
+                        return null;
+                    }
+                    catch (TimeoutException) { return null; }
+                    var match = Regex.Matches(stdout, "%%Page: ([0-9]+)[^PR]*%%Rotate: ([0-9]+)");
+                    if (match.Count != pages.Count) return null;
+                    foreach (Match m in match) {
+                        rotates[int.Parse(m.Groups[1].ToString())] = int.Parse(m.Groups[2].ToString());
+                    }
+                }
+                var tmpfile = TempFilesDeleter.GetTempFileName(".tex", workingDir);
+                if (tmpfile == null) return null;
+                tempFilesDeleter.AddTeXFile(tmpfile);
+                using (var fw = new StreamWriter(Path.Combine(workingDir, tmpfile))) {
+                    fw.WriteLine(@"\pdfoutput=1\relax");
+                    fw.WriteLine(@"\def\space{ }");
                     foreach (var p in pages) {
-                        if (abort) {
-                            if (controller_ != null) controller_.appendOutput(Properties.Resources.STOPCONVERTMSG + "\n");
-                            return null;
-                        }
-                        int rotate = 0;
-                        BoundingBox box = new BoundingBox(), media = new BoundingBox();
-                        const int repeatTimes = 10;
-                        for (int i = 1; i <= repeatTimes; ++i) {
-                            try {
-                                var page = mupdf.Execute<int>("load_page", doc, p - 1);
-                                media = mupdf.Execute< BoundingBox>("pdfbox_page", page, "media");
-                                box = mupdf.Execute<BoundingBox>("pdfbox_page", page, boxname);
-                                rotate = mupdf.Execute<int>("rotate_page", page);
-                                break;
-                            }
-                            catch (Exception) {
-                                mupdf.ClearError();
-                                if (i == repeatTimes) throw;
-                            }
-                        }
+                        fw.WriteLine(@"\pdfximage page " + p.ToString(enUS) + " mediabox{" + inputPDFFileName + "}");
+                        fw.WriteLine(@"\message{^^JPage: " + p.ToString(enUS) + "^^J}");
+                        fw.WriteLine(@"\message{media: \pdfximagebbox\pdflastximage 1 \space\pdfximagebbox\pdflastximage 2 \space\pdfximagebbox\pdflastximage 3 \space\pdfximagebbox\pdflastximage 4^^J}");
+                        fw.WriteLine(@"\pdfximage page " + p.ToString(enUS) + " " + boxname + "box{" + inputPDFFileName + "}");
+                        fw.WriteLine(@"\message{" + boxname + @": \pdfximagebbox\pdflastximage 1 \space\pdfximagebbox\pdflastximage 2 \space\pdfximagebbox\pdflastximage 3 \space\pdfximagebbox\pdflastximage 4^^J}");
+                    }
+                    fw.WriteLine(@"\bye");
+                }
+                List<BoundingBoxPair> rv = new List<BoundingBoxPair>();
+                using (var proc = GetProcess()) {
+                    string arg;
+                    string stdout = "";
+                    Action<string> read_stdout_func = (s) => { stdout += s; if (controller_ != null) controller_.appendOutput(s + "\n"); };
+                    Action<string> read_func = (s) => { if (controller_ != null) controller_.appendOutput(s + "\n"); };
+                    proc.StartInfo.FileName = setProcStartInfo(Properties.Settings.Default.pdftexPath, out arg);
+                    proc.StartInfo.Arguments = arg + " -no-shell-escape -interaction=nonstopmode \"" + tmpfile + "\"";
+                    try {
+                        printCommandLine(proc);
+                        ReadOutputs(proc, Properties.Resources.EXEC_PDFTEX, read_stdout_func, read_func);
+                    }
+                    catch (Win32Exception) {
+                        if (controller_ != null) controller_.showPathError("pdftex.exe", String.Format(Properties.Resources.TEX_DISTRIBUTION, "pdftex"));
+                        return null;
+                    }
+                    catch (TimeoutException) { return null; }
+                    stdout = stdout.Replace("\r", "").Replace("\n", "");
+                    var match = Regex.Matches(stdout, @"Page: *([0-9]+) *media: *([0-9\.]+)pt *([0-9\.]+)pt *([0-9\.]+)pt *([0-9\.])+pt *" + boxname + @": *([0-9\.]+)pt *([0-9\.]+)pt *([0-9\.]+)pt *([0-9\.]+)pt");
+                    if (match.Count != pages.Count) return null;
+                    foreach (Match m in match) {
+                        var media = pdfTeXbbBoxTobbBox(m.Groups[2].ToString(), m.Groups[3].ToString(), m.Groups[4].ToString(), m.Groups[5].ToString());
+                        var box = pdfTeXbbBoxTobbBox(m.Groups[6].ToString(), m.Groups[7].ToString(), m.Groups[8].ToString(), m.Groups[9].ToString());
                         BoundingBox bb;
-                        switch (rotate) {
+                        switch (rotates[int.Parse(m.Groups[1].ToString())]) {
                         default:
                         case 0:
                             bb = new BoundingBox(box.Left - media.Left, box.Bottom - media.Bottom, box.Right - media.Left, box.Top - media.Bottom);
@@ -211,12 +260,12 @@ namespace TeX2img {
                             bb = new BoundingBox(media.Top - box.Top, box.Left - media.Left, media.Top - box.Bottom, box.Right - media.Left);
                             break;
                         }
-                        if (controller_ != null) controller_.appendOutput(bb.ToString() + " (Page " + p + ")\n");
+                        if (controller_ != null) controller_.appendOutput(bb.ToString() + " (Page " + m.Groups[1].ToString() + ")\n");
                         rv.Add(new BoundingBoxPair(bb.HiresBBToBB(), bb));
                     }
-                    if (controller_ != null) controller_.appendOutput("\n");
-                    return rv;
                 }
+                if (controller_ != null) controller_.appendOutput("\n");
+                return rv;
             }
             catch (Exception e) {
                 if (controller_ != null) controller_.appendOutput(e.Message + "\n");
@@ -226,6 +275,8 @@ namespace TeX2img {
                 return null;
             }
         }
+
+
 
         BoundingBoxPair readPDFBB(string inputPDFFileName, int page) {
             var bbs = readPDFBB(inputPDFFileName, page, page);
@@ -460,8 +511,8 @@ namespace TeX2img {
         }
 
         bool pdf2pdf(string input, string output, int resolution, int version, int page = 0) {
-			string pageopt = "";
-			if(page != 0) pageopt = " -dFirstPage=" + page.ToString(new System.Globalization.CultureInfo("en-US")) + " -dLastPage=" + page.ToString(new System.Globalization.CultureInfo("en-US"));
+            string pageopt = "";
+            if (page != 0) pageopt = " -dFirstPage=" + page.ToString(new System.Globalization.CultureInfo("en-US")) + " -dLastPage=" + page.ToString(new System.Globalization.CultureInfo("en-US"));
             return gs_pdfwrite("\"" + input + "\"", output, (IsNewGhostscript() ? "-dNoOutputFonts" : "-dNOCACHE") + pageopt, Properties.Resources.EXEC_GS, resolution, version, "");
         }
 
@@ -485,8 +536,8 @@ namespace TeX2img {
                 if (cmd != "") proc.StartInfo.Arguments += " " + cmd;
                 proc.StartInfo.Arguments += "\" -f " + input;
                 string stdout = "";
-                Action<string> read_stdout_func = (s) => { stdout += s; if(controller_ != null) controller_.appendOutput(s + "\n"); };
-                Action<string> read_func = (s) => { if(controller_ != null) controller_.appendOutput(s + "\n"); };
+                Action<string> read_stdout_func = (s) => { stdout += s; if (controller_ != null) controller_.appendOutput(s + "\n"); };
+                Action<string> read_func = (s) => { if (controller_ != null) controller_.appendOutput(s + "\n"); };
                 try {
                     printCommandLine(proc);
                     ReadOutputs(proc, msg, read_stdout_func, read_func);
@@ -500,7 +551,7 @@ namespace TeX2img {
                     if (controller_ != null) controller_.showGenerateError();
                     return false;
                 }
-                if(stdout.IndexOf("Error reading a content stream.") >= 0) return false;
+                if (stdout.IndexOf("Error reading a content stream.") >= 0) return false;
                 return true;
             }
         }
@@ -640,7 +691,7 @@ namespace TeX2img {
                     ReadOutputs(proc, Properties.Resources.EXEC_PDFTEX);
                 }
                 catch (Win32Exception) {
-                    if (controller_ != null) controller_.showPathError("pdftex.exe", String.Format(Properties.Resources.TEX_DISTRIBUTION,"pdftex"));
+                    if (controller_ != null) controller_.showPathError("pdftex.exe", String.Format(Properties.Resources.TEX_DISTRIBUTION, "pdftex"));
                     return false;
                 }
                 catch (TimeoutException) { return false; }
@@ -705,8 +756,14 @@ namespace TeX2img {
             tempFilesDeleter.AddFile(outputFileName);
             var enUS = new System.Globalization.CultureInfo("en-US");
             using (var proc = GetProcess()) {
-                proc.StartInfo.FileName = Path.Combine(GetToolsPath(), "mudraw.exe");
-                proc.StartInfo.Arguments = "-l -o \"" + outputFileName + "\" \"" + inputFileName + "\"";
+                var mudraw = Path.Combine(GetToolsPath(), "mudraw.exe");
+                string arg = "";
+                if (!File.Exists(mudraw)) {
+                    mudraw = Path.Combine(GetToolsPath(), "mutool.exe");
+                    arg = "draw ";
+                }
+                proc.StartInfo.FileName = mudraw;
+                proc.StartInfo.Arguments = arg + "-o \"" + outputFileName + "\" \"" + inputFileName + "\"";
                 if (pages.Count > 0) proc.StartInfo.Arguments += " " + String.Join(",", pages.Select(d => d.ToString(enUS)).ToArray());
                 try {
                     printCommandLine(proc);
@@ -775,7 +832,7 @@ namespace TeX2img {
                 if (type == "emf") {
                     proc.StartInfo.Arguments = "--extent=50 ";
                     if (!Properties.Settings.Default.transparentPngFlag)
-                        proc.StartInfo.Arguments += "--backcolor=" + String.Format(new System.Globalization.CultureInfo("en-US"),"{0:X2}{1:X2}{2:X2}",
+                        proc.StartInfo.Arguments += "--backcolor=" + String.Format(new System.Globalization.CultureInfo("en-US"), "{0:X2}{1:X2}{2:X2}",
                             Properties.Settings.Default.backgroundColor.R,
                             Properties.Settings.Default.backgroundColor.G,
                             Properties.Settings.Default.backgroundColor.B) + " ";
@@ -1116,7 +1173,7 @@ namespace TeX2img {
 
             // ページ数を取得
             int page, version;
-            if (!pdfinfo(Path.Combine(workingDir, tmpFileBaseName + ".pdf"), out page, out version)) {
+            if (!pdfinfo(tmpFileBaseName + ".pdf", out page, out version)) {
                 controller_.showError(Properties.Resources.FAIL_PDFPAGES);
                 return false;
             }
@@ -1154,7 +1211,7 @@ namespace TeX2img {
             if (Properties.Settings.Default.useLowResolution) gsresolution = 72 * Properties.Settings.Default.resolutionScale;
             else gsresolution = 20016;
 
-            Func<bool, bool,bool> modify_pdf = (bool paint, bool resize) => {
+            Func<bool, bool, bool> modify_pdf = (bool paint, bool resize) => {
                 var tmppdf = TempFilesDeleter.GetTempFileName(".pdf", workingDir);
                 tempFilesDeleter.AddFile(tmppdf);
                 if (!pdfcrop(tmpFileBaseName + ".pdf", tmppdf,
@@ -1166,7 +1223,7 @@ namespace TeX2img {
             };
 
             // サイズ調整もする
-            Func<bool,bool> make_pdf_without_text = (bool paint) => {
+            Func<bool, bool> make_pdf_without_text = (bool paint) => {
                 if (IsNewGhostscript()) {
                     if (!modify_pdf(paint, true)) return false;
                     // 新しい場合はpdfwrite
@@ -1225,7 +1282,7 @@ namespace TeX2img {
                 } else if (!modify_pdf(!Properties.Settings.Default.transparentPngFlag, true)) return false;
                 if (!pdf2img_mudraw(tmpFileBaseName + ".pdf", tmpFileBaseName + "-%d.svg", pagelist)) return false;
                 if (Properties.Settings.Default.deleteDisplaySize) {
-                    foreach(var i in pagelist) {
+                    foreach (var i in pagelist) {
                         DeleteHeightAndWidthFromSVGFile(tmpFileBaseName + "-" + i.ToString(enUS) + ".svg");
                     }
                 }
@@ -1233,7 +1290,7 @@ namespace TeX2img {
                     var temp = TempFilesDeleter.GetTempFileName(".svg", workingDir);
                     var temp1 = Path.GetFileNameWithoutExtension(temp) + "-1.svg";
                     tempFilesDeleter.AddFile(temp1);
-                    if(svgconcat(pagelist.Select(d=>tmpFileBaseName + "-" + d.ToString(enUS) + ".svg").ToList(), temp1, Properties.Settings.Default.animationDelay, Properties.Settings.Default.animationLoop)) {
+                    if (svgconcat(pagelist.Select(d => tmpFileBaseName + "-" + d.ToString(enUS) + ".svg").ToList(), temp1, Properties.Settings.Default.animationDelay, Properties.Settings.Default.animationLoop)) {
                         page = 1;
                         tmpFileBaseName = Path.GetFileNameWithoutExtension(temp);
                     } else warnngs.Add(Properties.Resources.FAIL_CONCAT_IMAGES);
@@ -1242,8 +1299,8 @@ namespace TeX2img {
             };
             generate_actions[".svgz"] = () => {
                 if (!generate_actions[".svg"]()) return false;
-                for(int i = 1; i <= page; ++i) {
-                    if(File.Exists(Path.Combine(workingDir,tmpFileBaseName + "-" + i.ToString(enUS) + ".svg"))) {
+                for (int i = 1; i <= page; ++i) {
+                    if (File.Exists(Path.Combine(workingDir, tmpFileBaseName + "-" + i.ToString(enUS) + ".svg"))) {
                         tempFilesDeleter.AddFile(tmpFileBaseName + "-" + i.ToString(enUS) + ".svgz");
                         using (var ins = new FileStream(Path.Combine(workingDir, tmpFileBaseName + "-" + i.ToString(enUS) + ".svg"), FileMode.Open))
                         using (var outs = new FileStream(Path.Combine(workingDir, tmpFileBaseName + "-" + i.ToString(enUS) + ".svgz"), FileMode.Create))
@@ -1259,13 +1316,13 @@ namespace TeX2img {
             generate_actions[".emf"] = () => {
                 if (Properties.Settings.Default.outlinedText) {
                     if (!make_pdf_without_text(false)) return false;
-                }else if (!modify_pdf(false, true)) return false;
+                } else if (!modify_pdf(false, true)) return false;
                 var tmpfile = TempFilesDeleter.GetTempFileName(".pdf", workingDir);
                 File.Move(Path.Combine(workingDir, tmpFileBaseName + ".pdf"), Path.Combine(workingDir, tmpfile));
-                if(!dashtoline(tmpfile, tmpFileBaseName + ".pdf", version)) {
-                    if(controller_ != null) controller_.appendOutput(Properties.Resources.DASHTOLINE_FAIL_MSG + "\n");
+                if (!dashtoline(tmpfile, tmpFileBaseName + ".pdf", version)) {
+                    if (controller_ != null) controller_.appendOutput(Properties.Resources.DASHTOLINE_FAIL_MSG + "\n");
                     File.Delete(Path.Combine(workingDir, tmpFileBaseName + ".pdf"));
-                    File.Move(Path.Combine(workingDir,tmpfile), Path.Combine(workingDir,tmpFileBaseName + ".pdf"));
+                    File.Move(Path.Combine(workingDir, tmpfile), Path.Combine(workingDir, tmpFileBaseName + ".pdf"));
                 }
                 if (!pdf2img_pdfium(tmpFileBaseName + ".pdf", tmpFileBaseName + "-%d" + extension, pagelist)) return false;
                 return true;
@@ -1291,7 +1348,7 @@ namespace TeX2img {
                 if (Properties.Settings.Default.mergeOutputFiles && page > 1) {
                     var temp = TempFilesDeleter.GetTempFileName(".tiff", workingDir);
                     var temp1 = Path.GetFileNameWithoutExtension(temp) + "-1.tiff";
-                    if(tiffconcat(pagelist.Select(d => tmpFileBaseName + "-" + d.ToString(enUS) + ".tiff").ToList(), temp1)){ 
+                    if (tiffconcat(pagelist.Select(d => tmpFileBaseName + "-" + d.ToString(enUS) + ".tiff").ToList(), temp1)) {
                         page = 1;
                         tmpFileBaseName = Path.GetFileNameWithoutExtension(temp);
                     } else warnngs.Add(Properties.Resources.FAIL_CONCAT_IMAGES);
@@ -1323,7 +1380,7 @@ namespace TeX2img {
                 if (!generate_actions[extension]()) return false;
             }
             // 適当．後で考える．
-            catch(Exception e) {
+            catch (Exception e) {
                 warnngs.Add(e.Message);
             }
 
@@ -1410,29 +1467,68 @@ namespace TeX2img {
 
         #region PDF情報
         bool pdfinfo(string file, out int page, out int version) {
-            page = -1;version = -1;
-            using (var mupdf = new MuPDF(Path.Combine(GetToolsPath(), "mudraw.exe"))) {
-                try {
-                    int doc = mupdf.Execute<int>("open_document", Path.Combine(workingDir, file));
-                    const int repeatTimes = 10;
-                    for (int i = 1; i <= repeatTimes; ++i) {
-                        try {
-                            if (page == -1) page = mupdf.Execute<int>("count_pages", doc);
-                            if (version == -1) version = mupdf.Execute<int>("version_document", doc);
-                            return true;
-                        }
-                        catch (Exception) {
-                            mupdf.ClearError();
-                            if (i == repeatTimes) throw;
-                        }
-                    }
-                }
-                catch (Exception e) {
-                    if (controller_ != null) controller_.appendOutput(Properties.Resources.FAIL_PDFPAGES + "\n" + e.Message);
-                    return false;
-                }
+            page = -1; version = -1;
+            if(Path.IsPathRooted(file) && (Path.GetDirectoryName(file) != workingDir)) {
+                var b = TempFilesDeleter.GetTempFileName(Path.GetExtension(file));
+                try { File.Copy(file, Path.Combine(workingDir, b)); }
+                catch (Exception) { return false; }
+                file = b;
+                tempFilesDeleter.AddFile(file);
             }
-            return false;
+            try {
+                using (var fs = new FileStream(Path.Combine(workingDir, file), FileMode.Open, FileAccess.Read)) {
+                    if (!fs.CanRead) return false;
+                    string verstr = "";
+                    int b;
+                    while (true) {
+                        b = fs.ReadByte();
+                        if (fs.Position == fs.Length || b == '\r' || b == '\n') break;
+                        verstr += (char)b;
+                    }
+                    if (verstr.Substring(0, 5) != "%PDF-") return false;
+                    verstr = verstr.Substring(5);
+                    verstr = verstr.Replace(".", "");
+                    try {
+                        version = int.Parse(verstr);
+                    }
+                    catch (Exception) { return false; }
+                }
+                var tmpfile = TempFilesDeleter.GetTempFileName(".tex", workingDir);
+                if (tmpfile == null) return false;
+                tempFilesDeleter.AddTeXFile(tmpfile);
+                using (var fw = new StreamWriter(Path.Combine(workingDir, tmpfile))) {
+                    fw.WriteLine(@"\pdfoutput=1\relax");
+                    fw.WriteLine(@"\pdfximage{" + file + "}");
+                    fw.WriteLine(@"\message{^^JPages: \the\pdflastximagepages^^J}");
+                    fw.WriteLine(@"\bye");
+                }
+                using (var proc = GetProcess()) {
+                    string arg;
+                    string stdout = "";
+                    Action<string> read_stdout_func = (s) => { stdout += s; if (controller_ != null) controller_.appendOutput(s + "\n"); };
+                    Action<string> read_func = (s) => { if (controller_ != null) controller_.appendOutput(s + "\n"); };
+                    proc.StartInfo.FileName = setProcStartInfo(Properties.Settings.Default.pdftexPath, out arg);
+                    proc.StartInfo.Arguments = arg + " -no-shell-escape -interaction=nonstopmode \"" + tmpfile + "\"";
+                    try {
+                        printCommandLine(proc);
+                        ReadOutputs(proc, Properties.Resources.EXEC_PDFTEX, read_stdout_func, read_func);
+                    }
+                    catch (Win32Exception) {
+                        if (controller_ != null) controller_.showPathError("pdftex.exe", String.Format(Properties.Resources.TEX_DISTRIBUTION, "pdftex"));
+                        return false;
+                    }
+                    catch (TimeoutException) { return false; }
+                    stdout = stdout.Replace("\r\n", "\n").Replace("\r", "\n");
+                    var match = Regex.Match(stdout, "Pages: ([0-9]+)");
+                    if (match.Success) page = int.Parse(match.Groups[1].ToString());
+                    else return false;
+                }
+                return true;
+            }
+            catch (Exception e) {
+                if (controller_ != null) controller_.appendOutput(Properties.Resources.FAIL_PDFPAGES + "\n" + e.Message);
+                return false;
+            }
         }
 
         #endregion
@@ -1488,6 +1584,15 @@ namespace TeX2img {
             if (!imageExtensions.Contains(extension)) {
                 if (controller_ != null) controller_.showExtensionError(OutputFile);
                 return false;
+            }
+            if(extension == ".svg") {
+                if (
+                    (!File.Exists(Path.Combine(GetToolsPath(), "mudraw.exe"))) &&
+                    (!File.Exists(Path.Combine(GetToolsPath(), "mutool.exe")))
+                 ) {
+                    if (controller_ != null) controller_.showNoToolError("mudraw / mutool", "SVG");
+                    return false;
+                }
             }
             return true;
         }

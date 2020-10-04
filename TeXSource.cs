@@ -98,51 +98,124 @@ namespace TeX2img {
 
         static void PDFEmbed(string file, string text) {
             var tmpdir = Path.GetTempPath();
-            var tmp = TempFilesDeleter.GetTempFileName(".pdf", tmpdir);
-            tmp = Path.Combine(tmpdir, tmp);
-            using (var tmp_deleter = new TempFilesDeleter(tmpdir)) {
-                tmp_deleter.AddFile(tmp);
-                using (var mupdf = new MuPDF(mudraw)) {
-                    var doc = mupdf.Execute<int>("open_document", file);
-                    if (doc == 0) return;
-                    var page = mupdf.Execute<int>("load_page", doc, 0);
-                    if (page == 0) return;
-                    var annot = mupdf.Execute<int>("create_annot", page, "Text");
-                    if (annot == 0) return;
-                    mupdf.Execute("set_annot_contents", annot, ChangeReturnCode(PDFsrcHead + System.Environment.NewLine + text, "\n"));
-                    mupdf.Execute("set_annot_flag", annot, 35);
-                    mupdf.Execute("write_document", doc, tmp);
+            using (var tempFileDeleter = new TempFilesDeleter(tmpdir)) {
+                var targettmp = TempFilesDeleter.GetTempFileName(".pdf", tmpdir);
+                try { File.Copy(file, Path.Combine(tmpdir,targettmp)); }
+                catch(Exception) { return; }
+                tempFileDeleter.AddFile(targettmp);
+                var txttmp = TempFilesDeleter.GetTempFileName(".txt", tmpdir);
+                tempFileDeleter.AddFile(txttmp);
+                using(var fw = new BinaryWriter(new FileStream(Path.Combine(tmpdir, txttmp), FileMode.Create))) {
+                    fw.Write((new UnicodeEncoding(true,false)).GetBytes(ChangeReturnCode(PDFsrcHead + System.Environment.NewLine + text + "\n","\n")));
                 }
-                if (File.Exists(tmp)) {
+                var tmp = TempFilesDeleter.GetTempFileName(".tex", tmpdir);
+                tmp = Path.Combine(tmpdir, tmp);
+                tempFileDeleter.AddTeXFile(tmp);
+                using (var fw = new BinaryWriter(new FileStream(tmp,FileMode.Create))) {
+                    fw.Write(ASCIIEncoding.ASCII.GetBytes(
+@"\pdfoutput=1\relax
+\newread\teximgread
+\newcount\teximgcnt
+\teximgcnt=0\relax
+\newif\ifteximgflag\teximgflagtrue
+\def\x{{%
+  \loop
+    \expandafter\catcode\the\teximgcnt=12\relax
+    \advance\teximgcnt by 1\relax
+  \ifnum\teximgcnt<128\repeat
+  \gdef\teximgannot{"));
+                    fw.Write((new UnicodeEncoding(true,true)).GetPreamble());
+                    fw.Write(ASCIIEncoding.ASCII.GetBytes(
+@"}%
+  \immediate\openin\teximgread="));
+                    fw.Write(ASCIIEncoding.ASCII.GetBytes(txttmp));
+                    fw.Write(ASCIIEncoding.ASCII.GetBytes(
+@"\relax
+  \ifeof\teximgread\teximgflagfalse\else
+    \loop
+      \read\teximgread to \teximgline
+      \xdef\teximgannot{\teximgannot\teximgline}%
+    \unless\ifeof\teximgread\repeat
+    \immediate\closein\teximgread
+  \fi
+}}\x
+\ifteximgflag
+  \def\teximguniqtokena{\teximguniqtokenx}\def\teximguniqtokenb{\teximguniqtokenbx}\def\teximguniqtokenx{}%
+  {\catcode0=12\catcode13=12\relax\def\removelast#1^^M\teximguniqtokena#2\teximguniqtokenb{#1}%
+  \xdef\teximgannot{\expandafter\removelast\teximgannot\teximguniqtokena^^M\teximguniqtokena\teximguniqtokenb}%
+  \def\removelast#1^^@^^M\teximguniqtokena#2\teximguniqtokenb{#1}%
+  \xdef\teximgannot{\expandafter\removelast\teximgannot\teximguniqtokena^^@^^M\teximguniqtokena\teximguniqtokenb}}%
+  \newcount\teximgtotalpage
+  \pdfximage{" + targettmp + @"}\teximgtotalpage =\pdflastximagepages
+  \advance\teximgtotalpage by 1\relax
+  \teximgcnt=1\relax
+  \loop
+    \pdfximage page \the\teximgcnt {" + targettmp + @"}%
+    \setbox0 =\hbox{\ifnum\teximgcnt=1\relax
+    \pdfannot width 0pt height 0pt depth 0pt{/Subtype /Text /F 35 /Contents (\pdfescapestring{\teximgannot})}\fi
+    \pdfrefximage\pdflastximage}%
+    \pdfhorigin=0pt\relax
+    \pdfvorigin=0pt\relax
+    \pdfpagewidth=\wd0\relax
+    \pdfpageheight=\ht0\relax
+    \shipout\box0\relax
+    \advance\teximgcnt by 1\relax
+  \ifnum\teximgcnt<\teximgtotalpage\repeat
+\fi
+\bye"));
+                }
+                using(var proc = new System.Diagnostics.Process()) {
+                    string arg;
+                    proc.StartInfo.WorkingDirectory = Path.GetDirectoryName(tmp);
+                    proc.StartInfo.FileName = Converter.setProcStartInfo(Properties.Settings.Default.pdftexPath, out arg);
+                    proc.StartInfo.Arguments = arg + " -no-shell-escape -interaction=nonstopmode \"" + Path.GetFileName(tmp) + "\"";
+                    proc.StartInfo.UseShellExecute = false;
+                    proc.StartInfo.CreateNoWindow = true;
+                    try { proc.Start(); }
+                    catch (Exception) { return; }
+                    proc.WaitForExit(5000);
+                }
+                var tmppdf = Path.ChangeExtension(tmp, ".pdf");
+                if (File.Exists(tmppdf)) {
                     File.Delete(file);
-                    File.Move(tmp, file);
+                    File.Move(tmppdf, file);
                 }
             }
         }
-        
+
         static string PDFRead(string file) {
             var srcHead = PDFsrcHead + System.Environment.NewLine;
-            using (var mupdf = new MuPDF(mudraw)) {
-                var doc = mupdf.Execute<int>("open_document", file);
-                if (doc == 0) return null;
-                var page = mupdf.Execute<int>("load_page", doc, 0);
-                if (page == 0) return null;
-                var annot = mupdf.Execute<int>("first_annot", page);
-                while (annot != 0) {
-                    var rect = mupdf.Execute<BoundingBox>("bound_annot", annot);
-                    if(rect.Width == 0 && rect.Height == 0) { 
-                        if (mupdf.Execute<string>("annot_type", annot) == "Text") {
-                            var text = mupdf.Execute<string>("annot_contents", annot);
-                            text = ChangeReturnCode(text);
+            var tmpdir = Path.GetTempPath();
+            using (var tempFileDeleter = new TempFilesDeleter(tmpdir)) {
+                var targettmp = TempFilesDeleter.GetTempFileName(".txt");
+                var targetpre = Path.GetFileNameWithoutExtension(targettmp);
+                using (var proc = new System.Diagnostics.Process()) {
+                    proc.StartInfo.FileName = Path.Combine(Converter.GetToolsPath(), "pdfiumdraw.exe");
+                    proc.StartInfo.Arguments = "--output-text-annots --output=\"" + Path.Combine(tmpdir,targetpre) + "-%d.txt\" \"" + Path.GetFileName(file) + "\"";
+                    proc.StartInfo.WorkingDirectory = Path.GetDirectoryName(file);
+                    proc.StartInfo.CreateNoWindow = true;
+                    proc.StartInfo.UseShellExecute = false;
+                    try { proc.Start(); }
+                    catch (Exception e) { System.Windows.Forms.MessageBox.Show(e.ToString()); return null; }
+                    proc.WaitForExit(1000);
+                }
+                int i = 1;
+                string rv = null;
+                while (File.Exists(Path.Combine(tmpdir, targetpre + "-" + i.ToString() + ".txt"))){
+                    string annot_txt_file = Path.Combine(tmpdir, targetpre + "-" + i.ToString() + ".txt");
+                    tempFileDeleter.AddFile(annot_txt_file);
+                    if (rv == null) {
+                        using (var fr = new StreamReader(Path.Combine(tmpdir, targetpre + "-" + i.ToString() + ".txt"), Encoding.UTF8)) {
+                            var text = ChangeReturnCode(fr.ReadToEnd());
                             if (text.StartsWith(srcHead)) {
                                 return text.Substring(srcHead.Length);
                             }
                         }
                     }
-                    annot = mupdf.Execute<int>("next_annot", annot);
+                    ++i;
                 }
+                return rv;
             }
-            return null;
         }
 
         static string ReadAppleDouble(string file) {

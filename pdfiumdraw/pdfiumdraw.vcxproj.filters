@@ -15,8 +15,6 @@
     <Text Include="howtobuild.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="pdfiumdraw.cpp">
-      <Filter>リソース ファイル</Filter>
-    </ClCompile>
+    <ClCompile Include="pdfiumdraw.cpp" />
   </ItemGroup>
 </Project>
