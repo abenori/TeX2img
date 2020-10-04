@@ -2,7 +2,7 @@
 
 (C) Yusuke Terada and Noriyuki Abe http://www.ms.u-tokyo.ac.jp/~abenori/
 
-（日本語のドキュメントは [TeX2img.txt](./TeX2img.txt) をご覧ください．）
+（日本語のドキュメントは [README-ja.md](./README-ja.md) をご覧ください．）
 
 ## What is TeX2img?
 TeX2img generates an image in various file formats from a TeX source code.
@@ -160,3 +160,7 @@ For further details, see the website of each library.
 * 2.1.3 (2020/09/14)
     - Added the path setting of pdfTeX.
 
+* 2.2.0 (2020/10/04)
+    - TeX2img works without mudraw.
+    - Improve the default values on save/open file dialog.
+    - Fixed bugs.

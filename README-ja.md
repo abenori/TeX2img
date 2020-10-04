@@ -2,7 +2,7 @@
 
 (C) Yusuke Terada and Noriyuki Abe http://www.ms.u-tokyo.ac.jp/~abenori/
 
-(For the English document, see README.md.)
+(For the English document, see [README.md](./README.md).)
 
 ## これは何？
 入力した TeX ソースコードを TeX でコンパイルして，次のような形式の画像で出力するアプリケーションです．
@@ -36,7 +36,7 @@ TeX2imgc.exe は CUI モードで動かすためのラッパです．TeX2img.exe
 
 です．各種設定項目は TeX2img のそれを受け継ぎますが，変換後のプレビューのみ必ず行わないようになります．行いたい場合はオプション /preview を指定してください．
 
-SVG ファイルの生成には MuPDF が必要です．[MuPDF](https://mupdf.com/index.html)からオリジナルを，または http://www.ms.u-tokyo.ac.jp/~abenori/soft/index.html#MUTOOL  から改変版をダウンロードし，mutool.exe を TeX2img.exe と同じフォルダにおいてください．
+SVG ファイルの生成には MuPDF が必要です．[MuPDF](https://mupdf.com/index.html)からオリジナルを，または http://www.ms.u-tokyo.ac.jp/~abenori/soft/index.html#MUTOOL から改変版をダウンロードし，mutool.exe を TeX2img.exe と同じフォルダにおいてください．
 
 
 ## 制限
@@ -379,3 +379,7 @@ https://pdfium.googlesource.com/pdfium/
 * 2.1.3 (2020/09/15)
     - pdfTeX のパス指定を追加した．
 
+* 2.2.0 (2020/10/04)
+    - mudrawなしでも動くようにした．
+    - ファイルの保存ダイアログなどでのデフォルト値を改善．
+    - バグ修正．
