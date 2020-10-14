@@ -415,6 +415,15 @@ namespace TeX2img.Properties {
         }
         
         /// <summary>
+        ///   Set path for pdfTeX に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string CMDLINE_PDFTEX {
+            get {
+                return ResourceManager.GetString("CMDLINE_PDFTEX", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Preview after compiling に類似しているローカライズされた文字列を検索します。
         /// </summary>
         internal static string CMDLINE_PREVIEW {

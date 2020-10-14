@@ -522,4 +522,7 @@ If they are not correct, please set them manually.</value>
   <data name="NOTOOLERROR" xml:space="preserve">
     <value>{1} is needed for {0}, put {1} in tool path directory.</value>
   </data>
+  <data name="CMDLINE_PDFTEX" xml:space="preserve">
+    <value>Set path for pdfTeX</value>
+  </data>
 </root>

@@ -535,4 +535,7 @@
   <data name="NOTOOLERROR" xml:space="preserve">
     <value>{1}の処理には{0}が必要です．{0}をツールディレクトリにおいてください．</value>
   </data>
+  <data name="CMD_PDFTEX" xml:space="preserve">
+    <value>pdfTeXのパス</value>
+  </data>
 </root>
