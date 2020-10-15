@@ -164,3 +164,6 @@ For further details, see the website of each library.
     - TeX2img works without mudraw.
     - Improve the default values on save/open file dialog.
     - Fixed bugs.
+
+* 2.2.1 (2020/10/15)
+    - TeX2img can guess the number of compilations with LateX 2020-10-01.
