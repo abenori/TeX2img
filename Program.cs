@@ -26,7 +26,7 @@ namespace TeX2img {
             {"platex=",val => Properties.Settings.Default.platexPath=val},
             {"dvidriver=",Properties.Resources.CMDLINE_DVIDRIVER,val =>Properties.Settings.Default.dvipdfmxPath=val,()=>Properties.Settings.Default.dvipdfmxPath},
             {"dvipdfmx=",val =>Properties.Settings.Default.dvipdfmxPath=val},
-            {"pdftex=",Properties.Resources.CMDLINE_PDFTEX,val => Properties.Settings.Default.pdftexPath =val},
+            {"pdftex=",Properties.Resources.CMDLINE_PDFTEX,val => Properties.Settings.Default.pdftexPath =val,()=>Properties.Settings.Default.pdftexPath},
             {"gs=",Properties.Resources.CMDLINE_GS,val => Properties.Settings.Default.gsPath = val,()=>Properties.Settings.Default.gsPath},
             {"oldgs",
                 Properties.Resources.CMDLINE_OLDGS + "[-]",

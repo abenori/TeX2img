@@ -538,4 +538,7 @@
   <data name="CMD_PDFTEX" xml:space="preserve">
     <value>pdfTeXのパス</value>
   </data>
+  <data name="CMDLINE_PDFTEX" xml:space="preserve">
+    <value>pdfTeX へのパス</value>
+  </data>
 </root>
