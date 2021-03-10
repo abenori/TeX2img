@@ -109,7 +109,12 @@ namespace TeX2img {
                             if (old_status == 4) {
                                 if (!buf.SequenceEqual(aux[ext])) rv = true;
                             }else rv = true;
-                        }else if(new_status == 1 || new_status == 2 || new_status == 3) {
+                        }else if (new_status == 3) {
+							if (old_status == 4) rv = true;
+							else if (old_status == 3) {
+								if (!buf.SequenceEqual(aux[ext])) rv = true;
+							}
+                        }else if(new_status == 1 || new_status == 2) {
                             if (old_status == 4) rv = true;
                         }
                     } else {
