@@ -695,7 +695,7 @@ namespace TeX2img.Properties {
         }
         
         /// <summary>
-        ///   Faile to guess paths of LaTeX / DVI driver / Ghostscript. Please set them manually. に類似しているローカライズされた文字列を検索します。
+        ///   Fail to guess paths of LaTeX / DVI driver / Ghostscript. Please set them manually. に類似しているローカライズされた文字列を検索します。
         /// </summary>
         internal static string FAIL_INIT_PATH {
             get {

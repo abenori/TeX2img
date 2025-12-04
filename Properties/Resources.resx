@@ -258,7 +258,7 @@ Check the path of {1}.</value>
     <value>Fail to guess {0}.</value>
   </data>
   <data name="FAIL_INIT_PATH" xml:space="preserve">
-    <value>Faile to guess paths of LaTeX / DVI driver / Ghostscript. Please set them manually.</value>
+    <value>Fail to guess paths of LaTeX / DVI driver / Ghostscript. Please set them manually.</value>
   </data>
   <data name="CMDLINE_NUM" xml:space="preserve">
     <value>(maximum) number of times for LaTeX</value>
